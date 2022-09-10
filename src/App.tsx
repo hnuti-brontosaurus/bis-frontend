@@ -1,17 +1,15 @@
-import { useEffect } from 'react'
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
+import Home from './Home'
 import Login from './Login'
+import { PrivateOutlet } from './utils/PrivateOutlet'
 
 function App() {
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    navigate('/login')
-  }, [])
-
   return (
     <Routes>
-      <Route path="login" element={<Login />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<PrivateOutlet />}>
+        <Route index element={<Home />} />
+      </Route>
     </Routes>
   )
 }
