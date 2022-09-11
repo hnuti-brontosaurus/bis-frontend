@@ -33,5 +33,22 @@ export const api = createApi({
         body: credentials,
       }),
     }),
+    sendResetPasswordLink: builder.mutation<unknown, { email: string }>({
+      query: body => ({
+        url: 'auth/send_verification_link/',
+        method: 'POST',
+        body,
+      }),
+    }),
+    resetPassword: builder.mutation<
+      LoginResponse,
+      { code: string; email: string; password: string }
+    >({
+      query: body => ({
+        url: 'auth/reset_password/',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 })
