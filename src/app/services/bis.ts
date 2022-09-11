@@ -20,7 +20,7 @@ export const api = createApi({
       // By default, if we have a token in the store, let's use that for authenticated requests
       const token = (getState() as RootState).auth.token
       if (token) {
-        headers.set('authorization', `Bearer ${token}`)
+        headers.set('authorization', `Token ${token}`)
       }
       return headers
     },
@@ -49,6 +49,12 @@ export const api = createApi({
         method: 'POST',
         body,
       }),
+    }),
+    whoami: builder.query<{ id: number }, void>({
+      query: () => 'auth/whoami/',
+    }),
+    getUser: builder.query<any, number>({
+      query: id => `frontend/users/${id}/`,
     }),
   }),
 })

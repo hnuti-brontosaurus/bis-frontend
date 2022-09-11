@@ -1,3 +1,5 @@
-const Home = () => <h1>Logged in</h1>
+import Header from './Header'
+
+const Home = () => <Header />
 
 export default Home
