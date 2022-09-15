@@ -25,22 +25,22 @@ export const api = createApi({
       return headers
     },
   }),
-  endpoints: builder => ({
-    login: builder.mutation<LoginResponse, LoginRequest>({
+  endpoints: build => ({
+    login: build.mutation<LoginResponse, LoginRequest>({
       query: credentials => ({
         url: 'auth/login/',
         method: 'POST',
         body: credentials,
       }),
     }),
-    sendResetPasswordLink: builder.mutation<unknown, { email: string }>({
+    sendResetPasswordLink: build.mutation<unknown, { email: string }>({
       query: body => ({
         url: 'auth/send_verification_link/',
         method: 'POST',
         body,
       }),
     }),
-    resetPassword: builder.mutation<
+    resetPassword: build.mutation<
       LoginResponse,
       { code: string; email: string; password: string }
     >({
@@ -50,10 +50,10 @@ export const api = createApi({
         body,
       }),
     }),
-    whoami: builder.query<{ id: number }, void>({
+    whoami: build.query<{ id: number }, void>({
       query: () => 'auth/whoami/',
     }),
-    getUser: builder.query<any, number>({
+    getUser: build.query<any, number>({
       query: id => `frontend/users/${id}/`,
     }),
   }),

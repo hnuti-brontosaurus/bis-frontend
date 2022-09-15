@@ -13,6 +13,7 @@ import storage from 'redux-persist/lib/storage'
 
 import authReducer from '../features/auth/authSlice'
 import { api } from './services/bis'
+import { emptySplitApi } from './services/emptyApi'
 
 const persistConfig = {
   key: 'auth',
@@ -24,6 +25,7 @@ const persistedAuthReducer = persistReducer(persistConfig, authReducer)
 
 export const store = configureStore({
   reducer: {
+    [emptySplitApi.reducerPath]: emptySplitApi.reducer,
     [api.reducerPath]: api.reducer,
     auth: persistedAuthReducer,
   },

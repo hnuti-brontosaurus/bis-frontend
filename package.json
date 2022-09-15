@@ -30,7 +30,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json,md,css,scss}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md,css,scss}\"",
+    "generate-api": "npx @rtk-query/codegen-openapi ./src/app/services/openapi-config.json"
   },
   "browserslist": {
     "production": [
