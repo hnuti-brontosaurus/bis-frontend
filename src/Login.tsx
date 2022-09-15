@@ -48,6 +48,14 @@ const Login = () => {
       </form>
 
       <Link to="/send-reset-password-link">Forgot/not have password</Link>
+
+      <button
+        onClick={() => {
+          throw new Error('This is a Sentry test')
+        }}
+      >
+        Throw error
+      </button>
     </div>
   )
 }

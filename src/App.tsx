@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import { Route, Routes } from 'react-router-dom'
 import Home from './Home'
 import Login from './Login'
@@ -5,9 +6,11 @@ import ResetPassword from './ResetPassword'
 import SendResetPasswordLink from './SendResetPasswordLink'
 import { PrivateOutlet } from './utils/PrivateOutlet'
 
+const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes)
+
 function App() {
   return (
-    <Routes>
+    <SentryRoutes>
       <Route path="/login" element={<Login />} />
       <Route
         path="/send-reset-password-link"
@@ -17,7 +20,7 @@ function App() {
       <Route path="/" element={<PrivateOutlet />}>
         <Route index element={<Home />} />
       </Route>
-    </Routes>
+    </SentryRoutes>
   )
 }
 
