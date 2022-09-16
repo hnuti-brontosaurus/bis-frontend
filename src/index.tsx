@@ -8,18 +8,22 @@ import { persistor, store } from './app/store'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
 
+import { ErrorBoundary, ErrorBoundaryFallback } from './config/sentry'
+
 const container = document.getElementById('root')!
 const root = createRoot(container)
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </PersistGate>
-    </Provider>
+    <ErrorBoundary fallback={ErrorBoundaryFallback}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </PersistGate>
+      </Provider>
+    </ErrorBoundary>
   </React.StrictMode>,
 )
 

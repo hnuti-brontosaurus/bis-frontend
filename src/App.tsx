@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route } from 'react-router-dom'
+import { Routes } from './config/sentry'
 import Home from './Home'
 import Login from './Login'
 import ResetPassword from './ResetPassword'

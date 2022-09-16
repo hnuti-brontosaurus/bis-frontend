@@ -17,3 +17,4 @@ REACT_APP_VAR1="something" REACT_APP_VAR2="something_else" yarn build
 ```
 
 - `REACT_APP_API_BASE_URL` API base url, including trailing slash (default `/api/`)
+- `REACT_APP_SENTRY_DSN` a dsn for Sentry setup
