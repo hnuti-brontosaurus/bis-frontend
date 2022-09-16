@@ -1,3 +1,5 @@
+// https://docs.sentry.io/platforms/javascript/guides/react/components/errorboundary/#setting-a-fallback-function-render-props
+
 import * as Sentry from '@sentry/react'
 
 const ErrorBoundaryFallback: Sentry.FallbackRender = ({

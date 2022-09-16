@@ -9,7 +9,13 @@ import {
   useNavigationType,
 } from 'react-router-dom'
 
-/* to remove Sentry fully, remove this file and
+/*
+set up using the following resources:
+https://docs.sentry.io/platforms/javascript/guides/react/
+https://docs.sentry.io/platforms/javascript/guides/react/components/errorboundary/
+https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/react-router/
+
+to remove Sentry fully, remove this file and
 replace ErrorBoundary with React.ErrorBoundary
 figure out new fallback component
 replace Routes with Routes from 'react-router-dom'
