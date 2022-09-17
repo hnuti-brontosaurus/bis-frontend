@@ -1,61 +1,76 @@
-import { FormEventHandler, useState } from 'react'
+import classnames from 'classnames'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from './app/services/bis'
+import styles from './Login.module.scss'
+
+const requiredMessage = 'Toto pole je povinné!'
 
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [login, { isLoading: isLoginLoading }] =
     api.endpoints.login.useMutation()
   const navigate = useNavigate()
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async e => {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{ email: string; password: string }>()
+
+  const handleFormSubmit = handleSubmit(async data => {
     try {
-      await login({ email, password }).unwrap()
-      setEmail('')
-      setPassword('')
+      await login(data).unwrap()
       navigate('/')
     } catch (e) {
-      alert(e)
+      alert(JSON.stringify(e))
       setError((e as any).data?.detail)
     }
-  }
+  })
 
   if (isLoginLoading) return <div>Loading...</div>
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className={styles.loginContainer}>
+      <div className={styles.formContainer}>
+        {error && <div>{error}</div>}
+        <form onSubmit={handleFormSubmit}>
+          <header className={styles.formHeader}>
+            Přihlašte se ke svému účtu
+          </header>
+          <section>
+            Zadejte své přihlašovací jméno a heslo pro přístup k aplikaci
+          </section>
+          <input
+            className={classnames(
+              styles.formElement,
+              errors.email && styles.error,
+            )}
+            type="text"
+            placeholder="E-mail"
+            {...register('email', { required: requiredMessage })}
+          />
+          {errors.email?.message}
+          <input
+            className={classnames(
+              styles.formElement,
+              errors.password && styles.error,
+            )}
+            type="password"
+            placeholder="Heslo"
+            {...register('password', { required: requiredMessage })}
+          />
+          {errors.password?.message}
+          <input
+            className={styles.formElement}
+            type="submit"
+            value="Přihlásit se"
+          />
 
-      {error && <div>{error}</div>}
-
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <input type="submit" value="Login" />
-      </form>
-
-      <Link to="/send-reset-password-link">Forgot/not have password</Link>
-
-      <button
-        onClick={() => {
-          throw new Error('This is a Sentry test')
-        }}
-      >
-        Throw error
-      </button>
+          <Link to="/send-reset-password-link">Forgot/not have password</Link>
+        </form>
+      </div>
     </div>
   )
 }

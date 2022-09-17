@@ -1,6 +1,8 @@
-import { FormEventHandler, useState } from 'react'
+import classnames from 'classnames'
+import { useForm } from 'react-hook-form'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from './app/services/bis'
+import styles from './Login.module.scss'
 
 const ResetPassword = () => {
   // use search parameters
@@ -8,48 +10,64 @@ const ResetPassword = () => {
   const navigate = useNavigate()
   const email = searchParams.get('email') ?? ''
   const code = searchParams.get('code') ?? ''
-  const [password, setPassword] = useState('')
-  const [passwordRepeat, setPasswordRepeat] = useState('')
   const [resetPassword, { isLoading }] =
     api.endpoints.resetPassword.useMutation()
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async e => {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<{ password: string; passwordRepeat: string }>()
 
-    if (password !== passwordRepeat) {
-      alert('different passwords')
-    }
+  const handleFormSubmit = handleSubmit(async data => {
     try {
       await resetPassword({
+        password: data.password,
         email,
-        password,
         code,
       }).unwrap()
       navigate('/')
     } catch (error) {
       alert(error)
     }
-  }
+  })
 
   if (isLoading) return <>Processing...</>
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="password"
-          placeholder="new password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="repeat password"
-          value={passwordRepeat}
-          onChange={e => setPasswordRepeat(e.target.value)}
-        />
-        <input type="submit" value="set new password" />
-      </form>
+    <div className={styles.loginContainer}>
+      <div className={styles.formContainer}>
+        <form onSubmit={handleFormSubmit}>
+          <input
+            className={classnames(
+              styles.formElement,
+              errors.password && styles.error,
+            )}
+            type="password"
+            placeholder="new password"
+            {...register('password', { required: 'empty!!!' })}
+          />
+          {errors.password?.message}
+          <input
+            className={classnames(
+              styles.formElement,
+              errors.passwordRepeat && styles.error,
+            )}
+            type="password"
+            placeholder="repeat password"
+            {...register('passwordRepeat', {
+              validate: pwd => getValues('password') === pwd || 'not the same',
+            })}
+          />
+          {errors.passwordRepeat?.message}
+          <input
+            className={styles.formElement}
+            type="submit"
+            value="set new password"
+          />
+        </form>
+      </div>
     </div>
   )
 }
