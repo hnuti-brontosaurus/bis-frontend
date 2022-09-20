@@ -1,0 +1,11 @@
+.mainMenu {
+  display: grid;
+  grid-template-columns: repeat(2, 120px);
+  grid-template-rows: repeat(2, 50px);
+  grid-row-gap: 2rem;
+  grid-column-gap: 1rem;
+
+  a {
+    background-color: pink;
+  }
+}

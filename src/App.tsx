@@ -1,10 +1,13 @@
 import { Route } from 'react-router-dom'
 import { Routes } from './config/sentry'
+import CreateEvent from './CreateEvent'
 import Home from './Home'
 import Login from './Login'
+import OrgHome from './OrgHome'
 import ResetPassword from './ResetPassword'
 import SendResetPasswordLink from './SendResetPasswordLink'
 import AuthenticatedOutlet from './utils/AuthenticatedOutlet'
+import OrganizerOutlet from './utils/OrganizerOutlet'
 import UnauthenticatedOutlet from './utils/UnauthenticatedOutlet'
 
 function App() {
@@ -20,6 +23,10 @@ function App() {
       </Route>
       <Route path="/" element={<AuthenticatedOutlet />}>
         <Route index element={<Home />} />
+        <Route path="org" element={<OrganizerOutlet />}>
+          <Route index element={<OrgHome />} />
+          <Route path="nova-akce" element={<CreateEvent />} />
+        </Route>
       </Route>
     </Routes>
   )
