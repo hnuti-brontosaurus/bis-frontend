@@ -1,13 +1,18 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import AuthenticatedLayout from '../AuthenticatedLayout'
 import { useAuth } from '../hooks/auth'
 
-export function PrivateOutlet() {
+const AuthenticatedOutlet = () => {
   const auth = useAuth()
   const location = useLocation()
 
   return auth.user ? (
-    <Outlet />
+    <AuthenticatedLayout>
+      <Outlet />
+    </AuthenticatedLayout>
   ) : (
     <Navigate to="/login" state={{ from: location }} />
   )
 }
+
+export default AuthenticatedOutlet

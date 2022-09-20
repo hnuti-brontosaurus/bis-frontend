@@ -1,6 +1,7 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../store'
+import { User } from './testApi'
 
 export interface LoginRequest {
   email: string
@@ -53,8 +54,9 @@ export const api = createApi({
     whoami: build.query<{ id: number }, void>({
       query: () => 'auth/whoami/',
     }),
-    getUser: build.query<any, number>({
-      query: id => `frontend/users/${id}/`,
+    // frontendUsersRetrieve
+    getUser: build.query<User, { id: number }>({
+      query: ({ id }) => `frontend/users/${id}/`,
     }),
   }),
 })

@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/auth'
 import UnauthenticatedLayout from '../UnauthenticatedLayout'
 
-export const UnauthenticatedOutlet = () => {
+const UnauthenticatedOutlet = () => {
   const auth = useAuth()
 
   return auth.user ? (
@@ -13,3 +13,5 @@ export const UnauthenticatedOutlet = () => {
     </UnauthenticatedLayout>
   )
 }
+
+export default UnauthenticatedOutlet

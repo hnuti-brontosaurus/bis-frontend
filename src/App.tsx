@@ -4,8 +4,8 @@ import Home from './Home'
 import Login from './Login'
 import ResetPassword from './ResetPassword'
 import SendResetPasswordLink from './SendResetPasswordLink'
-import { PrivateOutlet } from './utils/PrivateOutlet'
-import { UnauthenticatedOutlet } from './utils/UnauthenticatedOutlet'
+import AuthenticatedOutlet from './utils/AuthenticatedOutlet'
+import UnauthenticatedOutlet from './utils/UnauthenticatedOutlet'
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
         />
         <Route path="/reset_password" element={<ResetPassword />} />
       </Route>
-      <Route path="/" element={<PrivateOutlet />}>
+      <Route path="/" element={<AuthenticatedOutlet />}>
         <Route index element={<Home />} />
       </Route>
     </Routes>

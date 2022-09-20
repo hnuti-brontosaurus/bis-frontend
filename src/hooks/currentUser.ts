@@ -4,7 +4,7 @@ import { api } from '../app/services/bis'
 export const useCurrentUser = () => {
   const { data, ...restWhoami } = api.endpoints.whoami.useQuery()
   const { data: currentUser, ...restUser } = api.endpoints.getUser.useQuery(
-    data?.id ?? skipToken,
+    data?.id ? { id: data.id } : skipToken,
   )
 
   return {

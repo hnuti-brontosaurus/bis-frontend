@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0 1.5rem;
+  align-items: center;
+  .spacer {
+    flex: auto;
+  }
+  .logo {
+    height: 4rem;
+  }
+}
