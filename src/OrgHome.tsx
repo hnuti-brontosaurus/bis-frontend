@@ -4,9 +4,9 @@ import styles from './OrgHome.module.scss'
 const OrgHome = () => (
   <div>
     <nav className={styles.mainMenu}>
-      <Link to="nova-akce">Nová akce</Link>
-      <Link to="upravit-akci">Upravit akci</Link>
-      <Link to="po-akci">Po akci</Link>
+      <Link to="akce/vytvorit">Nová akce</Link>
+      <Link to="akce/upravit">Upravit akci</Link>
+      <Link to="akce/uzavrit">Po akci</Link>
       <Link to="rozcestnik">Rozcestník</Link>
     </nav>
 

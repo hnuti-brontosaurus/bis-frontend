@@ -1,7 +1,21 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../store'
-import { User } from './testApi'
+import {
+  DietCategory,
+  EventCategory,
+  EventGroupCategory,
+  EventProgramCategory,
+  PropagationIntendedForCategory,
+  User,
+} from './testApi'
+
+type PaginatedList<T> = {
+  count?: number
+  next?: string | null
+  previous?: string | null
+  results?: T[]
+}
 
 export interface LoginRequest {
   email: string
@@ -57,6 +71,34 @@ export const api = createApi({
     // frontendUsersRetrieve
     getUser: build.query<User, { id: number }>({
       query: ({ id }) => `frontend/users/${id}/`,
+    }),
+    getEventCategories: build.query<PaginatedList<EventCategory>, void>({
+      query: () => ({
+        url: `categories/event_categories/`,
+      }),
+    }),
+    getEventGroups: build.query<PaginatedList<EventGroupCategory>, void>({
+      query: () => ({
+        url: `categories/event_group_categories/`,
+      }),
+    }),
+    getPrograms: build.query<PaginatedList<EventProgramCategory>, void>({
+      query: () => ({
+        url: `categories/event_program_categories/`,
+      }),
+    }),
+    getIntendedFor: build.query<
+      PaginatedList<PropagationIntendedForCategory>,
+      void
+    >({
+      query: () => ({
+        url: `categories/propagation_intended_for_categories/`,
+      }),
+    }),
+    getDiets: build.query<PaginatedList<DietCategory>, void>({
+      query: () => ({
+        url: `categories/diet_categories/`,
+      }),
     }),
   }),
 })
