@@ -28,7 +28,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="org" element={<OrganizerOutlet />}>
           <Route index element={<OrgHome />} />
-          <Route path="nova-akce" element={<CreateEvent />} />
+          <Route path="akce/vytvorit" element={<CreateEvent />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
