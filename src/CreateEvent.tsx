@@ -1,5 +1,6 @@
-import { Fragment } from 'react'
-import { useForm } from 'react-hook-form'
+import { Fragment, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import Select from 'react-select'
 import { api } from './app/services/bis'
 import { Event } from './app/services/testApi'
 
@@ -10,8 +11,11 @@ const CreateEvent = () => {
     handleSubmit,
     getValues,
     watch,
+    control,
     formState: { errors },
   } = useForm<Event>()
+
+  const [orgQuery, setOrgQuery] = useState('')
 
   const { data: categories, isLoading: isEventCategoriesLoading } =
     api.endpoints.getEventCategories.useQuery()
@@ -23,6 +27,10 @@ const CreateEvent = () => {
     api.endpoints.getIntendedFor.useQuery()
   const { data: diets, isLoading: isDietsLoading } =
     api.endpoints.getDiets.useQuery()
+  const { data: potentialOrganizers, isLoading: isPotentialOrganizersLoading } =
+    api.endpoints.searchOrganizers.useQuery({
+      query: orgQuery,
+    })
 
   const handleFormSubmit = handleSubmit(async data => {
     console.log(data)
@@ -202,9 +210,59 @@ const CreateEvent = () => {
         <div>TODO</div>
         {/* organizátor */}
         <div>
-          <header>{++i} Organizátorský tým</header>
-          <input type="search" list="main-organizer-search-options" />
-          <datalist id="main-organizer-search-options"></datalist>
+          <div>
+            <header>{++i} Hlavní organizátor/ka</header>
+            <Controller
+              name="main_organizer"
+              control={control}
+              rules={{ required: 'Toto pole je povinné!' }}
+              render={({ field: { onChange, value, name, ref } }) => (
+                <Select
+                  isClearable
+                  options={
+                    potentialOrganizers
+                      ? potentialOrganizers?.results?.map(
+                          ({ display_name, id }) => ({
+                            value: id,
+                            label: display_name,
+                          }),
+                        )
+                      : []
+                  }
+                  inputValue={orgQuery}
+                  onInputChange={input => setOrgQuery(input)}
+                  filterOption={() => true}
+                  onChange={val => onChange(val?.value ?? undefined)}
+                />
+              )}
+            />
+          </div>
+          <div>
+            <header>{++i} Organizátorský tým</header>
+            <Controller
+              name="other_organizers"
+              control={control}
+              render={({ field: { onChange, value, name, ref } }) => (
+                <Select
+                  isMulti
+                  options={
+                    potentialOrganizers
+                      ? potentialOrganizers?.results?.map(
+                          ({ display_name, id }) => ({
+                            value: id,
+                            label: display_name,
+                          }),
+                        )
+                      : []
+                  }
+                  inputValue={orgQuery}
+                  onInputChange={input => setOrgQuery(input)}
+                  filterOption={() => true}
+                  onChange={val => onChange(val.map(val => val.value))}
+                />
+              )}
+            />
+          </div>
         </div>
         <input type="submit" value="Submit" />
       </form>
