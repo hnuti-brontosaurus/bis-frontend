@@ -1,0 +1,16 @@
+.isHidden {
+  display: none;
+}
+
+.stepButton {
+  &.isActive {
+    background-color: green;
+  }
+}
+
+.bottomNavigation {
+  display: flex;
+  .spacer {
+    flex: auto;
+  }
+}
