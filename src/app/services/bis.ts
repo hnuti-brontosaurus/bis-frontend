@@ -100,5 +100,28 @@ export const api = createApi({
         url: `categories/diet_categories/`,
       }),
     }),
+    searchOrganizers: build.query<
+      PaginatedList<
+        Pick<User, 'id' | 'first_name' | 'last_name' | 'display_name'>
+      >,
+      { query: string }
+    >({
+      queryFn: async ({ query }) => ({
+        data: {
+          results: Array(20)
+            .fill('')
+            .map((a, i) => ({
+              id: i,
+              first_name: 'firstname' + i,
+              last_name: 'lastname' + i,
+              nickname: 'nickname' + i,
+              get display_name() {
+                return `${this.nickname} (${this.first_name} ${this.last_name})`
+              },
+            }))
+            .slice(3 * query.length, 3 * query.length + 3),
+        },
+      }),
+    }),
   }),
 })
