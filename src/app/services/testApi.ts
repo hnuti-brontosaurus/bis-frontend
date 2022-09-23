@@ -444,7 +444,10 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/organizers/`,
         params: {
+          birthday: queryArg.birthday,
+          first_name: queryArg.firstName,
           id: queryArg.id,
+          last_name: queryArg.lastName,
           ordering: queryArg.ordering,
           page: queryArg.page,
         },
@@ -521,7 +524,10 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/record/participants/`,
         params: {
+          birthday: queryArg.birthday,
+          first_name: queryArg.firstName,
           id: queryArg.id,
+          last_name: queryArg.lastName,
           ordering: queryArg.ordering,
           page: queryArg.page,
         },
@@ -598,7 +604,10 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/registered/`,
         params: {
+          birthday: queryArg.birthday,
+          first_name: queryArg.firstName,
           id: queryArg.id,
+          last_name: queryArg.lastName,
           ordering: queryArg.ordering,
           page: queryArg.page,
         },
@@ -825,7 +834,10 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/users/`,
         params: {
+          birthday: queryArg.birthday,
+          first_name: queryArg.firstName,
           id: queryArg.id,
+          last_name: queryArg.lastName,
           ordering: queryArg.ordering,
           page: queryArg.page,
         },
@@ -1403,9 +1415,12 @@ export type FrontendEventsFinanceReceiptsDestroyApiArg = {
 export type FrontendEventsOrganizersListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsOrganizersListApiArg = {
+  birthday?: string
   eventId: string
+  firstName?: string
   /** Více hodnot lze oddělit čárkami. */
   id?: number[]
+  lastName?: string
   /** Which field to use when ordering the results. */
   ordering?: string
   /** A page number within the paginated result set. */
@@ -1465,9 +1480,12 @@ export type FrontendEventsPropagationImagesDestroyApiArg = {
 export type FrontendEventsRecordParticipantsListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsRecordParticipantsListApiArg = {
+  birthday?: string
   eventId: string
+  firstName?: string
   /** Více hodnot lze oddělit čárkami. */
   id?: number[]
+  lastName?: string
   /** Which field to use when ordering the results. */
   ordering?: string
   /** A page number within the paginated result set. */
@@ -1527,9 +1545,12 @@ export type FrontendEventsRecordPhotosDestroyApiArg = {
 export type FrontendEventsRegisteredListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsRegisteredListApiArg = {
+  birthday?: string
   eventId: string
+  firstName?: string
   /** Více hodnot lze oddělit čárkami. */
   id?: number[]
+  lastName?: string
   /** Which field to use when ordering the results. */
   ordering?: string
   /** A page number within the paginated result set. */
@@ -1693,8 +1714,11 @@ export type FrontendLocationsDestroyApiArg = {
 }
 export type FrontendUsersListApiResponse = /** status 200  */ PaginatedUserList
 export type FrontendUsersListApiArg = {
+  birthday?: string
+  firstName?: string
   /** Více hodnot lze oddělit čárkami. */
   id?: number[]
+  lastName?: string
   /** Which field to use when ordering the results. */
   ordering?: string
   /** A page number within the paginated result set. */

@@ -3,9 +3,11 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../store'
 import {
   DietCategory,
+  Event,
   EventCategory,
   EventGroupCategory,
   EventProgramCategory,
+  Propagation,
   PropagationIntendedForCategory,
   User,
 } from './testApi'
@@ -123,5 +125,40 @@ export const api = createApi({
         },
       }),
     }),
+    createEvent: build.mutation<Event, EventPayload>({
+      query: event => ({
+        url: `frontend/events/`,
+        method: 'POST',
+        body: event,
+      }),
+    }),
+    readUsers: build.query<PaginatedList<User>, { id?: number[] }>({
+      query: ({ id }) => ({
+        url: `frontend/users/`,
+        params: {
+          //birthday: queryArg.birthday,
+          //first_name: queryArg.firstName,
+          ...(id ? { id: id.join(',') } : {}),
+          //last_name: queryArg.lastName,
+          //ordering: queryArg.ordering,
+          //page: queryArg.page,
+        },
+      }),
+    }),
   }),
 })
+
+export type PropagationPayload = Omit<Propagation, 'intended_for' | 'diets'> & {
+  intended_for: number
+  diets: number[]
+}
+
+export type EventPayload = Omit<
+  Event,
+  'group' | 'category' | 'program' | 'propagation'
+> & {
+  group: number
+  category: number
+  program: number
+  propagation?: PropagationPayload | null
+}
