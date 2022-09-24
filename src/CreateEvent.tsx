@@ -61,6 +61,8 @@ const CreateEvent = () => {
     },
   })
 
+  console.log(errors)
+
   const [createEvent, { isLoading }] = api.endpoints.createEvent.useMutation()
 
   const [orgQuery, setOrgQuery] = useState('')
@@ -169,7 +171,7 @@ const CreateEvent = () => {
                 <input
                   type="datetime-local"
                   id="start"
-                  {...register('start')}
+                  {...(register('start'), { required: true })}
                 />
               </label>
               <label htmlFor="end">
@@ -382,10 +384,106 @@ const CreateEvent = () => {
                   )}
                 />
               </div>
+              <div>
+                {++i} Denní pracovní doba
+                <input type="number" {...register('record.working_hours')} />
+                Počet pracovních dní na akci
+                <input type="number" {...register('record.working_days')} />
+              </div>
+              <div>
+                {++i} Kontaktní osoba
+                <label>
+                  <input type="checkbox" /> stejná jako hlavní organizátor
+                </label>
+                {/* TODO if checkbox is checked, autofill, or figure out what happens */}
+                <Controller
+                  name="propagation.contact_person"
+                  control={control}
+                  render={({ field: { onChange, value, name, ref } }) => (
+                    <Select
+                      isClearable
+                      options={
+                        potentialOrganizers
+                          ? potentialOrganizers?.results?.map(
+                              ({ display_name, id }) => ({
+                                value: id,
+                                label: display_name,
+                              }),
+                            )
+                          : []
+                      }
+                      inputValue={orgQuery}
+                      onInputChange={input => setOrgQuery(input)}
+                      filterOption={() => true}
+                      onChange={val => onChange(val?.value ?? undefined)}
+                      {...(mainOrganizer
+                        ? {
+                            defaultValue: {
+                              value: mainOrganizer.id,
+                              label: mainOrganizer.display_name,
+                            },
+                          }
+                        : {})}
+                    />
+                  )}
+                />
+              </div>
+              {/*
+              TODO figure out what happens with name when contact person is filled
+              maybe fill when not already filled
+              */}
+              <div>
+                Jméno kontaktní osoby
+                <input type="text" {...register('propagation.contact_name')} />
+              </div>
+              <div>
+                Kontaktní email
+                <input
+                  type="email"
+                  {...register('propagation.contact_email')}
+                />
+              </div>
+              <div>
+                Kontaktní telefon
+                <input type="tel" {...register('propagation.contact_phone')} />
+              </div>
+              <div>
+                Web o akci
+                <input type="url" {...register('propagation.web_url')} />
+              </div>
             </div>
           </Step>
           <Step name="detaily akce">
-            <div>TODO</div>
+            <div>
+              Poznámka (add help)
+              <input type="text" {...register('internal_note')} />
+            </div>
+            <div>
+              Zvací text: Co nás čeká
+              <textarea
+                {...register('propagation.invitation_text_introduction')}
+              />
+            </div>
+            <div>
+              Zvací text: Co, kde a jak
+              <textarea
+                {...register(
+                  'propagation.invitation_text_practical_information',
+                )}
+              />
+            </div>
+            <div>
+              Zvací text: Dobrovolnická pomoc
+              <textarea
+                {...register('propagation.invitation_text_work_description')}
+              />
+            </div>
+            <div>
+              Zvací text: Malá ochutnávka (TODO, which field?)
+              <textarea />
+            </div>
+            <div>Hlavní foto</div>
+            <input type="file" />
           </Step>
           <Step name="organizátor">
             <div>
