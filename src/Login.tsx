@@ -22,7 +22,7 @@ const Login = () => {
   const handleFormSubmit = handleSubmit(async data => {
     try {
       await login(data).unwrap()
-      navigate('/')
+      // AuthenticatedOutlet should take care of the rest...
     } catch (e) {
       alert(JSON.stringify(e))
       setError((e as any).data?.detail)
