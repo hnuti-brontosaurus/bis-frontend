@@ -6,13 +6,19 @@ const AuthenticatedOutlet = () => {
   const auth = useAuth()
   const location = useLocation()
 
-  return auth.user ? (
-    <AuthenticatedLayout>
-      <Outlet />
-    </AuthenticatedLayout>
-  ) : (
-    <Navigate to="/login" state={{ from: location }} />
-  )
+  if (auth.user) {
+    return (
+      <AuthenticatedLayout>
+        <Outlet />
+      </AuthenticatedLayout>
+    )
+  } else {
+    // next location will be the current, or empty
+    const next = ['', '/'].includes(location.pathname)
+      ? ''
+      : `?next=${encodeURIComponent(location.pathname)}`
+    return <Navigate to={`/login${next}`} />
+  }
 }
 
 export default AuthenticatedOutlet
