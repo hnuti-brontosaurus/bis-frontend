@@ -1,0 +1,15 @@
+.container {
+  display: inline-block;
+}
+
+.inputWrapper {
+  &.isError {
+    input {
+      border-color: red;
+    }
+  }
+}
+
+.errorMessage {
+  color: red;
+}
