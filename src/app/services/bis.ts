@@ -2,6 +2,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../store'
 import {
+  AdministrationUnit,
   DietCategory,
   Event,
   EventCategory,
@@ -12,7 +13,7 @@ import {
   User,
 } from './testApi'
 
-type PaginatedList<T> = {
+export type PaginatedList<T> = {
   count?: number
   next?: string | null
   previous?: string | null
@@ -100,6 +101,19 @@ export const api = createApi({
     getDiets: build.query<PaginatedList<DietCategory>, void>({
       query: () => ({
         url: `categories/diet_categories/`,
+      }),
+    }),
+    getAdministrationUnits: build.query<
+      PaginatedList<AdministrationUnit>,
+      { page?: number }
+    >({
+      query: ({ page }) => ({
+        url: `web/administration_units/`,
+        params: {
+          //category: queryArg.category,
+          //ordering: queryArg.ordering,
+          ...(page ? { page } : {}),
+        },
       }),
     }),
     searchOrganizers: build.query<
