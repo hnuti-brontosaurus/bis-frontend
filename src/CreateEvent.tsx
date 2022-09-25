@@ -5,11 +5,12 @@ import Select from 'react-select'
 import { api, EventPayload } from './app/services/bis'
 import FormInputError from './components/FormInputError'
 import { Step, Steps } from './components/Steps'
+import { useAllPages } from './hooks/allPages'
 
 const CreateEvent = () => {
   let i = 0
-  const formMethods =
-    useForm<EventPayload>(/*{
+  const formMethods = useForm<EventPayload>(
+    { defaultValues: { number_of_sub_events: 1 } } /*{
     defaultValues: {
       is_canceled: false,
       end: '2029-10-18',
@@ -52,7 +53,8 @@ const CreateEvent = () => {
       record: null,
       finance: null,
     },
-  }*/)
+  }*/,
+  )
 
   const {
     register,
@@ -77,6 +79,8 @@ const CreateEvent = () => {
     api.endpoints.getIntendedFor.useQuery()
   const { data: diets, isLoading: isDietsLoading } =
     api.endpoints.getDiets.useQuery()
+  const [administrationUnits, { isLoading: isAdministrationUnitsLoading }] =
+    useAllPages(api.endpoints.getAdministrationUnits)
   const { data: potentialOrganizers, isLoading: isPotentialOrganizersLoading } =
     api.endpoints.searchOrganizers.useQuery({
       query: orgQuery,
@@ -107,7 +111,8 @@ const CreateEvent = () => {
     isDietsLoading ||
     isPotentialOrganizersLoading ||
     isMainOrganizerLoading ||
-    isOtherOrganizersLoading
+    isOtherOrganizersLoading ||
+    isAdministrationUnitsLoading
   )
     return <div>Loading (event stuff)</div>
 
@@ -125,37 +130,37 @@ const CreateEvent = () => {
               {/* kategorie akce */}
               <fieldset>
                 {++i}. Jaký je typ nové akce?
-                <Controller
-                  name="group"
-                  control={control}
-                  rules={
-                    {
-                      /*required: 'Toto pole je povinné!'*/
-                    }
-                  }
-                  render={({ field }) => (
-                    <>
-                      {groups &&
-                        groups.results!.map(({ id, name, slug }) => (
-                          <Fragment key={id}>
-                            <input
-                              ref={field.ref}
-                              key={id}
-                              type="radio"
-                              name={field.name}
-                              id={slug}
-                              value={id}
-                              checked={id === field.value}
-                              onChange={e =>
-                                field.onChange(parseInt(e.target.value))
-                              }
-                            />
-                            <label htmlFor={slug}>{name}</label>
-                          </Fragment>
-                        ))}
-                    </>
-                  )}
-                />
+                <FormInputError>
+                  <Controller
+                    name="group"
+                    control={control}
+                    rules={{
+                      required: 'Toto pole je povinné!',
+                    }}
+                    render={({ field }) => (
+                      <>
+                        {groups &&
+                          groups.results!.map(({ id, name, slug }) => (
+                            <Fragment key={id}>
+                              <input
+                                ref={field.ref}
+                                key={id}
+                                type="radio"
+                                name={field.name}
+                                id={slug}
+                                value={id}
+                                checked={id === field.value}
+                                onChange={e =>
+                                  field.onChange(parseInt(e.target.value))
+                                }
+                              />
+                              <label htmlFor={slug}>{name}</label>
+                            </Fragment>
+                          ))}
+                      </>
+                    )}
+                  />
+                </FormInputError>
               </fieldset>
             </Step>
             <Step name="základní info">
@@ -183,72 +188,113 @@ const CreateEvent = () => {
                 <label htmlFor="end">
                   Do{' '}
                   <FormInputError>
-                    <input type="date" id="end" {...register('end')} />
+                    <input
+                      type="date"
+                      id="end"
+                      {...register('end', { required: 'required' })}
+                    />
                   </FormInputError>
                 </label>
               </div>
               <div>
-                {++i}. Počet akcí v uvedeném období
-                <input type="number" {...register('number_of_sub_events')} />
+                {++i}. Počet akcí v uvedeném období (TODO add help)
+                <FormInputError>
+                  <input
+                    type="number"
+                    {...register('number_of_sub_events', {
+                      required: 'required',
+                      valueAsNumber: true,
+                    })}
+                  />
+                </FormInputError>
               </div>
               <div>
                 {++i}. Typ akce
-                <select {...register('category')}>
-                  {categories &&
-                    categories.results!.map(category => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                </select>
+                <FormInputError>
+                  <select {...register('category', { required: 'required' })}>
+                    <option disabled selected />
+                    {categories &&
+                      categories.results!.map(category => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                  </select>
+                </FormInputError>
               </div>
               <div>
                 {++i}. Program
-                <select {...register('program')}>
-                  {programs &&
-                    programs.results!.map(program => (
-                      <option key={program.id} value={program.id}>
-                        {program.name}
-                      </option>
-                    ))}
-                </select>
+                <FormInputError>
+                  <select {...register('program', { required: 'required' })}>
+                    <option disabled selected />
+                    {programs &&
+                      programs.results!.map(program => (
+                        <option key={program.id} value={program.id}>
+                          {program.name}
+                        </option>
+                      ))}
+                  </select>
+                </FormInputError>
+              </div>
+              <div>
+                {++i}. Pořádající ZČ/Klub/RC/ústředí
+                <FormInputError>
+                  <Controller
+                    name="administration_units"
+                    control={control}
+                    render={({ field: { onChange, value, name, ref } }) => (
+                      <Select
+                        isMulti
+                        options={
+                          administrationUnits
+                            ? administrationUnits.map(unit => ({
+                                label: `${unit.category.name} ${unit.name}`,
+                                value: unit.id,
+                              }))
+                            : []
+                        }
+                        onChange={val => onChange(val.map(val => val.value))}
+                      />
+                    )}
+                  />
+                </FormInputError>
               </div>
             </Step>
             <Step name="pro koho">
               <div>
                 {++i}. Pro koho
                 <fieldset>
-                  <Controller
-                    name="propagation.intended_for"
-                    control={control}
-                    rules={
-                      {
-                        /*required: 'Toto pole je povinné!'*/
-                      }
-                    }
-                    render={({ field: { onChange, value, name, ref } }) => (
-                      <>
-                        {intendedFor &&
-                          intendedFor.results!.map(({ id, name, slug }) => (
-                            <Fragment key={id}>
-                              <input
-                                ref={ref}
-                                key={id}
-                                type="radio"
-                                name={name}
-                                id={slug}
-                                value={id}
-                                checked={id === value}
-                                onChange={e =>
-                                  onChange(parseInt(e.target.value))
-                                }
-                              />
-                              <label htmlFor={slug}>{name}</label>
-                            </Fragment>
-                          ))}
-                      </>
-                    )}
-                  />
+                  <FormInputError>
+                    <Controller
+                      name="propagation.intended_for"
+                      control={control}
+                      rules={{
+                        required: 'Toto pole je povinné!',
+                      }}
+                      render={({ field: { onChange, value, name, ref } }) => (
+                        <>
+                          {intendedFor &&
+                            intendedFor.results!.map(({ id, name, slug }) => (
+                              <Fragment key={id}>
+                                <input
+                                  ref={ref}
+                                  key={id}
+                                  type="radio"
+                                  name={name}
+                                  id={slug}
+                                  value={id}
+                                  checked={id === value}
+                                  onChange={e =>
+                                    onChange(parseInt(e.target.value))
+                                  }
+                                />
+                                <label htmlFor={slug}>{name}</label>
+                              </Fragment>
+                            ))}
+                        </>
+                      )}
+                    />
+                  </FormInputError>
                 </fieldset>
                 {
                   /* not great hardcoded id */
@@ -262,11 +308,13 @@ const CreateEvent = () => {
                         účastníkům, co zajímavého si zkusí, co se dozví, naučí,
                         v čem se rozvinou…
                       </div>
-                      <textarea
-                        {...register(
-                          'propagation.vip_propagation.goals_of_event',
-                        )}
-                      ></textarea>
+                      <FormInputError>
+                        <textarea
+                          {...register(
+                            'propagation.vip_propagation.goals_of_event',
+                          )}
+                        ></textarea>
+                      </FormInputError>
                       <div>Programové pojetí akce pro prvoúčastníky:</div>
                       <div>
                         V základu uveďte, jak bude vaše akce programově a
@@ -275,59 +323,63 @@ const CreateEvent = () => {
                         a program akce reflektují potřeby vaší cílové skupiny
                         prvoúčastníků.
                       </div>
-                      <textarea
-                        {...register('propagation.vip_propagation.program')}
-                      ></textarea>
+                      <FormInputError>
+                        <textarea
+                          {...register('propagation.vip_propagation.program')}
+                        ></textarea>
+                      </FormInputError>
                       <div>Krátký zvací text do propagace</div>
                       <div>
                         Text (max 200 znaků) -. Ve 2-4 větách nalákejte na vaši
                         akci a zdůrazněte osobní přínos pro účastníky (max. 200
                         znaků).
                       </div>
-                      <textarea
-                        {...register(
-                          'propagation.vip_propagation.short_invitation_text',
-                        )}
-                      ></textarea>
+                      <FormInputError>
+                        <textarea
+                          {...register(
+                            'propagation.vip_propagation.short_invitation_text',
+                          )}
+                        ></textarea>
+                      </FormInputError>
                       <div>Propagovat akci v Roverském kmeni</div>
-                      <Controller
-                        name="propagation.vip_propagation.rover_propagation"
-                        control={control}
-                        rules={
-                          {
-                            /*required: 'Toto pole je povinné!'*/
-                          }
-                        }
-                        render={({ field }) => (
-                          <>
-                            {[
-                              { name: 'ano', value: true },
-                              { name: 'ne', value: false },
-                            ].map(({ name, value }) => (
-                              <Fragment key={name}>
-                                <input
-                                  ref={field.ref}
-                                  type="radio"
-                                  name={name}
-                                  id={name}
-                                  value={String(value)}
-                                  checked={field.value === value}
-                                  onChange={e =>
-                                    field.onChange(
-                                      e.target.value === 'true'
-                                        ? true
-                                        : e.target.value === 'false'
-                                        ? false
-                                        : undefined,
-                                    )
-                                  }
-                                />
-                                <label htmlFor={name}>{name}</label>
-                              </Fragment>
-                            ))}
-                          </>
-                        )}
-                      />
+                      <FormInputError>
+                        <Controller
+                          name="propagation.vip_propagation.rover_propagation"
+                          control={control}
+                          rules={{
+                            required: 'Toto pole je povinné!',
+                          }}
+                          render={({ field }) => (
+                            <>
+                              {[
+                                { name: 'ano', value: true },
+                                { name: 'ne', value: false },
+                              ].map(({ name, value }) => (
+                                <Fragment key={name}>
+                                  <input
+                                    ref={field.ref}
+                                    type="radio"
+                                    name={name}
+                                    id={name}
+                                    value={String(value)}
+                                    checked={field.value === value}
+                                    onChange={e =>
+                                      field.onChange(
+                                        e.target.value === 'true'
+                                          ? true
+                                          : e.target.value === 'false'
+                                          ? false
+                                          : undefined,
+                                      )
+                                    }
+                                  />
+                                  <label htmlFor={name}>{name}</label>
+                                </Fragment>
+                              ))}
+                            </>
+                          )}
+                        />
+                      </FormInputError>
                     </div>
                   )
                 }
