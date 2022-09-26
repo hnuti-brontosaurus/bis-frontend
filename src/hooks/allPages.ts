@@ -21,6 +21,7 @@ export function useAllPages<
   const [getStuff, status] = query.useLazyQuery()
 
   const [stuff, setStuff] = useState<AdministrationUnit[]>([])
+  const [isFinished, setIsFinished] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -28,16 +29,18 @@ export function useAllPages<
       let i = 1
       setStuff([])
       while (isNext) {
-        const data = await getStuff(
-          { page: i++, ...params } as any,
-          true,
-        ).unwrap()
+        const data = await getStuff({ page: i++ } as any, true).unwrap()
         const results = data.results ?? []
         isNext = Boolean(data.next)
-        setStuff(stuff => [...stuff, ...results])
+        setStuff(stuff =>
+          [...stuff, ...results].filter(
+            (item, i, all) => all.findIndex(a => a.id === item.id) === i,
+          ),
+        )
       }
+      setIsFinished(true)
     })()
   }, [getStuff])
 
-  return [stuff, status] as const
+  return [stuff, status, isFinished] as const
 }

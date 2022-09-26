@@ -3,6 +3,7 @@ import { Fragment, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import { api, EventPayload } from './app/services/bis'
+import { AdministrationUnit } from './app/services/testApi'
 import FormInputError from './components/FormInputError'
 import { Step, Steps } from './components/Steps'
 import { useAllPages } from './hooks/allPages'
@@ -10,51 +11,54 @@ import { useAllPages } from './hooks/allPages'
 const CreateEvent = () => {
   let i = 0
   const formMethods = useForm<EventPayload>(
-    { defaultValues: { number_of_sub_events: 1 } } /*{
-    defaultValues: {
-      is_canceled: false,
-      end: '2029-10-18',
-      number_of_sub_events: 1,
-      location: 50,
-      online_link: '',
-      group: 3,
-      category: 5,
-      program: 2,
-      administration_units: [6],
-      main_organizer: 2,
-      other_organizers: [25, 47, 59],
-      is_attendance_list_required: false,
-      is_internal: false,
-      internal_note: 'asdf',
-      duration: 3,
-      //propagation: null,
-      propagation: {
-        is_shown_on_web: false,
-        minimum_age: 15,
-        maximum_age: 30,
-        cost: 250,
-        discounted_cost: null,
-        intended_for: 1,
-        accommodation: '.',
-        diets: [2, 3],
-        organizers: 'string',
-        web_url: 'https://example.com',
-        invitation_text_introduction: 'asdf',
-        invitation_text_practical_information: 'asdf',
-        invitation_text_work_description: '',
-        invitation_text_about_us: 'aaaaaa',
-        contact_person: null,
-        contact_name: 'Name Contact',
-        contact_phone: '+420 771 111 111',
-        contact_email: 'test@example.com',
-        vip_propagation: null,
+    {
+      //defaultValues: { number_of_sub_events: 1 } } /*{
+      defaultValues: {
+        is_canceled: false,
+        end: '2029-10-18',
+        number_of_sub_events: 1,
+        location: 50,
+        online_link: '',
+        group: 3,
+        category: 5,
+        program: 2,
+        administration_units: [6],
+        main_organizer: 2,
+        other_organizers: [25, 47, 59],
+        is_attendance_list_required: false,
+        is_internal: false,
+        internal_note: 'asdf',
+        duration: 3,
+        //propagation: null,
+        propagation: {
+          is_shown_on_web: false,
+          minimum_age: 15,
+          maximum_age: 30,
+          cost: 250,
+          discounted_cost: null,
+          intended_for: 1,
+          accommodation: '.',
+          diets: [2, 3],
+          organizers: 'string',
+          web_url: 'https://example.com',
+          invitation_text_introduction: 'asdf',
+          invitation_text_practical_information: 'asdf',
+          invitation_text_work_description: '',
+          invitation_text_about_us: 'aaaaaa',
+          contact_person: null,
+          contact_name: 'Name Contact',
+          contact_phone: '+420 771 111 111',
+          contact_email: 'test@example.com',
+          vip_propagation: null,
+        },
+        registration: null,
+        record: null,
+        finance: null,
       },
-      registration: null,
-      record: null,
-      finance: null,
-    },
-  }*/,
+    }, // */,
   )
+
+  console.log('*******************************')
 
   const {
     register,
@@ -79,8 +83,11 @@ const CreateEvent = () => {
     api.endpoints.getIntendedFor.useQuery()
   const { data: diets, isLoading: isDietsLoading } =
     api.endpoints.getDiets.useQuery()
-  const [administrationUnits, { isLoading: isAdministrationUnitsLoading }] =
-    useAllPages(api.endpoints.getAdministrationUnits)
+  const [
+    administrationUnits,
+    { isLoading: isAdministrationUnitsLoading },
+    isAdministrationUnitsFinished,
+  ] = useAllPages(api.endpoints.getAdministrationUnits)
   const { data: potentialOrganizers, isLoading: isPotentialOrganizersLoading } =
     api.endpoints.searchOrganizers.useQuery({
       query: orgQuery,
@@ -112,7 +119,8 @@ const CreateEvent = () => {
     isPotentialOrganizersLoading ||
     isMainOrganizerLoading ||
     isOtherOrganizersLoading ||
-    isAdministrationUnitsLoading
+    isAdministrationUnitsLoading ||
+    !isAdministrationUnitsFinished
   )
     return <div>Loading (event stuff)</div>
 
@@ -211,8 +219,11 @@ const CreateEvent = () => {
               <div>
                 {++i}. Typ akce
                 <FormInputError>
-                  <select {...register('category', { required: 'required' })}>
-                    <option disabled selected />
+                  <select
+                    {...register('category', { required: 'required' })}
+                    defaultValue=""
+                  >
+                    <option disabled value="" />
                     {categories &&
                       categories.results!.map(category => (
                         <option key={category.id} value={category.id}>
@@ -225,8 +236,11 @@ const CreateEvent = () => {
               <div>
                 {++i}. Program
                 <FormInputError>
-                  <select {...register('program', { required: 'required' })}>
-                    <option disabled selected />
+                  <select
+                    {...register('program', { required: 'required' })}
+                    defaultValue=""
+                  >
+                    <option disabled value="" />
                     {programs &&
                       programs.results!.map(program => (
                         <option key={program.id} value={program.id}>
@@ -254,6 +268,16 @@ const CreateEvent = () => {
                             : []
                         }
                         onChange={val => onChange(val.map(val => val.value))}
+                        defaultValue={(
+                          (getValues('administration_units') ?? [])
+                            .map(id =>
+                              administrationUnits.find(unit => id === unit.id),
+                            )
+                            .filter(a => !!a) as AdministrationUnit[]
+                        ).map(unit => ({
+                          label: `${unit.category.name} ${unit.name}`,
+                          value: unit.id,
+                        }))}
                       />
                     )}
                   />
@@ -298,7 +322,7 @@ const CreateEvent = () => {
                 </fieldset>
                 {
                   /* not great hardcoded id */
-                  +watch('propagation.intended_for') === 5 && (
+                  watch('propagation.intended_for') === 5 && (
                     <div>
                       <div>text info pro prvoucastniky</div>
                       <div>Cíle akce a přínos pro prvoúčastníky:</div>
@@ -341,45 +365,56 @@ const CreateEvent = () => {
                           )}
                         ></textarea>
                       </FormInputError>
-                      <div>Propagovat akci v Roverském kmeni</div>
-                      <FormInputError>
-                        <Controller
-                          name="propagation.vip_propagation.rover_propagation"
-                          control={control}
-                          rules={{
-                            required: 'Toto pole je povinné!',
-                          }}
-                          render={({ field }) => (
-                            <>
-                              {[
-                                { name: 'ano', value: true },
-                                { name: 'ne', value: false },
-                              ].map(({ name, value }) => (
-                                <Fragment key={name}>
-                                  <input
-                                    ref={field.ref}
-                                    type="radio"
-                                    name={name}
-                                    id={name}
-                                    value={String(value)}
-                                    checked={field.value === value}
-                                    onChange={e =>
-                                      field.onChange(
-                                        e.target.value === 'true'
-                                          ? true
-                                          : e.target.value === 'false'
-                                          ? false
-                                          : undefined,
-                                      )
-                                    }
-                                  />
-                                  <label htmlFor={name}>{name}</label>
-                                </Fragment>
-                              ))}
-                            </>
-                          )}
-                        />
-                      </FormInputError>
+
+                      {
+                        /*
+                        only "camp" can see this
+                        https://docs.google.com/document/d/1p3nz0-kVJxwN_pRCYYyhy0BObyGox6LDk35RQPADT4g/edit?disco=AAAAc3SBnZQ
+                        */
+                        watch('group') === 1 && (
+                          <>
+                            <div>Propagovat akci v Roverském kmeni</div>
+                            <FormInputError>
+                              <Controller
+                                name="propagation.vip_propagation.rover_propagation"
+                                control={control}
+                                rules={{
+                                  required: 'Toto pole je povinné!',
+                                }}
+                                render={({ field }) => (
+                                  <>
+                                    {[
+                                      { name: 'ano', value: true },
+                                      { name: 'ne', value: false },
+                                    ].map(({ name, value }) => (
+                                      <Fragment key={name}>
+                                        <input
+                                          ref={field.ref}
+                                          type="radio"
+                                          name={name}
+                                          id={name}
+                                          value={String(value)}
+                                          checked={field.value === value}
+                                          onChange={e =>
+                                            field.onChange(
+                                              e.target.value === 'true'
+                                                ? true
+                                                : e.target.value === 'false'
+                                                ? false
+                                                : undefined,
+                                            )
+                                          }
+                                        />
+                                        <label htmlFor={name}>{name}</label>
+                                      </Fragment>
+                                    ))}
+                                  </>
+                                )}
+                              />
+                            </FormInputError>
+                          </>
+                        )
+                      }
                     </div>
                   )
                 }
