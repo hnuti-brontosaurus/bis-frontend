@@ -10,6 +10,7 @@ import {
   EventProgramCategory,
   Propagation,
   PropagationIntendedForCategory,
+  Question,
   User,
 } from './testApi'
 
@@ -157,6 +158,16 @@ export const api = createApi({
           //ordering: queryArg.ordering,
           //page: queryArg.page,
         },
+      }),
+    }),
+    createQuestion: build.mutation<
+      Question,
+      { eventId: number; question: Omit<Question, 'id'> }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
+        method: 'POST',
+        body: queryArg.question,
       }),
     }),
   }),

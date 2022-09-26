@@ -1,26 +1,51 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { Fragment, useState } from 'react'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form'
 import Select from 'react-select'
 import { api, EventPayload } from './app/services/bis'
-import { AdministrationUnit } from './app/services/testApi'
+import {
+  AdministrationUnit,
+  Question,
+  Questionnaire,
+  Registration,
+} from './app/services/testApi'
 import FormInputError from './components/FormInputError'
 import { Step, Steps } from './components/Steps'
 import { useAllPages } from './hooks/allPages'
+import { getIdBySlug, getIdsBySlugs, requireBoolean } from './utils/helpers'
+
+type FormEventQuestionnaire = Questionnaire & {
+  questions: Omit<Question, 'id' | 'order'>[]
+}
+
+type FormEventRegistration = Omit<Registration, 'questionnaire'> & {
+  questionnaire: FormEventQuestionnaire | null
+}
 
 const CreateEvent = () => {
   let i = 0
-  const formMethods = useForm<EventPayload>(
+  const formMethods = useForm<
+    Omit<EventPayload, 'registration'> & {
+      registration: FormEventRegistration | null
+    }
+  >(
     {
       //defaultValues: { number_of_sub_events: 1 } } /*{
       defaultValues: {
+        name: 'asdf' + Date.now(),
         is_canceled: false,
+        start: '2022-10-10T15:03',
         end: '2029-10-18',
         number_of_sub_events: 1,
         location: 50,
         online_link: '',
         group: 3,
-        category: 5,
+        category: 8,
         program: 2,
         administration_units: [6],
         main_organizer: 2,
@@ -43,25 +68,28 @@ const CreateEvent = () => {
           web_url: 'https://example.com',
           invitation_text_introduction: 'asdf',
           invitation_text_practical_information: 'asdf',
-          invitation_text_work_description: '',
+          invitation_text_work_description: 'aaaa',
           invitation_text_about_us: 'aaaaaa',
-          contact_person: null,
+          contact_person: 5,
           contact_name: 'Name Contact',
           contact_phone: '+420 771 111 111',
           contact_email: 'test@example.com',
           vip_propagation: null,
+          working_hours: 0,
+          working_days: 0,
         },
-        registration: null,
+        registration: {
+          is_registration_required: true,
+        },
         record: null,
         finance: null,
       },
     }, // */,
   )
 
-  console.log('*******************************')
-
   const {
     register,
+    unregister,
     handleSubmit,
     getValues,
     watch,
@@ -69,7 +97,14 @@ const CreateEvent = () => {
     formState: { errors },
   } = formMethods
 
+  const questions = useFieldArray({
+    control,
+    name: 'registration.questionnaire.questions',
+  })
+
   const [createEvent, { isLoading }] = api.endpoints.createEvent.useMutation()
+  const [createQuestion, { isLoading: isSavingQuestions }] =
+    api.endpoints.createQuestion.useMutation()
 
   const [orgQuery, setOrgQuery] = useState('')
 
@@ -93,9 +128,14 @@ const CreateEvent = () => {
       query: orgQuery,
     })
 
+  const contactPersonId = getValues('propagation.contact_person')
   const mainOrganizerId = getValues('main_organizer')
-
   const otherOrganizersIds = getValues('other_organizers')
+
+  const { data: contactPerson, isLoading: isContactPersonLoading } =
+    api.endpoints.getUser.useQuery(
+      contactPersonId ? { id: contactPersonId } : skipToken,
+    )
 
   const { data: mainOrganizer, isLoading: isMainOrganizerLoading } =
     api.endpoints.getUser.useQuery(
@@ -117,16 +157,34 @@ const CreateEvent = () => {
     isIntendedForLoading ||
     isDietsLoading ||
     isPotentialOrganizersLoading ||
+    isContactPersonLoading ||
     isMainOrganizerLoading ||
     isOtherOrganizersLoading ||
     isAdministrationUnitsLoading ||
-    !isAdministrationUnitsFinished
+    !isAdministrationUnitsFinished ||
+    isSavingQuestions
   )
     return <div>Loading (event stuff)</div>
 
+  console.log(errors)
+
   const handleFormSubmit = handleSubmit(async data => {
     console.log(data)
-    await createEvent(data).unwrap()
+    if (data.registration) {
+      data.registration.is_event_full = Boolean(data.registration.is_event_full)
+    }
+    const event = await createEvent(data).unwrap()
+    if (data.registration?.questionnaire?.questions) {
+      await Promise.all(
+        data.registration.questionnaire.questions.map((question, order) =>
+          createQuestion({
+            eventId: event.id,
+            question: { ...question, order },
+          }).unwrap(),
+        ),
+      )
+    }
+    // TODO save questions
   })
 
   return (
@@ -255,6 +313,7 @@ const CreateEvent = () => {
                 <FormInputError>
                   <Controller
                     name="administration_units"
+                    rules={{ required: 'required' }}
                     control={control}
                     render={({ field: { onChange, value, name, ref } }) => (
                       <Select
@@ -295,21 +354,21 @@ const CreateEvent = () => {
                       rules={{
                         required: 'Toto pole je povinné!',
                       }}
-                      render={({ field: { onChange, value, name, ref } }) => (
+                      render={({ field }) => (
                         <>
                           {intendedFor &&
                             intendedFor.results!.map(({ id, name, slug }) => (
                               <Fragment key={id}>
                                 <input
-                                  ref={ref}
+                                  ref={field.ref}
                                   key={id}
                                   type="radio"
-                                  name={name}
+                                  name={field.name}
                                   id={slug}
                                   value={id}
-                                  checked={id === value}
+                                  checked={id === field.value}
                                   onChange={e =>
-                                    onChange(parseInt(e.target.value))
+                                    field.onChange(parseInt(e.target.value))
                                   }
                                 />
                                 <label htmlFor={slug}>{name}</label>
@@ -378,9 +437,7 @@ const CreateEvent = () => {
                               <Controller
                                 name="propagation.vip_propagation.rover_propagation"
                                 control={control}
-                                rules={{
-                                  required: 'Toto pole je povinné!',
-                                }}
+                                rules={{ ...requireBoolean }}
                                 render={({ field }) => (
                                   <>
                                     {[
@@ -391,7 +448,7 @@ const CreateEvent = () => {
                                         <input
                                           ref={field.ref}
                                           type="radio"
-                                          name={name}
+                                          name={field.name}
                                           id={name}
                                           value={String(value)}
                                           checked={field.value === value}
@@ -420,84 +477,377 @@ const CreateEvent = () => {
                 }
               </div>
             </Step>
-            <Step name="lokace">
-              <div>{++i}. Lokace (TODO)</div>
-            </Step>
-            <Step name="info pro účastníky">
+            <Step name="random (TODO)">
               <div>
-                <div>{++i}. Účastnický poplatek</div>
-                částka <input type="text" {...register('propagation.cost')} />
-                snížený poplatek{' '}
-                <input
-                  type="text"
-                  {...register('propagation.discounted_cost')}
-                />
                 <div>
-                  <header>{++i}. Věk</header>
-                  Od{' '}
-                  <input
-                    type="number"
-                    {...register('propagation.minimum_age')}
-                  />
-                  Do{' '}
-                  <input
-                    type="number"
-                    {...register('propagation.maximum_age')}
-                  />
-                </div>
-                <div>
-                  <header>{++i} Ubytování</header>
-                  <textarea {...register('propagation.accommodation')} />
-                </div>
-                <div>
-                  <header>{++i} Strava</header>
+                  <header>
+                    Na koho je akce zaměřená (Help?: Akce zaměřená na členy jsou
+                    interní akce HB - valné hromady, týmovky atd.)
+                  </header>
                   <FormInputError>
                     <Controller
-                      name="propagation.diets"
+                      name={'is_internal'}
                       control={control}
                       rules={{
-                        required: 'Toto pole je povinné!',
+                        ...requireBoolean,
                       }}
                       render={({ field }) => (
                         <>
-                          {diets &&
-                            diets.results!.map(({ id, name, slug }) => (
-                              <Fragment key={id}>
-                                <input
-                                  ref={field.ref}
-                                  key={id}
-                                  type="checkbox"
-                                  name={field.name}
-                                  id={slug}
-                                  value={id}
-                                  checked={
-                                    field.value && field.value.includes(id)
-                                  }
-                                  onChange={e => {
-                                    // check when unchecked and vise-versa
-                                    const targetId = Number(e.target.value)
-                                    const set = new Set(field.value)
-                                    if (set.has(targetId)) {
-                                      set.delete(targetId)
-                                    } else {
-                                      set.add(targetId)
-                                    }
-                                    field.onChange(Array.from(set))
-                                  }}
-                                />
-                                <label htmlFor={slug}>{name}</label>
-                              </Fragment>
-                            ))}
+                          {[
+                            { name: 'Na členy', value: true },
+                            { name: 'Na nečleny', value: false },
+                          ].map(({ name, value }) => (
+                            <Fragment key={name}>
+                              <input
+                                ref={field.ref}
+                                type="radio"
+                                name={field.name}
+                                id={name}
+                                value={String(value)}
+                                checked={field.value === value}
+                                onChange={e =>
+                                  field.onChange(
+                                    e.target.value === 'true'
+                                      ? true
+                                      : e.target.value === 'false'
+                                      ? false
+                                      : undefined,
+                                  )
+                                }
+                              />
+                              <label htmlFor={name}>{name}</label>
+                            </Fragment>
+                          ))}
                         </>
                       )}
                     />
                   </FormInputError>
                 </div>
                 <div>
+                  <header>
+                    Zveřejnit na brontosauřím webu * (help?: Pokud zaškrtnete
+                    ano, akce se zobrazí na webu www. brontosaurus.cz. Volbu ne
+                    zaškrtněte pouze jedná-li se o interní akci HB nebo interní
+                    akci Brďa.)
+                  </header>
+                  <FormInputError>
+                    <Controller
+                      name={'propagation.is_shown_on_web'}
+                      control={control}
+                      rules={{ ...requireBoolean }}
+                      render={({ field }) => (
+                        <>
+                          {[
+                            { name: 'Ano', value: true },
+                            { name: 'Ne', value: false },
+                          ].map(({ name, value }) => (
+                            <Fragment key={name}>
+                              <input
+                                ref={field.ref}
+                                type="radio"
+                                name={field.name}
+                                id={name}
+                                value={String(value)}
+                                checked={field.value === value}
+                                onChange={e =>
+                                  field.onChange(
+                                    e.target.value === 'true'
+                                      ? true
+                                      : e.target.value === 'false'
+                                      ? false
+                                      : undefined,
+                                  )
+                                }
+                              />
+                              <label htmlFor={name}>{name}</label>
+                            </Fragment>
+                          ))}
+                        </>
+                      )}
+                    />
+                  </FormInputError>
+                </div>
+                <div>
+                  <header>
+                    Způsob přihlášení *! (help?: Způsoby přihlášení na vaši akci
+                    na www.brontosaurus.cz, které se zobrazí po kliknutí na
+                    tlačítko “chci jet”:
+                  </header>
+                </div>
+                <pre>
+                  {`standardní přihláška na brontowebu (doporučujeme!) -  Je jednotná pro celé HB. Do této přihlášky si můžete přidat 4 vlastní otázky. Vyplněné údaje se pak rovnou zobrazí v BIS, což tobě i kanceláři ulehčí práci.
+jiná elektornická přihláška -  Přesměruje zájemce na vaši přihlášku. 
+přihlášení na e-mail organizátora - Přesměruje zájemce na outlook s kontaktním emailem.
+Registrace není potřeba, stačí přijít - Zobrazí se jako text u vaší akce.
+Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaší akce.)`}
+                </pre>
+                <div>
+                  Je požadována registrace?
+                  <FormInputError>
+                    <Controller
+                      name={'registration.is_registration_required'}
+                      control={control}
+                      rules={{
+                        ...requireBoolean,
+                      }}
+                      render={({ field }) => (
+                        <>
+                          {[
+                            { name: 'Ano', value: true },
+                            { name: 'Ne', value: false },
+                          ].map(({ name, value }) => (
+                            <Fragment key={name}>
+                              <input
+                                ref={field.ref}
+                                type="radio"
+                                name={field.name}
+                                id={name}
+                                value={String(value)}
+                                checked={field.value === value}
+                                onChange={e => {
+                                  field.onChange(
+                                    e.target.value === 'true'
+                                      ? true
+                                      : e.target.value === 'false'
+                                      ? false
+                                      : undefined,
+                                  )
+                                }}
+                              />
+                              <label htmlFor={name}>{name}</label>
+                            </Fragment>
+                          ))}
+                        </>
+                      )}
+                    />
+                  </FormInputError>
+                </div>
+                <div>
+                  Je akce plná?
+                  <FormInputError>
+                    <input
+                      type="checkbox"
+                      {...register('registration.is_event_full')}
+                    />
+                  </FormInputError>
+                </div>
+
+                <div>
+                  <header>Přihláška</header>
+                  <FormInputError>
+                    <textarea
+                      placeholder="úvod"
+                      {...register('registration.questionnaire.introduction')}
+                    />
+                  </FormInputError>
+                  <FormInputError>
+                    <textarea
+                      placeholder="text po odeslání"
+                      {...register(
+                        'registration.questionnaire.after_submit_text',
+                      )}
+                    />
+                  </FormInputError>
+                  <header>Otázky</header>
+                  <ul>
+                    {questions.fields.map((item, index) => (
+                      <li key={item.id}>
+                        <input
+                          {...register(
+                            `registration.questionnaire.questions.${index}.question` as const,
+                          )}
+                        />
+                        <label>
+                          <input
+                            type="checkbox"
+                            {...register(
+                              `registration.questionnaire.questions.${index}.is_required` as const,
+                            )}
+                          />{' '}
+                          povinné?
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => questions.remove(index)}
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    type="button"
+                    onClick={() => questions.append({ question: '' })}
+                  >
+                    append
+                  </button>
+                </div>
+                <pre>
+                  {`
+Způsob přihlášení *! (help?: Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se zobrazí po kliknutí na tlačítko “chci jet”:
+standardní přihláška na brontowebu (doporučujeme!) -  Je jednotná pro celé HB. Do této přihlášky si můžete přidat 4 vlastní otázky. Vyplněné údaje se pak rovnou zobrazí v BIS, což tobě i kanceláři ulehčí práci.
+jiná elektornická přihláška -  Přesměruje zájemce na vaši přihlášku. 
+přihlášení na e-mail organizátora - Přesměruje zájemce na outlook s kontaktním emailem.
+Registrace není potřeba, stačí přijít - Zobrazí se jako text u vaší akce.
+Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaší akce.)
+
+Standardní přihláška na brontowebu
+Fce: tlačítko chci jet odkáže na: vyplnit předdefinovaný brontosauří formulář
+Jiná elektronická přihláška
+Fce: tlačítko chci jet = proklik na jinou elektronickou přihlášku
+přihlášení  na mail organizátora
+Fce: tlačítko chci jet = otevření outlook, kde je příjemce mail organizátora
+Registrace není potřeba, stačí přijít
+FCE: propíše se na web, že není třeba se hlásit
+Máme bohužel plno, zkuste jinou z našich akcí
+Fce: propíše se to na web
+
+při vybrání možnosti “Standardní příhláška na brontowebu” se objeví tyto položky 
+(help? - Zde můžeš připsat svoje doplňující otázky pro účastníky, které se zobrazí u standartní přihlášky na brontowebu)
+Otázka 1
+Otázka 2
+Otázka 3
+Otázka 4
+
+při vybrání možnosti “jiná elektronická přihláška” se zobrazí políčko
+URL tvé přihlášky
+Fce: proklik na přihlášky vytvořenou externě`}
+                </pre>
+              </div>
+            </Step>
+            <Step name="lokace">
+              <div>{++i}. Lokace (TODO)</div>
+            </Step>
+            <Step name="info pro účastníky">
+              <div>
+                <div>{++i}. Účastnický poplatek</div>
+                částka{' '}
+                <FormInputError>
+                  <input
+                    type="number"
+                    {...register('propagation.cost', { required: 'required' })}
+                  />
+                </FormInputError>
+                snížený poplatek{' '}
+                <FormInputError>
+                  <input
+                    type="number"
+                    {...register('propagation.discounted_cost')}
+                  />
+                </FormInputError>
+                <div>
+                  <header>{++i}. Věk</header>
+                  Od{' '}
+                  <FormInputError>
+                    <input
+                      type="number"
+                      {...register('propagation.minimum_age', {
+                        required: 'required',
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </FormInputError>
+                  Do{' '}
+                  <FormInputError>
+                    <input
+                      type="number"
+                      {...register('propagation.maximum_age', {
+                        required: 'required',
+                        valueAsNumber: true,
+                        validate: maxAge =>
+                          Number(getValues('propagation.minimum_age')) <=
+                            Number(maxAge) ||
+                          'Maximální věk musí být vyšší než minimální věk',
+                      })}
+                    />
+                  </FormInputError>
+                </div>
+                {getIdsBySlugs(groups?.results ?? [], [
+                  'camp',
+                  'weekend_event',
+                ]).includes(watch('group')) && ( // only camp and weekend
+                  <div>
+                    <header>{++i} Ubytování</header>
+                    <textarea
+                      {...register('propagation.accommodation', {
+                        required: 'required',
+                      })}
+                    />
+                  </div>
+                )}
+                {getIdsBySlugs(groups?.results ?? [], [
+                  'camp',
+                  'weekend_event',
+                ]).includes(watch('group')) && ( // only camp and weekend
+                  <div>
+                    <header>{++i} Strava</header>
+                    <FormInputError>
+                      <Controller
+                        name="propagation.diets"
+                        control={control}
+                        rules={{
+                          required: 'Toto pole je povinné!',
+                        }}
+                        render={({ field }) => (
+                          <>
+                            {diets &&
+                              diets.results!.map(({ id, name, slug }) => (
+                                <Fragment key={id}>
+                                  <input
+                                    ref={field.ref}
+                                    key={id}
+                                    type="checkbox"
+                                    name={field.name}
+                                    id={slug}
+                                    value={id}
+                                    checked={
+                                      field.value && field.value.includes(id)
+                                    }
+                                    onChange={e => {
+                                      // check when unchecked and vise-versa
+                                      const targetId = Number(e.target.value)
+                                      const set = new Set(field.value)
+                                      if (set.has(targetId)) {
+                                        set.delete(targetId)
+                                      } else {
+                                        set.add(targetId)
+                                      }
+                                      field.onChange(Array.from(set))
+                                    }}
+                                  />
+                                  <label htmlFor={slug}>{name}</label>
+                                </Fragment>
+                              ))}
+                          </>
+                        )}
+                      />
+                    </FormInputError>
+                  </div>
+                )}
+                <div>
                   {++i} Denní pracovní doba
-                  <input type="number" {...register('record.working_hours')} />
-                  Počet pracovních dní na akci
-                  <input type="number" {...register('record.working_days')} />
+                  <FormInputError>
+                    <input
+                      type="number"
+                      {...register('propagation.working_hours', {
+                        required: 'required',
+                      })}
+                    />
+                  </FormInputError>
+                  {getIdBySlug(groups?.results ?? [], 'camp') ===
+                    watch('group') && (
+                    <>
+                      Počet pracovních dní na akci
+                      <FormInputError>
+                        <input
+                          type="number"
+                          {...register('propagation.working_days', {
+                            required: 'required',
+                          })}
+                        />
+                      </FormInputError>
+                    </>
+                  )}
                 </div>
                 <div>
                   {++i} Kontaktní osoba
@@ -505,171 +855,222 @@ const CreateEvent = () => {
                     <input type="checkbox" /> stejná jako hlavní organizátor
                   </label>
                   {/* TODO if checkbox is checked, autofill, or figure out what happens */}
-                  <Controller
-                    name="propagation.contact_person"
-                    control={control}
-                    render={({ field: { onChange, value, name, ref } }) => (
-                      <Select
-                        isClearable
-                        options={
-                          potentialOrganizers
-                            ? potentialOrganizers?.results?.map(
-                                ({ display_name, id }) => ({
-                                  value: id,
-                                  label: display_name,
-                                }),
-                              )
-                            : []
-                        }
-                        inputValue={orgQuery}
-                        onInputChange={input => setOrgQuery(input)}
-                        filterOption={() => true}
-                        onChange={val => onChange(val?.value ?? undefined)}
-                        {...(mainOrganizer
-                          ? {
-                              defaultValue: {
-                                value: mainOrganizer.id,
-                                label: mainOrganizer.display_name,
-                              },
-                            }
-                          : {})}
-                      />
-                    )}
-                  />
+                  <FormInputError>
+                    <Controller
+                      name="propagation.contact_person"
+                      control={control}
+                      render={({ field: { onChange, value, name, ref } }) => (
+                        <Select
+                          isClearable
+                          options={
+                            potentialOrganizers
+                              ? potentialOrganizers?.results?.map(
+                                  ({ display_name, id }) => ({
+                                    value: id,
+                                    label: display_name,
+                                  }),
+                                )
+                              : []
+                          }
+                          inputValue={orgQuery}
+                          onInputChange={input => setOrgQuery(input)}
+                          filterOption={() => true}
+                          onChange={val => onChange(val?.value ?? undefined)}
+                          {...(contactPerson
+                            ? {
+                                defaultValue: {
+                                  value: contactPerson.id,
+                                  label: contactPerson.display_name,
+                                },
+                              }
+                            : {})}
+                        />
+                      )}
+                    />
+                  </FormInputError>
                 </div>
                 {/*
-              TODO figure out what happens with name when contact person is filled
-              maybe fill when not already filled
-              */}
+                TODO figure out what happens with name when contact person is filled
+                maybe fill when not already filled
+                */}
                 <div>
                   Jméno kontaktní osoby
-                  <input
-                    type="text"
-                    {...register('propagation.contact_name')}
-                  />
+                  <FormInputError>
+                    <input
+                      type="text"
+                      {...register('propagation.contact_name', {
+                        required: 'required',
+                      })}
+                    />
+                  </FormInputError>
                 </div>
                 <div>
                   Kontaktní email
-                  <input
-                    type="email"
-                    {...register('propagation.contact_email')}
-                  />
+                  <FormInputError>
+                    <input
+                      type="email"
+                      {...register('propagation.contact_email', {
+                        required: 'required',
+                      })}
+                    />
+                  </FormInputError>
                 </div>
                 <div>
                   Kontaktní telefon
-                  <input
-                    type="tel"
-                    {...register('propagation.contact_phone')}
-                  />
+                  <FormInputError>
+                    <input
+                      type="tel"
+                      {...register('propagation.contact_phone', {})}
+                    />
+                  </FormInputError>
                 </div>
                 <div>
                   Web o akci
-                  <input type="url" {...register('propagation.web_url')} />
+                  <FormInputError>
+                    <input
+                      type="url"
+                      {...register('propagation.web_url', {})}
+                    />
+                  </FormInputError>
                 </div>
               </div>
             </Step>
             <Step name="detaily akce">
               <div>
-                Poznámka (add help)
-                <input type="text" {...register('internal_note')} />
+                Poznámka (TODO add help)
+                <FormInputError>
+                  <input type="text" {...register('internal_note', {})} />
+                </FormInputError>
               </div>
               <div>
                 Zvací text: Co nás čeká
-                <textarea
-                  {...register('propagation.invitation_text_introduction')}
-                />
+                <FormInputError>
+                  <textarea
+                    {...register('propagation.invitation_text_introduction', {
+                      required: 'required',
+                    })}
+                  />
+                </FormInputError>
               </div>
               <div>
                 Zvací text: Co, kde a jak
-                <textarea
-                  {...register(
-                    'propagation.invitation_text_practical_information',
-                  )}
-                />
+                <FormInputError>
+                  <textarea
+                    {...register(
+                      'propagation.invitation_text_practical_information',
+                      {
+                        required: 'required',
+                      },
+                    )}
+                  />
+                </FormInputError>
               </div>
               <div>
                 Zvací text: Dobrovolnická pomoc
-                <textarea
-                  {...register('propagation.invitation_text_work_description')}
-                />
+                <FormInputError>
+                  <textarea
+                    {...register(
+                      'propagation.invitation_text_work_description',
+                      {
+                        required:
+                          getIdsBySlugs(categories?.results ?? [], [
+                            'public__volunteering__only_volunteering',
+                            'public__volunteering__with_experience',
+                          ]).includes(+watch('category')) &&
+                          'Toto pole je povinné!',
+                      },
+                    )}
+                  />
+                </FormInputError>
               </div>
               <div>
-                Zvací text: Malá ochutnávka (TODO, which field?)
-                <textarea />
+                Zvací text: Malá ochutnávka
+                <FormInputError>
+                  <textarea
+                    {...register('propagation.invitation_text_about_us', {})}
+                  />
+                </FormInputError>
               </div>
               <div>Hlavní foto</div>
+              <input type="file" />
+              <div>Fotky k malé ochutnávce</div>
               <input type="file" />
             </Step>
             <Step name="organizátor">
               <div>
                 <div>
                   <header>{++i} Hlavní organizátor/ka</header>
-                  <Controller
-                    name="main_organizer"
-                    control={control}
-                    rules={{ required: 'Toto pole je povinné!' }}
-                    render={({ field: { onChange, value, name, ref } }) => (
-                      <Select
-                        isClearable
-                        options={
-                          potentialOrganizers
-                            ? potentialOrganizers?.results?.map(
-                                ({ display_name, id }) => ({
-                                  value: id,
-                                  label: display_name,
-                                }),
-                              )
-                            : []
-                        }
-                        inputValue={orgQuery}
-                        onInputChange={input => setOrgQuery(input)}
-                        filterOption={() => true}
-                        onChange={val => onChange(val?.value ?? undefined)}
-                        {...(mainOrganizer
-                          ? {
-                              defaultValue: {
-                                value: mainOrganizer.id,
-                                label: mainOrganizer.display_name,
-                              },
-                            }
-                          : {})}
-                      />
-                    )}
-                  />
+                  <FormInputError>
+                    <Controller
+                      name="main_organizer"
+                      control={control}
+                      rules={{ required: 'Toto pole je povinné!' }}
+                      render={({ field: { onChange, value, name, ref } }) => (
+                        <Select
+                          isClearable
+                          options={
+                            potentialOrganizers
+                              ? potentialOrganizers?.results?.map(
+                                  ({ display_name, id }) => ({
+                                    value: id,
+                                    label: display_name,
+                                  }),
+                                )
+                              : []
+                          }
+                          inputValue={orgQuery}
+                          onInputChange={input => setOrgQuery(input)}
+                          filterOption={() => true}
+                          onChange={val => onChange(val?.value ?? undefined)}
+                          {...(mainOrganizer
+                            ? {
+                                defaultValue: {
+                                  value: mainOrganizer.id,
+                                  label: mainOrganizer.display_name,
+                                },
+                              }
+                            : {})}
+                        />
+                      )}
+                    />
+                  </FormInputError>
                 </div>
                 <div>
                   <header>{++i} Organizátorský tým</header>
-                  <Controller
-                    name="other_organizers"
-                    control={control}
-                    render={({ field: { onChange, value, name, ref } }) => (
-                      <Select
-                        isMulti
-                        options={
-                          potentialOrganizers
-                            ? potentialOrganizers?.results?.map(
-                                ({ display_name, id }) => ({
-                                  value: id,
-                                  label: display_name,
-                                }),
-                              )
-                            : []
-                        }
-                        inputValue={orgQuery}
-                        onInputChange={input => setOrgQuery(input)}
-                        filterOption={() => true}
-                        onChange={val => onChange(val.map(val => val.value))}
-                        defaultValue={
-                          otherOrganizers?.results
-                            ? otherOrganizers.results!.map(org => ({
-                                label: org.display_name,
-                                value: org.id,
-                              }))
-                            : []
-                        }
-                      />
-                    )}
-                  />
+                  {/* TODO make sure that event creator adds themself here or as main organizer, so they can edit the event */}
+                  <FormInputError>
+                    <Controller
+                      name="other_organizers"
+                      control={control}
+                      render={({ field: { onChange, value, name, ref } }) => (
+                        <Select
+                          isMulti
+                          options={
+                            potentialOrganizers
+                              ? potentialOrganizers?.results?.map(
+                                  ({ display_name, id }) => ({
+                                    value: id,
+                                    label: display_name,
+                                  }),
+                                )
+                              : []
+                          }
+                          inputValue={orgQuery}
+                          onInputChange={input => setOrgQuery(input)}
+                          filterOption={() => true}
+                          onChange={val => onChange(val.map(val => val.value))}
+                          defaultValue={
+                            otherOrganizers?.results
+                              ? otherOrganizers.results!.map(org => ({
+                                  label: org.display_name,
+                                  value: org.id,
+                                }))
+                              : []
+                          }
+                        />
+                      )}
+                    />
+                  </FormInputError>
                 </div>
               </div>
               <input type="submit" value="Submit" />
