@@ -2277,6 +2277,8 @@ export type Propagation = {
   discounted_cost?: number | null
   intended_for: PropagationIntendedForCategory
   accommodation: string
+  working_hours?: number | null
+  working_days?: number | null
   diets: DietCategory[]
   organizers: string
   web_url?: string
@@ -2302,8 +2304,6 @@ export type Registration = {
 }
 export type Record = {
   total_hours_worked?: number | null
-  working_hours?: number | null
-  working_days?: number | null
   comment_on_work_done?: string
   attendance_list?: string | null
   participants?: number[]
@@ -2576,7 +2576,7 @@ export type LocationContactPerson = {
 export type Location = {
   id: number
   name: string
-  description: string
+  description?: string
   patron: LocationPatron
   contact_person: LocationContactPerson
   for_beginners?: boolean
@@ -2585,11 +2585,11 @@ export type Location = {
   program: LocationProgramCategory
   accessibility_from_prague: LocationAccessibilityCategory
   accessibility_from_brno: LocationAccessibilityCategory
-  volunteering_work: string
-  volunteering_work_done: string
-  volunteering_work_goals: string
-  options_around: string
-  facilities: string
+  volunteering_work?: string
+  volunteering_work_done?: string
+  volunteering_work_goals?: string
+  options_around?: string
+  facilities?: string
   web?: string
   address?: string
   gps_location?: {
