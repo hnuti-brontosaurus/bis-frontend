@@ -7,9 +7,9 @@ import {
   Event,
   EventCategory,
   EventGroupCategory,
+  EventIntendedForCategory,
   EventProgramCategory,
   Propagation,
-  PropagationIntendedForCategory,
   Question,
   User,
 } from './testApi'
@@ -91,12 +91,9 @@ export const api = createApi({
         url: `categories/event_program_categories/`,
       }),
     }),
-    getIntendedFor: build.query<
-      PaginatedList<PropagationIntendedForCategory>,
-      void
-    >({
+    getIntendedFor: build.query<PaginatedList<EventIntendedForCategory>, void>({
       query: () => ({
-        url: `categories/propagation_intended_for_categories/`,
+        url: `categories/event_intended_for_categories/`,
       }),
     }),
     getDiets: build.query<PaginatedList<DietCategory>, void>({
@@ -173,17 +170,17 @@ export const api = createApi({
   }),
 })
 
-export type PropagationPayload = Omit<Propagation, 'intended_for' | 'diets'> & {
-  intended_for: number
+export type PropagationPayload = Omit<Propagation, 'diets'> & {
   diets: number[]
 }
 
 export type EventPayload = Omit<
   Event,
-  'group' | 'category' | 'program' | 'propagation'
+  'intended_for' | 'group' | 'category' | 'program' | 'propagation'
 > & {
   group: number
   category: number
   program: number
+  intended_for: number
   propagation?: PropagationPayload | null
 }

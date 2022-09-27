@@ -54,6 +54,7 @@ const CreateEvent = () => {
         is_internal: false,
         internal_note: 'asdf',
         duration: 3,
+        intended_for: 1,
         //propagation: null,
         propagation: {
           is_shown_on_web: false,
@@ -61,7 +62,6 @@ const CreateEvent = () => {
           maximum_age: 30,
           cost: 250,
           discounted_cost: null,
-          intended_for: 1,
           accommodation: '.',
           diets: [2, 3],
           organizers: 'string',
@@ -349,7 +349,7 @@ const CreateEvent = () => {
                 <fieldset>
                   <FormInputError>
                     <Controller
-                      name="propagation.intended_for"
+                      name="intended_for"
                       control={control}
                       rules={{
                         required: 'Toto pole je povinné!',
@@ -381,7 +381,7 @@ const CreateEvent = () => {
                 </fieldset>
                 {
                   /* not great hardcoded id */
-                  watch('propagation.intended_for') === 5 && (
+                  watch('intended_for') === 5 && (
                     <div>
                       <div>text info pro prvoucastniky</div>
                       <div>Cíle akce a přínos pro prvoúčastníky:</div>
