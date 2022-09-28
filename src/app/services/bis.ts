@@ -9,6 +9,7 @@ import {
   EventGroupCategory,
   EventIntendedForCategory,
   EventProgramCategory,
+  EventPropagationImage,
   Propagation,
   Question,
   User,
@@ -165,6 +166,16 @@ export const api = createApi({
         url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
         method: 'POST',
         body: queryArg.question,
+      }),
+    }),
+    createImage: build.mutation<
+      EventPropagationImage,
+      { eventId: number; image: Omit<EventPropagationImage, 'id'> }
+    >({
+      query: ({ eventId, image }) => ({
+        url: `frontend/events/${eventId}/propagation/images/`,
+        method: 'POST',
+        body: image,
       }),
     }),
   }),

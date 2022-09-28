@@ -1,5 +1,5 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   Controller,
   FormProvider,
@@ -10,28 +10,28 @@ import Select from 'react-select'
 import { api, EventPayload } from './app/services/bis'
 import {
   AdministrationUnit,
+  EventPropagationImage,
   Question,
-  Questionnaire,
-  Registration,
+  User,
 } from './app/services/testApi'
 import FormInputError from './components/FormInputError'
 import { Step, Steps } from './components/Steps'
 import { useAllPages } from './hooks/allPages'
-import { getIdBySlug, getIdsBySlugs, requireBoolean } from './utils/helpers'
-
-type FormEventQuestionnaire = Questionnaire & {
-  questions: Omit<Question, 'id' | 'order'>[]
-}
-
-type FormEventRegistration = Omit<Registration, 'questionnaire'> & {
-  questionnaire: FormEventQuestionnaire | null
-}
+import { useQueries } from './hooks/queries'
+import {
+  file2base64,
+  getIdBySlug,
+  getIdsBySlugs,
+  requireBoolean,
+} from './utils/helpers'
 
 const CreateEvent = () => {
   let i = 0
   const formMethods = useForm<
-    Omit<EventPayload, 'registration'> & {
-      registration: FormEventRegistration | null
+    EventPayload & {
+      questions: Omit<Question, 'id' | 'order'>[]
+      main_image?: Omit<EventPropagationImage, 'id' | 'order'>
+      images: Omit<EventPropagationImage, 'id' | 'order'>[]
     }
   >(
     {
@@ -48,7 +48,7 @@ const CreateEvent = () => {
         category: 8,
         program: 2,
         administration_units: [6],
-        main_organizer: 2,
+        main_organizer: 1822,
         other_organizers: [25, 47, 59],
         is_attendance_list_required: false,
         is_internal: false,
@@ -97,14 +97,22 @@ const CreateEvent = () => {
     formState: { errors },
   } = formMethods
 
-  const questions = useFieldArray({
+  const questionFields = useFieldArray({
     control,
-    name: 'registration.questionnaire.questions',
+    name: 'questions',
   })
 
-  const [createEvent, { isLoading }] = api.endpoints.createEvent.useMutation()
+  const imageFields = useFieldArray({
+    control,
+    name: 'images',
+  })
+
+  const [createEvent, { isLoading: isSavingEvent }] =
+    api.endpoints.createEvent.useMutation()
   const [createQuestion, { isLoading: isSavingQuestions }] =
     api.endpoints.createQuestion.useMutation()
+  const [createImage, { isLoading: isSavingImages }] =
+    api.endpoints.createImage.useMutation()
 
   const [orgQuery, setOrgQuery] = useState('')
 
@@ -142,15 +150,35 @@ const CreateEvent = () => {
       mainOrganizerId ? { id: mainOrganizerId } : skipToken,
     )
 
-  const { data: otherOrganizers, isLoading: isOtherOrganizersLoading } =
-    api.endpoints.readUsers.useQuery(
-      otherOrganizersIds && otherOrganizersIds.length > 0
-        ? { id: otherOrganizersIds }
-        : skipToken,
-    )
+  const organizerQueryResults = useQueries(
+    api.endpoints.getUser,
+    useMemo(
+      () => otherOrganizersIds?.map(id => ({ id })) ?? [],
+      [otherOrganizersIds],
+    ),
+  )
+
+  useEffect(() => {
+    // when there is no empty image, add empty image (add button)
+    if (!getValues('images') || getValues('images').length === 0)
+      imageFields.append({ image: '' })
+    // when images change, check that there is always one empty
+    const subscription = watch((data, { name, type }) => {
+      if (
+        data.images &&
+        data.images.length ===
+          data.images.filter(image => Boolean(image && image.image)).length
+      )
+        imageFields.append({ image: '' })
+    })
+    //imageFields.append({ image: '' })
+
+    return () => subscription.unsubscribe()
+  }, [watch, imageFields, getValues])
+
+  const otherOrganizers = organizerQueryResults.map(result => result.data)
 
   if (
-    isLoading ||
     isEventCategoriesLoading ||
     isEventGroupsLoading ||
     isEventProgramsLoading ||
@@ -159,33 +187,49 @@ const CreateEvent = () => {
     isPotentialOrganizersLoading ||
     isContactPersonLoading ||
     isMainOrganizerLoading ||
-    isOtherOrganizersLoading ||
     isAdministrationUnitsLoading ||
     !isAdministrationUnitsFinished ||
-    isSavingQuestions
+    !otherOrganizers.every(org => Boolean(org))
   )
     return <div>Loading (event stuff)</div>
 
-  console.log(errors)
+  if (isSavingEvent || isSavingQuestions || isSavingImages)
+    return <div>Saving event</div>
 
-  const handleFormSubmit = handleSubmit(async data => {
-    console.log(data)
-    if (data.registration) {
-      data.registration.is_event_full = Boolean(data.registration.is_event_full)
-    }
-    const event = await createEvent(data).unwrap()
-    if (data.registration?.questionnaire?.questions) {
+  const handleFormSubmit = handleSubmit(
+    async ({ main_image, images, questions, ...data }) => {
+      if (data.registration) {
+        data.registration.is_event_full = Boolean(
+          data.registration.is_event_full,
+        )
+      }
+      console.log('data!', data)
+      const event = await createEvent(data).unwrap()
+      if (questions) {
+        await Promise.all(
+          questions.map((question, order) =>
+            createQuestion({
+              eventId: event.id,
+              question: { ...question, order },
+            }).unwrap(),
+          ),
+        )
+      }
+
+      const allImages = [
+        ...(main_image ? [main_image] : []),
+        ...(images ?? []),
+      ].filter(({ image }) => Boolean(image))
       await Promise.all(
-        data.registration.questionnaire.questions.map((question, order) =>
-          createQuestion({
+        allImages.map((image, order) =>
+          createImage({
             eventId: event.id,
-            question: { ...question, order },
+            image: { ...image, order },
           }).unwrap(),
         ),
       )
-    }
-    // TODO save questions
-  })
+    },
+  )
 
   return (
     <div>
@@ -650,25 +694,23 @@ Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaš
                   </FormInputError>
                   <header>Otázky</header>
                   <ul>
-                    {questions.fields.map((item, index) => (
+                    {questionFields.fields.map((item, index) => (
                       <li key={item.id}>
                         <input
-                          {...register(
-                            `registration.questionnaire.questions.${index}.question` as const,
-                          )}
+                          {...register(`questions.${index}.question` as const)}
                         />
                         <label>
                           <input
                             type="checkbox"
                             {...register(
-                              `registration.questionnaire.questions.${index}.is_required` as const,
+                              `questions.${index}.is_required` as const,
                             )}
                           />{' '}
                           povinné?
                         </label>
                         <button
                           type="button"
-                          onClick={() => questions.remove(index)}
+                          onClick={() => questionFields.remove(index)}
                         >
                           Delete
                         </button>
@@ -677,7 +719,7 @@ Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaš
                   </ul>
                   <button
                     type="button"
-                    onClick={() => questions.append({ question: '' })}
+                    onClick={() => questionFields.append({ question: '' })}
                   >
                     append
                   </button>
@@ -992,9 +1034,69 @@ Fce: proklik na přihlášky vytvořenou externě`}
                 </FormInputError>
               </div>
               <div>Hlavní foto</div>
-              <input type="file" />
+              <Controller
+                name="main_image.image"
+                control={control}
+                render={({ field }) => (
+                  <label>
+                    <input
+                      style={{ display: 'none' }}
+                      type="file"
+                      {...field}
+                      value=""
+                      onChange={async e => {
+                        const file = e.target.files?.[0]
+                        field.onChange(file ? await file2base64(file) : '')
+                      }}
+                    />
+                    {watch('main_image.image') ? (
+                      <img src={watch('main_image.image')} alt="" />
+                    ) : (
+                      <span>+</span>
+                    )}
+                  </label>
+                )}
+              />
               <div>Fotky k malé ochutnávce</div>
-              <input type="file" />
+              <ul>
+                {imageFields.fields.map((item, index, allItems) => (
+                  <li key={item.id}>
+                    <Controller
+                      name={`images.${index}.image` as const}
+                      control={control}
+                      render={({ field }) => (
+                        <label>
+                          <input
+                            style={{ display: 'none' }}
+                            type="file"
+                            {...field}
+                            value=""
+                            onChange={async e => {
+                              const file = e.target.files?.[0]
+                              field.onChange(
+                                file ? await file2base64(file) : '',
+                              )
+                            }}
+                          />
+                          {watch(`images.${index}.image`) ? (
+                            <img src={watch(`images.${index}.image`)} alt="" />
+                          ) : (
+                            <span>+</span>
+                          )}
+                        </label>
+                      )}
+                    />
+                    {getValues(`images.${index}.image`) && (
+                      <button
+                        type="button"
+                        onClick={() => imageFields.remove(index)}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </Step>
             <Step name="organizátor">
               <div>
@@ -1059,14 +1161,12 @@ Fce: proklik na přihlášky vytvořenou externě`}
                           onInputChange={input => setOrgQuery(input)}
                           filterOption={() => true}
                           onChange={val => onChange(val.map(val => val.value))}
-                          defaultValue={
-                            otherOrganizers?.results
-                              ? otherOrganizers.results!.map(org => ({
-                                  label: org.display_name,
-                                  value: org.id,
-                                }))
-                              : []
-                          }
+                          defaultValue={(otherOrganizers as User[]).map(
+                            org => ({
+                              label: org.display_name,
+                              value: org.id,
+                            }),
+                          )}
                         />
                       )}
                     />

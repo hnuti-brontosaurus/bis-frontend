@@ -16,3 +16,22 @@ export const requireBoolean = {
     return value === true || value === false || 'Toto pole je povinné!'
   },
 }
+
+export const file2base64 = async (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      resolve(addFilename(reader.result as string, file.name))
+    }
+    reader.onerror = e => reject(e)
+  })
+
+const addFilename = (url: string, filename: string) => {
+  const [data, ...rest] = url.split(';')
+  return [
+    data,
+    `filename=${filename.substring(0, filename.lastIndexOf('.')) || filename}`,
+    ...rest,
+  ].join(';')
+}
