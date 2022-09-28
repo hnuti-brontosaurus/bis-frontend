@@ -45,6 +45,7 @@ export const api = createApi({
       return headers
     },
   }),
+  tagTypes: ['User'],
   endpoints: build => ({
     login: build.mutation<LoginResponse, LoginRequest>({
       query: credentials => ({
@@ -76,6 +77,7 @@ export const api = createApi({
     // frontendUsersRetrieve
     getUser: build.query<User, { id: number }>({
       query: ({ id }) => `frontend/users/${id}/`,
+      providesTags: (result, error, { id }) => [{ type: 'User', id }],
     }),
     getEventCategories: build.query<PaginatedList<EventCategory>, void>({
       query: () => ({
@@ -115,29 +117,6 @@ export const api = createApi({
         },
       }),
     }),
-    searchOrganizers: build.query<
-      PaginatedList<
-        Pick<User, 'id' | 'first_name' | 'last_name' | 'display_name'>
-      >,
-      { query: string }
-    >({
-      queryFn: async ({ query }) => ({
-        data: {
-          results: Array(20)
-            .fill('')
-            .map((a, i) => ({
-              id: i,
-              first_name: 'firstname' + i,
-              last_name: 'lastname' + i,
-              nickname: 'nickname' + i,
-              get display_name() {
-                return `${this.nickname} (${this.first_name} ${this.last_name})`
-              },
-            }))
-            .slice(3 * query.length, 3 * query.length + 3),
-        },
-      }),
-    }),
     createEvent: build.mutation<Event, EventPayload>({
       query: event => ({
         url: `frontend/events/`,
@@ -145,18 +124,29 @@ export const api = createApi({
         body: event,
       }),
     }),
-    readUsers: build.query<PaginatedList<User>, { id?: number[] }>({
-      query: ({ id }) => ({
+    readUsers: build.query<
+      PaginatedList<User>,
+      { id?: number[]; search?: string }
+    >({
+      query: ({ id, search }) => ({
         url: `frontend/users/`,
         params: {
           //birthday: queryArg.birthday,
           //first_name: queryArg.firstName,
           ...(id ? { id: id.join(',') } : {}),
+          ...(typeof search === 'string' ? { search } : {}),
           //last_name: queryArg.lastName,
           //ordering: queryArg.ordering,
           //page: queryArg.page,
         },
       }),
+      providesTags: results =>
+        results?.results
+          ? results.results.map(user => ({
+              type: 'User',
+              id: user.id,
+            }))
+          : [],
     }),
     createQuestion: build.mutation<
       Question,

@@ -49,7 +49,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/administration_unit_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesAdministrationUnitCategoriesRetrieve: build.query<
@@ -66,7 +70,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/diet_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesDietCategoriesRetrieve: build.query<
@@ -83,7 +91,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/donation_source_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesDonationSourceCategoriesRetrieve: build.query<
@@ -100,7 +112,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/event_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesEventCategoriesRetrieve: build.query<
@@ -117,7 +133,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/event_group_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesEventGroupCategoriesRetrieve: build.query<
@@ -134,7 +154,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/event_intended_for_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesEventIntendedForCategoriesRetrieve: build.query<
@@ -151,7 +175,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/event_program_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesEventProgramCategoriesRetrieve: build.query<
@@ -168,7 +196,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/grant_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesGrantCategoriesRetrieve: build.query<
@@ -185,7 +217,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/health_insurance_companies/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesHealthInsuranceCompaniesRetrieve: build.query<
@@ -202,7 +238,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/location_accessibility_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesLocationAccessibilityCategoriesRetrieve: build.query<
@@ -219,7 +259,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/location_program_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesLocationProgramCategoriesRetrieve: build.query<
@@ -236,7 +280,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/membership_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesMembershipCategoriesRetrieve: build.query<
@@ -253,7 +301,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/opportunity_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesOpportunityCategoriesRetrieve: build.query<
@@ -270,7 +322,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/organizer_role_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesOrganizerRoleCategoriesRetrieve: build.query<
@@ -287,7 +343,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/qualification_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesQualificationCategoriesRetrieve: build.query<
@@ -304,7 +364,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/regions/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesRegionsRetrieve: build.query<
@@ -319,7 +383,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/role_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesRoleCategoriesRetrieve: build.query<
@@ -336,7 +404,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/sex_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesSexCategoriesRetrieve: build.query<
@@ -353,7 +425,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/team_role_categories/`,
-        params: { ordering: queryArg.ordering, page: queryArg.page },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     categoriesTeamRoleCategoriesRetrieve: build.query<
@@ -370,7 +446,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsCreate: build.mutation<
@@ -389,7 +470,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/finance/receipts/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsFinanceReceiptsCreate: build.mutation<
@@ -445,7 +530,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/organizers/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsOrganizersRetrieve: build.query<
@@ -462,7 +552,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/propagation/images/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsPropagationImagesCreate: build.mutation<
@@ -518,7 +612,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/record/participants/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsRecordParticipantsRetrieve: build.query<
@@ -535,7 +634,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/record/photos/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsRecordPhotosCreate: build.mutation<
@@ -591,7 +694,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/registered/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsRegisteredRetrieve: build.query<
@@ -608,7 +716,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/registration/applications/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsRegistrationApplicationsCreate: build.mutation<
@@ -664,7 +776,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendEventsRegistrationQuestionnaireQuestionsCreate: build.mutation<
@@ -766,7 +882,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/locations/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendLocationsCreate: build.mutation<
@@ -820,7 +941,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/users/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendUsersCreate: build.mutation<
@@ -874,7 +1000,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/users/${queryArg.userId}/events_where_was_organizer/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendUsersEventsWhereWasOrganizerRetrieve: build.query<
@@ -891,7 +1022,11 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/users/${queryArg.userId}/opportunities/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendUsersOpportunitiesCreate: build.mutation<
@@ -947,7 +1082,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/users/${queryArg.userId}/participated_in_events/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendUsersParticipatedInEventsRetrieve: build.query<
@@ -964,7 +1104,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/frontend/users/${queryArg.userId}/registered_in_events/`,
-        params: { page: queryArg.page, search: queryArg.search },
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
       }),
     }),
     frontendUsersRegisteredInEventsRetrieve: build.query<
@@ -983,8 +1128,9 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/api/web/administration_units/`,
         params: {
           category: queryArg.category,
-          ordering: queryArg.ordering,
           page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
         },
       }),
     }),
@@ -1007,9 +1153,10 @@ const injectedRtkApi = api.injectEndpoints({
           duration__lte: queryArg.durationLte,
           group: queryArg.group,
           intended_for: queryArg.intendedFor,
-          ordering: queryArg.ordering,
           page: queryArg.page,
+          page_size: queryArg.pageSize,
           program: queryArg.program,
+          search: queryArg.search,
         },
       }),
     }),
@@ -1027,8 +1174,9 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/api/web/opportunities/`,
         params: {
           category: queryArg.category,
-          ordering: queryArg.ordering,
           page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
         },
       }),
     }),
@@ -1062,10 +1210,12 @@ export type AuthWhoamiRetrieveApiArg = void
 export type CategoriesAdministrationUnitCategoriesListApiResponse =
   /** status 200  */ PaginatedAdministrationUnitCategoryList
 export type CategoriesAdministrationUnitCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesAdministrationUnitCategoriesRetrieveApiResponse =
   /** status 200  */ AdministrationUnitCategory
@@ -1076,10 +1226,12 @@ export type CategoriesAdministrationUnitCategoriesRetrieveApiArg = {
 export type CategoriesDietCategoriesListApiResponse =
   /** status 200  */ PaginatedDietCategoryList
 export type CategoriesDietCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesDietCategoriesRetrieveApiResponse =
   /** status 200  */ DietCategory
@@ -1090,10 +1242,12 @@ export type CategoriesDietCategoriesRetrieveApiArg = {
 export type CategoriesDonationSourceCategoriesListApiResponse =
   /** status 200  */ PaginatedDonationSourceCategoryList
 export type CategoriesDonationSourceCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesDonationSourceCategoriesRetrieveApiResponse =
   /** status 200  */ DonationSourceCategory
@@ -1104,10 +1258,12 @@ export type CategoriesDonationSourceCategoriesRetrieveApiArg = {
 export type CategoriesEventCategoriesListApiResponse =
   /** status 200  */ PaginatedEventCategoryList
 export type CategoriesEventCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesEventCategoriesRetrieveApiResponse =
   /** status 200  */ EventCategory
@@ -1118,10 +1274,12 @@ export type CategoriesEventCategoriesRetrieveApiArg = {
 export type CategoriesEventGroupCategoriesListApiResponse =
   /** status 200  */ PaginatedEventGroupCategoryList
 export type CategoriesEventGroupCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesEventGroupCategoriesRetrieveApiResponse =
   /** status 200  */ EventGroupCategory
@@ -1132,10 +1290,12 @@ export type CategoriesEventGroupCategoriesRetrieveApiArg = {
 export type CategoriesEventIntendedForCategoriesListApiResponse =
   /** status 200  */ PaginatedEventIntendedForCategoryList
 export type CategoriesEventIntendedForCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesEventIntendedForCategoriesRetrieveApiResponse =
   /** status 200  */ EventIntendedForCategory
@@ -1146,10 +1306,12 @@ export type CategoriesEventIntendedForCategoriesRetrieveApiArg = {
 export type CategoriesEventProgramCategoriesListApiResponse =
   /** status 200  */ PaginatedEventProgramCategoryList
 export type CategoriesEventProgramCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesEventProgramCategoriesRetrieveApiResponse =
   /** status 200  */ EventProgramCategory
@@ -1160,10 +1322,12 @@ export type CategoriesEventProgramCategoriesRetrieveApiArg = {
 export type CategoriesGrantCategoriesListApiResponse =
   /** status 200  */ PaginatedGrantCategoryList
 export type CategoriesGrantCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesGrantCategoriesRetrieveApiResponse =
   /** status 200  */ GrantCategory
@@ -1174,10 +1338,12 @@ export type CategoriesGrantCategoriesRetrieveApiArg = {
 export type CategoriesHealthInsuranceCompaniesListApiResponse =
   /** status 200  */ PaginatedHealthInsuranceCompanyList
 export type CategoriesHealthInsuranceCompaniesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesHealthInsuranceCompaniesRetrieveApiResponse =
   /** status 200  */ HealthInsuranceCompany
@@ -1188,10 +1354,12 @@ export type CategoriesHealthInsuranceCompaniesRetrieveApiArg = {
 export type CategoriesLocationAccessibilityCategoriesListApiResponse =
   /** status 200  */ PaginatedLocationAccessibilityCategoryList
 export type CategoriesLocationAccessibilityCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesLocationAccessibilityCategoriesRetrieveApiResponse =
   /** status 200  */ LocationAccessibilityCategory
@@ -1202,10 +1370,12 @@ export type CategoriesLocationAccessibilityCategoriesRetrieveApiArg = {
 export type CategoriesLocationProgramCategoriesListApiResponse =
   /** status 200  */ PaginatedLocationProgramCategoryList
 export type CategoriesLocationProgramCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesLocationProgramCategoriesRetrieveApiResponse =
   /** status 200  */ LocationProgramCategory
@@ -1216,10 +1386,12 @@ export type CategoriesLocationProgramCategoriesRetrieveApiArg = {
 export type CategoriesMembershipCategoriesListApiResponse =
   /** status 200  */ PaginatedMembershipCategoryList
 export type CategoriesMembershipCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesMembershipCategoriesRetrieveApiResponse =
   /** status 200  */ MembershipCategory
@@ -1230,10 +1402,12 @@ export type CategoriesMembershipCategoriesRetrieveApiArg = {
 export type CategoriesOpportunityCategoriesListApiResponse =
   /** status 200  */ PaginatedOpportunityCategoryList
 export type CategoriesOpportunityCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesOpportunityCategoriesRetrieveApiResponse =
   /** status 200  */ OpportunityCategory
@@ -1244,10 +1418,12 @@ export type CategoriesOpportunityCategoriesRetrieveApiArg = {
 export type CategoriesOrganizerRoleCategoriesListApiResponse =
   /** status 200  */ PaginatedOrganizerRoleCategoryList
 export type CategoriesOrganizerRoleCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesOrganizerRoleCategoriesRetrieveApiResponse =
   /** status 200  */ OrganizerRoleCategory
@@ -1258,10 +1434,12 @@ export type CategoriesOrganizerRoleCategoriesRetrieveApiArg = {
 export type CategoriesQualificationCategoriesListApiResponse =
   /** status 200  */ PaginatedQualificationCategoryList
 export type CategoriesQualificationCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesQualificationCategoriesRetrieveApiResponse =
   /** status 200  */ QualificationCategory
@@ -1272,10 +1450,12 @@ export type CategoriesQualificationCategoriesRetrieveApiArg = {
 export type CategoriesRegionsListApiResponse =
   /** status 200  */ PaginatedRegionList
 export type CategoriesRegionsListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesRegionsRetrieveApiResponse = /** status 200  */ Region
 export type CategoriesRegionsRetrieveApiArg = {
@@ -1285,10 +1465,12 @@ export type CategoriesRegionsRetrieveApiArg = {
 export type CategoriesRoleCategoriesListApiResponse =
   /** status 200  */ PaginatedRoleCategoryList
 export type CategoriesRoleCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesRoleCategoriesRetrieveApiResponse =
   /** status 200  */ RoleCategory
@@ -1299,10 +1481,12 @@ export type CategoriesRoleCategoriesRetrieveApiArg = {
 export type CategoriesSexCategoriesListApiResponse =
   /** status 200  */ PaginatedSexCategoryList
 export type CategoriesSexCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesSexCategoriesRetrieveApiResponse =
   /** status 200  */ SexCategory
@@ -1313,10 +1497,12 @@ export type CategoriesSexCategoriesRetrieveApiArg = {
 export type CategoriesTeamRoleCategoriesListApiResponse =
   /** status 200  */ PaginatedTeamRoleCategoryList
 export type CategoriesTeamRoleCategoriesListApiArg = {
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type CategoriesTeamRoleCategoriesRetrieveApiResponse =
   /** status 200  */ TeamRoleCategory
@@ -1327,8 +1513,12 @@ export type CategoriesTeamRoleCategoriesRetrieveApiArg = {
 export type FrontendEventsListApiResponse =
   /** status 200  */ PaginatedEventList
 export type FrontendEventsListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1342,6 +1532,8 @@ export type FrontendEventsFinanceReceiptsListApiArg = {
   eventId: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1384,8 +1576,12 @@ export type FrontendEventsOrganizersListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsOrganizersListApiArg = {
   eventId: string
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1402,6 +1598,8 @@ export type FrontendEventsPropagationImagesListApiArg = {
   eventId: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1444,8 +1642,12 @@ export type FrontendEventsRecordParticipantsListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsRecordParticipantsListApiArg = {
   eventId: string
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1462,6 +1664,8 @@ export type FrontendEventsRecordPhotosListApiArg = {
   eventId: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1504,8 +1708,12 @@ export type FrontendEventsRegisteredListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsRegisteredListApiArg = {
   eventId: string
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1522,6 +1730,8 @@ export type FrontendEventsRegistrationApplicationsListApiArg = {
   eventId: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1566,6 +1776,8 @@ export type FrontendEventsRegistrationQuestionnaireQuestionsListApiArg = {
   eventId: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1635,8 +1847,12 @@ export type FrontendGetUnknownUserCreateApiArg = {
 export type FrontendLocationsListApiResponse =
   /** status 200  */ PaginatedLocationList
 export type FrontendLocationsListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1669,8 +1885,12 @@ export type FrontendLocationsDestroyApiArg = {
 }
 export type FrontendUsersListApiResponse = /** status 200  */ PaginatedUserList
 export type FrontendUsersListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
 }
@@ -1703,8 +1923,12 @@ export type FrontendUsersDestroyApiArg = {
 export type FrontendUsersEventsWhereWasOrganizerListApiResponse =
   /** status 200  */ PaginatedEventList
 export type FrontendUsersEventsWhereWasOrganizerListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
   userId: string
@@ -1721,6 +1945,8 @@ export type FrontendUsersOpportunitiesListApiResponse =
 export type FrontendUsersOpportunitiesListApiArg = {
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
   userId: string
@@ -1763,8 +1989,12 @@ export type FrontendUsersOpportunitiesDestroyApiArg = {
 export type FrontendUsersParticipatedInEventsListApiResponse =
   /** status 200  */ PaginatedEventList
 export type FrontendUsersParticipatedInEventsListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
   userId: string
@@ -1779,8 +2009,12 @@ export type FrontendUsersParticipatedInEventsRetrieveApiArg = {
 export type FrontendUsersRegisteredInEventsListApiResponse =
   /** status 200  */ PaginatedEventList
 export type FrontendUsersRegisteredInEventsListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  id?: number[]
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** A search term. */
   search?: string
   userId: string
@@ -1797,10 +2031,12 @@ export type WebAdministrationUnitsListApiResponse =
 export type WebAdministrationUnitsListApiArg = {
   /** Více hodnot lze oddělit čárkami. */
   category?: ('basic_section' | 'club' | 'headquarter' | 'regional_center')[]
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type WebAdministrationUnitsRetrieveApiResponse =
   /** status 200  */ AdministrationUnit
@@ -1811,7 +2047,97 @@ export type WebAdministrationUnitsRetrieveApiArg = {
 export type WebEventsListApiResponse = /** status 200  */ PaginatedEventList
 export type WebEventsListApiArg = {
   /** Více hodnot lze oddělit čárkami. */
-  administrationUnit?: number[]
+  administrationUnit?: (
+    | 1
+    | 10
+    | 11
+    | 12
+    | 13
+    | 14
+    | 15
+    | 16
+    | 17
+    | 18
+    | 19
+    | 2
+    | 20
+    | 21
+    | 22
+    | 23
+    | 24
+    | 25
+    | 26
+    | 27
+    | 28
+    | 29
+    | 3
+    | 30
+    | 31
+    | 32
+    | 33
+    | 34
+    | 35
+    | 36
+    | 37
+    | 38
+    | 39
+    | 4
+    | 40
+    | 41
+    | 42
+    | 43
+    | 44
+    | 45
+    | 46
+    | 47
+    | 48
+    | 49
+    | 5
+    | 50
+    | 51
+    | 52
+    | 53
+    | 54
+    | 55
+    | 56
+    | 57
+    | 58
+    | 59
+    | 6
+    | 60
+    | 61
+    | 62
+    | 63
+    | 64
+    | 65
+    | 66
+    | 67
+    | 68
+    | 69
+    | 7
+    | 70
+    | 71
+    | 72
+    | 73
+    | 74
+    | 75
+    | 76
+    | 77
+    | 78
+    | 79
+    | 8
+    | 80
+    | 81
+    | 82
+    | 83
+    | 84
+    | 85
+    | 86
+    | 87
+    | 88
+    | 89
+    | 9
+  )[]
   /** Více hodnot lze oddělit čárkami. */
   category?: (
     | 'internal__general_meeting'
@@ -1845,10 +2171,10 @@ export type WebEventsListApiArg = {
     | 'for_parents_with_kids'
     | 'for_young_and_adult'
   )[]
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
   /** Více hodnot lze oddělit čárkami. */
   program?: (
     | 'eco_tent'
@@ -1860,6 +2186,8 @@ export type WebEventsListApiArg = {
     | 'nature'
     | 'none'
   )[]
+  /** A search term. */
+  search?: string
 }
 export type WebEventsRetrieveApiResponse = /** status 200  */ Event
 export type WebEventsRetrieveApiArg = {
@@ -1871,10 +2199,12 @@ export type WebOpportunitiesListApiResponse =
 export type WebOpportunitiesListApiArg = {
   /** Více hodnot lze oddělit čárkami. */
   category?: ('collaboration' | 'location_help' | 'organizing')[]
-  /** Which field to use when ordering the results. */
-  ordering?: string
   /** A page number within the paginated result set. */
   page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
 }
 export type WebOpportunitiesRetrieveApiResponse = /** status 200  */ Opportunity
 export type WebOpportunitiesRetrieveApiArg = {
