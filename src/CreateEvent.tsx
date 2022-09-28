@@ -32,56 +32,7 @@ const CreateEvent = () => {
       main_image?: Omit<EventPropagationImage, 'id' | 'order'>
       images: Omit<EventPropagationImage, 'id' | 'order'>[]
     }
-  >(
-    {
-      //defaultValues: { number_of_sub_events: 1 } } /*{
-      defaultValues: {
-        name: 'asdf' + Date.now(),
-        is_canceled: false,
-        start: '2022-10-10T15:03',
-        end: '2029-10-18',
-        number_of_sub_events: 1,
-        location: 50,
-        online_link: '',
-        group: 3,
-        category: 8,
-        program: 2,
-        administration_units: [6],
-        is_attendance_list_required: false,
-        is_internal: false,
-        internal_note: 'asdf',
-        duration: 3,
-        intended_for: 1,
-        //propagation: null,
-        propagation: {
-          is_shown_on_web: false,
-          minimum_age: 15,
-          maximum_age: 30,
-          cost: 250,
-          discounted_cost: null,
-          accommodation: '.',
-          diets: [2, 3],
-          organizers: 'string',
-          web_url: 'https://example.com',
-          invitation_text_introduction: 'asdf',
-          invitation_text_practical_information: 'asdf',
-          invitation_text_work_description: 'aaaa',
-          invitation_text_about_us: 'aaaaaa',
-          contact_name: 'Name Contact',
-          contact_phone: '+420 771 111 111',
-          contact_email: 'test@example.com',
-          vip_propagation: null,
-          working_hours: 0,
-          working_days: 0,
-        },
-        registration: {
-          is_registration_required: true,
-        },
-        record: null,
-        finance: null,
-      },
-    }, // */,
-  )
+  >()
 
   const navigate = useNavigate()
 
@@ -201,7 +152,7 @@ const CreateEvent = () => {
       <FormProvider {...formMethods}>
         <form onSubmit={handleFormSubmit}>
           <Steps>
-            <Step name="kategorie akce">
+            <Step name="kategorie akce" fields={['group']}>
               {/* kategorie akce */}
               <fieldset>
                 {++i}. Jaký je typ nové akce?
@@ -238,7 +189,18 @@ const CreateEvent = () => {
                 </FormInputError>
               </fieldset>
             </Step>
-            <Step name="základní info">
+            <Step
+              name="základní info"
+              fields={[
+                'name',
+                'start',
+                'end',
+                'number_of_sub_events',
+                'category',
+                'program',
+                'administration_units',
+              ]}
+            >
               <div>
                 {++i}. Název
                 <FormInputError>
@@ -352,7 +314,16 @@ const CreateEvent = () => {
                 </FormInputError>
               </div>
             </Step>
-            <Step name="pro koho">
+            <Step
+              name="pro koho"
+              fields={[
+                'intended_for',
+                'propagation.vip_propagation.goals_of_event',
+                'propagation.vip_propagation.program',
+                'propagation.vip_propagation.short_invitation_text',
+                'propagation.vip_propagation.rover_propagation',
+              ]}
+            >
               <div>
                 {++i}. Pro koho
                 <fieldset>
@@ -486,7 +457,14 @@ const CreateEvent = () => {
                 }
               </div>
             </Step>
-            <Step name="random (TODO)">
+            <Step
+              name="random (TODO)"
+              fields={[
+                'is_internal',
+                'propagation.is_shown_on_web',
+                'registration',
+              ]}
+            >
               <div>
                 <div>
                   <header>
@@ -722,10 +700,27 @@ Fce: proklik na přihlášky vytvořenou externě`}
                 </pre>
               </div>
             </Step>
-            <Step name="lokace">
+            <Step name="lokace (TODO)" fields={['location']}>
               <div>{++i}. Lokace (TODO)</div>
             </Step>
-            <Step name="info pro účastníky">
+            <Step
+              name="info pro účastníky"
+              fields={[
+                'propagation.cost',
+                'propagation.discounted_cost',
+                'propagation.minimum_age',
+                'propagation.maximum_age',
+                'propagation.accommodation',
+                'propagation.diets',
+                'propagation.working_hours',
+                'propagation.working_days',
+                'propagation.contact_person',
+                'propagation.contact_name',
+                'propagation.contact_email',
+                'propagation.contact_phone',
+                'propagation.web_url',
+              ]}
+            >
               <div>
                 <div>{++i}. Účastnický poplatek</div>
                 částka{' '}
@@ -916,7 +911,18 @@ Fce: proklik na přihlášky vytvořenou externě`}
                 </div>
               </div>
             </Step>
-            <Step name="detaily akce">
+            <Step
+              name="detaily akce"
+              fields={[
+                'internal_note',
+                'propagation.invitation_text_introduction',
+                'propagation.invitation_text_practical_information',
+                'propagation.invitation_text_work_description',
+                'propagation.invitation_text_about_us',
+                'main_image',
+                'images',
+              ]}
+            >
               <div>
                 Poznámka (TODO add help)
                 <FormInputError>

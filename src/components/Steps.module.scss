@@ -6,6 +6,9 @@
   &.isActive {
     background-color: green;
   }
+  &.isError {
+    border-color: red;
+  }
 }
 
 .bottomNavigation {
