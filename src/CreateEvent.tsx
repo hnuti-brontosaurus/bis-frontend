@@ -1,23 +1,22 @@
-import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect } from 'react'
 import {
   Controller,
   FormProvider,
   useFieldArray,
   useForm,
 } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import Select from 'react-select'
 import { api, EventPayload } from './app/services/bis'
 import {
   AdministrationUnit,
   EventPropagationImage,
   Question,
-  User,
 } from './app/services/testApi'
 import FormInputError from './components/FormInputError'
+import SelectUsers, { SelectUser } from './components/SelectUsers'
 import { Step, Steps } from './components/Steps'
 import { useAllPages } from './hooks/allPages'
-import { useQueries } from './hooks/queries'
 import {
   file2base64,
   getIdBySlug,
@@ -48,8 +47,6 @@ const CreateEvent = () => {
         category: 8,
         program: 2,
         administration_units: [6],
-        main_organizer: 1822,
-        other_organizers: [25, 47, 59],
         is_attendance_list_required: false,
         is_internal: false,
         internal_note: 'asdf',
@@ -70,7 +67,6 @@ const CreateEvent = () => {
           invitation_text_practical_information: 'asdf',
           invitation_text_work_description: 'aaaa',
           invitation_text_about_us: 'aaaaaa',
-          contact_person: 5,
           contact_name: 'Name Contact',
           contact_phone: '+420 771 111 111',
           contact_email: 'test@example.com',
@@ -86,6 +82,8 @@ const CreateEvent = () => {
       },
     }, // */,
   )
+
+  const navigate = useNavigate()
 
   const {
     register,
@@ -114,8 +112,6 @@ const CreateEvent = () => {
   const [createImage, { isLoading: isSavingImages }] =
     api.endpoints.createImage.useMutation()
 
-  const [orgQuery, setOrgQuery] = useState('')
-
   const { data: categories, isLoading: isEventCategoriesLoading } =
     api.endpoints.getEventCategories.useQuery()
   const { data: groups, isLoading: isEventGroupsLoading } =
@@ -131,32 +127,6 @@ const CreateEvent = () => {
     { isLoading: isAdministrationUnitsLoading },
     isAdministrationUnitsFinished,
   ] = useAllPages(api.endpoints.getAdministrationUnits)
-  const { data: potentialOrganizers, isLoading: isPotentialOrganizersLoading } =
-    api.endpoints.searchOrganizers.useQuery({
-      query: orgQuery,
-    })
-
-  const contactPersonId = getValues('propagation.contact_person')
-  const mainOrganizerId = getValues('main_organizer')
-  const otherOrganizersIds = getValues('other_organizers')
-
-  const { data: contactPerson, isLoading: isContactPersonLoading } =
-    api.endpoints.getUser.useQuery(
-      contactPersonId ? { id: contactPersonId } : skipToken,
-    )
-
-  const { data: mainOrganizer, isLoading: isMainOrganizerLoading } =
-    api.endpoints.getUser.useQuery(
-      mainOrganizerId ? { id: mainOrganizerId } : skipToken,
-    )
-
-  const organizerQueryResults = useQueries(
-    api.endpoints.getUser,
-    useMemo(
-      () => otherOrganizersIds?.map(id => ({ id })) ?? [],
-      [otherOrganizersIds],
-    ),
-  )
 
   useEffect(() => {
     // when there is no empty image, add empty image (add button)
@@ -176,20 +146,14 @@ const CreateEvent = () => {
     return () => subscription.unsubscribe()
   }, [watch, imageFields, getValues])
 
-  const otherOrganizers = organizerQueryResults.map(result => result.data)
-
   if (
     isEventCategoriesLoading ||
     isEventGroupsLoading ||
     isEventProgramsLoading ||
     isIntendedForLoading ||
     isDietsLoading ||
-    isPotentialOrganizersLoading ||
-    isContactPersonLoading ||
-    isMainOrganizerLoading ||
     isAdministrationUnitsLoading ||
-    !isAdministrationUnitsFinished ||
-    !otherOrganizers.every(org => Boolean(org))
+    !isAdministrationUnitsFinished
   )
     return <div>Loading (event stuff)</div>
 
@@ -228,6 +192,7 @@ const CreateEvent = () => {
           }).unwrap(),
         ),
       )
+      navigate(`/org/akce/${event.id}`)
     },
   )
 
@@ -901,33 +866,7 @@ Fce: proklik na přihlášky vytvořenou externě`}
                     <Controller
                       name="propagation.contact_person"
                       control={control}
-                      render={({ field: { onChange, value, name, ref } }) => (
-                        <Select
-                          isClearable
-                          options={
-                            potentialOrganizers
-                              ? potentialOrganizers?.results?.map(
-                                  ({ display_name, id }) => ({
-                                    value: id,
-                                    label: display_name,
-                                  }),
-                                )
-                              : []
-                          }
-                          inputValue={orgQuery}
-                          onInputChange={input => setOrgQuery(input)}
-                          filterOption={() => true}
-                          onChange={val => onChange(val?.value ?? undefined)}
-                          {...(contactPerson
-                            ? {
-                                defaultValue: {
-                                  value: contactPerson.id,
-                                  label: contactPerson.display_name,
-                                },
-                              }
-                            : {})}
-                        />
-                      )}
+                      render={({ field }) => <SelectUser {...field} />}
                     />
                   </FormInputError>
                 </div>
@@ -1106,34 +1045,7 @@ Fce: proklik na přihlášky vytvořenou externě`}
                     <Controller
                       name="main_organizer"
                       control={control}
-                      rules={{ required: 'Toto pole je povinné!' }}
-                      render={({ field: { onChange, value, name, ref } }) => (
-                        <Select
-                          isClearable
-                          options={
-                            potentialOrganizers
-                              ? potentialOrganizers?.results?.map(
-                                  ({ display_name, id }) => ({
-                                    value: id,
-                                    label: display_name,
-                                  }),
-                                )
-                              : []
-                          }
-                          inputValue={orgQuery}
-                          onInputChange={input => setOrgQuery(input)}
-                          filterOption={() => true}
-                          onChange={val => onChange(val?.value ?? undefined)}
-                          {...(mainOrganizer
-                            ? {
-                                defaultValue: {
-                                  value: mainOrganizer.id,
-                                  label: mainOrganizer.display_name,
-                                },
-                              }
-                            : {})}
-                        />
-                      )}
+                      render={({ field }) => <SelectUser {...field} />}
                     />
                   </FormInputError>
                 </div>
@@ -1144,31 +1056,7 @@ Fce: proklik na přihlášky vytvořenou externě`}
                     <Controller
                       name="other_organizers"
                       control={control}
-                      render={({ field: { onChange, value, name, ref } }) => (
-                        <Select
-                          isMulti
-                          options={
-                            potentialOrganizers
-                              ? potentialOrganizers?.results?.map(
-                                  ({ display_name, id }) => ({
-                                    value: id,
-                                    label: display_name,
-                                  }),
-                                )
-                              : []
-                          }
-                          inputValue={orgQuery}
-                          onInputChange={input => setOrgQuery(input)}
-                          filterOption={() => true}
-                          onChange={val => onChange(val.map(val => val.value))}
-                          defaultValue={(otherOrganizers as User[]).map(
-                            org => ({
-                              label: org.display_name,
-                              value: org.id,
-                            }),
-                          )}
-                        />
-                      )}
+                      render={({ field }) => <SelectUsers {...field} />}
                     />
                   </FormInputError>
                 </div>
