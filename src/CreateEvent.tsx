@@ -11,10 +11,14 @@ import { api, EventPayload } from './app/services/bis'
 import {
   AdministrationUnit,
   EventPropagationImage,
+  Location,
   Question,
 } from './app/services/testApi'
 import FormInputError from './components/FormInputError'
-import SelectUsers, { SelectUser } from './components/SelectUsers'
+import SelectUsers, {
+  SelectByQuery,
+  SelectUser,
+} from './components/SelectUsers'
 import { Step, Steps } from './components/Steps'
 import { useAllPages } from './hooks/allPages'
 import {
@@ -32,7 +36,17 @@ const CreateEvent = () => {
       main_image?: Omit<EventPropagationImage, 'id' | 'order'>
       images: Omit<EventPropagationImage, 'id' | 'order'>[]
     }
-  >()
+  >({
+    defaultValues: {
+      finance: null,
+      record: null,
+      propagation: {
+        accommodation: '.',
+        organizers: '.',
+        working_days: 0,
+      },
+    },
+  })
 
   const navigate = useNavigate()
 
@@ -41,6 +55,7 @@ const CreateEvent = () => {
     unregister,
     handleSubmit,
     getValues,
+    setValue,
     watch,
     control,
     formState: { errors },
@@ -96,6 +111,24 @@ const CreateEvent = () => {
 
     return () => subscription.unsubscribe()
   }, [watch, imageFields, getValues])
+
+  // unregister stuff
+  useEffect(() => {
+    const subscription = watch((data, { name, type }) => {
+      if (
+        name === 'intended_for' &&
+        getIdBySlug(
+          intendedFor?.results ?? [],
+          'for_first_time_participant',
+        ) !== data.intended_for
+      ) {
+        unregister('propagation.vip_propagation')
+        setValue('propagation.vip_propagation', null)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch])
 
   if (
     isEventCategoriesLoading ||
@@ -702,6 +735,24 @@ Fce: proklik na přihlášky vytvořenou externě`}
             </Step>
             <Step name="lokace (TODO)" fields={['location']}>
               <div>{++i}. Lokace (TODO)</div>
+              <FormInputError>
+                <Controller
+                  name="location"
+                  control={control}
+                  render={({ field: { ref, ...field } }) => (
+                    <SelectByQuery
+                      {...field}
+                      queryRead={api.endpoints.readLocation}
+                      querySearch={api.endpoints.readLocations}
+                      transform={(location: Location) => ({
+                        label: location.name,
+                        value: location.id,
+                      })}
+                      customRef={ref}
+                    />
+                  )}
+                />
+              </FormInputError>
             </Step>
             <Step
               name="info pro účastníky"

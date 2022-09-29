@@ -10,6 +10,7 @@ import {
   EventIntendedForCategory,
   EventProgramCategory,
   EventPropagationImage,
+  Location,
   Propagation,
   Question,
   User,
@@ -167,6 +168,32 @@ export const api = createApi({
         method: 'POST',
         body: image,
       }),
+    }),
+    readLocations: build.query<
+      PaginatedList<Location>,
+      {
+        /** Více hodnot lze oddělit čárkami. */
+        id?: number[]
+        /** A page number within the paginated result set. */
+        page?: number
+        /** Number of results to return per page. */
+        pageSize?: number
+        /** A search term. */
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/locations/`,
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readLocation: build.query<Location, { id: number }>({
+      query: queryArg => ({ url: `frontend/locations/${queryArg.id}/` }),
     }),
   }),
 })
