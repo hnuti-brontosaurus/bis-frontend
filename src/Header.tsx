@@ -1,5 +1,7 @@
+import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import { FaBars, FaRegUser } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { api } from './app/services/bis'
 import { User } from './app/services/testApi'
 import logo from './assets/logo.png'
 import styles from './Header.module.scss'
@@ -10,10 +12,23 @@ const getCurrentRole = (user: User): 'organizer' | 'user' =>
 
 const Header = () => {
   const { data: user, isLoading } = useCurrentUser()
+  const [logout, { isLoading: isLoggingOut }] =
+    api.endpoints.logout.useMutation()
+
+  const navigate = useNavigate()
 
   if (!user || isLoading) return <div>loading...</div>
 
   const currentRole = getCurrentRole(user)
+
+  const handleLogout = async () => {
+    // logout with endpoint
+    await logout().unwrap()
+    // remove auth token from local storage and state
+
+    // go to homepage
+    navigate('/')
+  }
 
   return (
     <div className={styles.container}>
@@ -27,9 +42,20 @@ const Header = () => {
           {currentRole === 'organizer' ? 'Organizátor' : 'Uživatel'}
         </Link>
       </div>
-      <div title={`${user.first_name} ${user.last_name}`}>
-        <FaRegUser fontSize={20} />
-      </div>
+      <Menu
+        menuButton={
+          <MenuButton>
+            <div title={`${user.first_name} ${user.last_name}`}>
+              <FaRegUser fontSize={20} />
+            </div>
+          </MenuButton>
+        }
+      >
+        <MenuItem>{`${user.first_name} ${user.last_name}`}</MenuItem>
+        <MenuItem>
+          <button onClick={handleLogout}>Logout</button>
+        </MenuItem>
+      </Menu>
     </div>
   )
 }
