@@ -1,4 +1,11 @@
-import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
+import {
+  Action,
+  combineReducers,
+  configureStore,
+  createListenerMiddleware,
+  Reducer,
+  ThunkAction,
+} from '@reduxjs/toolkit'
 import {
   FLUSH,
   PAUSE,
@@ -21,26 +28,52 @@ const persistConfig = {
   storage,
 }
 
+const listenerMiddleware = createListenerMiddleware()
+
+listenerMiddleware.startListening({
+  matcher: api.endpoints.logout.matchFulfilled,
+  effect: async (action, listenerApi) => {
+    await resetStore()
+  },
+})
+
 const persistedAuthReducer = persistReducer(persistConfig, authReducer)
 
+const appReducer = combineReducers({
+  [emptySplitApi.reducerPath]: emptySplitApi.reducer,
+  [api.reducerPath]: api.reducer,
+  auth: persistedAuthReducer,
+})
+
+const rootReducer: Reducer<RootState> = (state, action) => {
+  if (api.endpoints.logout.matchFulfilled(action)) {
+    state = {} as RootState
+  }
+
+  return appReducer(state, action)
+}
+
 export const store = configureStore({
-  reducer: {
-    [emptySplitApi.reducerPath]: emptySplitApi.reducer,
-    [api.reducerPath]: api.reducer,
-    auth: persistedAuthReducer,
-  },
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(api.middleware),
+    })
+      .prepend(listenerMiddleware.middleware)
+      .concat(api.middleware),
 })
 
 export const persistor = persistStore(store)
 
+export const resetStore = async () => {
+  await persistor.purge()
+  await persistor.flush()
+}
+
 export type AppDispatch = typeof store.dispatch
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof appReducer>
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,
