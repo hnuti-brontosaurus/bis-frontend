@@ -1,7 +1,27 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../store'
-import { User } from './testApi'
+import {
+  AdministrationUnit,
+  DietCategory,
+  Event,
+  EventCategory,
+  EventGroupCategory,
+  EventIntendedForCategory,
+  EventProgramCategory,
+  EventPropagationImage,
+  Location,
+  Propagation,
+  Question,
+  User,
+} from './testApi'
+
+export type PaginatedList<T> = {
+  count?: number
+  next?: string | null
+  previous?: string | null
+  results?: T[]
+}
 
 export interface LoginRequest {
   email: string
@@ -26,6 +46,7 @@ export const api = createApi({
       return headers
     },
   }),
+  tagTypes: ['User'],
   endpoints: build => ({
     login: build.mutation<LoginResponse, LoginRequest>({
       query: credentials => ({
@@ -57,6 +78,137 @@ export const api = createApi({
     // frontendUsersRetrieve
     getUser: build.query<User, { id: number }>({
       query: ({ id }) => `frontend/users/${id}/`,
+      providesTags: (result, error, { id }) => [{ type: 'User', id }],
+    }),
+    getEventCategories: build.query<PaginatedList<EventCategory>, void>({
+      query: () => ({
+        url: `categories/event_categories/`,
+      }),
+    }),
+    getEventGroups: build.query<PaginatedList<EventGroupCategory>, void>({
+      query: () => ({
+        url: `categories/event_group_categories/`,
+      }),
+    }),
+    getPrograms: build.query<PaginatedList<EventProgramCategory>, void>({
+      query: () => ({
+        url: `categories/event_program_categories/`,
+      }),
+    }),
+    getIntendedFor: build.query<PaginatedList<EventIntendedForCategory>, void>({
+      query: () => ({
+        url: `categories/event_intended_for_categories/`,
+      }),
+    }),
+    getDiets: build.query<PaginatedList<DietCategory>, void>({
+      query: () => ({
+        url: `categories/diet_categories/`,
+      }),
+    }),
+    getAdministrationUnits: build.query<
+      PaginatedList<AdministrationUnit>,
+      { page?: number }
+    >({
+      query: ({ page }) => ({
+        url: `web/administration_units/`,
+        params: {
+          //category: queryArg.category,
+          //ordering: queryArg.ordering,
+          ...(page ? { page } : {}),
+        },
+      }),
+    }),
+    createEvent: build.mutation<Event, EventPayload>({
+      query: event => ({
+        url: `frontend/events/`,
+        method: 'POST',
+        body: event,
+      }),
+    }),
+    readUsers: build.query<
+      PaginatedList<User>,
+      { id?: number[]; search?: string }
+    >({
+      query: ({ id, search }) => ({
+        url: `frontend/users/`,
+        params: {
+          //birthday: queryArg.birthday,
+          //first_name: queryArg.firstName,
+          ...(id ? { id: id.join(',') } : {}),
+          ...(typeof search === 'string' ? { search } : {}),
+          //last_name: queryArg.lastName,
+          //ordering: queryArg.ordering,
+          //page: queryArg.page,
+        },
+      }),
+      providesTags: results =>
+        results?.results
+          ? results.results.map(user => ({
+              type: 'User',
+              id: user.id,
+            }))
+          : [],
+    }),
+    createQuestion: build.mutation<
+      Question,
+      { eventId: number; question: Omit<Question, 'id'> }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
+        method: 'POST',
+        body: queryArg.question,
+      }),
+    }),
+    createImage: build.mutation<
+      EventPropagationImage,
+      { eventId: number; image: Omit<EventPropagationImage, 'id'> }
+    >({
+      query: ({ eventId, image }) => ({
+        url: `frontend/events/${eventId}/propagation/images/`,
+        method: 'POST',
+        body: image,
+      }),
+    }),
+    readLocations: build.query<
+      PaginatedList<Location>,
+      {
+        /** Více hodnot lze oddělit čárkami. */
+        id?: number[]
+        /** A page number within the paginated result set. */
+        page?: number
+        /** Number of results to return per page. */
+        pageSize?: number
+        /** A search term. */
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/locations/`,
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readLocation: build.query<Location, { id: number }>({
+      query: queryArg => ({ url: `frontend/locations/${queryArg.id}/` }),
     }),
   }),
 })
+
+export type PropagationPayload = Omit<Propagation, 'diets'> & {
+  diets: number[]
+}
+
+export type EventPayload = Omit<
+  Event,
+  'intended_for' | 'group' | 'category' | 'program' | 'propagation'
+> & {
+  group: number
+  category: number
+  program: number
+  intended_for: number
+  propagation?: PropagationPayload | null
+}
