@@ -198,6 +198,26 @@ export const api = createApi({
     readLocation: build.query<Location, { id: number }>({
       query: queryArg => ({ url: `frontend/locations/${queryArg.id}/` }),
     }),
+    readOrganizedEvents: build.query<
+      PaginatedList<Event>,
+      {
+        userId: number
+        id?: number[]
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/events_where_was_organizer/`,
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
   }),
 })
 
