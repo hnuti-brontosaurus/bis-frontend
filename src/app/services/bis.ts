@@ -55,6 +55,9 @@ export const api = createApi({
         body: credentials,
       }),
     }),
+    logout: build.mutation<void, void>({
+      query: () => ({ url: `auth/logout/`, method: 'POST' }),
+    }),
     sendResetPasswordLink: build.mutation<unknown, { email: string }>({
       query: body => ({
         url: 'auth/send_verification_link/',
