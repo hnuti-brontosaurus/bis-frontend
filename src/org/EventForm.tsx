@@ -1,34 +1,44 @@
-import { Fragment, useEffect } from 'react'
+import merge from 'lodash/merge'
+import { FC, Fragment, useEffect } from 'react'
 import {
   Controller,
   FormProvider,
   useFieldArray,
   useForm,
 } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import Select from 'react-select'
-import { api, EventPayload } from './app/services/bis'
+import type { Optional } from 'utility-types'
+import { api, EventPayload } from '../app/services/bis'
 import {
   AdministrationUnit,
   EventPropagationImage,
   Location,
   Question,
-} from './app/services/testApi'
-import FormInputError from './components/FormInputError'
+} from '../app/services/testApi'
+import FormInputError from '../components/FormInputError'
 import SelectUsers, {
   SelectByQuery,
   SelectUser,
-} from './components/SelectUsers'
-import { Step, Steps } from './components/Steps'
-import { useAllPages } from './hooks/allPages'
+} from '../components/SelectUsers'
+import { Step, Steps } from '../components/Steps'
+import { useAllPages } from '../hooks/allPages'
 import {
   file2base64,
   getIdBySlug,
   getIdsBySlugs,
   requireBoolean,
-} from './utils/helpers'
+} from '../utils/helpers'
 
-const CreateEvent = () => {
+export type FormShape = EventPayload & {
+  questions: Optional<Question, 'id' | 'order'>[]
+  main_image?: Optional<EventPropagationImage, 'id' | 'order'>
+  images: Optional<EventPropagationImage, 'id' | 'order'>[]
+}
+
+const EventForm: FC<{
+  initialData?: FormShape
+  onSubmit: (data: FormShape) => void
+}> = ({ onSubmit, initialData }) => {
   let i = 0
   const formMethods = useForm<
     EventPayload & {
@@ -37,18 +47,20 @@ const CreateEvent = () => {
       images: Omit<EventPropagationImage, 'id' | 'order'>[]
     }
   >({
-    defaultValues: {
-      finance: null,
-      record: null,
-      propagation: {
-        accommodation: '.',
-        organizers: '.',
-        working_days: 0,
+    defaultValues: merge(
+      {},
+      {
+        finance: null,
+        record: null,
+        propagation: {
+          accommodation: '.',
+          organizers: '.',
+          working_days: 0,
+        },
       },
-    },
+      initialData,
+    ),
   })
-
-  const navigate = useNavigate()
 
   const {
     register,
@@ -70,13 +82,6 @@ const CreateEvent = () => {
     control,
     name: 'images',
   })
-
-  const [createEvent, { isLoading: isSavingEvent }] =
-    api.endpoints.createEvent.useMutation()
-  const [createQuestion, { isLoading: isSavingQuestions }] =
-    api.endpoints.createQuestion.useMutation()
-  const [createImage, { isLoading: isSavingImages }] =
-    api.endpoints.createImage.useMutation()
 
   const { data: categories, isLoading: isEventCategoriesLoading } =
     api.endpoints.getEventCategories.useQuery()
@@ -128,7 +133,7 @@ const CreateEvent = () => {
     })
 
     return () => subscription.unsubscribe()
-  }, [watch])
+  }, [watch, intendedFor?.results, unregister, setValue])
 
   if (
     isEventCategoriesLoading ||
@@ -141,44 +146,12 @@ const CreateEvent = () => {
   )
     return <div>Loading (event stuff)</div>
 
-  if (isSavingEvent || isSavingQuestions || isSavingImages)
-    return <div>Saving event</div>
-
-  const handleFormSubmit = handleSubmit(
-    async ({ main_image, images, questions, ...data }) => {
-      if (data.registration) {
-        data.registration.is_event_full = Boolean(
-          data.registration.is_event_full,
-        )
-      }
-      console.log('data!', data)
-      const event = await createEvent(data).unwrap()
-      if (questions) {
-        await Promise.all(
-          questions.map((question, order) =>
-            createQuestion({
-              eventId: event.id,
-              question: { ...question, order },
-            }).unwrap(),
-          ),
-        )
-      }
-
-      const allImages = [
-        ...(main_image ? [main_image] : []),
-        ...(images ?? []),
-      ].filter(({ image }) => Boolean(image))
-      await Promise.all(
-        allImages.map((image, order) =>
-          createImage({
-            eventId: event.id,
-            image: { ...image, order },
-          }).unwrap(),
-        ),
-      )
-      navigate(`/org/akce/${event.id}`)
-    },
-  )
+  const handleFormSubmit = handleSubmit(data => {
+    if (data.registration) {
+      data.registration.is_event_full = Boolean(data.registration.is_event_full)
+    }
+    onSubmit(data)
+  })
 
   return (
     <div>
@@ -491,7 +464,7 @@ const CreateEvent = () => {
               </div>
             </Step>
             <Step
-              name="random (TODO)"
+              name="přihlášení"
               fields={[
                 'is_internal',
                 'propagation.is_shown_on_web',
@@ -594,13 +567,6 @@ const CreateEvent = () => {
                     tlačítko “chci jet”:
                   </header>
                 </div>
-                <pre>
-                  {`standardní přihláška na brontowebu (doporučujeme!) -  Je jednotná pro celé HB. Do této přihlášky si můžete přidat 4 vlastní otázky. Vyplněné údaje se pak rovnou zobrazí v BIS, což tobě i kanceláři ulehčí práci.
-jiná elektornická přihláška -  Přesměruje zájemce na vaši přihlášku. 
-přihlášení na e-mail organizátora - Přesměruje zájemce na outlook s kontaktním emailem.
-Registrace není potřeba, stačí přijít - Zobrazí se jako text u vaší akce.
-Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaší akce.)`}
-                </pre>
                 <div>
                   Je požadována registrace?
                   <FormInputError>
@@ -700,6 +666,7 @@ Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaš
                     append
                   </button>
                 </div>
+                {/*
                 <pre>
                   {`
 Způsob přihlášení *! (help?: Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se zobrazí po kliknutí na tlačítko “chci jet”:
@@ -731,9 +698,10 @@ při vybrání možnosti “jiná elektronická přihláška” se zobrazí pol�
 URL tvé přihlášky
 Fce: proklik na přihlášky vytvořenou externě`}
                 </pre>
+*/}
               </div>
             </Step>
-            <Step name="lokace (TODO)" fields={['location']}>
+            <Step name="lokace" fields={['location']}>
               <div>{++i}. Lokace (TODO)</div>
               <FormInputError>
                 <Controller
@@ -1127,4 +1095,4 @@ Fce: proklik na přihlášky vytvořenou externě`}
   )
 }
 
-export default CreateEvent
+export default EventForm

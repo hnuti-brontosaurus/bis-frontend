@@ -218,6 +218,45 @@ export const api = createApi({
         },
       }),
     }),
+    readEvent: build.query<Event, { id: number }>({
+      query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
+    }),
+    readEventImages: build.query<
+      PaginatedList<EventPropagationImage>,
+      {
+        eventId: number
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/propagation/images/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readEventQuestions: build.query<
+      PaginatedList<Question>,
+      {
+        eventId: number
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
   }),
 })
 
