@@ -46,7 +46,7 @@ export const api = createApi({
       return headers
     },
   }),
-  tagTypes: ['User'],
+  tagTypes: ['User', 'Event', 'EventImage', 'EventQuestion'],
   endpoints: build => ({
     login: build.mutation<LoginResponse, LoginRequest>({
       query: credentials => ({
@@ -121,13 +121,6 @@ export const api = createApi({
         },
       }),
     }),
-    createEvent: build.mutation<Event, EventPayload>({
-      query: event => ({
-        url: `frontend/events/`,
-        method: 'POST',
-        body: event,
-      }),
-    }),
     readUsers: build.query<
       PaginatedList<User>,
       { id?: number[]; search?: string }
@@ -151,26 +144,6 @@ export const api = createApi({
               id: user.id,
             }))
           : [],
-    }),
-    createQuestion: build.mutation<
-      Question,
-      { eventId: number; question: Omit<Question, 'id'> }
-    >({
-      query: queryArg => ({
-        url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
-        method: 'POST',
-        body: queryArg.question,
-      }),
-    }),
-    createImage: build.mutation<
-      EventPropagationImage,
-      { eventId: number; image: Omit<EventPropagationImage, 'id'> }
-    >({
-      query: ({ eventId, image }) => ({
-        url: `frontend/events/${eventId}/propagation/images/`,
-        method: 'POST',
-        body: image,
-      }),
     }),
     readLocations: build.query<
       PaginatedList<Location>,
@@ -218,8 +191,34 @@ export const api = createApi({
         },
       }),
     }),
+    createEvent: build.mutation<Event, EventPayload>({
+      query: event => ({
+        url: `frontend/events/`,
+        method: 'POST',
+        body: event,
+      }),
+    }),
     readEvent: build.query<Event, { id: number }>({
       query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
+      providesTags: (result, error, { id }) => [{ type: 'Event', id }],
+    }),
+    updateEvent: build.mutation<Event, { id: number; event: EventPayload }>({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.id}/`,
+        method: 'PUT',
+        body: queryArg.event,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Event', id }],
+    }),
+    createEventImage: build.mutation<
+      EventPropagationImage,
+      { eventId: number; image: Omit<EventPropagationImage, 'id'> }
+    >({
+      query: ({ eventId, image }) => ({
+        url: `frontend/events/${eventId}/propagation/images/`,
+        method: 'POST',
+        body: image,
+      }),
     }),
     readEventImages: build.query<
       PaginatedList<EventPropagationImage>,
@@ -237,6 +236,55 @@ export const api = createApi({
           page_size: queryArg.pageSize,
           search: queryArg.search,
         },
+      }),
+      providesTags: (results, error, { eventId }) =>
+        results?.results
+          ? results.results
+              .map(image => ({
+                type: 'EventImage' as const,
+                id: `${eventId}_${image.id}`,
+              }))
+              .concat([
+                { type: 'EventImage' as const, id: `${eventId}_IMAGE_LIST` },
+              ])
+          : [],
+    }),
+    updateEventImage: build.mutation<
+      EventPropagationImage,
+      {
+        eventId: number
+        id: number
+        image: Partial<Omit<EventPropagationImage, 'id'>>
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/propagation/images/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.image,
+      }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'EventImage', id: `${eventId}_${id}` },
+        { type: 'EventImage', id: `${eventId}_IMAGE_LIST` },
+      ],
+    }),
+    removeEventImage: build.mutation<void, { eventId: number; id: number }>({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/propagation/images/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, { id, eventId }) => [
+        { type: 'EventImage', id: `${eventId}_${id}` },
+        { type: 'EventImage', id: `${eventId}_IMAGE_LIST` },
+      ],
+    }),
+    createEventQuestion: build.mutation<
+      Question,
+      { eventId: number; question: Omit<Question, 'id'> }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
+        method: 'POST',
+        body: queryArg.question,
       }),
     }),
     readEventQuestions: build.query<
@@ -256,6 +304,44 @@ export const api = createApi({
           search: queryArg.search,
         },
       }),
+      providesTags: (results, error, { eventId }) =>
+        results?.results
+          ? results.results
+              .map(question => ({
+                type: 'EventQuestion' as const,
+                id: `${eventId}_${question.id}`,
+              }))
+              .concat([
+                {
+                  type: 'EventQuestion' as const,
+                  id: `${eventId}_QUESTION_LIST`,
+                },
+              ])
+          : [],
+    }),
+    updateEventQuestion: build.mutation<
+      Question,
+      { eventId: number; id: number; question: Partial<Omit<Question, 'id'>> }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.question,
+      }),
+      invalidatesTags: (_result, _error, { id, eventId }) => [
+        { type: 'EventQuestion', id: `${eventId}_${id}` },
+        { type: 'EventQuestion', id: `${eventId}_QUESTION_LIST` },
+      ],
+    }),
+    removeEventQuestion: build.mutation<void, { eventId: number; id: number }>({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, { id, eventId }) => [
+        { type: 'EventQuestion', id: `${eventId}_${id}` },
+        { type: 'EventQuestion', id: `${eventId}_QUESTION_LIST` },
+      ],
     }),
   }),
 })

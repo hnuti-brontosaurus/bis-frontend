@@ -7,10 +7,10 @@ const CreateEvent = () => {
 
   const [createEvent, { isLoading: isSavingEvent }] =
     api.endpoints.createEvent.useMutation()
-  const [createQuestion, { isLoading: isSavingQuestions }] =
-    api.endpoints.createQuestion.useMutation()
-  const [createImage, { isLoading: isSavingImages }] =
-    api.endpoints.createImage.useMutation()
+  const [createEventQuestion, { isLoading: isSavingQuestions }] =
+    api.endpoints.createEventQuestion.useMutation()
+  const [createEventImage, { isLoading: isSavingImages }] =
+    api.endpoints.createEventImage.useMutation()
 
   if (isSavingEvent || isSavingQuestions || isSavingImages)
     return <div>Saving event</div>
@@ -28,7 +28,7 @@ const CreateEvent = () => {
     if (questions) {
       await Promise.all(
         questions.map((question, order) =>
-          createQuestion({
+          createEventQuestion({
             eventId: event.id,
             question: { ...question, order },
           }).unwrap(),
@@ -42,7 +42,7 @@ const CreateEvent = () => {
     ].filter(({ image }) => Boolean(image))
     await Promise.all(
       allImages.map((image, order) =>
-        createImage({
+        createEventImage({
           eventId: event.id,
           image: { ...image, order },
         }).unwrap(),
