@@ -1,12 +1,13 @@
 import { Route } from 'react-router-dom'
 import AdminRedirect from './AdminRedirect'
 import { Routes } from './config/sentry'
-import CreateEvent from './CreateEvent'
 import Home from './Home'
 import Login from './Login'
 import NotFound from './NotFound'
 import ActiveEvents from './org/ActiveEvents'
 import AllEvents from './org/AllEvents'
+import CreateEvent from './org/CreateEvent'
+import EditEvent from './org/EditEvent'
 import EventsLayout from './org/EventsLayout'
 import OrgHome from './org/Home'
 import UnifinishedEvents from './org/UnfinishedEvents'
@@ -33,6 +34,9 @@ function App() {
         <Route path="org" element={<OrganizerOutlet />}>
           <Route index element={<OrgHome />} />
           <Route path="akce/vytvorit" element={<CreateEvent />} />
+          <Route path="akce/:eventId">
+            <Route path="upravit" element={<EditEvent />} />
+          </Route>
           <Route path="akce" element={<EventsLayout />}>
             <Route path="aktualni" element={<ActiveEvents />} />
             <Route path="vsechny" element={<AllEvents />} />
