@@ -215,6 +215,7 @@ export const api = createApi({
         method: 'POST',
         body: event,
       }),
+      invalidatesTags: () => [{ type: 'Event', id: 'ORGANIZED_EVENT_LIST' }],
     }),
     readEvent: build.query<Event, { id: number }>({
       query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
@@ -226,7 +227,10 @@ export const api = createApi({
         method: 'PUT',
         body: queryArg.event,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Event', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Event', id },
+        { type: 'Event', id: 'ORGANIZED_EVENT_LIST' },
+      ],
     }),
     removeEvent: build.mutation<void, { id: number }>({
       query: queryArg => ({
