@@ -1,10 +1,11 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import { Event, EventPropagationImage, Question } from '../app/services/testApi'
 import EventForm, { FormShape } from './EventForm'
 
 const EditEvent = () => {
   const params = useParams()
+  const navigate = useNavigate()
   const eventId = Number(params.eventId)
   const {
     data: event,
@@ -141,6 +142,8 @@ const EditEvent = () => {
       ...patchedQuestionPromises,
       ...deletedQuestionPromises,
     ])
+
+    await navigate(`/org/akce/${eventId}`)
   }
 
   return (

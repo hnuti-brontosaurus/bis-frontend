@@ -11,6 +11,7 @@ import EditEvent from './org/EditEvent'
 import EventsLayout from './org/EventsLayout'
 import OrgHome from './org/Home'
 import UnifinishedEvents from './org/UnfinishedEvents'
+import ViewEvent from './org/ViewEvent'
 import ResetPassword from './ResetPassword'
 import SendResetPasswordLink from './SendResetPasswordLink'
 import AuthenticatedOutlet from './utils/AuthenticatedOutlet'
@@ -35,6 +36,7 @@ function App() {
           <Route index element={<OrgHome />} />
           <Route path="akce/vytvorit" element={<CreateEvent />} />
           <Route path="akce/:eventId">
+            <Route index element={<ViewEvent />} />
             <Route path="upravit" element={<EditEvent />} />
           </Route>
           <Route path="akce" element={<EventsLayout />}>
