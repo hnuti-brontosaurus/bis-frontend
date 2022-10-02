@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
-import styles from './OrgHome.module.scss'
+import styles from './Home.module.scss'
 
-const OrgHome = () => (
+const Home = () => (
   <div>
     <nav className={styles.mainMenu}>
       <Link to="akce/vytvorit">Nová akce</Link>
-      <Link to="akce/upravit">Upravit akci</Link>
-      <Link to="akce/uzavrit">Po akci</Link>
+      <Link to="akce/aktualni">Upravit akci</Link>
+      <Link to="akce/nevyplnene">Po akci</Link>
       <Link to="rozcestnik">Rozcestník</Link>
     </nav>
 
@@ -14,4 +14,4 @@ const OrgHome = () => (
   </div>
 )
 
-export default OrgHome
+export default Home
