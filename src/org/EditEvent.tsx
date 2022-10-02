@@ -167,20 +167,20 @@ const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
   return aOrder - bOrder
 }
 
-const event2payload = (
-  event: Event,
+export const event2payload = (
+  event: Partial<Event>,
   questions: Question[],
   images: EventPropagationImage[],
-): FormShape => {
+): Partial<FormShape> => {
   const [main_image, ...otherImages] = [...images].sort(sortOrder)
 
   return (
     event && {
       ...event,
-      group: event.group.id,
-      category: event.category.id,
-      program: event.program.id,
-      intended_for: event.intended_for.id,
+      group: event?.group?.id,
+      category: event?.category?.id,
+      program: event?.program?.id,
+      intended_for: event?.intended_for?.id,
       propagation: event.propagation && {
         ...event.propagation,
         diets: event.propagation.diets.map(diet => diet.id),
