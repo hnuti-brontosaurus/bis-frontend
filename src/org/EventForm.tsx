@@ -36,7 +36,7 @@ export type FormShape = EventPayload & {
 }
 
 const EventForm: FC<{
-  initialData?: FormShape
+  initialData?: Partial<FormShape>
   onSubmit: (data: FormShape) => void
 }> = ({ onSubmit, initialData }) => {
   let i = 0
