@@ -190,6 +190,24 @@ export const api = createApi({
           search: queryArg.search,
         },
       }),
+      providesTags: (results, error, { userId, id, page }) =>
+        results?.results
+          ? [
+              ...results.results.map(event => ({
+                type: 'Event' as const,
+                id: event.id,
+              })),
+              {
+                type: 'Event' as const,
+                id: `ORGANIZED_EVENT_LIST`,
+              },
+            ]
+          : [
+              {
+                type: 'Event' as const,
+                id: `ORGANIZED_EVENT_LIST`,
+              },
+            ],
     }),
     createEvent: build.mutation<Event, EventPayload>({
       query: event => ({
@@ -209,6 +227,16 @@ export const api = createApi({
         body: queryArg.event,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Event', id }],
+    }),
+    removeEvent: build.mutation<void, { id: number }>({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Event', id },
+        { type: 'Event', id: 'ORGANIZED_EVENT_LIST' },
+      ],
     }),
     createEventImage: build.mutation<
       EventPropagationImage,

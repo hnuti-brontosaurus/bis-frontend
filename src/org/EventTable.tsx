@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom'
 import { Event } from '../app/services/testApi'
 
 import { useMemo } from 'react'
+import 'react-confirm-alert/src/react-confirm-alert.css'
 import { api } from '../app/services/bis'
 import { useQueries } from '../hooks/queries'
+import { useRemoveEvent } from '../hooks/removeEvent'
 
 const EventTable: FC<{
   events: Event[]
@@ -21,6 +23,9 @@ const EventTable: FC<{
       [events],
     ),
   )
+
+  const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
+
   return (
     <table>
       <thead>
@@ -66,7 +71,14 @@ const EventTable: FC<{
                     klonovat
                   </Link>
                 </MenuItem>
-                <MenuItem>smazat</MenuItem>
+                <MenuItem>
+                  <button
+                    disabled={isEventRemoving}
+                    onClick={() => removeEvent(event)}
+                  >
+                    smazat
+                  </button>
+                </MenuItem>
               </Menu>
             </td>
           </tr>
