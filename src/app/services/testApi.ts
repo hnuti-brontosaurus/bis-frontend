@@ -2457,8 +2457,7 @@ export type Propagation = {
   is_shown_on_web: boolean
   minimum_age?: number | null
   maximum_age?: number | null
-  cost: number
-  discounted_cost?: number | null
+  cost: string
   accommodation: string
   working_hours?: number | null
   working_days?: number | null

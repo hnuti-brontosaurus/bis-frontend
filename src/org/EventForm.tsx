@@ -726,7 +726,6 @@ Fce: proklik na přihlášky vytvořenou externě`}
               name="info pro účastníky"
               fields={[
                 'propagation.cost',
-                'propagation.discounted_cost',
                 'propagation.minimum_age',
                 'propagation.maximum_age',
                 'propagation.accommodation',
@@ -745,15 +744,8 @@ Fce: proklik na přihlášky vytvořenou externě`}
                 částka{' '}
                 <FormInputError>
                   <input
-                    type="number"
+                    type="string"
                     {...register('propagation.cost', { required: 'required' })}
-                  />
-                </FormInputError>
-                snížený poplatek{' '}
-                <FormInputError>
-                  <input
-                    type="number"
-                    {...register('propagation.discounted_cost')}
                   />
                 </FormInputError>
                 <div>
