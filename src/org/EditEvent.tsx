@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { api } from '../app/services/bis'
+import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import { Event, EventPropagationImage, Question } from '../app/services/testApi'
+import { useBase64Images } from '../hooks/base64Images'
 import EventForm, { FormShape } from './EventForm'
 
 const EditEvent = () => {
@@ -13,8 +14,17 @@ const EditEvent = () => {
     isError,
   } = api.endpoints.readEvent.useQuery({ id: eventId })
 
-  const { data: images, isLoading: isImagesLoading } =
-    api.endpoints.readEventImages.useQuery({ eventId })
+  const {
+    data: images,
+    isLoading: isImagesLoading,
+    isConverting,
+  } = useBase64Images<CorrectEventPropagationImage, any, any, any>(
+    api.endpoints.readEventImages,
+    {
+      eventId,
+    },
+  )
+
   const { data: questions, isLoading: isQuestionsLoading } =
     api.endpoints.readEventQuestions.useQuery({ eventId })
 
@@ -54,7 +64,7 @@ const EditEvent = () => {
       // images with id, but with different
       else {
         // find original image
-        const originalImage = images.results!.find(img => img.id === image.id)
+        const originalImage = images.find(img => img.id === image.id)
 
         // if they're same, ignore
         if (
@@ -80,7 +90,7 @@ const EditEvent = () => {
     })
 
     // delete any image that is missing
-    const imagesToDelete: { id: number }[] = images.results!.filter(
+    const imagesToDelete: { id: number }[] = images.filter(
       img => !imagesWithOrder.find(image => image.id === img.id),
     )
 
@@ -148,11 +158,7 @@ const EditEvent = () => {
 
   return (
     <EventForm
-      initialData={event2payload(
-        event,
-        questions?.results ?? [],
-        images?.results ?? [],
-      )}
+      initialData={event2payload(event, questions?.results ?? [], images ?? [])}
       onSubmit={handleSubmit}
     />
   )

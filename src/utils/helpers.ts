@@ -33,9 +33,40 @@ const addFilename = (url: string, filename: string) => {
   const [data, ...rest] = url.split(';')
   return [
     data,
-    `filename=${filename.substring(0, filename.lastIndexOf('.')) || filename}`,
+    `filename=${getFilenameWithoutExtension(filename)}`,
     ...rest,
   ].join(';')
+}
+
+const getFilenameFromUrl = (url: string): string =>
+  url.split('/').pop() as string
+
+const getFilenameWithoutExtension = (filename: string): string =>
+  filename.substring(0, filename.lastIndexOf('.')) || filename
+
+/*
+https://stackoverflow.com/a/20285053
+
+fetch image and convert it to base64
+*/
+export const toDataURL = async (url: string): Promise<string> => {
+  const response = await fetch(
+    process.env.REACT_APP_CORS_PROXY
+      ? process.env.REACT_APP_CORS_PROXY + url
+      : url,
+  )
+  const blob = await response.blob()
+  const dataURL = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+
+  return addFilename(
+    dataURL,
+    getFilenameWithoutExtension(getFilenameFromUrl(url)),
+  )
 }
 
 /**
