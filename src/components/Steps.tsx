@@ -11,6 +11,7 @@ export const Steps: FC<{
     | FunctionComponentElement<{
         name: string
         fields?: string[]
+        hidden?: boolean
       }>[]
     | FunctionComponentElement<{
         name: string
@@ -21,7 +22,8 @@ export const Steps: FC<{
   const elementProps = Children.map(children, element => ({
     name: element.props.name,
     errors: element.props.fields ?? [],
-  }))
+    hidden: element.props.hidden,
+  })).filter(element => !element.hidden)
   const methods = useFormContext()
 
   const hasErrors = (errors: string[]): boolean =>
@@ -71,4 +73,5 @@ export const Step: FC<{
   name: string
   fields?: string[]
   children: ReactNode
+  hidden?: boolean
 }> = ({ children }) => <>{children}</>

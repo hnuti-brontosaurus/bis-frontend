@@ -154,6 +154,7 @@ const EditEvent = () => {
         images?.results ?? [],
       )}
       onSubmit={handleSubmit}
+      eventToEdit={true}
     />
   )
 }
