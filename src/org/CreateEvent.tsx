@@ -1,6 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { api } from '../app/services/bis'
+import { api, CorrectEventPropagationImage } from '../app/services/bis'
+import { useBase64Images } from '../hooks/base64Images'
 import { event2payload } from './EditEvent'
 import EventForm, { FormShape } from './EventForm'
 
@@ -18,10 +19,14 @@ const CreateEvent = () => {
   )
 
   // TODO images are urls, currently API doesn't accept them
-  const { data: images, isLoading: isImagesLoading } =
-    api.endpoints.readEventImages.useQuery(
-      cloneEventId > 0 ? { eventId: cloneEventId } : skipToken,
-    )
+  const {
+    data: images,
+    isLoading: isImagesLoading,
+    isConverting,
+  } = useBase64Images<CorrectEventPropagationImage, any, any, any>(
+    api.endpoints.readEventImages,
+    cloneEventId > 0 ? { eventId: cloneEventId } : skipToken,
+  )
 
   const { data: questions, isLoading: isQuestionsLoading } =
     api.endpoints.readEventQuestions.useQuery(
@@ -93,11 +98,7 @@ const CreateEvent = () => {
         eventToClone &&
         images &&
         questions &&
-        event2payload(
-          eventToCloneFixed,
-          questions.results ?? [],
-          images.results ?? [],
-        )
+        event2payload(eventToCloneFixed, questions.results ?? [], images ?? [])
       }
     />
   )

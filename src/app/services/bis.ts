@@ -1,5 +1,6 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { Overwrite } from 'utility-types'
 import { RootState } from '../store'
 import {
   AdministrationUnit,
@@ -17,10 +18,10 @@ import {
 } from './testApi'
 
 export type PaginatedList<T> = {
-  count?: number
-  next?: string | null
-  previous?: string | null
-  results?: T[]
+  count: number
+  next: string | null
+  previous: string | null
+  results: T[]
 }
 
 export interface LoginRequest {
@@ -251,9 +252,12 @@ export const api = createApi({
         method: 'POST',
         body: image,
       }),
+      invalidatesTags: (result, error, { eventId }) => [
+        { type: 'EventImage', id: `${eventId}_IMAGE_LIST` },
+      ],
     }),
     readEventImages: build.query<
-      PaginatedList<EventPropagationImage>,
+      PaginatedList<CorrectEventPropagationImage>,
       {
         eventId: number
         page?: number
@@ -392,3 +396,15 @@ export type EventPayload = Omit<
   intended_for: number
   propagation?: PropagationPayload | null
 }
+
+type CorrectImage = {
+  small: string
+  medium: string
+  large: string
+  original: string
+}
+
+export type CorrectEventPropagationImage = Overwrite<
+  EventPropagationImage,
+  { image: CorrectImage }
+>
