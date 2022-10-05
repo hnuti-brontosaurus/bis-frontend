@@ -99,6 +99,7 @@ const CreateEvent = () => {
           images.results ?? [],
         )
       }
+      eventToEdit={false}
     />
   )
 }
