@@ -8,7 +8,9 @@ import styles from './Header.module.scss'
 import { useCurrentUser } from './hooks/currentUser'
 
 const getCurrentRole = (user: User): 'organizer' | 'user' =>
-  user.roles.find(role => role.slug === 'organizer') ? 'organizer' : 'user'
+  user.roles.find(role => ['organizer', 'admin'].includes(role.slug))
+    ? 'organizer'
+    : 'user'
 
 const Header = () => {
   const { data: user, isLoading } = useCurrentUser()
