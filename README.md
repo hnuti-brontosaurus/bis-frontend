@@ -20,7 +20,11 @@ REACT_APP_VAR1="something" REACT_APP_VAR2="something_else" yarn build
 - `REACT_APP_SENTRY_DSN` a dsn for Sentry setup
 - `REACT_APP_CORS_PROXY` A proxy which adds CORS headers to images, including trailing slash (default none)
 
-## Running locally with a proxy
+## Running locally with a remote proxy
+
+`REACT_APP_API_BASE_URL="https://bis.proxy.mrkvon.org/https://dev.bis.lomic.cz/api/" REACT_APP_CORS_PROXY="https://bis.proxy.mrkvon.org/" yarn start`
+
+## Running locally with a local proxy
 
 ### Set up the proxy
 
