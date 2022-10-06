@@ -53,7 +53,9 @@ const EditEvent = () => {
     const imagesWithOrder = [
       ...(updatedMainImage ? [updatedMainImage] : []),
       ...updatedImages,
-    ].map((image, order) => ({ ...image, order }))
+    ]
+      .filter(({ image }) => image) // ignore undefined images
+      .map((image, order) => ({ ...image, order }))
 
     const newImages: { image: string; order: number }[] = []
     const imagesToPatch: { id: number; image?: string; order?: number }[] = []
@@ -89,9 +91,11 @@ const EditEvent = () => {
       }
     })
 
-    // delete any image that is missing
+    // delete any image that is missing, or any image that has image: null
     const imagesToDelete: { id: number }[] = images.filter(
-      img => !imagesWithOrder.find(image => image.id === img.id),
+      img =>
+        (img.id && !img.image) ||
+        !imagesWithOrder.find(image => image.id === img.id),
     )
 
     const newImagePromises = newImages.map(image =>
