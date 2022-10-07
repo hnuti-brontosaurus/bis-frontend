@@ -1,4 +1,4 @@
-import { Event } from '../app/services/testApi'
+import { Event, User } from '../app/services/testApi'
 
 export function getIdBySlug<S extends string>(
   objects: { id: number; slug: S }[],
@@ -98,3 +98,6 @@ const shouldBeFinishedUntil = (event: Event): number => {
 
   return finishUntil.getTime()
 }
+
+export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
+  Boolean(user.roles.find(role => ['organizer', 'admin'].includes(role.slug)))
