@@ -1,8 +1,10 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 import { api } from '../../app/services/bis'
+import { User } from '../../app/services/testApi'
 import { RootState } from '../../app/store'
 
 type AuthState = {
+  user: User | null
   token: string | null
 }
 
@@ -32,5 +34,5 @@ const slice = createSlice({
 
 export default slice.reducer
 
-export const selectCurrentUser = (state: RootState) =>
-  state.auth.token ? { name: 'asdf' } : undefined
+export const selectAuthenticated = (state: RootState) =>
+  Boolean(state.auth.token)
