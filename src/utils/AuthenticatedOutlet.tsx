@@ -1,12 +1,12 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import AuthenticatedLayout from '../AuthenticatedLayout'
-import { useAuth } from '../hooks/auth'
+import { useCurrentUser } from '../hooks/currentUser'
 
 const AuthenticatedOutlet = () => {
-  const auth = useAuth()
+  const { isAuthenticated, isLoading, data } = useCurrentUser()
   const location = useLocation()
 
-  if (auth.user) {
+  if (isAuthenticated) {
     return (
       <AuthenticatedLayout>
         <Outlet />

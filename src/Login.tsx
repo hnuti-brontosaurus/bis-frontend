@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { api } from './app/services/bis'
 import styles from './Login.module.scss'
 
@@ -11,7 +11,6 @@ const Login = () => {
   const [error, setError] = useState('')
   const [login, { isLoading: isLoginLoading }] =
     api.endpoints.login.useMutation()
-  const navigate = useNavigate()
 
   const {
     register,
