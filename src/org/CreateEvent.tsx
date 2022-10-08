@@ -39,6 +39,7 @@ const CreateEvent = () => {
     api.endpoints.createEventQuestion.useMutation()
   const [createEventImage, { isLoading: isSavingImages }] =
     api.endpoints.createEventImage.useMutation()
+  const [createLocation] = api.endpoints.createLocation.useMutation()
 
   if (isEventToCloneErrored) return <>Event not found (or different error)</>
 
@@ -55,11 +56,29 @@ const CreateEvent = () => {
     main_image,
     images,
     questions,
+    locationData,
     ...data
   }: FormShape) => {
     if (data.registration) {
       data.registration.is_event_full = Boolean(data.registration.is_event_full)
     }
+    // ***location***
+    if (locationData) {
+      if (!locationData.id) {
+        if (locationData?.gps_location?.coordinates) {
+          locationData.gps_location.type = 'Point'
+          locationData.gps_location.coordinates =
+            locationData.gps_location.coordinates.map(a => +a)
+        }
+        locationData.patron = null
+        locationData.contact_person = null
+
+        const { id } = await createLocation(locationData).unwrap()
+        data.location = id
+      }
+    }
+
+    // save the new event
     const event = await createEvent(data).unwrap()
     if (questions) {
       await Promise.all(

@@ -35,6 +35,7 @@ const EditEvent = () => {
   const [createEventQuestion] = api.endpoints.createEventQuestion.useMutation()
   const [updateEventQuestion] = api.endpoints.updateEventQuestion.useMutation()
   const [removeEventQuestion] = api.endpoints.removeEventQuestion.useMutation()
+  const [createLocation] = api.endpoints.createLocation.useMutation()
 
   if (isEventLoading || !event || !images || !questions)
     return <>Loading Event</>
@@ -44,12 +45,30 @@ const EditEvent = () => {
     main_image: updatedMainImage,
     images: updatedImages,
     questions: updatedQuestions,
+    locationData,
     ...event
   }) => {
+    // ***location***
+    if (locationData) {
+      if (!locationData.id) {
+        if (locationData?.gps_location?.coordinates) {
+          locationData.gps_location.type = 'Point'
+          locationData.gps_location.coordinates =
+            locationData.gps_location.coordinates.map(a => +a)
+        }
+        locationData.patron = null
+        locationData.contact_person = null
+
+        const { id } = await createLocation(locationData).unwrap()
+        event.location = id
+      }
+    }
+
     // update event
     await updateEvent({ id: eventId, event }).unwrap()
     // ***images***
     // get order from position
+
     const imagesWithOrder = [
       ...(updatedMainImage ? [updatedMainImage] : []),
       ...updatedImages,

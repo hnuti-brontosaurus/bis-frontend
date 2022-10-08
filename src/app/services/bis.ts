@@ -146,6 +146,13 @@ export const api = createApi({
             }))
           : [],
     }),
+    createLocation: build.mutation<Location, Omit<Location, 'id'>>({
+      query: queryArg => ({
+        url: `frontend/locations/`,
+        method: 'POST',
+        body: queryArg,
+      }),
+    }),
     readLocations: build.query<
       PaginatedList<Location>,
       {

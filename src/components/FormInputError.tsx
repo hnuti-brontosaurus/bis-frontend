@@ -1,14 +1,26 @@
 import classNames from 'classnames'
 import get from 'lodash/get'
-import { FC, ReactElement } from 'react'
-import { FieldError, useFormContext } from 'react-hook-form'
+import { ReactElement } from 'react'
+import {
+  FieldError,
+  FieldValues,
+  useFormContext,
+  UseFormReturn,
+} from 'react-hook-form'
 import styles from './FormInputError.module.scss'
 
-const FormInputError: FC<{ children: ReactElement; name?: string }> = ({
+function FormInputError<T extends FieldValues>({
   children,
   name,
-}) => {
-  const methods = useFormContext()
+  formMethods,
+}: {
+  children: ReactElement
+  name?: string
+  formMethods?: UseFormReturn<T>
+}) {
+  const defaultMethods = useFormContext()
+
+  const methods = formMethods ?? defaultMethods
 
   const error = get(methods.formState.errors, name ?? children.props.name) as
     | FieldError

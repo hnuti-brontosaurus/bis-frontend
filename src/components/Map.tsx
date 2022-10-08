@@ -3,7 +3,7 @@ import * as L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   MapContainer,
   Marker,
@@ -83,36 +83,50 @@ const Map = ({
   onDeselect,
 }: {
   markers: MarkerType[]
-  selection: number | null
+  selection?: MarkerType
   value?: L.LatLngTuple
   onChange: (location: L.LatLngTuple) => void
   onSelect: (id: number) => void
   onDeselect: () => void
 }) => {
+  const [flyPosition, setFlyPosition] = useState<L.LatLngTuple>()
+
+  useEffect(() => {
+    console.log('flying', selection?.coordinates)
+    if (selection?.coordinates) setFlyPosition(selection.coordinates)
+  }, [selection?.coordinates])
+
+  useEffect(() => {
+    console.log('flying', value)
+    if (value) setFlyPosition(value)
+  }, [value])
+
   return (
-    <MapContainer
-      className={mapStyles.container}
-      center={[49.82381, 15.46875]}
-      zoom={6}
-    >
-      <TileLayer url="https://m1.mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
-      <MapClick onClick={({ lat, lng }) => onChange([lat, lng])} />
-      <MapRefresh />
-      <MapFly value={value} />
-      <MarkerClusterGroup maxClusterRadius={10}>
-        {value && <Marker position={value} icon={newIcon}></Marker>}
-        {markers.map(marker => {
-          return (
-            <Marker
-              key={marker.id}
-              position={marker.coordinates}
-              icon={existentIcon}
-              eventHandlers={{ click: () => onSelect(marker.id) }}
-            ></Marker>
-          )
-        })}
-      </MarkerClusterGroup>
-    </MapContainer>
+    <>
+      <MapContainer
+        className={mapStyles.container}
+        center={[49.82381, 15.46875]}
+        zoom={6}
+      >
+        <TileLayer url="https://m1.mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
+        <MapClick onClick={({ lat, lng }) => onChange([lat, lng])} />
+        <MapRefresh />
+        <MapFly value={flyPosition} />
+        <MarkerClusterGroup maxClusterRadius={10}>
+          {value && <Marker position={value} icon={newIcon}></Marker>}
+          {markers.map(marker => {
+            return (
+              <Marker
+                key={marker.id}
+                position={marker.coordinates}
+                icon={marker.id === selection?.id ? selectedIcon : existentIcon}
+                eventHandlers={{ click: () => onSelect(marker.id) }}
+              ></Marker>
+            )
+          })}
+        </MarkerClusterGroup>
+      </MapContainer>
+    </>
   )
 }
 

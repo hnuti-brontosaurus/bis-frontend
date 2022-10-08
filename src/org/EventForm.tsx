@@ -13,6 +13,7 @@ import { api, EventPayload } from '../app/services/bis'
 import {
   AdministrationUnit,
   EventPropagationImage,
+  Location,
   Question,
 } from '../app/services/testApi'
 import FormInputError from '../components/FormInputError'
@@ -31,6 +32,7 @@ export type FormShape = EventPayload & {
   questions: Optional<Question, 'id' | 'order'>[]
   main_image?: Optional<EventPropagationImage, 'id' | 'order'>
   images: Optional<EventPropagationImage, 'id' | 'order'>[]
+  locationData?: Optional<Location, 'id'>
 }
 
 const EventForm: FC<{
@@ -154,7 +156,7 @@ const EventForm: FC<{
   })
 
   const handleGpsInputSubmit = gpsInputMethods.handleSubmit(data => {
-    console.log('asdf', data)
+    if (!data.gps.trim()) return setCurrentGPS(undefined)
     const [lat, lng] = data.gps!.split(/,\s+/)
     setCurrentGPS([+lat, +lng])
   })
