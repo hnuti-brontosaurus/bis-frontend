@@ -1,11 +1,11 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import type { LatLngTuple } from 'leaflet'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext, UseFormReturn } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import type { Location } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
-import Map, { MarkerType } from '../../../components/Map'
+import Map, { ClearBounds, MarkerType } from '../../../components/Map'
 import { SelectByQuery } from '../../../components/SelectUsers'
 import { FormShape } from '../../EventForm'
 import styles from './LocationStep.module.scss'
@@ -35,6 +35,24 @@ const LocationStep = ({
   // maybe hardcode it, or do some smart component or hook...
   const { watch, control, setValue } = useFormContext<FormShape>()
 
+  const [bounds, setBounds] = useState<ClearBounds>()
+
+  const { data: locations, isLoading } = api.endpoints.readLocations.useQuery(
+    bounds
+      ? {
+          pageSize: 5000,
+        }
+      : skipToken,
+  )
+
+  const locationsWithGPS = useMemo(
+    () =>
+      (locations?.results ?? []).filter(
+        location => location?.gps_location?.coordinates,
+      ),
+    [locations],
+  )
+
   const locationId = watch('location')
 
   const { data: selectedLocation } = api.endpoints.readLocation.useQuery(
@@ -47,28 +65,50 @@ const LocationStep = ({
 
   const actuallySelectedLocation = locationId ? selectedLocation : undefined
 
-  const markers: MarkerType[] = []
-  let selection: MarkerType | undefined = undefined
+  const markers: MarkerType[] = useMemo(() => {
+    const markers: MarkerType[] = locationsWithGPS.map(location => ({
+      type: 'existent',
+      id: location.id,
+      // api has coordinates switched, so we switch them, and we'll have to switch back when saving
+      coordinates: [
+        ...(location.gps_location?.coordinates as [number, number]),
+      ].reverse() as LatLngTuple,
+    }))
 
-  const [isEditing, setIsEditing] = useState(false)
+    if (locationId) {
+      // api has coordinates switched, so we switch them, and we'll have to switch back when saving
+      const selectedMarker = markers.find(marker => marker.id === locationId)
+      if (selectedMarker) {
+        selectedMarker.type = 'selected'
+      } else if (selectedLocation?.gps_location?.coordinates) {
+        const [lng, lat] = selectedLocation.gps_location.coordinates
+        const coordinates = [lat, lng] as LatLngTuple
 
-  if (selectedLocation?.gps_location?.coordinates) {
-    // api has coordinates switched, so we switch them, and we'll have to switch back when saving
-    const [lng, lat] = selectedLocation.gps_location.coordinates
-    const coordinates = [lat, lng] as LatLngTuple
-    markers.push({
-      type: 'selected',
-      coordinates,
-      id: selectedLocation.id,
-    })
+        markers.push({
+          type: 'selected',
+          coordinates,
+          id: selectedLocation.id,
+        })
+      }
+    }
 
-    if (locationId)
-      selection = {
+    return markers
+  }, [selectedLocation, locationsWithGPS, locationId])
+
+  const selection: MarkerType | undefined = useMemo(() => {
+    if (locationId && selectedLocation?.gps_location?.coordinates) {
+      // api has coordinates switched, so we switch them, and we'll have to switch back when saving
+      const [lng, lat] = selectedLocation.gps_location.coordinates
+      const coordinates = [lat, lng] as LatLngTuple
+      return {
         type: 'selected',
         coordinates,
         id: selectedLocation.id,
       }
-  }
+    }
+  }, [selectedLocation, locationId])
+
+  const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     if (currentGPS && isEditing) {
@@ -119,6 +159,7 @@ const LocationStep = ({
           value={currentGPS}
           onChange={onCurrentGPSChange}
           onSelect={id => setValue('location', id)}
+          onChangeBounds={bounds => setBounds(bounds)}
           onDeselect={() => {}}
         />
       </div>

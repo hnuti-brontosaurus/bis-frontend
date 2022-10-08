@@ -40,15 +40,26 @@ export type MarkerType = {
   type: 'new' | 'existent' | 'selected'
 }
 
-const MapClick = ({
+const MapEvents = ({
   onClick,
+  onMoveEnd,
 }: {
   onClick?: (coordinates: L.LatLng) => void
+  onMoveEnd?: (bounds: ClearBounds) => void
 }) => {
   const map = useMapEvents({
     click(e) {
       const ll = map.mouseEventToLatLng(e.originalEvent)
       if (onClick) onClick(ll)
+    },
+    moveend(e) {
+      const bounds = map.getBounds()
+      onMoveEnd?.({
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        west: bounds.getWest(),
+        east: bounds.getEast(),
+      })
     },
   })
   return null
@@ -74,6 +85,13 @@ const MapFly = ({ value }: { value?: L.LatLngTuple }) => {
   return null
 }
 
+export type ClearBounds = {
+  north: number
+  south: number
+  east: number
+  west: number
+}
+
 const Map = ({
   markers,
   selection,
@@ -81,6 +99,7 @@ const Map = ({
   onChange,
   onSelect,
   onDeselect,
+  onChangeBounds,
 }: {
   markers: MarkerType[]
   selection?: MarkerType
@@ -88,13 +107,14 @@ const Map = ({
   onChange: (location: L.LatLngTuple) => void
   onSelect: (id: number) => void
   onDeselect: () => void
+  onChangeBounds?: (bounds: ClearBounds) => void
 }) => {
   const [flyPosition, setFlyPosition] = useState<L.LatLngTuple>()
 
   useEffect(() => {
     console.log('flying', selection?.coordinates)
     if (selection?.coordinates) setFlyPosition(selection.coordinates)
-  }, [selection?.coordinates])
+  }, [selection?.id])
 
   useEffect(() => {
     console.log('flying', value)
@@ -109,7 +129,10 @@ const Map = ({
         zoom={6}
       >
         <TileLayer url="https://m1.mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
-        <MapClick onClick={({ lat, lng }) => onChange([lat, lng])} />
+        <MapEvents
+          onClick={({ lat, lng }) => onChange([lat, lng])}
+          onMoveEnd={onChangeBounds}
+        />
         <MapRefresh />
         <MapFly value={flyPosition} />
         <MarkerClusterGroup maxClusterRadius={10}>

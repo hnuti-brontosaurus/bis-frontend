@@ -1,6 +1,7 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Overwrite } from 'utility-types'
+import { ClearBounds } from '../../components/Map'
 import { RootState } from '../store'
 import {
   AdministrationUnit,
@@ -164,6 +165,8 @@ export const api = createApi({
         pageSize?: number
         /** A search term. */
         search?: string
+        // This doesn't exist, but we want it!
+        bounds?: ClearBounds
       }
     >({
       query: queryArg => ({
@@ -171,7 +174,7 @@ export const api = createApi({
         params: {
           id: queryArg.id,
           page: queryArg.page,
-          page_size: queryArg.pageSize,
+          page_size: queryArg.bounds ? 5000 : queryArg.pageSize, // this will fetch everything (cry)
           search: queryArg.search,
         },
       }),
