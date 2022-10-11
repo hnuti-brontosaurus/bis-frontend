@@ -211,48 +211,59 @@ const EditLocation = ({ onFinish }: { onFinish: () => void }) => {
 
   return (
     <>
-      Název:{' '}
-      <FormInputError>
+      <div>
+        Název:{' '}
+        <FormInputError>
+          <input
+            type="text"
+            {...register('locationData.name', { required: true })}
+          />
+        </FormInputError>
+      </div>
+      <div>
+        Adresa: <input type="text" {...register('locationData.address')} />
+      </div>
+      <div>
+        Popis: <textarea {...register('locationData.description')} />
+      </div>
+      <div>
+        GPS:{' '}
         <input
           type="text"
-          {...register('locationData.name', { required: true })}
+          placeholder="50.01234567"
+          {...register('locationData.gps_location.coordinates.1', {
+            required: true,
+          })}
+        />{' '}
+        <input
+          type="text"
+          placeholder="14.98765432"
+          {...register('locationData.gps_location.coordinates.0', {
+            required: true,
+          })}
         />
-      </FormInputError>
-      Adresa: <input type="text" {...register('locationData.address')} />
-      Popis: <textarea {...register('locationData.description')} />
-      <input
-        type="text"
-        placeholder="50.01234567"
-        {...register('locationData.gps_location.coordinates.1', {
-          required: true,
-        })}
-      />{' '}
-      <input
-        type="text"
-        placeholder="14.98765432"
-        {...register('locationData.gps_location.coordinates.0', {
-          required: true,
-        })}
-      />
-      <button
-        type="button"
-        onClick={() => {
-          setValue('locationData', undefined)
-          onFinish()
-        }}
-      >
-        zrušit
-      </button>{' '}
-      <button
-        type="button"
-        onClick={async () => {
-          if (await trigger('locationData')) {
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={() => {
+            setValue('locationData', undefined)
             onFinish()
-          }
-        }}
-      >
-        ok
-      </button>
+          }}
+        >
+          zrušit
+        </button>{' '}
+        <button
+          type="button"
+          onClick={async () => {
+            if (await trigger('locationData')) {
+              onFinish()
+            }
+          }}
+        >
+          ok
+        </button>
+      </div>
     </>
   )
 }
