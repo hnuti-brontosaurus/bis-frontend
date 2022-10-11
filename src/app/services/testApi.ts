@@ -440,6 +440,87 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/api/categories/team_role_categories/${queryArg.id}/`,
       }),
     }),
+    frontendDashboardItemsList: build.query<
+      FrontendDashboardItemsListApiResponse,
+      FrontendDashboardItemsListApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/dashboard_items/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    frontendDashboardItemsRetrieve: build.query<
+      FrontendDashboardItemsRetrieveApiResponse,
+      FrontendDashboardItemsRetrieveApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/dashboard_items/${queryArg.id}/`,
+      }),
+    }),
+    frontendEventDraftsList: build.query<
+      FrontendEventDraftsListApiResponse,
+      FrontendEventDraftsListApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/event_drafts/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    frontendEventDraftsCreate: build.mutation<
+      FrontendEventDraftsCreateApiResponse,
+      FrontendEventDraftsCreateApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/event_drafts/`,
+        method: 'POST',
+        body: queryArg.eventDraft,
+      }),
+    }),
+    frontendEventDraftsRetrieve: build.query<
+      FrontendEventDraftsRetrieveApiResponse,
+      FrontendEventDraftsRetrieveApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/event_drafts/${queryArg.id}/`,
+      }),
+    }),
+    frontendEventDraftsUpdate: build.mutation<
+      FrontendEventDraftsUpdateApiResponse,
+      FrontendEventDraftsUpdateApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/event_drafts/${queryArg.id}/`,
+        method: 'PUT',
+        body: queryArg.eventDraft,
+      }),
+    }),
+    frontendEventDraftsPartialUpdate: build.mutation<
+      FrontendEventDraftsPartialUpdateApiResponse,
+      FrontendEventDraftsPartialUpdateApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/event_drafts/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedEventDraft,
+      }),
+    }),
+    frontendEventDraftsDestroy: build.mutation<
+      FrontendEventDraftsDestroyApiResponse,
+      FrontendEventDraftsDestroyApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/event_drafts/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+    }),
     frontendEventsList: build.query<
       FrontendEventsListApiResponse,
       FrontendEventsListApiArg
@@ -1510,6 +1591,59 @@ export type CategoriesTeamRoleCategoriesRetrieveApiArg = {
   /** A unique integer value identifying this Týmová role. */
   id: number
 }
+export type FrontendDashboardItemsListApiResponse =
+  /** status 200  */ PaginatedDashboardItemList
+export type FrontendDashboardItemsListApiArg = {
+  /** A page number within the paginated result set. */
+  page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
+}
+export type FrontendDashboardItemsRetrieveApiResponse =
+  /** status 200  */ DashboardItem
+export type FrontendDashboardItemsRetrieveApiArg = {
+  id: string
+}
+export type FrontendEventDraftsListApiResponse =
+  /** status 200  */ PaginatedEventDraftList
+export type FrontendEventDraftsListApiArg = {
+  /** A page number within the paginated result set. */
+  page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
+}
+export type FrontendEventDraftsCreateApiResponse = /** status 201  */ EventDraft
+export type FrontendEventDraftsCreateApiArg = {
+  eventDraft: EventDraft
+}
+export type FrontendEventDraftsRetrieveApiResponse =
+  /** status 200  */ EventDraft
+export type FrontendEventDraftsRetrieveApiArg = {
+  /** A unique integer value identifying this event draft. */
+  id: number
+}
+export type FrontendEventDraftsUpdateApiResponse = /** status 200  */ EventDraft
+export type FrontendEventDraftsUpdateApiArg = {
+  /** A unique integer value identifying this event draft. */
+  id: number
+  eventDraft: EventDraft
+}
+export type FrontendEventDraftsPartialUpdateApiResponse =
+  /** status 200  */ EventDraft
+export type FrontendEventDraftsPartialUpdateApiArg = {
+  /** A unique integer value identifying this event draft. */
+  id: number
+  patchedEventDraft: PatchedEventDraft
+}
+export type FrontendEventDraftsDestroyApiResponse = unknown
+export type FrontendEventDraftsDestroyApiArg = {
+  /** A unique integer value identifying this event draft. */
+  id: number
+}
 export type FrontendEventsListApiResponse =
   /** status 200  */ PaginatedEventList
 export type FrontendEventsListApiArg = {
@@ -2439,6 +2573,35 @@ export type PaginatedTeamRoleCategoryList = {
   previous?: string | null
   results?: TeamRoleCategory[]
 }
+export type DashboardItem = {
+  date: string
+  name: string
+  description?: string
+}
+export type PaginatedDashboardItemList = {
+  count?: number
+  next?: string | null
+  previous?: string | null
+  results?: DashboardItem[]
+}
+export type EventDraft = {
+  id: number
+  data: {
+    [key: string]: any
+  }
+}
+export type PaginatedEventDraftList = {
+  count?: number
+  next?: string | null
+  previous?: string | null
+  results?: EventDraft[]
+}
+export type PatchedEventDraft = {
+  id?: number
+  data?: {
+    [key: string]: any
+  }
+}
 export type Finance = {
   bank_account_number?: string
   grant_category: GrantCategory
@@ -2496,6 +2659,7 @@ export type Event = {
   id: number
   name: string
   is_canceled?: boolean
+  is_closed?: boolean
   start: string
   end: string
   number_of_sub_events?: number
@@ -2724,6 +2888,7 @@ export type PatchedEvent = {
   id?: number
   name?: string
   is_canceled?: boolean
+  is_closed?: boolean
   start?: string
   end?: string
   number_of_sub_events?: number
@@ -2766,8 +2931,8 @@ export type Location = {
   id: number
   name: string
   description?: string
-  patron: LocationPatron
-  contact_person: LocationContactPerson
+  patron: LocationPatron | null
+  contact_person: LocationContactPerson | null
   for_beginners?: boolean
   is_full?: boolean
   is_unexplored?: boolean
@@ -2797,8 +2962,8 @@ export type PatchedLocation = {
   id?: number
   name?: string
   description?: string
-  patron?: LocationPatron
-  contact_person?: LocationContactPerson
+  patron?: LocationPatron | null
+  contact_person?: LocationContactPerson | null
   for_beginners?: boolean
   is_full?: boolean
   is_unexplored?: boolean
@@ -2956,6 +3121,14 @@ export const {
   useCategoriesSexCategoriesRetrieveQuery,
   useCategoriesTeamRoleCategoriesListQuery,
   useCategoriesTeamRoleCategoriesRetrieveQuery,
+  useFrontendDashboardItemsListQuery,
+  useFrontendDashboardItemsRetrieveQuery,
+  useFrontendEventDraftsListQuery,
+  useFrontendEventDraftsCreateMutation,
+  useFrontendEventDraftsRetrieveQuery,
+  useFrontendEventDraftsUpdateMutation,
+  useFrontendEventDraftsPartialUpdateMutation,
+  useFrontendEventDraftsDestroyMutation,
   useFrontendEventsListQuery,
   useFrontendEventsCreateMutation,
   useFrontendEventsFinanceReceiptsListQuery,
