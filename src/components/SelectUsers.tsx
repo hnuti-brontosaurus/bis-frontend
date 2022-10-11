@@ -82,10 +82,15 @@ type SelectProps = Omit<
 > & {
   value?: number | null | undefined
   onChange: (value: number | null | undefined) => void
+  transform?: (user: User) => {
+    label: string
+    value: number
+    disabled?: boolean
+  }
 }
 
 export const SelectUser = forwardRef<any, SelectProps>(
-  ({ value, onChange, ...rest }, ref) => {
+  ({ value, onChange, transform: transformProp, ...rest }, ref) => {
     const [searchQuery, debouncedSearchQuery, setSearchQuery] =
       useDebouncedState(1000, '')
     const { data: userOptions, isLoading: isOptionsLoading } =
@@ -100,10 +105,12 @@ export const SelectUser = forwardRef<any, SelectProps>(
     const { data: selectedUser, isLoading: isSelectedUserLoading } =
       api.endpoints.getUser.useQuery(value ? { id: value } : skipToken)
 
-    const transform = (user: User) => ({
-      label: user.display_name,
-      value: user.id,
-    })
+    const transform =
+      transformProp ??
+      ((user: User): { label: string; value: number; disabled?: boolean } => ({
+        label: user.display_name,
+        value: user.id,
+      }))
 
     return (
       <>
@@ -122,10 +129,17 @@ export const SelectUser = forwardRef<any, SelectProps>(
           value={
             value && selectedUser && !isSelectedUserLoading
               ? transform(selectedUser)
-              : { label: '', value: '' }
+              : { label: '', value: 0 }
           }
-          defaultValue={{ label: '', value: '' }}
+          defaultValue={
+            { label: '', value: 0 } as {
+              label: string
+              value: number
+              disabled?: boolean
+            }
+          }
           onChange={val => onChange(val ? Number(val.value) : null)}
+          isOptionDisabled={({ disabled }) => Boolean(disabled)}
         />
       </>
     )
