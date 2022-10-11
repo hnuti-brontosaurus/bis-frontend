@@ -65,6 +65,19 @@ const LocationStep = ({
 
   const actuallySelectedLocation = locationId ? selectedLocation : undefined
 
+  useEffect(() => {
+    if (
+      actuallySelectedLocation &&
+      !actuallySelectedLocation?.gps_location?.coordinates
+    ) {
+      setIsEditing(true)
+      setValue('locationData', actuallySelectedLocation)
+    } else {
+      setIsEditing(false)
+      setValue('locationData', undefined)
+    }
+  }, [actuallySelectedLocation, setValue])
+
   const markers: MarkerType[] = useMemo(() => {
     const markers: MarkerType[] = locationsWithGPS.map(location => ({
       type: 'existent',
@@ -170,7 +183,17 @@ const LocationStep = ({
           <ViewLocation
             location={watch('locationData') ?? actuallySelectedLocation}
           />
-          {actuallySelectedLocation ? null : (
+          {actuallySelectedLocation ? (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditing(true)
+                setValue('locationData', actuallySelectedLocation)
+              }}
+            >
+              upravit
+            </button>
+          ) : (
             <button type="button" onClick={() => setIsEditing(true)}>
               vytvořit
             </button>
@@ -200,12 +223,16 @@ const EditLocation = ({ onFinish }: { onFinish: () => void }) => {
       <input
         type="text"
         placeholder="50.01234567"
-        {...register('locationData.gps_location.coordinates.1')}
+        {...register('locationData.gps_location.coordinates.1', {
+          required: true,
+        })}
       />{' '}
       <input
         type="text"
         placeholder="14.98765432"
-        {...register('locationData.gps_location.coordinates.0')}
+        {...register('locationData.gps_location.coordinates.0', {
+          required: true,
+        })}
       />
       <button
         type="button"
@@ -220,7 +247,6 @@ const EditLocation = ({ onFinish }: { onFinish: () => void }) => {
         type="button"
         onClick={async () => {
           if (await trigger('locationData')) {
-            setValue('location', undefined)
             onFinish()
           }
         }}
@@ -239,9 +265,6 @@ const ViewLocation = ({ location }: { location?: Omit<Location, 'id'> }) => {
       <div>
         GPS: {location?.gps_location?.coordinates?.[1]}{' '}
         {location?.gps_location?.coordinates?.[0]}
-      </div>
-      <div>
-        Patron: {location?.patron?.first_name} {location?.patron?.last_name}
       </div>
     </>
   )

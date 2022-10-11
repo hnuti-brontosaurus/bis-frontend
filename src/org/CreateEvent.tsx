@@ -1,6 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api, CorrectEventPropagationImage } from '../app/services/bis'
+import { Location } from '../app/services/testApi'
 import { useBase64Images } from '../hooks/base64Images'
 import { event2payload } from './EditEvent'
 import EventForm, { FormShape } from './EventForm'
@@ -40,6 +41,7 @@ const CreateEvent = () => {
   const [createEventImage, { isLoading: isSavingImages }] =
     api.endpoints.createEventImage.useMutation()
   const [createLocation] = api.endpoints.createLocation.useMutation()
+  const [updateLocation] = api.endpoints.updateLocation.useMutation()
 
   if (isEventToCloneErrored) return <>Event not found (or different error)</>
 
@@ -64,6 +66,7 @@ const CreateEvent = () => {
     }
     // ***location***
     if (locationData) {
+      // create location, when it's new
       if (!locationData.id) {
         if (locationData?.gps_location?.coordinates) {
           locationData.gps_location.type = 'Point'
@@ -75,6 +78,13 @@ const CreateEvent = () => {
 
         const { id } = await createLocation(locationData).unwrap()
         data.location = id
+      }
+      // otherwise update the location
+      else {
+        await updateLocation({
+          id: locationData.id,
+          location: locationData as Location,
+        })
       }
     }
 

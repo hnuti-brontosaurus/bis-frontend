@@ -48,7 +48,7 @@ export const api = createApi({
       return headers
     },
   }),
-  tagTypes: ['User', 'Event', 'EventImage', 'EventQuestion'],
+  tagTypes: ['User', 'Event', 'EventImage', 'EventQuestion', 'Location'],
   endpoints: build => ({
     login: build.mutation<LoginResponse, LoginRequest>({
       query: credentials => ({
@@ -153,6 +153,9 @@ export const api = createApi({
         method: 'POST',
         body: queryArg,
       }),
+      invalidatesTags: () => [
+        { type: 'Location' as const, id: 'LOCATION_LIST' },
+      ],
     }),
     readLocations: build.query<
       PaginatedList<Location>,
@@ -178,9 +181,35 @@ export const api = createApi({
           search: queryArg.search,
         },
       }),
+      providesTags: results =>
+        (results?.results
+          ? results.results.map(
+              location =>
+                ({
+                  type: 'Location' as const,
+                  id: location.id,
+                } as { type: 'Location'; id: 'LOCATION_LIST' | number }),
+            )
+          : []
+        ).concat([{ type: 'Location' as const, id: 'LOCATION_LIST' }]),
     }),
     readLocation: build.query<Location, { id: number }>({
       query: queryArg => ({ url: `frontend/locations/${queryArg.id}/` }),
+      providesTags: (results, _, { id }) => [{ type: 'Location' as const, id }],
+    }),
+    updateLocation: build.mutation<
+      Location,
+      { id: number; location: Partial<Location> }
+    >({
+      query: queryArg => ({
+        url: `frontend/locations/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.location,
+      }),
+      invalidatesTags: (results, _, { id }) => [
+        { type: 'Location' as const, id: 'LOCATION_LIST' },
+        { type: 'Location' as const, id },
+      ],
     }),
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
