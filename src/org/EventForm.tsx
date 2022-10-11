@@ -12,6 +12,9 @@ import type { Optional } from 'utility-types'
 import { api, EventPayload } from '../app/services/bis'
 import {
   AdministrationUnit,
+  EventCategory,
+  EventGroupCategory,
+  EventIntendedForCategory,
   EventPropagationImage,
   Location,
   Question,
@@ -27,6 +30,10 @@ import {
   requireBoolean,
 } from '../utils/helpers'
 import LocationStep from './EventForm/steps/LocationStep'
+import {
+  canBeMainOrganizer,
+  canBeMainOrganizer2,
+} from './EventForm/steps/validateMainOrganizer'
 
 export type FormShape = EventPayload & {
   questions: Optional<Question, 'id' | 'order'>[]
@@ -95,6 +102,10 @@ const EventForm: FC<{
     { isLoading: isAdministrationUnitsLoading },
     isAdministrationUnitsFinished,
   ] = useAllPages(api.endpoints.getAdministrationUnits)
+  const { data: allQualifications, isLoading: isQualificationsLoading } =
+    api.endpoints.readQualifications.useQuery({})
+
+  const [readUser] = api.endpoints.getUser.useLazyQuery()
 
   useEffect(() => {
     // when there is no empty image, add empty image (add button)
@@ -144,7 +155,12 @@ const EventForm: FC<{
     isIntendedForLoading ||
     isDietsLoading ||
     isAdministrationUnitsLoading ||
-    !isAdministrationUnitsFinished
+    !isAdministrationUnitsFinished ||
+    isQualificationsLoading ||
+    !allQualifications ||
+    !intendedFor ||
+    !groups ||
+    !categories
   )
     return <div>Loading (event stuff)</div>
 
@@ -1062,7 +1078,65 @@ Fce: proklik na přihlášky vytvořenou externě`}
                     <Controller
                       name="main_organizer"
                       control={control}
-                      render={({ field }) => <SelectUser {...field} />}
+                      rules={{
+                        required: 'Toto pole je povinné!',
+                        validate: async () => {
+                          try {
+                            const userId = watch('main_organizer')
+                            if (!userId) return 'Toto pole je povinné!'
+                            const user = await readUser({ id: userId }).unwrap()
+                            return canBeMainOrganizer(
+                              {
+                                intended_for: intendedFor?.results.find(
+                                  c => c.id === +watch('intended_for'),
+                                ) as EventIntendedForCategory,
+                                group: groups.results.find(
+                                  g => g.id === +watch('group'),
+                                ) as EventGroupCategory,
+                                category: categories.results.find(
+                                  c => c.id === +watch('category'),
+                                ) as EventCategory,
+                              },
+                              user,
+                              allQualifications.results,
+                            )
+                          } catch (e) {
+                            if (e instanceof Error) return e.message
+                            else return 'Exception...'
+                          }
+                        },
+                      }}
+                      render={({ field }) => (
+                        <SelectUser
+                          {...field}
+                          transform={user => ({
+                            label: `${user.display_name} (${user.qualifications
+                              .filter(
+                                q =>
+                                  new Date(q.valid_since) <= new Date() &&
+                                  new Date() <= new Date(q.valid_till),
+                              )
+                              .map(q => q.category.name)
+                              .join(', ')})`,
+                            value: user.id,
+                            disabled: !canBeMainOrganizer2(
+                              {
+                                intended_for: intendedFor?.results.find(
+                                  c => c.id === +watch('intended_for'),
+                                ) as EventIntendedForCategory,
+                                group: groups.results.find(
+                                  g => g.id === +watch('group'),
+                                ) as EventGroupCategory,
+                                category: categories.results.find(
+                                  c => c.id === +watch('category'),
+                                ) as EventCategory,
+                              },
+                              user,
+                              allQualifications.results,
+                            ),
+                          })}
+                        />
+                      )}
                     />
                   </FormInputError>
                 </div>

@@ -14,6 +14,7 @@ import {
   EventPropagationImage,
   Location,
   Propagation,
+  QualificationCategory,
   Question,
   User,
 } from './testApi'
@@ -120,6 +121,26 @@ export const api = createApi({
           //category: queryArg.category,
           //ordering: queryArg.ordering,
           ...(page ? { page } : {}),
+        },
+      }),
+    }),
+    readQualifications: build.query<
+      PaginatedList<QualificationCategory>,
+      {
+        /** A page number within the paginated result set. */
+        page?: number
+        /** Number of results to return per page. */
+        pageSize?: number
+        /** A search term. */
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `categories/qualification_categories/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
         },
       }),
     }),
