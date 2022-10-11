@@ -4,10 +4,10 @@ import styles from './Home.module.scss'
 const Home = () => (
   <div>
     <nav className={styles.mainMenu}>
-      <Link to="akce/vytvorit">Nová akce</Link>
-      <Link to="akce/aktualni">Upravit akci</Link>
-      <Link to="akce/nevyplnene">Po akci</Link>
-      <Link to="rozcestnik">Rozcestník</Link>
+      <Link to="/org/akce/vytvorit">Nová akce</Link>
+      <Link to="/org/akce/aktualni">Upravit akci</Link>
+      <Link to="/org/akce/nevyplnene">Po akci</Link>
+      <Link to="/org/rozcestnik">Rozcestník</Link>
     </nav>
 
     <img src="asdf.txt" alt="" />

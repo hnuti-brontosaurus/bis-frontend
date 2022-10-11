@@ -1,5 +1,6 @@
+import type { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import {
   Controller,
   FormProvider,
@@ -16,10 +17,7 @@ import {
   Question,
 } from '../app/services/testApi'
 import FormInputError from '../components/FormInputError'
-import SelectUsers, {
-  SelectByQuery,
-  SelectUser,
-} from '../components/SelectUsers'
+import SelectUsers, { SelectUser } from '../components/SelectUsers'
 import { Step, Steps } from '../components/Steps'
 import { useAllPages } from '../hooks/allPages'
 import {
@@ -28,11 +26,13 @@ import {
   getIdsBySlugs,
   requireBoolean,
 } from '../utils/helpers'
+import LocationStep from './EventForm/steps/LocationStep'
 
 export type FormShape = EventPayload & {
   questions: Optional<Question, 'id' | 'order'>[]
   main_image?: Optional<EventPropagationImage, 'id' | 'order'>
   images: Optional<EventPropagationImage, 'id' | 'order'>[]
+  locationData?: Optional<Location, 'id'>
 }
 
 const EventForm: FC<{
@@ -40,13 +40,7 @@ const EventForm: FC<{
   onSubmit: (data: FormShape) => void
 }> = ({ onSubmit, initialData }) => {
   let i = 0
-  const formMethods = useForm<
-    EventPayload & {
-      questions: Omit<Question, 'id' | 'order'>[]
-      main_image?: Omit<EventPropagationImage, 'id' | 'order'>
-      images: Omit<EventPropagationImage, 'id' | 'order'>[]
-    }
-  >({
+  const formMethods = useForm<FormShape>({
     defaultValues: merge(
       {},
       {
@@ -72,6 +66,9 @@ const EventForm: FC<{
     control,
     formState: { errors },
   } = formMethods
+
+  const gpsInputMethods = useForm<{ gps: string }>()
+  const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
 
   const questionFields = useFieldArray({
     control,
@@ -135,6 +132,11 @@ const EventForm: FC<{
     return () => subscription.unsubscribe()
   }, [watch, intendedFor?.results, unregister, setValue])
 
+  const handleCurrentGpsChange = (gps: LatLngTuple) => {
+    setCurrentGPS(gps)
+    gpsInputMethods.setValue('gps', gps.join(', '))
+  }
+
   if (
     isEventCategoriesLoading ||
     isEventGroupsLoading ||
@@ -153,8 +155,15 @@ const EventForm: FC<{
     onSubmit(data)
   })
 
+  const handleGpsInputSubmit = gpsInputMethods.handleSubmit(data => {
+    if (!data.gps.trim()) return setCurrentGPS(undefined)
+    const [lat, lng] = data.gps!.split(/,\s+/)
+    setCurrentGPS([+lat, +lng])
+  })
+
   return (
     <div>
+      <form id="gpsInputForm" onSubmit={handleGpsInputSubmit} />
       <FormProvider {...formMethods}>
         <form onSubmit={handleFormSubmit}>
           <Steps>
@@ -212,7 +221,9 @@ const EventForm: FC<{
                 <FormInputError>
                   <input
                     type="text"
-                    {...register('name', { required: 'Toto pole je povinné' })}
+                    {...register('name', {
+                      required: 'Toto pole je povinné',
+                    })}
                   />
                 </FormInputError>
               </div>
@@ -701,26 +712,13 @@ Fce: proklik na přihlášky vytvořenou externě`}
 */}
               </div>
             </Step>
-            <Step name="lokace" fields={['location']}>
-              <div>{++i}. Lokace (TODO)</div>
-              <FormInputError>
-                <Controller
-                  name="location"
-                  control={control}
-                  render={({ field: { ref, ...field } }) => (
-                    <SelectByQuery
-                      {...field}
-                      queryRead={api.endpoints.readLocation}
-                      querySearch={api.endpoints.readLocations}
-                      transform={(location: Location) => ({
-                        label: location.name,
-                        value: location.id,
-                      })}
-                      customRef={ref}
-                    />
-                  )}
-                />
-              </FormInputError>
+            <Step name="lokace" fields={['location', 'locationData']}>
+              <LocationStep
+                i={i++}
+                gpsInputMethods={gpsInputMethods}
+                currentGPS={currentGPS}
+                onCurrentGPSChange={handleCurrentGpsChange}
+              />
             </Step>
             <Step
               name="info pro účastníky"
@@ -745,7 +743,9 @@ Fce: proklik na přihlášky vytvořenou externě`}
                 <FormInputError>
                   <input
                     type="string"
-                    {...register('propagation.cost', { required: 'required' })}
+                    {...register('propagation.cost', {
+                      required: 'required',
+                    })}
                   />
                 </FormInputError>
                 <div>
