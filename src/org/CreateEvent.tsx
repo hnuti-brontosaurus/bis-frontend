@@ -129,6 +129,7 @@ const CreateEvent = () => {
         questions &&
         event2payload(eventToCloneFixed, questions.results ?? [], images ?? [])
       }
+      eventToEdit={false}
     />
   )
 }
