@@ -45,7 +45,8 @@ export type FormShape = EventPayload & {
 const EventForm: FC<{
   initialData?: Partial<FormShape>
   onSubmit: (data: FormShape) => void
-}> = ({ onSubmit, initialData }) => {
+  eventToEdit: boolean
+}> = ({ onSubmit, initialData, eventToEdit }) => {
   let i = 0
   const formMethods = useForm<FormShape>({
     defaultValues: merge(
@@ -1153,6 +1154,21 @@ Fce: proklik na přihlášky vytvořenou externě`}
                 </div>
               </div>
               <input type="submit" value="Submit" />
+            </Step>
+            <Step name="ucastnicy" hidden={!eventToEdit}>
+              <div>
+                <div>
+                  <h3>Prihlaseni</h3>
+                  <button>Upload from file</button>
+                </div>
+                <div>
+                  <h3>Ucastnicy</h3>
+                  <button>Upload from file</button>
+                </div>
+              </div>
+            </Step>
+            <Step name="prace" hidden={!eventToEdit}>
+              <div>Prace form</div>
             </Step>
           </Steps>
         </form>

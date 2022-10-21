@@ -189,6 +189,7 @@ const EditEvent = () => {
     <EventForm
       initialData={event2payload(event, questions?.results ?? [], images ?? [])}
       onSubmit={handleSubmit}
+      eventToEdit={true}
     />
   )
 }
