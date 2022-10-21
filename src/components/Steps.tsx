@@ -16,6 +16,7 @@ export const Steps: FC<{
     | FunctionComponentElement<{
         name: string
         fields?: string[]
+        hidden?: boolean
       }>
 }> = ({ children }) => {
   const [step, setStep] = useSearchParamsState('krok', 1, i => Number(i))
