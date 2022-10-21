@@ -53,7 +53,7 @@ const EventTable: FC<{
               status === 'draft'
                 ? `/org/akce/${event.id}/upravit`
                 : status === 'inProgress'
-                ? `/org/akce/${event.id}/uzavrit`
+                ? `/org/akce/${event.id}/upravit?krok=9`
                 : `/org/akce/${event.id}`,
           }
           return (
