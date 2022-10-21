@@ -2608,7 +2608,6 @@ export type Finance = {
   grant_amount?: number | null
   total_event_cost?: number | null
   budget?: string
-  receipts: number[]
 }
 export type VipPropagation = {
   goals_of_event: string
@@ -2632,7 +2631,7 @@ export type Propagation = {
   invitation_text_practical_information: string
   invitation_text_work_description?: string
   invitation_text_about_us?: string
-  contact_person?: number | null
+  contact_person: number
   contact_name?: string
   contact_phone?: string
   contact_email?: string
@@ -2670,7 +2669,7 @@ export type Event = {
   program: EventProgramCategory
   intended_for: EventIntendedForCategory
   administration_units: number[]
-  main_organizer?: number | null
+  main_organizer: number
   other_organizers?: number[]
   is_attendance_list_required?: boolean
   is_internal?: boolean
@@ -2899,7 +2898,7 @@ export type PatchedEvent = {
   program?: number
   intended_for?: number
   administration_units?: number[]
-  main_organizer?: number | null
+  main_organizer?: number
   other_organizers?: number[]
   is_attendance_list_required?: boolean
   is_internal?: boolean
@@ -2946,10 +2945,10 @@ export type Location = {
   facilities?: string
   web?: string
   address?: string
-  gps_location?: {
+  gps_location: {
     type?: 'Point'
     coordinates?: number[]
-  } | null
+  }
   region: Region
 }
 export type PaginatedLocationList = {
@@ -2980,8 +2979,8 @@ export type PatchedLocation = {
   gps_location?: {
     type?: 'Point'
     coordinates?: number[]
-  } | null
-  region?: number | null
+  }
+  region?: number
 }
 export type PatchedUser = {
   id?: number

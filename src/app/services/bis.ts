@@ -178,6 +178,17 @@ export const api = createApi({
         { type: 'Location' as const, id: 'LOCATION_LIST' },
       ],
     }),
+
+    readUserByBirthdate: build.query<
+      User,
+      { first_name: string; last_name: string; birthday: string }
+    >({
+      query: queryArg => ({
+        url: `frontend/get_unknown_user/`,
+        method: 'POST',
+        body: queryArg,
+      }),
+    }),
     readLocations: build.query<
       PaginatedList<Location>,
       {

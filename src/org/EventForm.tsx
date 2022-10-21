@@ -1,3 +1,4 @@
+import { skipToken } from '@reduxjs/toolkit/dist/query'
 import type { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
 import { FC, Fragment, useEffect, useState } from 'react'
@@ -23,6 +24,7 @@ import FormInputError from '../components/FormInputError'
 import SelectUsers, { SelectUser } from '../components/SelectUsers'
 import { Step, Steps } from '../components/Steps'
 import { useAllPages } from '../hooks/allPages'
+import { useDebouncedState } from '../hooks/debouncedState'
 import {
   file2base64,
   getIdBySlug,
@@ -77,6 +79,12 @@ const EventForm: FC<{
 
   const gpsInputMethods = useForm<{ gps: string }>()
   const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
+  const [birthdate, setBirthdate] = useState('')
+  const [name, debouncedName, setName] = useDebouncedState(1000, '')
+  const [secondName, debouncedSecondName, setSecondName] = useDebouncedState(
+    1000,
+    '',
+  )
 
   const questionFields = useFieldArray({
     control,
@@ -107,6 +115,21 @@ const EventForm: FC<{
     api.endpoints.readQualifications.useQuery({})
 
   const [readUser] = api.endpoints.getUser.useLazyQuery()
+  // gowniana linijka, ktora pewnie przyniesie problems
+  const {
+    data: userByBirthdate,
+    isLoading: isUserByBirthdateLoading,
+    error: rest,
+  } = api.endpoints.readUserByBirthdate.useQuery(
+    debouncedName && debouncedSecondName && birthdate && birthdate.length === 10
+      ? {
+          first_name: name,
+          last_name: secondName,
+          birthday: birthdate,
+        }
+      : skipToken,
+  )
+  console.log('reszta', rest)
 
   useEffect(() => {
     // when there is no empty image, add empty image (add button)
@@ -177,6 +200,9 @@ const EventForm: FC<{
     const [lat, lng] = data.gps!.split(/,\s+/)
     setCurrentGPS([+lat, +lng])
   })
+  const addUserToRegistered = () => {
+    console.log('add user to registered')
+  }
 
   return (
     <div>
@@ -1155,15 +1181,52 @@ Fce: proklik na přihlášky vytvořenou externě`}
               </div>
               <input type="submit" value="Submit" />
             </Step>
-            <Step name="ucastnicy" hidden={!eventToEdit}>
+            <Step name="ucastnici" hidden={!eventToEdit}>
               <div>
                 <div>
                   <h3>Prihlaseni</h3>
                   <button>Upload from file</button>
+                  <div>
+                    Novy prihlaseny
+                    <input
+                      placeholder="Jmeno"
+                      onChange={e => {
+                        setName(e.target.value)
+                        if (
+                          name !== '' &&
+                          secondName !== '' &&
+                          birthdate !== ''
+                        ) {
+                          console.log('get data')
+                        }
+                      }}
+                    ></input>
+                    {/** TODO: move to a separate component and use in Ucastnici */}
+                    <input
+                      placeholder="Prijmeni"
+                      onChange={e => setSecondName(e.target.value)}
+                    ></input>
+                    <input
+                      placeholder="Data narozeni"
+                      onChange={e => setBirthdate(e.target.value)}
+                    ></input>
+                    {userByBirthdate && (
+                      <div>
+                        NAME: {userByBirthdate?.first_name}
+                        <button onClick={addUserToRegistered}>+</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
-                  <h3>Ucastnicy</h3>
+                  <h3>Ucastnici</h3>
                   <button>Upload from file</button>
+                  <div>
+                    Novy ucastnik
+                    <input placeholder="Jmeno"></input>
+                    <input placeholder="Prijmeni"></input>
+                    <input placeholder="Data narozeni"></input>
+                  </div>
                 </div>
               </div>
             </Step>
