@@ -32,11 +32,12 @@ In a new terminal run:
 
 1. `git clone https://github.com/mrkvon/rdf-proxy.git`
 1. `cd rdf-proxy`
+1. `git switch cors-anywhere`
 1. `yarn`
-1. `yarn start`
+1. `yarn proxy`
 
-And the proxy will run on `http://localhost:3001` and you can do `http://localhost:3001/https://example.com/whatever`
+And the proxy will run on `http://localhost:8080` and you can do `http://localhost:8080/https://example.com/whatever`
 
 ### Run the app
 
-Use the command: `REACT_APP_API_BASE_URL="http://localhost:3001?uri=https://dev.bis.lomic.cz/api/" yarn start`
+Use the command: `REACT_APP_API_BASE_URL="http://localhost:8080/https://dev.bis.lomic.cz/api/" REACT_APP_CORS_PROXY="http://localhost:8080/" yarn start`
