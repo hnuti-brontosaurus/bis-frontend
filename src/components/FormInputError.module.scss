@@ -19,9 +19,6 @@
 
 .errorMessage {
   color: colors.$error;
-  height: 1rem;
-}
-
-.errorPlaceholder {
-  height: 1rem;
+  font-size: 0.75rem;
+  margin-bottom: 4px;
 }

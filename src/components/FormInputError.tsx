@@ -35,11 +35,7 @@ function FormInputError<T extends FieldValues>({
       <div className={classNames(styles.inputWrapper, error && styles.isError)}>
         {children}
       </div>
-      {error ? (
-        <div className={styles.errorMessage}>{error?.message}</div>
-      ) : (
-        <div className={styles.errorPlaceholder}></div>
-      )}
+      <div className={styles.errorMessage}>{error?.message ?? <>&nbsp;</>}</div>
     </div>
   )
 }
