@@ -15,7 +15,6 @@ const Rozcestnik = () => {
           }
         : skipToken,
     )
-  console.log('OPPORTUNITIESA:', opportunities)
   return (
     <div>
       <div>
@@ -32,8 +31,13 @@ const Rozcestnik = () => {
               </tr>
             </thead>
             <tbody>
-              {/* {opportunities &&
-                opportunities.map(opportunity => <div>{opportunity.name}</div>)} */}
+              {opportunities &&
+                opportunities.results.map(opportunity => (
+                  <tr key={opportunity.id}>
+                    <td>{opportunity.name}</td>
+                    <td>{opportunity.category.name}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
