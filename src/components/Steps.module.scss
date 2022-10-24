@@ -27,22 +27,18 @@ $step-button-line-height: 1.5rem;
     color: colors.$bronto;
     border-radius: 2rem;
     &:hover {
-      border-color: colors.$bronto;
+      background-color: colors.$bronto;
+      color: white;
     }
     &.isActive {
       background-color: colors.$bronto;
       color: white;
       &.isError {
-        background-color: colors.$error;
+        border-color: colors.$error;
       }
     }
     &.isError {
-      border-color: colors.$error-light;
-      background-color: colors.$error-light;
-      color: black;
-      &:hover {
-        border-color: colors.$error;
-      }
+      border-color: colors.$error;
       /*&:not(:last-child):after {
         //background-color: colors.$error-light;
       }*/
