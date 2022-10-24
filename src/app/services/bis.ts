@@ -13,6 +13,7 @@ import {
   EventProgramCategory,
   EventPropagationImage,
   Location,
+  Opportunity,
   Propagation,
   QualificationCategory,
   Question,
@@ -49,7 +50,14 @@ export const api = createApi({
       return headers
     },
   }),
-  tagTypes: ['User', 'Event', 'EventImage', 'EventQuestion', 'Location'],
+  tagTypes: [
+    'User',
+    'Event',
+    'EventImage',
+    'EventQuestion',
+    'Location',
+    'Opportunity',
+  ],
   endpoints: build => ({
     login: build.mutation<LoginResponse, LoginRequest>({
       query: credentials => ({
@@ -242,6 +250,37 @@ export const api = createApi({
         { type: 'Location' as const, id: 'LOCATION_LIST' },
         { type: 'Location' as const, id },
       ],
+    }),
+    readOpportunities: build.query<
+      PaginatedList<Opportunity>,
+      {
+        userId: number
+        id?: number[]
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/opportunities/`,
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        (results?.results
+          ? results.results.map(
+              opportunity =>
+                ({
+                  type: 'Opportunity' as const,
+                  id: opportunity.id,
+                } as { type: 'Opportunity'; id: 'OPPORTUNITY_LIST' | number }),
+            )
+          : []
+        ).concat([{ type: 'Opportunity' as const, id: 'OPPORTUNITY_LIST' }]),
     }),
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
