@@ -1,8 +1,9 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { Link } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import { useCurrentUser } from '../hooks/currentUser'
 
-const Rozcestnik = () => {
+const Opportunity = () => {
   const { data: currentUser, isLoading: isCurrentUserLoading } =
     useCurrentUser()
   const { data: opportunities, isLoading } =
@@ -20,7 +21,9 @@ const Rozcestnik = () => {
       <div>
         <div>
           <h1>Prilezitosti</h1>
-          <button>Nova prilezitost</button>
+          <Link to="/org/prilezitosti/vytvorit">
+            <button>Nova prilezitost</button>
+          </Link>
         </div>
         <div>
           <table>
@@ -46,4 +49,4 @@ const Rozcestnik = () => {
   )
 }
 
-export default Rozcestnik
+export default Opportunity
