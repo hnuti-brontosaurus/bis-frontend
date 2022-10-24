@@ -7,7 +7,7 @@ const Home = () => (
       <Link to="/org/akce/vytvorit">Nová akce</Link>
       <Link to="/org/akce/aktualni">Upravit akci</Link>
       <Link to="/org/akce/nevyplnene">Po akci</Link>
-      <Link to="/org/rozcestnik">Rozcestník</Link>
+      <Link to="/org/prilezitosti">Rozcestník</Link>
     </nav>
 
     <img src="asdf.txt" alt="" />
