@@ -1,0 +1,41 @@
+@use './colors';
+
+.mainActionButton.mainActionButton {
+  color: white;
+  background-color: colors.$bronto;
+  border: 2px solid colors.$bronto;
+}
+
+.alternativeActionButton.alternativeActionButton {
+  color: black;
+  background: none;
+}
+
+.dangerActionButton {
+  background-color: colors.$error;
+  color: black;
+}
+
+input[type='text'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+input[type='datetime-local'],
+select {
+  border: 2px solid #ebeff4;
+  border-radius: 10px;
+  padding: 5px;
+
+  &::placeholder {
+    color: rgb(166, 166, 166);
+  }
+}
+
+button,
+input[type='submit'],
+.actionButton {
+  border-radius: 10px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: center;
+}

@@ -13,10 +13,12 @@ function FormInputError<T extends FieldValues>({
   children,
   name,
   formMethods,
+  isBlock,
 }: {
   children: ReactElement
   name?: string
   formMethods?: UseFormReturn<T>
+  isBlock?: boolean
 }) {
   const defaultMethods = useFormContext()
 
@@ -27,11 +29,17 @@ function FormInputError<T extends FieldValues>({
     | undefined
 
   return (
-    <div className={styles.container}>
+    <div
+      className={classNames(isBlock ? styles.blockContainer : styles.container)}
+    >
       <div className={classNames(styles.inputWrapper, error && styles.isError)}>
         {children}
       </div>
-      {error && <div className={styles.errorMessage}>{error?.message}</div>}
+      {error ? (
+        <div className={styles.errorMessage}>{error?.message}</div>
+      ) : (
+        <div className={styles.errorPlaceholder}></div>
+      )}
     </div>
   )
 }

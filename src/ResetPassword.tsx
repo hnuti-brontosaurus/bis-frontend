@@ -1,7 +1,9 @@
-import classnames from 'classnames'
-import { useForm } from 'react-hook-form'
+import { default as classNames, default as classnames } from 'classnames'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from './app/services/bis'
+import FormInputError from './components/FormInputError'
+import formStyles from './Form.module.scss'
 import styles from './Login.module.scss'
 
 const ResetPassword = () => {
@@ -13,13 +15,14 @@ const ResetPassword = () => {
   const [resetPassword, { isLoading }] =
     api.endpoints.resetPassword.useMutation()
 
+  const formMethods = useForm<{ password: string; passwordRepeat: string }>()
+
   const {
     register,
     handleSubmit,
     getValues,
     formState: { errors },
-  } = useForm<{ password: string; passwordRepeat: string }>()
-
+  } = formMethods
   const handleFormSubmit = handleSubmit(async data => {
     try {
       await resetPassword({
@@ -29,7 +32,7 @@ const ResetPassword = () => {
       }).unwrap()
       navigate('/')
     } catch (error) {
-      alert(error)
+      alert(JSON.stringify(error))
     }
   })
 
@@ -38,35 +41,43 @@ const ResetPassword = () => {
   return (
     <div className={styles.loginContainer}>
       <div className={styles.formContainer}>
-        <form onSubmit={handleFormSubmit}>
-          <input
-            className={classnames(
-              styles.formElement,
-              errors.password && styles.error,
-            )}
-            type="password"
-            placeholder="new password"
-            {...register('password', { required: 'empty!!!' })}
-          />
-          {errors.password?.message}
-          <input
-            className={classnames(
-              styles.formElement,
-              errors.passwordRepeat && styles.error,
-            )}
-            type="password"
-            placeholder="repeat password"
-            {...register('passwordRepeat', {
-              validate: pwd => getValues('password') === pwd || 'not the same',
-            })}
-          />
-          {errors.passwordRepeat?.message}
-          <input
-            className={styles.formElement}
-            type="submit"
-            value="set new password"
-          />
-        </form>
+        <FormProvider {...formMethods}>
+          <form onSubmit={handleFormSubmit}>
+            <FormInputError isBlock>
+              <input
+                className={classnames(
+                  styles.formElement,
+                  errors.password && styles.error,
+                )}
+                type="password"
+                placeholder="new password"
+                {...register('password', { required: 'empty!!!' })}
+              />
+            </FormInputError>
+            <FormInputError isBlock>
+              <input
+                className={classnames(
+                  styles.formElement,
+                  errors.passwordRepeat && styles.error,
+                )}
+                type="password"
+                placeholder="repeat password"
+                {...register('passwordRepeat', {
+                  validate: pwd =>
+                    getValues('password') === pwd || 'not the same',
+                })}
+              />
+            </FormInputError>
+            <input
+              className={classNames(
+                styles.formElement,
+                formStyles.mainActionButton,
+              )}
+              type="submit"
+              value="Potvrdit"
+            />
+          </form>
+        </FormProvider>
       </div>
     </div>
   )

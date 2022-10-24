@@ -5,6 +5,14 @@
   min-height: 100%;
 }
 
+.title {
+  text-align: center;
+  font-weight: bold;
+}
+.subtitle {
+  text-align: center;
+}
+
 .formContainer {
   width: 400px;
   max-width: 100%;
@@ -20,8 +28,5 @@
   .formElement {
     width: 100%;
     display: block;
-    &.error {
-      border-color: red;
-    }
   }
 }
