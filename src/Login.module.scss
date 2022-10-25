@@ -5,6 +5,19 @@
   min-height: 100%;
 }
 
+.title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
 .formContainer {
   width: 400px;
   max-width: 100%;
@@ -14,14 +27,10 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    gap: 0.5rem;
   }
 
   .formElement {
     width: 100%;
     display: block;
-    &.error {
-      border-color: red;
-    }
   }
 }

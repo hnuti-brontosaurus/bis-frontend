@@ -1,15 +1,24 @@
+@use '../colors';
+
 .container {
   display: inline-block;
+}
+
+.blockContainer {
+  display: block;
+  width: 100%;
 }
 
 .inputWrapper {
   &.isError {
     input {
-      border-color: red;
+      border-color: colors.$error;
     }
   }
 }
 
 .errorMessage {
-  color: red;
+  color: colors.$error;
+  font-size: 0.75rem;
+  margin-bottom: 4px;
 }
