@@ -7,9 +7,11 @@ import NotFound from './NotFound'
 import ActiveEvents from './org/ActiveEvents'
 import AllEvents from './org/AllEvents'
 import CreateEvent from './org/CreateEvent'
+import CreateOpportunity from './org/CreateOpportunity'
 import EditEvent from './org/EditEvent'
 import EventsLayout from './org/EventsLayout'
 import OrgHome from './org/Home'
+import Opportunity from './org/Opportunity'
 import UnifinishedEvents from './org/UnfinishedEvents'
 import ViewEvent from './org/ViewEvent'
 import ResetPassword from './ResetPassword'
@@ -44,6 +46,8 @@ function App() {
             <Route path="vsechny" element={<AllEvents />} />
             <Route path="nevyplnene" element={<UnifinishedEvents />} />
           </Route>
+          <Route path="prilezitosti/vytvorit" element={<CreateOpportunity />} />
+          <Route path="prilezitosti" element={<Opportunity />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>

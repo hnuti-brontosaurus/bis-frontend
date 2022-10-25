@@ -1033,6 +1033,7 @@ Fce: proklik na přihlášky vytvořenou externě`}
                 </FormInputError>
               </div>
               <div>Hlavní foto</div>
+              {/* TODO: code copied from here */}
               <Controller
                 name="main_image.image"
                 control={control}
