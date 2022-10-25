@@ -31,6 +31,7 @@ import {
   getIdsBySlugs,
   requireBoolean,
 } from '../utils/helpers'
+import EventCategoryStep from './EventForm/steps/EventCategoryStep'
 import LocationStep from './EventForm/steps/LocationStep'
 import {
   canBeMainOrganizer,
@@ -129,7 +130,6 @@ const EventForm: FC<{
         }
       : skipToken,
   )
-  console.log('reszta', rest)
 
   useEffect(() => {
     // when there is no empty image, add empty image (add button)
@@ -211,41 +211,7 @@ const EventForm: FC<{
         <form onSubmit={handleFormSubmit}>
           <Steps>
             <Step name="kategorie akce" fields={['group']}>
-              {/* kategorie akce */}
-              <fieldset>
-                {++i}. Jaký je typ nové akce?
-                <FormInputError>
-                  <Controller
-                    name="group"
-                    control={control}
-                    rules={{
-                      required: 'Toto pole je povinné!',
-                    }}
-                    render={({ field }) => (
-                      <>
-                        {groups &&
-                          groups.results!.map(({ id, name, slug }) => (
-                            <Fragment key={id}>
-                              <input
-                                ref={field.ref}
-                                key={id}
-                                type="radio"
-                                name={field.name}
-                                id={slug}
-                                value={id}
-                                checked={id === field.value}
-                                onChange={e =>
-                                  field.onChange(parseInt(e.target.value))
-                                }
-                              />
-                              <label htmlFor={slug}>{name}</label>
-                            </Fragment>
-                          ))}
-                      </>
-                    )}
-                  />
-                </FormInputError>
-              </fieldset>
+              <EventCategoryStep />
             </Step>
             <Step
               name="základní info"
