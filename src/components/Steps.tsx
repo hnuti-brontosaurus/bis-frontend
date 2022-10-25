@@ -32,7 +32,7 @@ export const Steps: FC<{
 
   return (
     <div>
-      <nav>
+      <nav className={styles.navigation}>
         {elementProps.map(({ name: title, errors }, i) => (
           <button
             type="button"
