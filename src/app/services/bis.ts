@@ -13,6 +13,8 @@ import {
   EventProgramCategory,
   EventPropagationImage,
   Location,
+  Opportunity,
+  OpportunityCategory,
   Propagation,
   QualificationCategory,
   Question,
@@ -49,7 +51,14 @@ export const api = createApi({
       return headers
     },
   }),
-  tagTypes: ['User', 'Event', 'EventImage', 'EventQuestion', 'Location'],
+  tagTypes: [
+    'User',
+    'Event',
+    'EventImage',
+    'EventQuestion',
+    'Location',
+    'Opportunity',
+  ],
   endpoints: build => ({
     login: build.mutation<LoginResponse, LoginRequest>({
       query: credentials => ({
@@ -243,6 +252,48 @@ export const api = createApi({
         { type: 'Location' as const, id },
       ],
     }),
+    readOpportunities: build.query<
+      PaginatedList<Opportunity>,
+      {
+        userId: number
+        id?: number[]
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/opportunities/`,
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        (results?.results
+          ? results.results.map(
+              opportunity =>
+                ({
+                  type: 'Opportunity' as const,
+                  id: opportunity.id,
+                } as { type: 'Opportunity'; id: 'OPPORTUNITY_LIST' | number }),
+            )
+          : []
+        ).concat([{ type: 'Opportunity' as const, id: 'OPPORTUNITY_LIST' }]),
+    }),
+    createOpportunity: build.mutation<
+      Opportunity,
+      { userId: number; opportunity: OpportunityPayload }
+    >({
+      query: ({ userId, opportunity }) => ({
+        url: `frontend/users/${userId}/opportunities/`,
+        method: 'POST',
+        body: opportunity,
+      }),
+      invalidatesTags: () => [{ type: 'Opportunity', id: 'OPPORTUNITY_LIST' }],
+    }),
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
       {
@@ -280,6 +331,34 @@ export const api = createApi({
                 id: `ORGANIZED_EVENT_LIST`,
               },
             ],
+    }),
+    readOpportunityCategories: build.query<
+      PaginatedList<OpportunityCategory>,
+      {
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `categories/opportunity_categories/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        (results?.results
+          ? results.results.map(
+              opportunity =>
+                ({
+                  type: 'Opportunity' as const,
+                  id: opportunity.id,
+                } as { type: 'Opportunity'; id: 'OPPORTUNITY_LIST' | number }),
+            )
+          : []
+        ).concat([{ type: 'Opportunity' as const, id: 'OPPORTUNITY_LIST' }]),
     }),
     createEvent: build.mutation<Event, EventPayload>({
       query: event => ({
@@ -473,6 +552,10 @@ type CorrectImage = {
   medium: string
   large: string
   original: string
+}
+
+export type OpportunityPayload = Omit<Opportunity, 'category'> & {
+  category: number
 }
 
 export type CorrectEventPropagationImage = Overwrite<
