@@ -32,6 +32,7 @@ In a new terminal run:
 
 1. `git clone https://github.com/mrkvon/rdf-proxy.git`
 1. `cd rdf-proxy`
+1. `git switch cors-anywhere`
 1. `yarn`
 1. `yarn proxy`
 
