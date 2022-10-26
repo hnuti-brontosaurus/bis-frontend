@@ -1,0 +1,42 @@
+.section {
+  counter-reset: section;
+  border: 1px solid lightgray;
+  margin: 1rem;
+  padding: 2rem;
+  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subsection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .header {
+    margin-bottom: 1rem;
+  }
+}
+
+.header {
+  &::before {
+    content: counter(section);
+    counter-increment: section;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 5rem;
+    margin-right: 1.2rem;
+  }
+}
+
+[required] ~ label::after,
+.required::after {
+  content: '*';
+  color: red;
+  margin-left: 0.2rem;
+}

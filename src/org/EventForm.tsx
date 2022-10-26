@@ -8,11 +8,9 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form'
-import Select from 'react-select'
 import type { Optional } from 'utility-types'
 import { api, EventPayload } from '../app/services/bis'
 import {
-  AdministrationUnit,
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
@@ -31,6 +29,7 @@ import {
   getIdsBySlugs,
   requireBoolean,
 } from '../utils/helpers'
+import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
 import LocationStep from './EventForm/steps/LocationStep'
 import {
@@ -225,120 +224,7 @@ const EventForm: FC<{
                 'administration_units',
               ]}
             >
-              <div>
-                {++i}. Název
-                <FormInputError>
-                  <input
-                    type="text"
-                    {...register('name', {
-                      required: 'Toto pole je povinné',
-                    })}
-                  />
-                </FormInputError>
-              </div>
-              <div>
-                {++i}. Kdy bude akce?{' '}
-                <label htmlFor="start">
-                  Od{' '}
-                  <FormInputError>
-                    <input
-                      type="datetime-local"
-                      id="start"
-                      {...register('start', { required: 'required' })}
-                    />
-                  </FormInputError>
-                </label>
-                <label htmlFor="end">
-                  Do{' '}
-                  <FormInputError>
-                    <input
-                      type="date"
-                      id="end"
-                      {...register('end', { required: 'required' })}
-                    />
-                  </FormInputError>
-                </label>
-              </div>
-              <div>
-                {++i}. Počet akcí v uvedeném období (TODO add help)
-                <FormInputError>
-                  <input
-                    type="number"
-                    {...register('number_of_sub_events', {
-                      required: 'required',
-                      valueAsNumber: true,
-                    })}
-                  />
-                </FormInputError>
-              </div>
-              <div>
-                {++i}. Typ akce
-                <FormInputError>
-                  <select
-                    {...register('category', { required: 'required' })}
-                    defaultValue=""
-                  >
-                    <option disabled value="" />
-                    {categories &&
-                      categories.results!.map(category => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                  </select>
-                </FormInputError>
-              </div>
-              <div>
-                {++i}. Program
-                <FormInputError>
-                  <select
-                    {...register('program', { required: 'required' })}
-                    defaultValue=""
-                  >
-                    <option disabled value="" />
-                    {programs &&
-                      programs.results!.map(program => (
-                        <option key={program.id} value={program.id}>
-                          {program.name}
-                        </option>
-                      ))}
-                  </select>
-                </FormInputError>
-              </div>
-              <div>
-                {++i}. Pořádající ZČ/Klub/RC/ústředí
-                <FormInputError>
-                  <Controller
-                    name="administration_units"
-                    rules={{ required: 'required' }}
-                    control={control}
-                    render={({ field: { onChange, value, name, ref } }) => (
-                      <Select
-                        isMulti
-                        options={
-                          administrationUnits
-                            ? administrationUnits.map(unit => ({
-                                label: `${unit.category.name} ${unit.name}`,
-                                value: unit.id,
-                              }))
-                            : []
-                        }
-                        onChange={val => onChange(val.map(val => val.value))}
-                        defaultValue={(
-                          (getValues('administration_units') ?? [])
-                            .map(id =>
-                              administrationUnits.find(unit => id === unit.id),
-                            )
-                            .filter(a => !!a) as AdministrationUnit[]
-                        ).map(unit => ({
-                          label: `${unit.category.name} ${unit.name}`,
-                          value: unit.id,
-                        }))}
-                      />
-                    )}
-                  />
-                </FormInputError>
-              </div>
+              <BasicInfoStep />
             </Step>
             <Step
               name="pro koho"
