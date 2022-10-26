@@ -5,6 +5,7 @@ import { Controller, useFormContext, UseFormReturn } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import type { Location } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
+import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import Map, { ClearBounds, MarkerType } from '../../../components/Map'
 import { SelectByQuery } from '../../../components/SelectUsers'
 import { FormShape } from '../../EventForm'
@@ -131,76 +132,77 @@ const LocationStep = ({
   }, [currentGPS, setValue, isEditing])
 
   return (
-    <div>
-      <header>{i}. Lokace</header>
-      Najdi lokaci (zadej název nebo GPS):
-      <FormInputError>
-        <Controller
-          name="location"
-          control={control}
-          render={({ field: { ref, ...field } }) => (
-            <SelectByQuery
-              className={styles.aboveMap}
-              {...field}
-              placeholder="Název"
-              queryRead={api.endpoints.readLocation}
-              querySearch={api.endpoints.readLocations}
-              transform={(location: Location) => ({
-                label: location.name,
-                value: location.id,
-              })}
-              customRef={ref}
-            />
-          )}
-        />
-      </FormInputError>
-      <FormInputError formMethods={gpsInputMethods}>
-        <input
-          form="gpsInputForm"
-          type="text"
-          placeholder="GPS (50.01234, 14.98765)"
-          {...gpsInputMethods.register('gps', {
-            required: true,
-            pattern: /^\d+(\.\d+)?\s*,?\s+\d+(\.\d+)?$/,
-          })}
-        />
-      </FormInputError>
-      <div>
-        <Map
-          markers={markers}
-          selection={selection}
-          value={currentGPS}
-          onChange={onCurrentGPSChange}
-          onSelect={id => setValue('location', id)}
-          onChangeBounds={bounds => setBounds(bounds)}
-          onDeselect={() => {}}
-        />
-      </div>
-      {isEditing ? (
-        <EditLocation onFinish={() => setIsEditing(false)} />
-      ) : (
-        <>
-          <ViewLocation
-            location={watch('locationData') ?? actuallySelectedLocation}
+    <FormSection>
+      <FormSubsection header="Lokace">
+        Najdi lokaci (zadej název nebo GPS):
+        <FormInputError>
+          <Controller
+            name="location"
+            control={control}
+            render={({ field: { ref, ...field } }) => (
+              <SelectByQuery
+                className={styles.aboveMap}
+                {...field}
+                placeholder="Název"
+                queryRead={api.endpoints.readLocation}
+                querySearch={api.endpoints.readLocations}
+                transform={(location: Location) => ({
+                  label: location.name,
+                  value: location.id,
+                })}
+                customRef={ref}
+              />
+            )}
           />
-          {actuallySelectedLocation ? (
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditing(true)
-                setValue('locationData', actuallySelectedLocation)
-              }}
-            >
-              upravit
-            </button>
-          ) : (
-            <button type="button" onClick={() => setIsEditing(true)}>
-              vytvořit
-            </button>
-          )}
-        </>
-      )}
-    </div>
+        </FormInputError>
+        <FormInputError formMethods={gpsInputMethods}>
+          <input
+            form="gpsInputForm"
+            type="text"
+            placeholder="GPS (50.01234, 14.98765)"
+            {...gpsInputMethods.register('gps', {
+              required: true,
+              pattern: /^\d+(\.\d+)?\s*,?\s+\d+(\.\d+)?$/,
+            })}
+          />
+        </FormInputError>
+        <div>
+          <Map
+            markers={markers}
+            selection={selection}
+            value={currentGPS}
+            onChange={onCurrentGPSChange}
+            onSelect={id => setValue('location', id)}
+            onChangeBounds={bounds => setBounds(bounds)}
+            onDeselect={() => {}}
+          />
+        </div>
+        {isEditing ? (
+          <EditLocation onFinish={() => setIsEditing(false)} />
+        ) : (
+          <>
+            <ViewLocation
+              location={watch('locationData') ?? actuallySelectedLocation}
+            />
+            {actuallySelectedLocation ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(true)
+                  setValue('locationData', actuallySelectedLocation)
+                }}
+              >
+                upravit
+              </button>
+            ) : (
+              <button type="button" onClick={() => setIsEditing(true)}>
+                vytvořit
+              </button>
+            )}
+          </>
+        )}
+      </FormSubsection>
+    </FormSection>
   )
 }
 
