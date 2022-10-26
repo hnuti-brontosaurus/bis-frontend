@@ -17,16 +17,30 @@ export const FormNumberedHeader = ({
   )
 }
 
+export const FormSubheader = ({
+  children,
+  required,
+}: {
+  children: ReactNode
+  required?: boolean
+}) => {
+  return (
+    <header className={classNames(required && styles.required)}>
+      {children}
+    </header>
+  )
+}
+
 export const FormSection = ({
   children,
   startIndex,
 }: {
   children: ReactNode
-  startIndex: number
+  startIndex?: number
 }) => {
   return (
     <fieldset
-      style={{ counterReset: `section ${startIndex - 1 ?? 0}` }}
+      style={{ counterReset: `section ${(startIndex ?? 1) - 1}` }}
       className={styles.section}
     >
       {children}
@@ -50,6 +64,27 @@ export const FormSubsection = ({
       <FormNumberedHeader required={required}>
         {help && <Help>{help}</Help>} {header}
       </FormNumberedHeader>
+      {children}
+    </div>
+  )
+}
+
+export const FormSubsubsection = ({
+  children,
+  header,
+  help,
+  required,
+}: {
+  children: ReactNode
+  header: ReactNode
+  help?: ReactNode
+  required?: boolean
+}) => {
+  return (
+    <div className={styles.subsection}>
+      <FormSubheader required={required}>
+        {help && <Help>{help}</Help>} {header}
+      </FormSubheader>
       {children}
     </div>
   )

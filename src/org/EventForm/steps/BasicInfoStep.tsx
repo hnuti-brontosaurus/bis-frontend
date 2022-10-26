@@ -8,15 +8,12 @@ import { FormShape } from '../../EventForm'
 
 const BasicInfoStep = () => {
   const { register, control, getValues } = useFormContext<FormShape>()
-  const { data: categories, isLoading: isEventCategoriesLoading } =
-    api.endpoints.getEventCategories.useQuery()
-  const { data: programs, isLoading: isEventProgramsLoading } =
-    api.endpoints.getPrograms.useQuery()
-
-  const { data: administrationUnits, isLoading: isAdministrationUnitsLoading } =
+  const { data: categories } = api.endpoints.getEventCategories.useQuery()
+  const { data: programs } = api.endpoints.getPrograms.useQuery()
+  const { data: administrationUnits } =
     api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
 
-  if (!administrationUnits) return <>Loading...</>
+  if (!(administrationUnits && categories && programs)) return <>Loading...</>
 
   return (
     <>

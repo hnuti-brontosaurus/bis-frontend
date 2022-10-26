@@ -1,3 +1,5 @@
+import './index.scss'
+
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -5,10 +7,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import App from './App'
 import { persistor, store } from './app/store'
-import './index.scss'
-import reportWebVitals from './reportWebVitals'
-
 import { ErrorBoundary, ErrorBoundaryFallback } from './config/sentry'
+import reportWebVitals from './reportWebVitals'
 
 const container = document.getElementById('root')!
 const root = createRoot(container)
