@@ -1,0 +1,56 @@
+import classNames from 'classnames'
+import { ReactNode } from 'react'
+import styles from './FormLayout.module.scss'
+import Help from './Help'
+
+export const FormNumberedHeader = ({
+  children,
+  required,
+}: {
+  children: ReactNode
+  required?: boolean
+}) => {
+  return (
+    <header className={classNames(styles.header, required && styles.required)}>
+      {children}
+    </header>
+  )
+}
+
+export const FormSection = ({
+  children,
+  startIndex,
+}: {
+  children: ReactNode
+  startIndex: number
+}) => {
+  return (
+    <fieldset
+      style={{ counterReset: `section ${startIndex - 1 ?? 0}` }}
+      className={styles.section}
+    >
+      {children}
+    </fieldset>
+  )
+}
+
+export const FormSubsection = ({
+  children,
+  header,
+  help,
+  required,
+}: {
+  children: ReactNode
+  header: ReactNode
+  help?: ReactNode
+  required?: boolean
+}) => {
+  return (
+    <div className={styles.subsection}>
+      <FormNumberedHeader required={required}>
+        {help && <Help>{help}</Help>} {header}
+      </FormNumberedHeader>
+      {children}
+    </div>
+  )
+}

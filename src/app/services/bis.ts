@@ -122,14 +122,23 @@ export const api = createApi({
     }),
     getAdministrationUnits: build.query<
       PaginatedList<AdministrationUnit>,
-      { page?: number }
+      ListArguments & {
+        /** Více hodnot lze oddělit čárkami. */
+        category?: (
+          | 'basic_section'
+          | 'club'
+          | 'headquarter'
+          | 'regional_center'
+        )[]
+      }
     >({
-      query: ({ page }) => ({
+      query: queryArg => ({
         url: `web/administration_units/`,
         params: {
-          //category: queryArg.category,
-          //ordering: queryArg.ordering,
-          ...(page ? { page } : {}),
+          category: queryArg.category,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
         },
       }),
     }),
@@ -562,3 +571,14 @@ export type CorrectEventPropagationImage = Overwrite<
   EventPropagationImage,
   { image: CorrectImage }
 >
+
+interface ListArguments {
+  /** Více hodnot lze oddělit čárkami. */
+  category?: ('basic_section' | 'club' | 'headquarter' | 'regional_center')[]
+  /** A page number within the paginated result set. */
+  page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
+}
