@@ -97,6 +97,28 @@ const EventForm: FC<{
   const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
     {},
   )
+  /* PO AKCI step START*/
+
+  const { data: applications, isLoading: isReadApplicationsLoading } =
+    api.endpoints.readEventApplications.useQuery(
+      initialData && initialData.id
+        ? {
+            eventId: initialData.id.toString(),
+          }
+        : skipToken,
+    )
+
+  const { data: participants, isLoading: isReadParticipantsLoading } =
+    api.endpoints.readEventParticipants.useQuery(
+      initialData && initialData.id
+        ? {
+            eventId: initialData.id,
+          }
+        : skipToken,
+    )
+
+  console.log('appp', applications)
+  console.log('appp', participants)
 
   // gowniana linijka, ktora pewnie przyniesie problems
   const {
@@ -112,6 +134,8 @@ const EventForm: FC<{
         }
       : skipToken,
   )
+
+  /* PO AKCI step END*/
 
   const handleCurrentGpsChange = (gps: LatLngTuple) => {
     setCurrentGPS(gps)
@@ -283,6 +307,14 @@ const EventForm: FC<{
                         <button onClick={addUserToRegistered}>+</button>
                       </div>
                     )}
+                    {applications &&
+                      applications.results &&
+                      applications.results.map(application => (
+                        <>
+                          <div>{application.id}</div>
+                          <div>{application.first_name}</div>
+                        </>
+                      ))}
                   </div>
                 </div>
                 <div>
@@ -294,6 +326,14 @@ const EventForm: FC<{
                     <input placeholder="Prijmeni"></input>
                     <input placeholder="Data narozeni"></input>
                   </div>
+                  {participants &&
+                    participants.results &&
+                    participants.results.map(participant => (
+                      <>
+                        <div>{participant.id}</div>
+                        <div>{participant.first_name}</div>
+                      </>
+                    ))}
                 </div>
               </div>
             </Step>
