@@ -698,6 +698,17 @@ export const api = createApi({
         ],
       },
     ),
+    createEventApplication: build.mutation<
+      User,
+      { user: User; eventId: number }
+    >({
+      query: ({ user, eventId }) => ({
+        url: `frontend/events/${eventId}/registration/applications/`,
+        method: 'POST',
+        body: user,
+      }),
+      invalidatesTags: () => [{ type: 'User', id: 'USER_LIST' }],
+    }),
     readEventParticipants: build.query<
       PaginatedList<EventApplication>,
       {

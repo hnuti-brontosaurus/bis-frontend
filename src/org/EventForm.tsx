@@ -12,9 +12,9 @@ import {
   Question,
 } from '../app/services/testApi'
 import Loading from '../components/Loading'
+import Modal from '../components/Modal'
 import { NewLocation } from '../components/SelectLocation'
 import { Step, Steps } from '../components/Steps'
-import { useDebouncedState } from '../hooks/debouncedState'
 import {
   useClearPersistentForm,
   usePersistentFormData,
@@ -78,12 +78,8 @@ const EventForm: FC<{
 
   const gpsInputMethods = useForm<{ gps: string }>()
   const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
-  const [birthdate, setBirthdate] = useState('')
-  const [name, debouncedName, setName] = useDebouncedState(1000, '')
-  const [secondName, debouncedSecondName, setSecondName] = useDebouncedState(
-    1000,
-    '',
-  )
+  const [openNewApplicationModal, setOpenNewApplicationModal] =
+    useState<boolean>(false)
 
   // we're loading these to make sure that we have the data before we try to render the form, to make sure that the default values are properly initialized
   // TODO check whether this is necessary
@@ -121,19 +117,19 @@ const EventForm: FC<{
   console.log('appp', participants)
 
   // gowniana linijka, ktora pewnie przyniesie problems
-  const {
-    data: userByBirthdate,
-    isLoading: isUserByBirthdateLoading,
-    error: rest,
-  } = api.endpoints.readUserByBirthdate.useQuery(
-    debouncedName && debouncedSecondName && birthdate && birthdate.length === 10
-      ? {
-          first_name: name,
-          last_name: secondName,
-          birthday: birthdate,
-        }
-      : skipToken,
-  )
+  // const {
+  //   data: userByBirthdate,
+  //   isLoading: isUserByBirthdateLoading,
+  //   error: rest,
+  // } = api.endpoints.readUserByBirthdate.useQuery(
+  //   debouncedName && debouncedSecondName && birthdate && birthdate.length === 10
+  //     ? {
+  //         first_name: name,
+  //         last_name: secondName,
+  //         birthday: birthdate,
+  //       }
+  //     : skipToken,
+  // )
 
   /* PO AKCI step END*/
 
@@ -179,6 +175,10 @@ const EventForm: FC<{
 
   const addUserToRegistered = () => {
     console.log('add user to registered')
+  }
+
+  const openAddApplicationForm = () => {
+    setOpenNewApplicationModal(true)
   }
 
   return (
@@ -276,37 +276,13 @@ const EventForm: FC<{
               <div>
                 <div>
                   <h3>Prihlaseni</h3>
-                  <button>Upload from file</button>
+                  <button>Export do csv</button>
+                  <button>Tisknij prezencni listinu</button>
                   <div>
-                    Novy prihlaseny
-                    <input
-                      placeholder="Jmeno"
-                      onChange={e => {
-                        setName(e.target.value)
-                        if (
-                          name !== '' &&
-                          secondName !== '' &&
-                          birthdate !== ''
-                        ) {
-                          console.log('get data')
-                        }
-                      }}
-                    ></input>
-                    {/** TODO: move to a separate component and use in Ucastnici */}
-                    <input
-                      placeholder="Prijmeni"
-                      onChange={e => setSecondName(e.target.value)}
-                    ></input>
-                    <input
-                      placeholder="Data narozeni"
-                      onChange={e => setBirthdate(e.target.value)}
-                    ></input>
-                    {userByBirthdate && (
-                      <div>
-                        NAME: {userByBirthdate?.first_name}
-                        <button onClick={addUserToRegistered}>+</button>
-                      </div>
-                    )}
+                    <button onClick={openAddApplicationForm}>
+                      Add new applicant
+                    </button>
+
                     {applications &&
                       applications.results &&
                       applications.results.map(application => (
@@ -343,6 +319,14 @@ const EventForm: FC<{
           </Steps>
         </form>
       </FormProvider>
+      <Modal
+        open={openNewApplicationModal}
+        onClose={() => {
+          setOpenNewApplicationModal(false)
+        }}
+        onSubmit={() => {}}
+        data={initialData || {}}
+      ></Modal>
     </div>
   )
 }
