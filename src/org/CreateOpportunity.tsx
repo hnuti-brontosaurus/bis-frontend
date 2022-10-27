@@ -1,11 +1,31 @@
-import { Controller, useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { api, OpportunityPayload } from '../app/services/bis'
+import { ReactComponent as OneTreeIcon } from '../assets/one-tree.svg'
+import FormInputError from '../components/FormInputError'
+import {
+  FormSection,
+  FormSubheader,
+  FormSubsection,
+  FullSizeElement,
+  InfoBox,
+  Label,
+} from '../components/FormLayout'
+import { IconSelect, IconSelectGroup } from '../components/IconSelect'
 import { useCurrentUser } from '../hooks/currentUser'
-import { file2base64 } from '../utils/helpers'
+import { file2base64, getIdBySlug } from '../utils/helpers'
+import styles from './CreateOpportunity.module.scss'
+
+const required = 'Toto pole je povinné!'
+
+type OpportunitySlug = 'organizing' | 'collaboration' | 'location_help'
 
 const CreateOpportunity = () => {
   const { data: currentUser, isLoading: isCurrentUserLoading } =
     useCurrentUser()
+
+  const navigate = useNavigate()
 
   const {
     data: opportunityCategories,
@@ -18,7 +38,7 @@ const CreateOpportunity = () => {
   const categoriesList = opportunityCategories?.results
 
   const methods = useForm<OpportunityPayload>()
-  const { register, handleSubmit, control, watch } = methods
+  const { register, handleSubmit, control, watch, trigger, formState } = methods
 
   const handleFormSubmit = handleSubmit(data => {
     const newData = {
@@ -30,93 +50,296 @@ const CreateOpportunity = () => {
       createOpportunity({ userId: currentUser.id, opportunity: newData })
   })
 
+  const handleCancel = () => {
+    // TODO do whatever we need to do to clear the form, when it's persistent
+    // perhaps also ask for a confirmation
+    navigate('/org/prilezitosti')
+  }
+
   const [createOpportunity, { isLoading: isSavingOpportunity }] =
     api.endpoints.createOpportunity.useMutation()
 
+  const isCollaboration =
+    opportunityCategories &&
+    getIdBySlug(opportunityCategories.results, 'collaboration') ===
+      +watch('category')
+
+  // when switching to or from collaboration, and if form was already validated, revalidate form
+  // in order to update error messages on location_benefits
+  useEffect(() => {
+    if (formState.isDirty) trigger('location_benefits')
+  }, [isCollaboration, formState.isDirty, trigger])
+
+  if (!opportunityCategories) return <>Loading</>
+
   return (
     <div>
-      <div>
-        <div>
-          <h1>Nova prilezitost</h1>
-          <form onSubmit={handleFormSubmit}>
-            {categoriesList &&
-              categoriesList.map(category => (
-                <>
+      <h1 style={{ textAlign: 'center' }}>Nová příležitost</h1>
+      {/* Čeho se tvá příležitost k zapojení týká? *
+Organizování akcí
+Příležitosti organizovat či pomáhat s pořádáním našich akcí.
+Spolupráce
+        Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.
+Pomoc lokalitě
+Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.
+
+
+Kontaktní osoba *
+Kontaktní email *
+Kontaktní telefon - nepovinné
+Fotka příležitosti *
+*/}
+      <FormProvider {...methods}>
+        <form onSubmit={handleFormSubmit}>
+          <FormSection>
+            <FormSubsection required header="Jaký je typ nové příležitosti?">
+              {/*
+Čeho se tvá příležitost k zapojení týká? *
+Organizování akcí
+Příležitosti organizovat či pomáhat s pořádáním našich akcí.
+Spolupráce
+Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.
+Pomoc lokalitě
+Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
+              <FormInputError name="category">
+                <IconSelectGroup>
+                  {categoriesList &&
+                    categoriesList.map(category => (
+                      <IconSelect
+                        id={category.slug}
+                        key={category.slug}
+                        text={category.name}
+                        icon={OneTreeIcon}
+                        value={category.id}
+                        {...register('category', { required })}
+                      />
+                    ))}
+                </IconSelectGroup>
+              </FormInputError>
+            </FormSubsection>
+            <FormSubsection header="Název" required>
+              <FormInputError>
+                <input
+                  type="text"
+                  placeholder="name"
+                  {...register('name', { required })}
+                />
+              </FormInputError>
+            </FormSubsection>
+            <FormSubsection header="Datum">
+              <div>
+                <Label required htmlFor="start">
+                  Od
+                </Label>{' '}
+                <FormInputError>
                   <input
-                    id={category.slug}
-                    type="radio"
-                    value={category.id}
-                    {...register('category')}
+                    type="date"
+                    id="start"
+                    placeholder="start"
+                    {...register('start', { required })}
                   />
-                  <label htmlFor={category.slug}>{category.name}</label>
-                </>
-              ))}
-            <input type="text" placeholder="name" {...register('name')} />
-            <input
-              type="text"
-              placeholder="description"
-              {...register('description')}
-            />
-            <input type="date" placeholder="start" {...register('start')} />
-            <input type="date" placeholder="end" {...register('end')} />
-            <input
-              type="date"
-              placeholder="onWebStart"
-              {...register('on_web_start')}
-            />
-            <input
-              type="date"
-              placeholder="onWebEnd"
-              {...register('on_web_end')}
-            />
-            <input
-              type="text"
-              placeholder="location"
-              {...register('location')}
-            />
-            <input
-              type="text"
-              placeholder="introduction"
-              {...register('introduction')}
-            />
-            <input
-              type="text"
-              placeholder="personal_benefits"
-              {...register('personal_benefits')}
-            />
-            <input
-              type="text"
-              placeholder="requirements"
-              {...register('requirements')}
-            />
-            {/* TODO: copied code */}
-            <Controller
-              name="image"
-              control={control}
-              render={({ field }) => (
-                <label>
+                </FormInputError>{' '}
+                <Label required htmlFor="end">
+                  Do
+                </Label>{' '}
+                <FormInputError>
                   <input
-                    style={{ display: 'none' }}
-                    type="file"
-                    {...field}
-                    value=""
-                    onChange={async e => {
-                      const file = e.target.files?.[0]
-                      field.onChange(file ? await file2base64(file) : '')
-                    }}
+                    type="date"
+                    id="end"
+                    placeholder="end"
+                    {...register('end', { required })}
                   />
-                  {watch('image') ? (
-                    <img src={watch('image')} alt="" />
-                  ) : (
-                    <span>+</span>
+                </FormInputError>
+              </div>
+            </FormSubsection>
+            <FormSubsection header="Zobrazit na webu">
+              <div>
+                <Label required htmlFor="on_web_start">
+                  Od
+                </Label>{' '}
+                <FormInputError>
+                  <input
+                    type="date"
+                    id="on_web_start"
+                    placeholder="onWebStart"
+                    {...register('on_web_start', { required })}
+                  />
+                </FormInputError>{' '}
+                <Label required htmlFor="on_web_end">
+                  Do
+                </Label>{' '}
+                <FormInputError>
+                  <input
+                    type="date"
+                    id="on_web_end"
+                    placeholder="onWebEnd"
+                    {...register('on_web_end', { required })}
+                  />
+                </FormInputError>
+              </div>
+            </FormSubsection>
+            <FormSubsection header="Místo konání" required>
+              Lokalita
+              {/*TODO: this input is just a placeholder for something better*/}
+              <FormInputError>
+                <input {...register('location', { required })} />
+              </FormInputError>
+            </FormSubsection>
+            <FullSizeElement>
+              <FormSubsection header="Popis">
+                <FullSizeElement>
+                  <FormSubheader required>
+                    Představení příležitosti
+                  </FormSubheader>
+                  <InfoBox>
+                    Krátce vysvětli význam činnosti a její přínos, aby přilákala
+                    zájemce.
+                  </InfoBox>
+                  <FormInputError isBlock>
+                    <textarea
+                      placeholder="introduction"
+                      {...register('introduction', { required })}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+                <FullSizeElement>
+                  <FormSubheader required>Popis činnosti</FormSubheader>
+                  <InfoBox>
+                    Přibliž konkrétní činnosti a aktivity, které budou součástí
+                    příležitosti.
+                  </InfoBox>
+                  <FormInputError isBlock>
+                    <textarea
+                      placeholder="description"
+                      {...register('description', {
+                        required,
+                      })}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+                <FullSizeElement>
+                  <FormSubheader required={!isCollaboration}>
+                    Přínos pro lokalitu
+                  </FormSubheader>
+                  {/*u typu “spolupráce” nepovinná, u ostatních typů povinná*/}
+                  <InfoBox>
+                    Popiš dopad a přínos činnosti pro dané místě.
+                  </InfoBox>
+                  {/*nebude u spolupráce*/}
+                  <FormInputError isBlock>
+                    <textarea
+                      placeholder="location_benefits"
+                      {...register('location_benefits', {
+                        required: !isCollaboration && required,
+                      })}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+                <FullSizeElement>
+                  <FormSubheader required>Co mi to přinese?</FormSubheader>
+                  <InfoBox>
+                    Uveď konkrétní osobní přínos do života z realizace této
+                    příležitosti.
+                  </InfoBox>
+                  <FormInputError isBlock>
+                    <textarea
+                      placeholder="personal_benefits"
+                      {...register('personal_benefits', { required })}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+                <FullSizeElement>
+                  <FormSubheader>Co potřebuji ke spolupráci</FormSubheader>
+                  <InfoBox>
+                    Napiš dovednosti, zkušenosti či vybavení potřebné k zapojení
+                    do příležitosti.
+                  </InfoBox>
+                  {/* optional */}
+                  <FormInputError isBlock>
+                    <textarea
+                      placeholder="requirements"
+                      {...register('requirements')}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+              </FormSubsection>
+            </FullSizeElement>
+            <FormSubsection header="Fotka příležitosti" required>
+              {/* TODO: copied code */}
+              <FormInputError>
+                <Controller
+                  name="image"
+                  rules={{ required }}
+                  control={control}
+                  render={({ field }) => (
+                    <label>
+                      <input
+                        style={{ display: 'none' }}
+                        type="file"
+                        {...field}
+                        value=""
+                        onChange={async e => {
+                          const file = e.target.files?.[0]
+                          field.onChange(file ? await file2base64(file) : '')
+                        }}
+                      />
+                      {watch('image') ? (
+                        <img src={watch('image')} alt="" />
+                      ) : (
+                        <span>+</span>
+                      )}
+                    </label>
                   )}
-                </label>
-              )}
-            />
-            <input type="submit" value="Submit" />
-          </form>
-        </div>
-      </div>
+                />
+              </FormInputError>
+            </FormSubsection>
+            <FormSubsection header="Kontaktní osoba">
+              <div>
+                <Label required htmlFor="contact_name">
+                  Jméno kontaktní osoby
+                </Label>{' '}
+                <FormInputError>
+                  <input
+                    type="text"
+                    id="contact_name"
+                    placeholder="Jana Nováková"
+                    {...register('contact_name', { required })}
+                  />
+                </FormInputError>
+              </div>
+              <div>
+                <Label required htmlFor="contact_email">
+                  Kontaktní email
+                </Label>{' '}
+                <FormInputError>
+                  <input
+                    type="email"
+                    id="contact_email"
+                    placeholder="jana.novakova@example.com"
+                    {...register('contact_email', { required })}
+                  />
+                </FormInputError>
+              </div>
+              <div>
+                <Label htmlFor="contact_phone">Kontaktní telefon</Label>{' '}
+                <FormInputError>
+                  <input
+                    type="tel"
+                    id="contact_phone"
+                    {...register('contact_phone')}
+                  />
+                </FormInputError>
+              </div>
+            </FormSubsection>
+            <div className={styles.actions}>
+              <button type="button" onClick={handleCancel}>
+                Zrušit
+              </button>
+              <input type="submit" value="Přidat příležitost" />
+            </div>
+          </FormSection>
+        </form>
+      </FormProvider>
     </div>
   )
 }

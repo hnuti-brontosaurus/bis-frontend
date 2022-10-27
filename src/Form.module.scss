@@ -1,13 +1,13 @@
 @use './colors';
 
-.mainActionButton.mainActionButton {
+.mainActionButton {
   color: white;
   background-color: colors.$bronto;
   border: 2px solid colors.$bronto;
   font-size: 1rem;
 }
 
-.alternativeActionButton.alternativeActionButton {
+.alternativeActionButton {
   color: black;
   background: none;
   font-size: 0.875rem;
@@ -43,7 +43,7 @@ button,
 input[type='submit'],
 .actionButton {
   border-radius: 10px;
-  padding: 5px;
+  padding: 5px 2rem;
   cursor: pointer;
   text-align: center;
 }
