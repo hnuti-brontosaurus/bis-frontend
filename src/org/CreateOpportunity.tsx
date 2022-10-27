@@ -2,7 +2,9 @@ import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { api, OpportunityPayload } from '../app/services/bis'
-import { ReactComponent as OneTreeIcon } from '../assets/one-tree.svg'
+import { ReactComponent as HandsIcon } from '../assets/hands.svg'
+import { ReactComponent as HousesIcon } from '../assets/houses.svg'
+import { ReactComponent as OrganizerIcon } from '../assets/organizer.svg'
 import FormInputError from '../components/FormInputError'
 import {
   FormSection,
@@ -19,7 +21,13 @@ import styles from './CreateOpportunity.module.scss'
 
 const required = 'Toto pole je povinné!'
 
-type OpportunitySlug = 'organizing' | 'collaboration' | 'location_help'
+const categoryIcons = {
+  organizing: OrganizerIcon,
+  collaboration: HandsIcon,
+  location_help: HousesIcon,
+} as const
+
+type OpportunityCategorySlug = keyof typeof categoryIcons
 
 const CreateOpportunity = () => {
   const { data: currentUser, isLoading: isCurrentUserLoading } =
@@ -102,18 +110,22 @@ Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.
 Pomoc lokalitě
 Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
               <FormInputError name="category">
-                <IconSelectGroup>
+                <IconSelectGroup color="blue">
                   {categoriesList &&
-                    categoriesList.map(category => (
-                      <IconSelect
-                        id={category.slug}
-                        key={category.slug}
-                        text={category.name}
-                        icon={OneTreeIcon}
-                        value={category.id}
-                        {...register('category', { required })}
-                      />
-                    ))}
+                    categoriesList.map(category => {
+                      const Icon =
+                        categoryIcons[category.slug as OpportunityCategorySlug]
+                      return (
+                        <IconSelect
+                          id={category.slug}
+                          key={category.slug}
+                          text={category.name}
+                          icon={Icon}
+                          value={category.id}
+                          {...register('category', { required })}
+                        />
+                      )
+                    })}
                 </IconSelectGroup>
               </FormInputError>
             </FormSubsection>
@@ -332,10 +344,18 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
               </div>
             </FormSubsection>
             <div className={styles.actions}>
-              <button type="button" onClick={handleCancel}>
+              <button
+                className={styles.cancelAction}
+                type="button"
+                onClick={handleCancel}
+              >
                 Zrušit
               </button>
-              <input type="submit" value="Přidat příležitost" />
+              <input
+                className={styles.mainAction}
+                type="submit"
+                value="Přidat příležitost"
+              />
             </div>
           </FormSection>
         </form>
