@@ -7,6 +7,7 @@ import {
   AdministrationUnit,
   DietCategory,
   Event,
+  EventApplication,
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
@@ -54,6 +55,7 @@ export const api = createApi({
     },
   }),
   tagTypes: [
+    'Application',
     'User',
     'Event',
     'EventImage',
@@ -628,6 +630,37 @@ export const api = createApi({
               ])
           : [],
     }),
+
+    readEventApplications: build.query<
+      PaginatedList<EventApplication>,
+      {
+        eventId: number
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/applications/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        (results?.results
+          ? results.results.map(
+              application =>
+                ({
+                  type: 'Application' as const,
+                  id: application.id,
+                } as { type: 'Application'; id: 'APPLICATION_LIST' | number }),
+            )
+          : []
+        ).concat([{ type: 'Application' as const, id: 'APPLICATION_LIST' }]),
+    }),
+
     updateFinanceReceipt: build.mutation<
       FinanceReceipt,
       {
