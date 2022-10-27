@@ -64,6 +64,7 @@ export const api = createApi({
     'FinanceReceipt',
     'Location',
     'Opportunity',
+    'Participant',
   ],
   endpoints: build => ({
     login: build.mutation<LoginResponse, LoginRequest>({
@@ -632,12 +633,18 @@ export const api = createApi({
     }),
 
     readEventApplications: build.query<
-      PaginatedList<EventApplication>,
       {
-        eventId: number
-        page?: number
-        pageSize?: number
-        search?: string
+        count?: number | undefined
+        next?: string | null | undefined
+        previous?: string | null | undefined
+        results?: User[] | undefined
+      },
+      {
+        eventId: string
+        id?: number[] | undefined
+        page?: number | undefined
+        pageSize?: number | undefined
+        search?: string | undefined
       }
     >({
       query: queryArg => ({
@@ -691,6 +698,35 @@ export const api = createApi({
         ],
       },
     ),
+    readEventParticipants: build.query<
+      PaginatedList<EventApplication>,
+      {
+        eventId: number
+        page?: number
+        pageSize?: number
+        search?: string
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/participants/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        (results?.results
+          ? results.results.map(
+              application =>
+                ({
+                  type: 'Participant' as const,
+                  id: application.id,
+                } as { type: 'Participant'; id: 'PARTICIPANT_LIST' | number }),
+            )
+          : []
+        ).concat([{ type: 'Participant' as const, id: 'PARTICIPANT_LIST' }]),
+    }),
     createEventPhoto: build.mutation<
       EventPhoto,
       { eventId: number; eventPhoto: Omit<EventPhoto, 'id'> }
