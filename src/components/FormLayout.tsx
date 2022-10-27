@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import { HTMLAttributes, HTMLProps, ReactNode } from 'react'
 import styles from './FormLayout.module.scss'
 import Help from './Help'
 
@@ -89,3 +89,28 @@ export const FormSubsubsection = ({
     </div>
   )
 }
+
+export const InfoBox = ({
+  children,
+  className,
+  ...rest
+}: HTMLAttributes<HTMLDivElement>) => (
+  <div className={classNames(styles.infoBox, className)} {...rest}>
+    {children}
+  </div>
+)
+
+export const Label = ({
+  children,
+  className,
+  required,
+  ...rest
+}: HTMLProps<HTMLLabelElement> & { required?: boolean }) => (
+  <label className={classNames(required && styles.required, className)}>
+    {children}
+  </label>
+)
+
+export const FullSizeElement = ({ children }: HTMLProps<HTMLDivElement>) => (
+  <div className={styles.fullSize}>{children}</div>
+)

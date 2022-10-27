@@ -1,5 +1,6 @@
 import './index.scss'
-
+// this line intentionally left blank
+// it keeps reset stylesheets in index.scss imported first
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'

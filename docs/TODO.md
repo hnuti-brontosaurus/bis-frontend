@@ -1,0 +1,1 @@
+- separate location input into a separate component and use it in New Opportunity
