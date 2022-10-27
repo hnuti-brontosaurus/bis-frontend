@@ -30,7 +30,7 @@ export const IconSelect = forwardRef(
         <label htmlFor={id} className={styles.label}>
           <div>
             <div className={styles.icon}>
-              <Icon fill="#fff" height={60} width={60} />
+              <Icon height={60} width={60} />
             </div>
           </div>
           <span>{text}</span>
@@ -43,9 +43,21 @@ export const IconSelect = forwardRef(
 export const IconSelectGroup = ({
   children,
   className,
+  color = 'green',
 }: {
   children: ReactNode
   className?: string
+  color?: 'green' | 'blue'
 }) => {
-  return <div className={classNames(styles.group, className)}>{children}</div>
+  return (
+    <div
+      className={classNames(
+        styles.group,
+        className,
+        color === 'blue' ? styles.blue : styles.green,
+      )}
+    >
+      {children}
+    </div>
+  )
 }

@@ -24,10 +24,31 @@
   &:hover {
     border-color: colors.$bronto;
   }
+
+  svg {
+    fill: #fff;
+  }
 }
 
 .label {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+// set up color for opportunities
+.group.blue {
+  .input {
+    &:checked + .label .icon {
+      background-color: colors.$opportunities;
+    }
+  }
+
+  .icon {
+    border-color: colors.$opportunities-light;
+    background-color: colors.$opportunities-light;
+    &:hover {
+      border-color: colors.$opportunities;
+    }
+  }
 }
