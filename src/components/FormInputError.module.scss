@@ -11,7 +11,8 @@
 
 .inputWrapper {
   &.isError {
-    input {
+    input,
+    textarea {
       border-color: colors.$error;
     }
   }
