@@ -48,14 +48,17 @@ const CreateOpportunity = () => {
   const methods = useForm<OpportunityPayload>()
   const { register, handleSubmit, control, watch, trigger, formState } = methods
 
-  const handleFormSubmit = handleSubmit(data => {
+  const handleFormSubmit = handleSubmit(async data => {
     const newData = {
       ...data,
       // TODO: pridat pridavani lokace
       location: 1223,
     }
-    if (currentUser)
-      createOpportunity({ userId: currentUser.id, opportunity: newData })
+    const { id } = await createOpportunity({
+      userId: currentUser!.id,
+      opportunity: newData,
+    }).unwrap()
+    navigate(`/org/prilezitosti/${id}`)
   })
 
   const handleCancel = () => {
@@ -75,8 +78,8 @@ const CreateOpportunity = () => {
   // when switching to or from collaboration, and if form was already validated, revalidate form
   // in order to update error messages on location_benefits
   useEffect(() => {
-    if (formState.isDirty) trigger('location_benefits')
-  }, [isCollaboration, formState.isDirty, trigger])
+    if (formState.isSubmitted) trigger('location_benefits')
+  }, [isCollaboration, formState.isSubmitted, trigger])
 
   if (!opportunityCategories) return <>Loading</>
 
