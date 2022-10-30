@@ -10,8 +10,10 @@ import {
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
+  EventPhoto,
   EventProgramCategory,
   EventPropagationImage,
+  FinanceReceipt,
   Location,
   Opportunity,
   OpportunityCategory,
@@ -55,7 +57,9 @@ export const api = createApi({
     'User',
     'Event',
     'EventImage',
+    'EventPhoto',
     'EventQuestion',
+    'FinanceReceipt',
     'Location',
     'Opportunity',
   ],
@@ -538,6 +542,143 @@ export const api = createApi({
         { type: 'EventQuestion', id: `${eventId}_QUESTION_LIST` },
       ],
     }),
+    createFinanceReceipt: build.mutation<
+      FinanceReceipt,
+      {
+        eventId: number
+        financeReceipt: Omit<FinanceReceipt, 'id'>
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/finance/receipts/`,
+        method: 'POST',
+        body: queryArg.financeReceipt,
+      }),
+      invalidatesTags: (result, error, { eventId }) => [
+        { type: 'FinanceReceipt', id: `${eventId}_RECEIPT_LIST` },
+      ],
+    }),
+    readFinanceReceipts: build.query<
+      PaginatedList<FinanceReceipt>,
+      ListArguments & { eventId: number }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/finance/receipts/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: (results, error, { eventId }) =>
+        results?.results
+          ? results.results
+              .map(receipt => ({
+                type: 'FinanceReceipt' as const,
+                id: `${eventId}_${receipt.id}`,
+              }))
+              .concat([
+                {
+                  type: 'FinanceReceipt' as const,
+                  id: `${eventId}_RECEIPT_LIST`,
+                },
+              ])
+          : [],
+    }),
+    updateFinanceReceipt: build.mutation<
+      FinanceReceipt,
+      {
+        eventId: number
+        id: number
+        patchedFinanceReceipt: Partial<FinanceReceipt>
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/finance/receipts/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedFinanceReceipt,
+      }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'FinanceReceipt', id: `${eventId}_${id}` },
+        { type: 'FinanceReceipt', id: `${eventId}_RECEIPT_LIST` },
+      ],
+    }),
+    deleteFinanceReceipt: build.mutation<void, { eventId: number; id: number }>(
+      {
+        query: queryArg => ({
+          url: `frontend/events/${queryArg.eventId}/finance/receipts/${queryArg.id}/`,
+          method: 'DELETE',
+        }),
+        invalidatesTags: (result, error, { id, eventId }) => [
+          { type: 'FinanceReceipt', id: `${eventId}_${id}` },
+          { type: 'FinanceReceipt', id: `${eventId}_RECEIPT_LIST` },
+        ],
+      },
+    ),
+    createEventPhoto: build.mutation<
+      EventPhoto,
+      { eventId: number; eventPhoto: Omit<EventPhoto, 'id'> }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/photos/`,
+        method: 'POST',
+        body: queryArg.eventPhoto,
+      }),
+      invalidatesTags: (result, error, { eventId }) => [
+        { type: 'EventPhoto', id: `${eventId}_EVENT_PHOTO_LIST` },
+      ],
+    }),
+    readEventPhotos: build.query<
+      PaginatedList<EventPhoto>,
+      ListArguments & { eventId: number }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/photos/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: (results, error, { eventId }) =>
+        results?.results
+          ? results.results
+              .map(receipt => ({
+                type: 'EventPhoto' as const,
+                id: `${eventId}_${receipt.id}`,
+              }))
+              .concat([
+                {
+                  type: 'EventPhoto' as const,
+                  id: `${eventId}_EVENT_PHOTO_LIST`,
+                },
+              ])
+          : [],
+    }),
+    updateEventPhoto: build.mutation<
+      EventPhoto,
+      { eventId: number; id: number; patchedEventPhoto: Partial<EventPhoto> }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/photos/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedEventPhoto,
+      }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'EventPhoto', id: `${eventId}_${id}` },
+        { type: 'EventPhoto', id: `${eventId}_EVENT_PHOTO_LIST` },
+      ],
+    }),
+    deleteEventPhoto: build.mutation<void, { eventId: number; id: number }>({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/photos/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'EventPhoto', id: `${eventId}_${id}` },
+        { type: 'EventPhoto', id: `${eventId}_EVENT_PHOTO_LIST` },
+      ],
+    }),
   }),
 })
 
@@ -573,8 +714,6 @@ export type CorrectEventPropagationImage = Overwrite<
 >
 
 interface ListArguments {
-  /** Více hodnot lze oddělit čárkami. */
-  category?: ('basic_section' | 'club' | 'headquarter' | 'regional_center')[]
   /** A page number within the paginated result set. */
   page?: number
   /** Number of results to return per page. */
