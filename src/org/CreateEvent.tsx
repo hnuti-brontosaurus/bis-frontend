@@ -4,7 +4,7 @@ import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import { Location } from '../app/services/testApi'
 import { useBase64Images } from '../hooks/base64Images'
 import { event2payload } from './EditEvent'
-import EventForm, { FormShape } from './EventForm'
+import EventForm, { EventFormShape } from './EventForm'
 
 const CreateEvent = () => {
   const navigate = useNavigate()
@@ -60,7 +60,7 @@ const CreateEvent = () => {
     questions,
     locationData,
     ...data
-  }: FormShape) => {
+  }: EventFormShape) => {
     if (data.registration) {
       data.registration.is_event_full = Boolean(data.registration.is_event_full)
     }
