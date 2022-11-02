@@ -29,6 +29,7 @@ const ViewEvent = () => {
       <header>There is just data of event here...</header>
       <nav>
         <Link to={`/org/akce/${eventId}/upravit`}>upravit</Link>
+        <Link to={`/org/akce/${eventId}/uzavrit`}>uzavřít</Link>
         <Link to={`/org/akce/vytvorit?klonovat=${eventId}`}>klonovat</Link>
         <button onClick={() => removeEvent(event)}>smazat</button>
       </nav>

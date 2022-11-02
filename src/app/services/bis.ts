@@ -385,10 +385,13 @@ export const api = createApi({
       query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
       providesTags: (result, error, { id }) => [{ type: 'Event', id }],
     }),
-    updateEvent: build.mutation<Event, { id: number; event: EventPayload }>({
+    updateEvent: build.mutation<
+      Event,
+      { id: number; event: Partial<EventPayload> }
+    >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.id}/`,
-        method: 'PUT',
+        method: 'PATCH',
         body: queryArg.event,
       }),
       invalidatesTags: (result, error, { id }) => [
@@ -629,7 +632,7 @@ export const api = createApi({
       ],
     }),
     readEventPhotos: build.query<
-      PaginatedList<EventPhoto>,
+      PaginatedList<Overwrite<EventPhoto, { photo: CorrectImage }>>,
       ListArguments & { eventId: number }
     >({
       query: queryArg => ({

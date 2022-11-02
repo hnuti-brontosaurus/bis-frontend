@@ -61,7 +61,13 @@ export const ImageUpload = ({ name }: { name: string }) => {
   )
 }
 
-export const ImagesUpload = ({ name }: { name: string }) => {
+export const ImagesUpload = ({
+  name,
+  image = 'image',
+}: {
+  name: string
+  image?: string
+}) => {
   const { control, watch, getValues } = useFormContext()
   const imageFields = useFieldArray({
     control,
@@ -70,6 +76,17 @@ export const ImagesUpload = ({ name }: { name: string }) => {
 
   useEffect(() => {
     // when there is no empty image, add empty image (add button)
+    // somehow, watch doesn't always trigger at the beginning, therefore we add it also here
+    const values = getValues(name)
+    if (
+      !values ||
+      values.length === 0 ||
+      values.length ===
+        (values as { [image: string]: string }[]).filter(obj =>
+          Boolean(obj[image]),
+        ).length
+    )
+      imageFields.append({ [image]: '' })
     // when images change, check that there is always one empty
     const subscription = watch((data /*, { name, type }*/) => {
       const values = get(data, name)
@@ -77,14 +94,15 @@ export const ImagesUpload = ({ name }: { name: string }) => {
         !values ||
         values.length === 0 ||
         values.length ===
-          (values as { image: string }[]).filter(image => Boolean(image?.image))
-            .length
+          (values as { [image: string]: string }[]).filter(obj =>
+            Boolean(obj[image]),
+          ).length
       )
-        imageFields.append({ image: '' })
+        imageFields.append({ [image]: '' })
     })
 
     return () => subscription.unsubscribe()
-  }, [watch, imageFields, getValues, name])
+  }, [watch, imageFields, getValues, name, image])
 
   return (
     <ul className={styles.imageList}>
@@ -92,11 +110,11 @@ export const ImagesUpload = ({ name }: { name: string }) => {
         return (
           <li key={item.id} className={styles.imageItem}>
             <Controller
-              name={`${name}.${index}.image`}
+              name={`${name}.${index}.${image}`}
               control={control}
-              render={({ field }) => <ImageUpload {...field} />}
+              render={({ field }) => <UncontrolledImageUpload {...field} />}
             />
-            {watch(`${name}.${index}.image`) && (
+            {watch(`${name}.${index}.${image}`) && (
               <button
                 className={styles.removeButton}
                 type="button"

@@ -2653,6 +2653,7 @@ export type Record = {
   participants?: number[]
   number_of_participants?: number | null
   number_of_participants_under_26?: number | null
+  note?: string
 }
 export type Event = {
   id: number
@@ -2762,11 +2763,12 @@ export type User = {
   first_name: string
   last_name: string
   nickname?: string
+  birth_name?: string
   display_name: string
   phone?: string
   email?: string | null
   all_emails: string[]
-  birthday: string | null
+  birthday: string
   close_person: ClosePerson | null
   health_insurance_company: HealthInsuranceCompany
   health_issues?: string
@@ -2987,11 +2989,12 @@ export type PatchedUser = {
   first_name?: string
   last_name?: string
   nickname?: string
+  birth_name?: string
   display_name?: string
   phone?: string
   email?: string | null
   all_emails?: string[]
-  birthday?: string | null
+  birthday?: string
   close_person?: ClosePerson | null
   health_insurance_company?: number | null
   health_issues?: string

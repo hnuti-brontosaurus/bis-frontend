@@ -119,6 +119,7 @@ const CreateEvent = () => {
   const eventToCloneFixed = { ...eventToClone }
   delete eventToCloneFixed.start
   delete eventToCloneFixed.end
+  delete eventToCloneFixed.record
 
   return (
     <EventForm
