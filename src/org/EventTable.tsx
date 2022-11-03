@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import { Event } from '../app/services/testApi'
 
 import { useMemo } from 'react'
-import 'react-confirm-alert/src/react-confirm-alert.css'
 import { api } from '../app/services/bis'
 import { useQueries } from '../hooks/queries'
 import { useRemoveEvent } from '../hooks/removeEvent'
