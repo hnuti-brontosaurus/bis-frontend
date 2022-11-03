@@ -2,12 +2,17 @@ import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import { api } from '../app/services/bis'
 
-// open modal before before removing event
+// open modal before before removing opportunity
 
-export const useRemoveEvent = () => {
-  const [removeEvent, states] = api.endpoints.removeEvent.useMutation()
+export const useRemoveOpportunity = () => {
+  const [removeOpportunity, states] =
+    api.endpoints.deleteOpportunity.useMutation()
 
-  const removeEventWithModal = async (event: { id: number; name: string }) => {
+  const removeOpportunityWithModal = async (opportunity: {
+    id: number
+    userId: number
+    name: string
+  }) => {
     // replace with custom ui
     const isConfirmed = await new Promise((resolve, reject) => {
       confirmAlert({
@@ -35,13 +40,13 @@ export const useRemoveEvent = () => {
             </nav>
           </div>
         ),
-        title: `Mažeš akci ${event.name}`,
+        title: `Mažeš příležitost ${opportunity.name}`,
         message: 'Všechna data budou navždy ztracena. Chceš pokračovat?',
       })
     })
     if (isConfirmed) {
-      await removeEvent(event).unwrap()
+      await removeOpportunity(opportunity).unwrap()
     }
   }
-  return [removeEventWithModal, states] as const
+  return [removeOpportunityWithModal, states] as const
 }
