@@ -6,7 +6,9 @@ import { FormProvider, useForm } from 'react-hook-form'
 import type { Optional } from 'utility-types'
 import { api, EventPayload } from '../app/services/bis'
 import {
+  EventPhoto,
   EventPropagationImage,
+  FinanceReceipt,
   Location,
   Question,
 } from '../app/services/testApi'
@@ -20,21 +22,26 @@ import LocationStep from './EventForm/steps/LocationStep'
 import OrganizerStep from './EventForm/steps/OrganizerStep'
 import PropagationStep from './EventForm/steps/PropagationStep'
 import RegistrationStep from './EventForm/steps/RegistrationStep'
+import WorkStep from './EventForm/steps/WorkStep'
 
-export type FormShape = EventPayload & {
+export type EventFormShape = EventPayload & {
   questions: Optional<Question, 'id' | 'order'>[]
   main_image?: Optional<EventPropagationImage, 'id' | 'order'>
   images: Optional<EventPropagationImage, 'id' | 'order'>[]
   locationData?: Optional<Location, 'id'>
+  recordData: {
+    photos: Optional<EventPhoto, 'id'>[]
+    receipts: Optional<FinanceReceipt, 'id'>[]
+  }
 }
 
 const EventForm: FC<{
-  initialData?: Partial<FormShape>
-  onSubmit: (data: FormShape) => void
+  initialData?: Partial<EventFormShape>
+  onSubmit: (data: EventFormShape) => void
   eventToEdit: boolean
 }> = ({ onSubmit, initialData, eventToEdit }) => {
   let i = 0
-  const formMethods = useForm<FormShape>({
+  const formMethods = useForm<EventFormShape>({
     defaultValues: merge(
       {},
       {
@@ -50,7 +57,7 @@ const EventForm: FC<{
     ),
   })
 
-  const { handleSubmit } = formMethods
+  const { handleSubmit, watch } = formMethods
 
   const gpsInputMethods = useForm<{ gps: string }>()
   const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
@@ -60,6 +67,8 @@ const EventForm: FC<{
     1000,
     '',
   )
+
+  console.log(watch())
 
   // we're loading these to make sure that we have the data before we try to render the form, to make sure that the default values are properly initialized
   // TODO check whether this is necessary
@@ -263,8 +272,8 @@ const EventForm: FC<{
                 </div>
               </div>
             </Step>
-            <Step name="prace" hidden={!eventToEdit}>
-              <div>Prace form</div>
+            <Step name="práce" hidden={!eventToEdit}>
+              <WorkStep />
             </Step>
           </Steps>
         </form>

@@ -6,7 +6,7 @@ import { ReactComponent as ThreeTreesIcon } from '../../../assets/three-trees.sv
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import { IconSelect, IconSelectGroup } from '../../../components/IconSelect'
-import { FormShape } from '../../EventForm'
+import { EventFormShape } from '../../EventForm'
 
 const groupIcons = {
   weekend_event: ThreeTreesIcon,
@@ -20,7 +20,7 @@ type EventGroupSlug = keyof typeof groupIcons
 // In api, Category is called Group
 
 const EventCategoryStep = () => {
-  const { control } = useFormContext<FormShape>()
+  const { control } = useFormContext<EventFormShape>()
   const { data: groups, isLoading: isEventGroupsLoading } =
     api.endpoints.getEventGroups.useQuery()
   return (

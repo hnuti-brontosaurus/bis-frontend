@@ -5,11 +5,12 @@ import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import { SelectUser } from '../../../components/SelectUsers'
 import { getIdBySlug, getIdsBySlugs } from '../../../utils/helpers'
-import { FormShape } from '../../EventForm'
+import { EventFormShape } from '../../EventForm'
 
 const PropagationStep = () => {
   const { data: groups } = api.endpoints.getEventGroups.useQuery()
-  const { control, register, watch, getValues } = useFormContext<FormShape>()
+  const { control, register, watch, getValues } =
+    useFormContext<EventFormShape>()
   const { data: diets } = api.endpoints.getDiets.useQuery()
 
   if (!(groups && diets)) return <>Loading</>

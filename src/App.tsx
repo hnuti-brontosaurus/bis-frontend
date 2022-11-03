@@ -6,6 +6,7 @@ import Login from './Login'
 import NotFound from './NotFound'
 import ActiveEvents from './org/ActiveEvents'
 import AllEvents from './org/AllEvents'
+import CloseEvent from './org/CloseEvent'
 import CreateEvent from './org/CreateEvent'
 import CreateOpportunity from './org/CreateOpportunity'
 import EditEvent from './org/EditEvent'
@@ -40,6 +41,7 @@ function App() {
           <Route path="akce/:eventId">
             <Route index element={<ViewEvent />} />
             <Route path="upravit" element={<EditEvent />} />
+            <Route path="uzavrit" element={<CloseEvent />} />
           </Route>
           <Route path="akce" element={<EventsLayout />}>
             <Route path="aktualni" element={<ActiveEvents />} />

@@ -93,7 +93,7 @@ const shouldBeFinishedUntil = (event: Event): number => {
 
   let finishUntil = new Date(0)
   finishUntil.setFullYear(eventEnd.getFullYear() + 1)
-  finishUntil.setMonth(8)
+  finishUntil.setMonth(1) // this means February (months are zero-based)
   finishUntil.setDate(1)
 
   return finishUntil.getTime()

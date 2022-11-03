@@ -53,7 +53,7 @@ const EventTable: FC<{
               status === 'draft'
                 ? `/org/akce/${event.id}/upravit`
                 : status === 'inProgress'
-                ? `/org/akce/${event.id}/upravit?krok=9`
+                ? `/org/akce/${event.id}/uzavrit`
                 : `/org/akce/${event.id}`,
           }
           return (
@@ -94,6 +94,9 @@ const EventTable: FC<{
                     <Link to={`/org/akce/vytvorit?klonovat=${event.id}`}>
                       klonovat
                     </Link>
+                  </MenuItem>
+                  <MenuItem>
+                    <Link to={`/org/akce/${event.id}/uzavrit`}>uzavřít</Link>
                   </MenuItem>
                   <MenuItem>
                     <button

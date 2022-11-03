@@ -4,10 +4,10 @@ import { api } from '../../../app/services/bis'
 import { AdministrationUnit } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
-import { FormShape } from '../../EventForm'
+import { EventFormShape } from '../../EventForm'
 
 const BasicInfoStep = () => {
-  const { register, control, getValues } = useFormContext<FormShape>()
+  const { register, control, getValues } = useFormContext<EventFormShape>()
   const { data: categories } = api.endpoints.getEventCategories.useQuery()
   const { data: programs } = api.endpoints.getPrograms.useQuery()
   const { data: administrationUnits } =
