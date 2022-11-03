@@ -4,12 +4,12 @@ import { api } from '../../../app/services/bis'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import { getIdBySlug, requireBoolean } from '../../../utils/helpers'
-import { FormShape } from '../../EventForm'
+import { EventFormShape } from '../../EventForm'
 
 const IntendedForStep = () => {
   const { data: intendedFor } = api.endpoints.getIntendedFor.useQuery()
   const { watch, register, control, unregister, setValue } =
-    useFormContext<FormShape>()
+    useFormContext<EventFormShape>()
 
   // unregister stuff
   useEffect(() => {

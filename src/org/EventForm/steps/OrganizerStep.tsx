@@ -8,14 +8,14 @@ import {
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import SelectUsers, { SelectUser } from '../../../components/SelectUsers'
-import { FormShape } from '../../EventForm'
+import { EventFormShape } from '../../EventForm'
 import {
   canBeMainOrganizer,
   canBeMainOrganizer2,
 } from './validateMainOrganizer'
 
 const OrganizerStep = () => {
-  const { control, watch } = useFormContext<FormShape>()
+  const { control, watch } = useFormContext<EventFormShape>()
   const { data: categories } = api.endpoints.getEventCategories.useQuery()
   const { data: groups } = api.endpoints.getEventGroups.useQuery()
   const { data: intendedFor } = api.endpoints.getIntendedFor.useQuery()

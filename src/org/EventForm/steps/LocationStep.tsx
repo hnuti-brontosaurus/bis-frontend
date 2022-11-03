@@ -8,7 +8,7 @@ import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import Map, { ClearBounds, MarkerType } from '../../../components/Map'
 import { SelectByQuery } from '../../../components/SelectUsers'
-import { FormShape } from '../../EventForm'
+import { EventFormShape } from '../../EventForm'
 import styles from './LocationStep.module.scss'
 
 type GPSInputContextType = {
@@ -34,7 +34,7 @@ const LocationStep = ({
 }) => {
   // TODO let's deal with indexing the fields later
   // maybe hardcode it, or do some smart component or hook...
-  const { watch, control, setValue } = useFormContext<FormShape>()
+  const { watch, control, setValue } = useFormContext<EventFormShape>()
 
   const [bounds, setBounds] = useState<ClearBounds>()
 
@@ -209,7 +209,7 @@ const LocationStep = ({
 export default LocationStep
 
 const EditLocation = ({ onFinish }: { onFinish: () => void }) => {
-  const { register, trigger, setValue } = useFormContext<FormShape>()
+  const { register, trigger, setValue } = useFormContext<EventFormShape>()
 
   return (
     <>

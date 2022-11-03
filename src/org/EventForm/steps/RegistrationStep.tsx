@@ -7,10 +7,10 @@ import {
   FormSubsubsection,
 } from '../../../components/FormLayout'
 import { requireBoolean } from '../../../utils/helpers'
-import { FormShape } from '../../EventForm'
+import { EventFormShape } from '../../EventForm'
 
 const RegistrationStep = () => {
-  const { control, register, watch } = useFormContext<FormShape>()
+  const { control, register, watch } = useFormContext<EventFormShape>()
   const questionFields = useFieldArray({
     control,
     name: 'questions',

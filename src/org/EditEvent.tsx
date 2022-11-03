@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import { Event, EventPropagationImage, Question } from '../app/services/testApi'
 import { useBase64Images } from '../hooks/base64Images'
-import EventForm, { FormShape } from './EventForm'
+import EventForm, { EventFormShape } from './EventForm'
 
 const EditEvent = () => {
   const params = useParams()
@@ -69,6 +69,12 @@ const EditEvent = () => {
         }).unwrap()
       }
     }
+
+    // clean up unfilled fields which cause api problems
+    if (event.record?.comment_on_work_done === null)
+      delete event.record.comment_on_work_done
+    if (event.record?.total_hours_worked === null)
+      delete event.record.total_hours_worked
 
     // update event
     await updateEvent({ id: eventId, event }).unwrap()
@@ -182,7 +188,7 @@ const EditEvent = () => {
       ...deletedQuestionPromises,
     ])
 
-    await navigate(`/org/akce/${eventId}`)
+    navigate(`/org/akce/${eventId}`)
   }
 
   return (
@@ -207,7 +213,7 @@ export const event2payload = (
   event: Partial<Event>,
   questions: Question[],
   images: EventPropagationImage[],
-): Partial<FormShape> => {
+): Partial<EventFormShape> => {
   const [main_image, ...otherImages] = [...images].sort(sortOrder)
 
   return (

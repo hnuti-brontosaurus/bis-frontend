@@ -23,6 +23,8 @@ const Header = () => {
 
     // go to homepage
     navigate('/')
+    // and hard redirect to cleanup the state and whatnot
+    globalThis.location.href = '/'
   }
 
   return (

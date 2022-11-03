@@ -12,9 +12,19 @@ $step-button-connect-height: 4px;
 $step-button-horizontal-gap: 1rem;
 $step-button-line-height: 1.5rem;
 
+.navWrapper {
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.actions {
+  display: flex;
+  gap: $step-button-horizontal-gap;
+}
+
 .navigation {
   position: relative;
-  margin: 0 1rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.2rem $step-button-horizontal-gap;
