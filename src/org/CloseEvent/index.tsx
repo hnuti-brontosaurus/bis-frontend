@@ -195,7 +195,7 @@ const CloseEvent = () => {
   return (
     <CloseEventForm
       event={event}
-      defaultValues={defaultValues}
+      initialData={defaultValues}
       onSubmit={handleSubmit}
     />
   )
@@ -205,11 +205,11 @@ export default CloseEvent
 
 const CloseEventForm = ({
   event,
-  defaultValues,
+  initialData,
   onSubmit,
 }: {
   event: Event
-  defaultValues: Partial<EvidenceStepFormShape & ParticipantsStepFormShape>
+  initialData: Partial<EvidenceStepFormShape & ParticipantsStepFormShape>
   onSubmit: (
     data: EvidenceStepFormShape &
       ParticipantsStepFormShape &
@@ -219,7 +219,7 @@ const CloseEventForm = ({
   const evidenceFormMethods = useForm<EvidenceStepFormShape>({
     defaultValues: omit(
       pick(
-        defaultValues,
+        initialData,
         'record',
         'finance.bank_account_number',
         'finance.receipts',
@@ -231,7 +231,7 @@ const CloseEventForm = ({
   })
   const participantsFormMethods = useForm<ParticipantsStepFormShape>({
     defaultValues: pick(
-      defaultValues,
+      initialData,
       'record.participants',
       'record.number_of_participants',
       'record.number_of_participants_under_26',
@@ -302,7 +302,8 @@ const CloseEventForm = ({
       )
         delete data.record.total_hours_worked
 
-      if (data.record.attendance_list === defaultValues.record?.attendance_list)
+      // don't save the attendance list scan if it wasn't changed
+      if (data.record.attendance_list === initialData.record?.attendance_list)
         delete data.record.attendance_list
 
       onSubmit(data)
