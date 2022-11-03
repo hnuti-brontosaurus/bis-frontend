@@ -3,6 +3,7 @@ import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { FaPencilAlt, FaPlus, FaTimes } from 'react-icons/fa'
 import { file2base64 } from '../utils/helpers'
+import * as messages from '../utils/validationMessages'
 import styles from './ImageUpload.module.scss'
 
 export const UncontrolledImageUpload = forwardRef<
@@ -50,11 +51,18 @@ export const UncontrolledImageUpload = forwardRef<
   )
 })
 
-export const ImageUpload = ({ name }: { name: string }) => {
+export const ImageUpload = ({
+  name,
+  required,
+}: {
+  name: string
+  required?: boolean
+}) => {
   const { control } = useFormContext()
   return (
     <Controller
       name={name}
+      rules={{ required: required && messages.required }}
       control={control}
       render={({ field }) => <UncontrolledImageUpload {...field} />}
     />

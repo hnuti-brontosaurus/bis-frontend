@@ -265,8 +265,17 @@ export const api = createApi({
         { type: 'Location' as const, id },
       ],
     }),
+    readOpportunity: build.query<
+      CorrectOpportunity,
+      { userId: number; id: number }
+    >({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/opportunities/${queryArg.id}/`,
+      }),
+      providesTags: (result, error, { id }) => [{ type: 'Opportunity', id }],
+    }),
     readOpportunities: build.query<
-      PaginatedList<Opportunity>,
+      PaginatedList<CorrectOpportunity>,
       {
         userId: number
         id?: number[]
@@ -297,7 +306,7 @@ export const api = createApi({
         ).concat([{ type: 'Opportunity' as const, id: 'OPPORTUNITY_LIST' }]),
     }),
     createOpportunity: build.mutation<
-      Opportunity,
+      CorrectOpportunity,
       { userId: number; opportunity: OpportunityPayload }
     >({
       query: ({ userId, opportunity }) => ({
@@ -306,6 +315,34 @@ export const api = createApi({
         body: opportunity,
       }),
       invalidatesTags: () => [{ type: 'Opportunity', id: 'OPPORTUNITY_LIST' }],
+    }),
+    updateOpportunity: build.mutation<
+      CorrectOpportunity,
+      {
+        id: number
+        userId: number
+        patchedOpportunity: Partial<OpportunityPayload>
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/opportunities/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedOpportunity,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Opportunity', id: 'OPPORTUNITY_LIST' },
+        { type: 'Opportunity', id },
+      ],
+    }),
+    deleteOpportunity: build.mutation<void, { id: number; userId: number }>({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/opportunities/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Opportunity', id: 'OPPORTUNITY_LIST' },
+        { type: 'Opportunity', id },
+      ],
     }),
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
@@ -707,9 +744,12 @@ type CorrectImage = {
   original: string
 }
 
-export type OpportunityPayload = Omit<Opportunity, 'category'> & {
-  category: number
-}
+export type OpportunityPayload = Overwrite<
+  Opportunity,
+  {
+    category: number
+  }
+>
 
 export type CorrectEventPropagationImage = Overwrite<
   EventPropagationImage,
@@ -724,3 +764,5 @@ interface ListArguments {
   /** A search term. */
   search?: string
 }
+
+export type CorrectOpportunity = Overwrite<Opportunity, { image: CorrectImage }>

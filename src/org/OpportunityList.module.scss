@@ -1,0 +1,30 @@
+@use '../colors';
+
+.header {
+  background-color: colors.$opportunities-light;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  // TODO let's make the spacing of header more responsive
+  // e.g. some form of max-width
+  padding: 2rem 8rem 4rem;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .headerActionButton {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border-radius: 4rem;
+    box-sizing: content-box;
+    border: 2px solid colors.$opportunities-light;
+    &:hover {
+      border-color: colors.$opportunities;
+    }
+  }
+}

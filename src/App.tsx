@@ -12,9 +12,11 @@ import CreateOpportunity from './org/CreateOpportunity'
 import EditEvent from './org/EditEvent'
 import EventsLayout from './org/EventsLayout'
 import OrgHome from './org/Home'
-import Opportunity from './org/Opportunity'
+import OpportunityList from './org/OpportunityList'
 import UnifinishedEvents from './org/UnfinishedEvents'
+import UpdateOpportunity from './org/UpdateOpportunity'
 import ViewEvent from './org/ViewEvent'
+import ViewOpportunity from './org/ViewOpportunity'
 import ResetPassword from './ResetPassword'
 import SendResetPasswordLink from './SendResetPasswordLink'
 import AuthenticatedOutlet from './utils/AuthenticatedOutlet'
@@ -49,7 +51,11 @@ function App() {
             <Route path="nevyplnene" element={<UnifinishedEvents />} />
           </Route>
           <Route path="prilezitosti/vytvorit" element={<CreateOpportunity />} />
-          <Route path="prilezitosti" element={<Opportunity />} />
+          <Route path="prilezitosti/:opportunityId">
+            <Route index element={<ViewOpportunity />} />
+            <Route path="upravit" element={<UpdateOpportunity />} />
+          </Route>
+          <Route path="prilezitosti" element={<OpportunityList />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
