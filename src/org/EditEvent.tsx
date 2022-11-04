@@ -2,6 +2,7 @@ import merge from 'lodash/merge'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import { Event, EventPropagationImage, Question } from '../app/services/testApi'
+import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import { useBase64Images } from '../hooks/base64Images'
 import EventForm, { EventFormShape } from './EventForm'
@@ -42,7 +43,8 @@ const EditEvent = () => {
   const createOrSelectLocation = useCreateOrSelectLocation()
 
   if (isEventLoading || !event || !images || !questions)
-    return <>Loading Event</>
+    return <Loading>Stahujeme akci</Loading>
+
   if (isError) return <>Event not found (or different error)</>
 
   const handleSubmit: Parameters<typeof EventForm>[0]['onSubmit'] = async ({

@@ -19,6 +19,7 @@ import {
 import storage from 'redux-persist/lib/storage'
 
 import authReducer from '../features/auth/authSlice'
+import uiReducer from '../features/ui/uiSlice'
 import { api } from './services/bis'
 import { emptySplitApi } from './services/emptyApi'
 
@@ -43,6 +44,7 @@ const appReducer = combineReducers({
   [emptySplitApi.reducerPath]: emptySplitApi.reducer,
   [api.reducerPath]: api.reducer,
   auth: persistedAuthReducer,
+  ui: uiReducer,
 })
 
 const rootReducer: Reducer<RootState> = (state, action) => {

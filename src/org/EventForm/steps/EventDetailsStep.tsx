@@ -3,6 +3,7 @@ import { api } from '../../../app/services/bis'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import { ImagesUpload, ImageUpload } from '../../../components/ImageUpload'
+import Loading from '../../../components/Loading'
 import { getIdsBySlugs } from '../../../utils/helpers'
 import { EventFormShape } from '../../EventForm'
 
@@ -10,7 +11,7 @@ const EventDetailsStep = () => {
   const { register, watch } = useFormContext<EventFormShape>()
   const { data: categories } = api.endpoints.getEventCategories.useQuery()
 
-  if (!categories) return <>Loading...</>
+  if (!categories) return <Loading>Připravujeme formulář</Loading>
 
   return (
     <FormSection>

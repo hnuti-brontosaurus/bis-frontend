@@ -1,20 +1,21 @@
 import { FC, ReactNode } from 'react'
+import { useAppSelector } from './app/hooks'
 import logo from './assets/logo.png'
-import styles from './UnauthenticatedLayout.module.scss'
+import { selectShowHeader } from './features/ui/uiSlice'
+import { Content, Footer, Header, Layout } from './Layout'
 
-const UnauthenticatedLayout: FC<{ isLogo?: boolean; children: ReactNode }> = ({
-  isLogo = true,
-  children,
-}) => {
+const UnauthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
+  const showHeader = useAppSelector(selectShowHeader)
   return (
-    <div className={styles.container}>
-      {isLogo && (
-        <header className={styles.header}>
+    <Layout>
+      {showHeader && (
+        <Header>
           <img src={logo} alt="Brontosaurus logo" />
-        </header>
+        </Header>
       )}
-      {children}
-    </div>
+      <Content>{children}</Content>
+      <Footer></Footer>
+    </Layout>
   )
 }
 
