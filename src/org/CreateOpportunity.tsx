@@ -1,17 +1,24 @@
+import merge from 'lodash/merge'
 import { useNavigate } from 'react-router-dom'
-import { api, OpportunityPayload } from '../app/services/bis'
+import { api } from '../app/services/bis'
+import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import { useCurrentUser } from '../hooks/currentUser'
-import OpportunityForm from './OpportunityForm'
+import OpportunityForm, { OpportunityFormShape } from './OpportunityForm'
 
 const CreateOpportunity = () => {
   const { data: currentUser } = useCurrentUser()
 
   const navigate = useNavigate()
 
-  const handleSubmit = async (data: OpportunityPayload) => {
+  const [createOpportunity] = api.endpoints.createOpportunity.useMutation()
+  const createOrSelectLocation = useCreateOrSelectLocation()
+
+  const handleSubmit = async (data: OpportunityFormShape) => {
+    const locationId = await createOrSelectLocation(data.location)
+
     const { id } = await createOpportunity({
       userId: currentUser!.id,
-      opportunity: data,
+      opportunity: merge({}, data, { location: locationId }),
     }).unwrap()
     navigate(`/org/prilezitosti/${id}`)
   }
@@ -21,8 +28,6 @@ const CreateOpportunity = () => {
     // perhaps also ask for a confirmation
     navigate('/org/prilezitosti')
   }
-
-  const [createOpportunity] = api.endpoints.createOpportunity.useMutation()
 
   return (
     <div>

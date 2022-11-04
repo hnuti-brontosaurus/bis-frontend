@@ -1,9 +1,10 @@
 import merge from 'lodash/merge'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
-import { api, OpportunityPayload } from '../app/services/bis'
+import { api } from '../app/services/bis'
+import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import { useCurrentUser } from '../hooks/currentUser'
-import OpportunityForm from './OpportunityForm'
+import OpportunityForm, { OpportunityFormShape } from './OpportunityForm'
 
 const UpdateOpportunity = () => {
   const params = useParams()
@@ -21,8 +22,8 @@ const UpdateOpportunity = () => {
   } = api.endpoints.readOpportunity.useQuery({ id: opportunityId, userId })
 
   const [updateOpportunity] = api.endpoints.updateOpportunity.useMutation()
-  // TODO make a proper location
-  // const [createLocation] = api.endpoints.createLocation.useMutation()
+
+  const createOrSelectLocation = useCreateOrSelectLocation()
 
   if (isError)
     return (
@@ -34,10 +35,13 @@ const UpdateOpportunity = () => {
   const initialData = merge({}, opportunity, {
     category: opportunity.category.id,
     image: opportunity.image.original,
+    location: { id: opportunity.location },
   })
 
-  const handleSubmit = async (data: Optional<OpportunityPayload, 'image'>) => {
-    // TODO location
+  const handleSubmit = async (
+    data: Optional<OpportunityFormShape, 'image'>,
+  ) => {
+    const locationId = await createOrSelectLocation(data.location)
 
     // if image hasn't changed, delete it
     if (initialData.image === data.image) delete data.image
@@ -46,7 +50,7 @@ const UpdateOpportunity = () => {
     await updateOpportunity({
       id: opportunityId,
       userId,
-      patchedOpportunity: data,
+      patchedOpportunity: merge(data, { location: locationId }),
     }).unwrap()
 
     navigate(`/org/prilezitosti/${opportunityId}`)

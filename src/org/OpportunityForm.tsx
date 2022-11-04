@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import { api, OpportunityPayload } from '../app/services/bis'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { Overwrite } from 'utility-types'
+import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
 import { ReactComponent as HandsIcon } from '../assets/hands.svg'
 import { ReactComponent as HousesIcon } from '../assets/houses.svg'
 import { ReactComponent as OrganizerIcon } from '../assets/organizer.svg'
@@ -15,6 +16,7 @@ import {
 } from '../components/FormLayout'
 import { IconSelect, IconSelectGroup } from '../components/IconSelect'
 import { ImageUpload } from '../components/ImageUpload'
+import SelectLocation, { NewLocation } from '../components/SelectLocation'
 import { getIdBySlug } from '../utils/helpers'
 import { required } from '../utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
@@ -27,14 +29,21 @@ const categoryIcons = {
 
 type OpportunityCategorySlug = keyof typeof categoryIcons
 
+export type OpportunityFormShape = Overwrite<
+  OpportunityPayload,
+  {
+    location: NewLocation | Pick<CorrectLocation, 'id'>
+  }
+>
+
 const OpportunityForm = ({
   initialData,
   onSubmit,
   onCancel,
   isUpdate,
 }: {
-  initialData?: Partial<OpportunityPayload>
-  onSubmit: (data: OpportunityPayload) => void
+  initialData?: Partial<OpportunityFormShape>
+  onSubmit: (data: OpportunityFormShape) => void
   onCancel: () => void
   isUpdate?: boolean
 }) => {
@@ -43,10 +52,10 @@ const OpportunityForm = ({
     initialData.category = String(initialData.category) as unknown as number
   }
 
-  const methods = useForm<OpportunityPayload>({
+  const methods = useForm<OpportunityFormShape>({
     defaultValues: initialData,
   })
-  const { register, handleSubmit, watch, trigger, formState } = methods
+  const { register, control, handleSubmit, watch, trigger, formState } = methods
 
   const { data: opportunityCategories } =
     api.endpoints.readOpportunityCategories.useQuery({
@@ -189,7 +198,12 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
             Lokalita
             {/*TODO: this input is just a placeholder for something better*/}
             <FormInputError>
-              <input {...register('location', { required })} />
+              <Controller
+                name="location"
+                control={control}
+                rules={{ required }}
+                render={({ field }) => <SelectLocation {...field} />}
+              />
             </FormInputError>
           </FormSubsection>
           <FullSizeElement>

@@ -1,34 +1,37 @@
-import { useFormContext } from 'react-hook-form'
-import { api } from '../../../app/services/bis'
-import FormInputError from '../../../components/FormInputError'
-import {
-  FormSection,
-  FormSubsection,
-  FormSubsubsection,
-  InfoBox,
-} from '../../../components/FormLayout'
-import Help from '../../../components/Help'
-import { ImagesUpload, ImageUpload } from '../../../components/ImageUpload'
-import { getIdsBySlugs } from '../../../utils/helpers'
-import { EventFormShape } from '../../EventForm'
+// import { useFormContext } from 'react-hook-form'
+// import { api } from '../../../app/services/bis'
+// import FormInputError from '../../../components/FormInputError'
+// import {
+//   FormSection,
+//   FormSubsection,
+//   FormSubsubsection,
+//   InfoBox,
+// } from '../../../components/FormLayout'
+// import Help from '../../../components/Help'
+// import { ImagesUpload, ImageUpload } from '../../../components/ImageUpload'
+// import { getIdsBySlugs } from '../../../utils/helpers'
+// import { EventFormShape } from '../../EventForm'
 
-const totalHoursHelp =
-  'Napište kolik hodin strávili všichni účastníci a organizátoři dobrovolnickou prací. Např.: Na akci se dva dny kosila louka. Každý den se pracovalo 6 hodin a pracovalo 10 účastníků a 2 organizátoři. Všichni tedy dobrovolnickou prací strávili 2 dny x 6 hodin x 12 lidí =  144 člověkohodin.'
+import { FormSection } from '../../../components/FormLayout'
+
+// const totalHoursHelp =
+//   'Napište kolik hodin strávili všichni účastníci a organizátoři dobrovolnickou prací. Např.: Na akci se dva dny kosila louka. Každý den se pracovalo 6 hodin a pracovalo 10 účastníků a 2 organizátoři. Všichni tedy dobrovolnickou prací strávili 2 dny x 6 hodin x 12 lidí =  144 člověkohodin.'
 
 const WorkStep = () => {
-  const { register, watch } = useFormContext<EventFormShape>()
-  const { data: eventCategories } = api.endpoints.getEventCategories.useQuery()
+  // const { register, watch } = useFormContext<EventFormShape>()
+  // const { data: eventCategories } = api.endpoints.getEventCategories.useQuery()
 
-  if (!eventCategories) return <>Loading...</>
+  // if (!eventCategories) return <>Loading...</>
 
-  const isVolunteering = getIdsBySlugs(eventCategories.results, [
-    'public__volunteering__only_volunteering',
-    'public__volunteering__with_experience',
-  ]).includes(+watch('category'))
+  // const isVolunteering = getIdsBySlugs(eventCategories.results, [
+  //   'public__volunteering__only_volunteering',
+  //   'public__volunteering__with_experience',
+  // ]).includes(+watch('category'))
 
   return (
     <FormSection>
-      <FormSubsection header="Evidence práce">
+      nothing here
+      {/* <FormSubsection header="Evidence práce">
         <FormSubsubsection
           required={isVolunteering}
           header="Odpracováno člověkohodin"
@@ -77,8 +80,8 @@ const WorkStep = () => {
           header="Číslo účtu k proplacení dokladů"
           help="Povinné pro vybrané akce. Pokud jste mezi vybranými akcemi, bude vás ústředí HB informovat."
         >
-          {/* TODO: find or ask which field is this */}
-          <input type="text" /*{/*...register('record.')* /}*/ />
+          {/* TODO: find or ask which field is this * /}
+          <input type="text" /*{/*...register('record.')* /}* / />
         </FormSubsubsection>
         <FormSubsubsection header="Zpětná vazba">
           <InfoBox>
@@ -121,7 +124,7 @@ const WorkStep = () => {
               Vyplnit závěrečnou zprávu
             </a>
           </div>
-        </FormSubsubsection>
+        </FormSubsubsection>}
       </FormSubsection>
       {/* Údaje , které je třeba zadat po akci:
 Počet účastníků celkem *
