@@ -2,6 +2,7 @@ import merge from 'lodash/merge'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
 import { api } from '../app/services/bis'
+import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import { useCurrentUser } from '../hooks/currentUser'
 import OpportunityForm, { OpportunityFormShape } from './OpportunityForm'
@@ -30,7 +31,8 @@ const UpdateOpportunity = () => {
       <>Opportunity not found (or different error) {JSON.stringify(error)}</>
     )
 
-  if (isOpportunityLoading || !opportunity) return <>Loading Opportunity</>
+  if (isOpportunityLoading || !opportunity)
+    return <Loading>Stahujeme příležitost</Loading>
 
   const initialData = merge({}, opportunity, {
     category: opportunity.category.id,

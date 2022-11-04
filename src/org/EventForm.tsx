@@ -11,6 +11,7 @@ import {
   FinanceReceipt,
   Question,
 } from '../app/services/testApi'
+import Loading from '../components/Loading'
 import { NewLocation } from '../components/SelectLocation'
 import { Step, Steps } from '../components/Steps'
 import { useDebouncedState } from '../hooks/debouncedState'
@@ -112,7 +113,7 @@ const EventForm: FC<{
       administrationUnits
     )
   )
-    return <div>Loading (event stuff)</div>
+    return <Loading>Připravujeme formulář</Loading>
 
   const handleFormSubmit = handleSubmit(data => {
     if (data.registration) {

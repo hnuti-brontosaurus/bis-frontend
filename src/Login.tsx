@@ -4,6 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { api } from './app/services/bis'
 import FormInputError from './components/FormInputError'
+import Loading from './components/Loading'
 import formStyles from './Form.module.scss'
 import styles from './Login.module.scss'
 
@@ -27,7 +28,8 @@ const Login = () => {
     }
   })
 
-  if (isLoginLoading) return <div>Loading...</div>
+  if (isLoginLoading)
+    return <Loading hideHeader>Přihlášení do panelu Brontosaurus...</Loading>
 
   return (
     <div className={styles.loginContainer}>

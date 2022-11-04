@@ -7,6 +7,7 @@ import {
 } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
+import Loading from '../../../components/Loading'
 import SelectUsers, { SelectUser } from '../../../components/SelectUsers'
 import { EventFormShape } from '../../EventForm'
 import {
@@ -25,7 +26,8 @@ const OrganizerStep = () => {
 
   const [readUser] = api.endpoints.getUser.useLazyQuery()
 
-  if (!(groups && allQualifications && categories)) return <div>Loading...</div>
+  if (!(groups && allQualifications && categories))
+    return <Loading>Připravujeme formulář</Loading>
 
   return (
     <>

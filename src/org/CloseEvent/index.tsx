@@ -12,6 +12,7 @@ import {
   FinanceReceipt,
   Record,
 } from '../../app/services/testApi'
+import Loading from '../../components/Loading'
 import {
   SimpleStep as Step,
   SimpleSteps as Steps,
@@ -63,7 +64,7 @@ const CloseEvent = () => {
   const [updateReceipt] = api.endpoints.updateFinanceReceipt.useMutation()
   const [deleteReceipt] = api.endpoints.deleteFinanceReceipt.useMutation()
 
-  if (!(event && photos && receipts)) return <>Loading data</>
+  if (!(event && photos && receipts)) return <Loading>Stahujeme data</Loading>
 
   const defaultValues = {
     record: {

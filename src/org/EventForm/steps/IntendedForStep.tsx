@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
+import Loading from '../../../components/Loading'
 import { getIdBySlug, requireBoolean } from '../../../utils/helpers'
 import { EventFormShape } from '../../EventForm'
 
@@ -29,7 +30,7 @@ const IntendedForStep = () => {
     return () => subscription.unsubscribe()
   }, [watch, intendedFor?.results, unregister, setValue])
 
-  if (!intendedFor) return <>Loading</>
+  if (!intendedFor) return <Loading>Připravujeme formulář</Loading>
 
   return (
     <FormSection startIndex={8}>
