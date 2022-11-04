@@ -1,6 +1,8 @@
+import merge from 'lodash/merge'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import { Event, EventPropagationImage, Question } from '../app/services/testApi'
+import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import { useBase64Images } from '../hooks/base64Images'
 import EventForm, { EventFormShape } from './EventForm'
 
@@ -25,8 +27,9 @@ const EditEvent = () => {
     },
   )
 
-  const { data: questions, isLoading: isQuestionsLoading } =
-    api.endpoints.readEventQuestions.useQuery({ eventId })
+  const { data: questions } = api.endpoints.readEventQuestions.useQuery({
+    eventId,
+  })
 
   const [updateEvent] = api.endpoints.updateEvent.useMutation()
   const [createEventImage] = api.endpoints.createEventImage.useMutation()
@@ -35,8 +38,8 @@ const EditEvent = () => {
   const [createEventQuestion] = api.endpoints.createEventQuestion.useMutation()
   const [updateEventQuestion] = api.endpoints.updateEventQuestion.useMutation()
   const [removeEventQuestion] = api.endpoints.removeEventQuestion.useMutation()
-  const [createLocation] = api.endpoints.createLocation.useMutation()
-  const [updateLocation] = api.endpoints.updateLocation.useMutation()
+
+  const createOrSelectLocation = useCreateOrSelectLocation()
 
   if (isEventLoading || !event || !images || !questions)
     return <>Loading Event</>
@@ -46,29 +49,10 @@ const EditEvent = () => {
     main_image: updatedMainImage,
     images: updatedImages,
     questions: updatedQuestions,
-    locationData,
     ...event
   }) => {
     // ***location***
-    if (locationData) {
-      if (locationData?.gps_location?.coordinates) {
-        locationData.gps_location.type = 'Point'
-        locationData.gps_location.coordinates =
-          locationData.gps_location.coordinates.map(a => +a)
-      }
-      if (!locationData.id) {
-        locationData.patron = null
-        locationData.contact_person = null
-
-        const { id } = await createLocation(locationData).unwrap()
-        event.location = id
-      } else {
-        await updateLocation({
-          id: locationData.id,
-          location: locationData,
-        }).unwrap()
-      }
-    }
+    const locationId = await createOrSelectLocation(event.location)
 
     // clean up unfilled fields which cause api problems
     if (event.record?.comment_on_work_done === null)
@@ -77,7 +61,12 @@ const EditEvent = () => {
       delete event.record.total_hours_worked
 
     // update event
-    await updateEvent({ id: eventId, event }).unwrap()
+    await updateEvent({
+      id: eventId,
+      event: merge({}, event, {
+        location: locationId,
+      }),
+    }).unwrap()
     // ***images***
     // get order from position
 
@@ -230,6 +219,7 @@ export const event2payload = (
       main_image,
       images: otherImages,
       questions: [...questions].sort(sortOrder),
+      location: event.location ? { id: event.location } : undefined,
     }
   )
 }

@@ -3,15 +3,15 @@ import type { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
 import { FC, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import type { Optional } from 'utility-types'
-import { api, EventPayload } from '../app/services/bis'
+import type { Assign, Optional } from 'utility-types'
+import { api, CorrectLocation, EventPayload } from '../app/services/bis'
 import {
   EventPhoto,
   EventPropagationImage,
   FinanceReceipt,
-  Location,
   Question,
 } from '../app/services/testApi'
+import { NewLocation } from '../components/SelectLocation'
 import { Step, Steps } from '../components/Steps'
 import { useDebouncedState } from '../hooks/debouncedState'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
@@ -24,16 +24,19 @@ import PropagationStep from './EventForm/steps/PropagationStep'
 import RegistrationStep from './EventForm/steps/RegistrationStep'
 import WorkStep from './EventForm/steps/WorkStep'
 
-export type EventFormShape = EventPayload & {
-  questions: Optional<Question, 'id' | 'order'>[]
-  main_image?: Optional<EventPropagationImage, 'id' | 'order'>
-  images: Optional<EventPropagationImage, 'id' | 'order'>[]
-  locationData?: Optional<Location, 'id'>
-  recordData: {
-    photos: Optional<EventPhoto, 'id'>[]
-    receipts: Optional<FinanceReceipt, 'id'>[]
+export type EventFormShape = Assign<
+  EventPayload,
+  {
+    questions: Optional<Question, 'id' | 'order'>[]
+    main_image?: Optional<EventPropagationImage, 'id' | 'order'>
+    images: Optional<EventPropagationImage, 'id' | 'order'>[]
+    recordData: {
+      photos: Optional<EventPhoto, 'id'>[]
+      receipts: Optional<FinanceReceipt, 'id'>[]
+    }
+    location: NewLocation | Pick<CorrectLocation, 'id'>
   }
-}
+>
 
 const EventForm: FC<{
   initialData?: Partial<EventFormShape>
@@ -42,22 +45,19 @@ const EventForm: FC<{
 }> = ({ onSubmit, initialData, eventToEdit }) => {
   let i = 0
   const formMethods = useForm<EventFormShape>({
-    defaultValues: merge(
-      {},
-      {
-        finance: null,
-        record: null,
-        propagation: {
-          accommodation: '.',
-          organizers: '.',
-          working_days: 0,
-        },
-      },
-      initialData,
-    ),
+    defaultValues: merge({}, initialData, {
+      finance: null,
+      record: null,
+      is_closed: false,
+      // propagation: {
+      //   accommodation: '.',
+      //   organizers: '.',
+      //   working_days: 0,
+      // },
+    }),
   })
 
-  const { handleSubmit, watch } = formMethods
+  const { handleSubmit } = formMethods
 
   const gpsInputMethods = useForm<{ gps: string }>()
   const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
@@ -67,8 +67,6 @@ const EventForm: FC<{
     1000,
     '',
   )
-
-  console.log(watch())
 
   // we're loading these to make sure that we have the data before we try to render the form, to make sure that the default values are properly initialized
   // TODO check whether this is necessary
@@ -178,7 +176,7 @@ const EventForm: FC<{
             >
               <RegistrationStep />
             </Step>
-            <Step name="lokace" fields={['location', 'locationData']}>
+            <Step name="lokace" fields={['location']}>
               <LocationStep
                 i={i++}
                 gpsInputMethods={gpsInputMethods}
