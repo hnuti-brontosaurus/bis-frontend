@@ -4,6 +4,7 @@ import { api } from '../../../app/services/bis'
 import { AdministrationUnit } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
+import Loading from '../../../components/Loading'
 import { EventFormShape } from '../../EventForm'
 
 const BasicInfoStep = () => {
@@ -13,7 +14,8 @@ const BasicInfoStep = () => {
   const { data: administrationUnits } =
     api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
 
-  if (!(administrationUnits && categories && programs)) return <>Loading...</>
+  if (!(administrationUnits && categories && programs))
+    return <Loading>Připravujeme formulář</Loading>
 
   return (
     <>

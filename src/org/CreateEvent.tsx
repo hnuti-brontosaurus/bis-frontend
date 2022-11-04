@@ -2,6 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import merge from 'lodash/merge'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api, CorrectEventPropagationImage } from '../app/services/bis'
+import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import { useBase64Images } from '../hooks/base64Images'
 import { event2payload } from './EditEvent'
@@ -49,10 +50,10 @@ const CreateEvent = () => {
     cloneEventId > 0 &&
     (isEventToCloneLoading || !eventToClone || !images || !questions)
   )
-    return <div>Fetching event to clone</div>
+    return <Loading>Stahujeme akci ke zklonování</Loading>
 
   if (isSavingEvent || isSavingQuestions || isSavingImages)
-    return <div>Saving event</div>
+    return <Loading>Ukládáme akci</Loading>
 
   const handleSubmit = async ({
     main_image,

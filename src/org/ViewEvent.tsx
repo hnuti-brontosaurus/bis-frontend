@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
+import Loading from '../components/Loading'
 import { useRemoveEvent } from '../hooks/removeEvent'
 
 const ViewEvent = () => {
@@ -20,9 +21,9 @@ const ViewEvent = () => {
   if (isError) return <>Nepodařilo se nám najít akci</>
 
   if (isEventLoading || !event || !images || !questions)
-    return <>Loading Event</>
+    return <Loading>Stahujeme akci</Loading>
 
-  if (isEventRemoving) return <>Mažeme akci</>
+  if (isEventRemoving) return <Loading>Mažeme akci</Loading>
 
   return (
     <div>

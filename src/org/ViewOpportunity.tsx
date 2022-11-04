@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
+import Loading from '../components/Loading'
 import { useCurrentUser } from '../hooks/currentUser'
 import { useRemoveOpportunity } from '../hooks/removeOpportunity'
 
@@ -22,9 +23,10 @@ const ViewOpportunity = () => {
 
   if (isError) return <>Nepodařilo se nám najít příležitost</>
 
-  if (isOpportunityLoading || !opportunity) return <>Loading Opportunity</>
+  if (isOpportunityLoading || !opportunity)
+    return <Loading>Stahujeme příležitost</Loading>
 
-  if (isOpportunityRemoving) return <>Mažeme příležitost</>
+  if (isOpportunityRemoving) return <Loading>Mažeme příležitost</Loading>
 
   const handleClickRemove = async () => {
     await removeOpportunity({ ...opportunity, userId })

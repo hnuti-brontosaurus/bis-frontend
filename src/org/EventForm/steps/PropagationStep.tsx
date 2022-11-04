@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
+import Loading from '../../../components/Loading'
 import { SelectUser } from '../../../components/SelectUsers'
 import { getIdBySlug, getIdsBySlugs } from '../../../utils/helpers'
 import { EventFormShape } from '../../EventForm'
@@ -13,7 +14,7 @@ const PropagationStep = () => {
     useFormContext<EventFormShape>()
   const { data: diets } = api.endpoints.getDiets.useQuery()
 
-  if (!(groups && diets)) return <>Loading</>
+  if (!(groups && diets)) return <Loading>Připravujeme formulář</Loading>
 
   return (
     <FormSection>
