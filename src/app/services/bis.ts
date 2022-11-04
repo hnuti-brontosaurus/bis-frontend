@@ -190,7 +190,10 @@ export const api = createApi({
             }))
           : [],
     }),
-    createLocation: build.mutation<Location, Omit<Location, 'id'>>({
+    createLocation: build.mutation<
+      CorrectLocation,
+      Omit<CorrectLocation, 'id'>
+    >({
       query: queryArg => ({
         url: `frontend/locations/`,
         method: 'POST',
@@ -212,7 +215,7 @@ export const api = createApi({
       }),
     }),
     readLocations: build.query<
-      PaginatedList<Location>,
+      PaginatedList<CorrectLocation>,
       {
         /** Více hodnot lze oddělit čárkami. */
         id?: number[]
@@ -247,13 +250,13 @@ export const api = createApi({
           : []
         ).concat([{ type: 'Location' as const, id: 'LOCATION_LIST' }]),
     }),
-    readLocation: build.query<Location, { id: number }>({
+    readLocation: build.query<CorrectLocation, { id: number }>({
       query: queryArg => ({ url: `frontend/locations/${queryArg.id}/` }),
       providesTags: (results, _, { id }) => [{ type: 'Location' as const, id }],
     }),
     updateLocation: build.mutation<
-      Location,
-      { id: number; location: Partial<Location> }
+      CorrectLocation,
+      { id: number; location: Partial<CorrectLocation> }
     >({
       query: queryArg => ({
         url: `frontend/locations/${queryArg.id}/`,
@@ -766,3 +769,13 @@ interface ListArguments {
 }
 
 export type CorrectOpportunity = Overwrite<Opportunity, { image: CorrectImage }>
+
+export type CorrectLocation = Overwrite<
+  Location,
+  {
+    gps_location?: {
+      type: 'Point'
+      coordinates: [number, number]
+    }
+  }
+>

@@ -3,7 +3,7 @@ import * as L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   MapContainer,
   Marker,
@@ -36,6 +36,7 @@ const existentIcon = L.icon({
 
 export type MarkerType = {
   id: number
+  name: string
   coordinates: [number, number]
   type: 'new' | 'existent' | 'selected'
 }
@@ -53,26 +54,41 @@ const MapEvents = ({
       if (onClick) onClick(ll)
     },
     moveend(e) {
-      const bounds = map.getBounds()
-      onMoveEnd?.({
-        north: bounds.getNorth(),
-        south: bounds.getSouth(),
-        west: bounds.getWest(),
-        east: bounds.getEast(),
-      })
+      onMoveEnd?.(getClearBounds(map))
     },
   })
   return null
 }
 
-const MapRefresh = () => {
+const getClearBounds = (map: L.Map): ClearBounds => {
+  const bounds = map.getBounds()
+  return {
+    north: bounds.getNorth(),
+    south: bounds.getSouth(),
+    west: bounds.getWest(),
+    east: bounds.getEast(),
+  }
+}
+
+const MapRefresh = ({
+  onRefresh,
+}: {
+  onRefresh: (bounds: ClearBounds) => void
+}) => {
   const elementRef = useRef<HTMLDivElement>(null)
   const isOnScreen = useOnScreen(elementRef)
   const map = useMap()
 
+  const bounds = useMemo(() => {
+    return getClearBounds(map)
+  }, [map])
+
   useEffect(() => {
-    if (isOnScreen) map.invalidateSize()
-  }, [isOnScreen, map])
+    if (isOnScreen) {
+      map.invalidateSize()
+      onRefresh(bounds)
+    }
+  }, [isOnScreen, map, onRefresh, bounds])
   return <div ref={elementRef}></div>
 }
 
@@ -112,12 +128,10 @@ const Map = ({
   const [flyPosition, setFlyPosition] = useState<L.LatLngTuple>()
 
   useEffect(() => {
-    console.log('flying', selection?.coordinates)
     if (selection?.coordinates) setFlyPosition(selection.coordinates)
   }, [selection?.id])
 
   useEffect(() => {
-    console.log('flying', value)
     if (value) setFlyPosition(value)
   }, [value])
 
@@ -133,7 +147,7 @@ const Map = ({
           onClick={({ lat, lng }) => onChange([lat, lng])}
           onMoveEnd={onChangeBounds}
         />
-        <MapRefresh />
+        <MapRefresh onRefresh={bounds => onChangeBounds?.(bounds)} />
         <MapFly value={flyPosition} />
         <MarkerClusterGroup maxClusterRadius={10}>
           {value && <Marker position={value} icon={newIcon}></Marker>}
@@ -141,6 +155,7 @@ const Map = ({
             return (
               <Marker
                 key={marker.id}
+                title={marker.name}
                 position={marker.coordinates}
                 icon={marker.id === selection?.id ? selectedIcon : existentIcon}
                 eventHandlers={{ click: () => onSelect(marker.id) }}

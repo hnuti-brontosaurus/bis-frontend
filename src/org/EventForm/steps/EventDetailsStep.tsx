@@ -7,36 +7,10 @@ import { getIdsBySlugs } from '../../../utils/helpers'
 import { EventFormShape } from '../../EventForm'
 
 const EventDetailsStep = () => {
-  const { register, control, getValues, watch } =
-    useFormContext<EventFormShape>()
+  const { register, watch } = useFormContext<EventFormShape>()
   const { data: categories } = api.endpoints.getEventCategories.useQuery()
 
-  // const imageFields = useFieldArray({
-  //   control,
-  //   name: 'images',
-  // })
-
-  // useEffect(() => {
-  //   // when there is no empty image, add empty image (add button)
-  //   if (!getValues('images') || getValues('images').length === 0)
-  //     imageFields.append({ image: '' })
-  //   // when images change, check that there is always one empty
-  //   const subscription = watch((data, { name, type }) => {
-  //     if (
-  //       data.images &&
-  //       data.images.length ===
-  //         data.images.filter(image => Boolean(image && image.image)).length
-  //     )
-  //       imageFields.append({ image: '' })
-  //   })
-  //   //imageFields.append({ image: '' })
-
-  //   return () => subscription.unsubscribe()
-  // }, [watch, imageFields, getValues])
-
   if (!categories) return <>Loading...</>
-
-  console.log(watch())
 
   return (
     <FormSection>
