@@ -1,6 +1,5 @@
-import debounce from 'lodash/debounce'
 import merge from 'lodash/merge'
-import { FormEventHandler, useEffect, useMemo } from 'react'
+import { FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -21,6 +20,7 @@ import { IconSelect, IconSelectGroup } from '../components/IconSelect'
 import { ImageUpload } from '../components/ImageUpload'
 import SelectLocation, { NewLocation } from '../components/SelectLocation'
 import { actions, selectFormByTypeAndId } from '../features/form/formSlice'
+import { useDebouncedDispatch } from '../hooks/debouncedDispatch'
 import { getIdBySlug } from '../utils/helpers'
 import { required } from '../utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
@@ -69,9 +69,8 @@ const OpportunityForm = ({
   const { register, control, handleSubmit, watch, trigger, formState, reset } =
     methods
 
+  const debouncedDispatch = useDebouncedDispatch()
   const dispatch = useAppDispatch()
-
-  const debouncedDispatch = useMemo(() => debounce(dispatch, 300), [dispatch])
 
   // whenever the form changes, save it to redux
   // this is to persist the form

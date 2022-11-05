@@ -1,6 +1,6 @@
 import { FormProvider, UseFormReturn } from 'react-hook-form'
-import { ParticipantsStepFormShape } from '.'
 import FormInputError from '../../components/FormInputError'
+import { ParticipantsStepFormShape } from './CloseEventForm'
 
 const ParticipantsStep = ({
   areParticipantsRequired,

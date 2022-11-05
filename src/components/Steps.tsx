@@ -82,8 +82,10 @@ export const SimpleSteps = <T extends Record<string, any>>({
   children,
   actions,
   onSubmit,
+  onCancel,
 }: {
   onSubmit?: (props: T) => void
+  onCancel?: () => void
   actions?: { name: ReactNode; props: T }[]
   children:
     | FunctionComponentElement<{
@@ -124,6 +126,11 @@ export const SimpleSteps = <T extends Record<string, any>>({
           ))}
         </nav>
         <nav className={styles.actions}>
+          {onCancel && (
+            <button type="reset" onClick={() => onCancel()}>
+              Zrušit
+            </button>
+          )}
           {onSubmit &&
             actions &&
             actions.map(({ props, name }) => (
