@@ -44,6 +44,9 @@ export type ParticipantsStepFormShape = {
   >
 }
 
+export type CloseEventFormShape = EvidenceStepFormShape &
+  ParticipantsStepFormShape
+
 const CloseEvent = () => {
   const params = useParams()
   const eventId = Number(params.eventId)

@@ -32,7 +32,11 @@ const CreateOpportunity = () => {
   return (
     <div>
       <h1 style={{ textAlign: 'center' }}>Nová příležitost</h1>
-      <OpportunityForm onSubmit={handleSubmit} onCancel={handleCancel} />
+      <OpportunityForm
+        id="new"
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
     </div>
   )
 }
