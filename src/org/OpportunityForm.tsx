@@ -2,7 +2,6 @@ import merge from 'lodash/merge'
 import { FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
 import { ReactComponent as HandsIcon } from '../assets/hands.svg'
 import { ReactComponent as HousesIcon } from '../assets/houses.svg'
@@ -19,8 +18,11 @@ import {
 import { IconSelect, IconSelectGroup } from '../components/IconSelect'
 import { ImageUpload } from '../components/ImageUpload'
 import SelectLocation, { NewLocation } from '../components/SelectLocation'
-import { actions, selectFormByTypeAndId } from '../features/form/formSlice'
-import { useDebouncedDispatch } from '../hooks/debouncedDispatch'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from '../hooks/persistForm'
 import { getIdBySlug } from '../utils/helpers'
 import { required } from '../utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
@@ -58,35 +60,14 @@ const OpportunityForm = ({
     initialData.category = String(initialData.category) as unknown as number
   }
 
-  // TODO next: load the data from API
-  const savedData = useAppSelector(state =>
-    selectFormByTypeAndId(state, 'opportunity', id),
-  )
+  const savedData = usePersistentFormData('opportunity', id)
 
   const methods = useForm<OpportunityFormShape>({
     defaultValues: merge({}, initialData, savedData),
   })
-  const { register, control, handleSubmit, watch, trigger, formState, reset } =
-    methods
+  const { register, control, handleSubmit, watch, trigger, formState } = methods
 
-  const debouncedDispatch = useDebouncedDispatch()
-  const dispatch = useAppDispatch()
-
-  // whenever the form changes, save it to redux
-  // this is to persist the form
-  useEffect(() => {
-    const subscription = watch((data, { name, type }) => {
-      debouncedDispatch(
-        actions.saveForm({
-          id,
-          type: 'opportunity',
-          data: data as OpportunityFormShape,
-        }),
-      )
-    })
-
-    return () => subscription.unsubscribe()
-  }, [watch, debouncedDispatch, id])
+  usePersistForm('opportunity', id, watch)
 
   const { data: opportunityCategories } =
     api.endpoints.readOpportunityCategories.useQuery({
@@ -99,17 +80,14 @@ const OpportunityForm = ({
     onSubmit(data)
   })
 
+  const cancelPersist = useClearPersistentForm('opportunity', id)
+
   const handleFormReset: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
     // reset form
-    reset(initialData)
+    // reset(initialData) // it doesn't reset empty form but triggers watch
     // clear persisted changes
-    dispatch(
-      actions.removeForm({
-        id,
-        type: 'opportunity',
-      }),
-    )
+    cancelPersist()
     // and do whatever is necessary upstream
     onCancel()
   }

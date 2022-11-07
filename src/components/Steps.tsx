@@ -133,8 +133,9 @@ export const SimpleSteps = <T extends Record<string, any>>({
           )}
           {onSubmit &&
             actions &&
-            actions.map(({ props, name }) => (
+            actions.map(({ props, name }, i) => (
               <button
+                key={i} // TODO we should not use index as key
                 type="submit"
                 className={formStyles.mainActionButton}
                 onClick={() => onSubmit(props)}

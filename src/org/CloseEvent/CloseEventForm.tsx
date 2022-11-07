@@ -1,10 +1,8 @@
 import merge from 'lodash/merge'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Optional } from 'utility-types'
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import {
   Event,
   EventPhoto,
@@ -16,8 +14,11 @@ import {
   SimpleStep as Step,
   SimpleSteps as Steps,
 } from '../../components/Steps'
-import { actions, selectFormByTypeAndId } from '../../features/form/formSlice'
-import { useDebouncedDispatch } from '../../hooks/debouncedDispatch'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from '../../hooks/persistForm'
 import EvidenceStep from './EvidenceStep'
 import ParticipantsStep from './ParticipantsStep'
 
@@ -78,11 +79,8 @@ const CloseEventForm = ({
   id: string
 }) => {
   // load persisted data
-  const initialAndSavedData = merge(
-    {},
-    initialData,
-    useAppSelector(state => selectFormByTypeAndId(state, 'closeEvent', id)),
-  )
+  const savedData = usePersistentFormData('closeEvent', id)
+  const initialAndSavedData = merge({}, initialData, savedData)
 
   const evidenceFormMethods = useForm<EvidenceStepFormShape>({
     defaultValues: pickEvidenceData(initialAndSavedData),
@@ -91,37 +89,12 @@ const CloseEventForm = ({
     defaultValues: pickParticipantsData(initialAndSavedData),
   })
 
-  const dispatch = useAppDispatch()
-  // persist form
-  const debouncedDispatch = useDebouncedDispatch()
-
-  useEffect(() => {
-    const subscription = evidenceFormMethods.watch(data => {
-      debouncedDispatch(
-        actions.saveForm({
-          id,
-          type: 'closeEvent',
-          data: data as EvidenceStepFormShape,
-        }),
-      )
-    })
-
-    return () => subscription.unsubscribe()
-  })
-  useEffect(() => {
-    const subscription = participantsFormMethods.watch(data => {
-      debouncedDispatch(
-        actions.saveForm({
-          id,
-          type: 'closeEvent',
-          data: data as ParticipantsStepFormShape,
-        }),
-      )
-    })
-
-    return () => subscription.unsubscribe()
-  })
-  //
+  usePersistForm(
+    'closeEvent',
+    id,
+    evidenceFormMethods.watch,
+    participantsFormMethods.watch,
+  )
 
   const isVolunteering = [
     'public__volunteering__only_volunteering',
@@ -198,10 +171,12 @@ const CloseEventForm = ({
     }
   }
 
+  const clearPersist = useClearPersistentForm('closeEvent', id)
+
   const handleCancel = () => {
-    evidenceFormMethods.reset(pickEvidenceData(initialData))
-    participantsFormMethods.reset(pickParticipantsData(initialData))
-    dispatch(actions.removeForm({ id, type: 'closeEvent' }))
+    // evidenceFormMethods.reset(pickEvidenceData(initialData))
+    // participantsFormMethods.reset(pickParticipantsData(initialData))
+    clearPersist()
     onCancel()
   }
 

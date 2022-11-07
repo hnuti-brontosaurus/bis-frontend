@@ -97,6 +97,10 @@ const CreateEvent = () => {
     navigate(`/org/akce/${event.id}`)
   }
 
+  const handleCancel = () => {
+    navigate('/org')
+  }
+
   const eventToCloneFixed = { ...eventToClone }
   delete eventToCloneFixed.start
   delete eventToCloneFixed.end
@@ -104,7 +108,9 @@ const CreateEvent = () => {
 
   return (
     <EventForm
+      id={cloneEventId ? `clone-${cloneEventId}` : 'new'}
       onSubmit={handleSubmit}
+      onCancel={handleCancel}
       initialData={
         eventToClone &&
         images &&

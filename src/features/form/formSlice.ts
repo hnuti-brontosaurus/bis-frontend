@@ -12,6 +12,8 @@ type FormState<K extends string = string> = {
   opportunity: Record<K, OpportunityFormShape>
 }
 
+export type PersistentFormType = keyof FormState
+
 type SaveEventPayload<
   K extends string = string,
   T extends keyof FormState<K> = keyof FormState<K>,
