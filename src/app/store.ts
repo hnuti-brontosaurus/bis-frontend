@@ -19,9 +19,10 @@ import {
 import storage from 'redux-persist/lib/storage'
 
 import authReducer from '../features/auth/authSlice'
+import formReducer from '../features/form/formSlice'
 import uiReducer from '../features/ui/uiSlice'
 import { api } from './services/bis'
-import { emptySplitApi } from './services/emptyApi'
+// import { emptySplitApi } from './services/emptyApi'
 
 const persistConfig = {
   key: 'auth',
@@ -39,12 +40,17 @@ listenerMiddleware.startListening({
 })
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer)
+const persistedFormReducer = persistReducer(
+  { ...persistConfig, key: 'form' },
+  formReducer,
+)
 
 const appReducer = combineReducers({
-  [emptySplitApi.reducerPath]: emptySplitApi.reducer,
+  // [emptySplitApi.reducerPath]: emptySplitApi.reducer,
   [api.reducerPath]: api.reducer,
   auth: persistedAuthReducer,
   ui: uiReducer,
+  form: persistedFormReducer,
 })
 
 const rootReducer: Reducer<RootState> = (state, action) => {
