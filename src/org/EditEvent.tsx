@@ -182,10 +182,16 @@ const EditEvent = () => {
     navigate(`/org/akce/${eventId}`)
   }
 
+  const handleCancel = () => {
+    navigate(`/org/akce/${eventId}`)
+  }
+
   return (
     <EventForm
+      id={String(eventId)}
       initialData={event2payload(event, questions?.results ?? [], images ?? [])}
       onSubmit={handleSubmit}
+      onCancel={handleCancel}
       eventToEdit={true}
     />
   )

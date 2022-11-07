@@ -1,7 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import type { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
-import { FC, useState } from 'react'
+import { FC, FormEventHandler, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { Assign, Optional } from 'utility-types'
 import { api, CorrectLocation, EventPayload } from '../app/services/bis'
@@ -15,6 +15,11 @@ import Loading from '../components/Loading'
 import { NewLocation } from '../components/SelectLocation'
 import { Step, Steps } from '../components/Steps'
 import { useDebouncedState } from '../hooks/debouncedState'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from '../hooks/persistForm'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
 import EventDetailsStep from './EventForm/steps/EventDetailsStep'
@@ -42,23 +47,34 @@ export type EventFormShape = Assign<
 const EventForm: FC<{
   initialData?: Partial<EventFormShape>
   onSubmit: (data: EventFormShape) => void
+  onCancel: () => void
   eventToEdit: boolean
-}> = ({ onSubmit, initialData, eventToEdit }) => {
+  id: string
+}> = ({ onSubmit, onCancel, initialData, eventToEdit, id }) => {
   let i = 0
-  const formMethods = useForm<EventFormShape>({
-    defaultValues: merge({}, initialData, {
-      finance: null,
-      record: null,
-      is_closed: false,
-      // propagation: {
-      //   accommodation: '.',
-      //   organizers: '.',
-      //   working_days: 0,
-      // },
-    }),
-  })
 
-  const { handleSubmit } = formMethods
+  const persistedData = usePersistentFormData('event', id)
+
+  const formMethods = useForm<EventFormShape>({
+    defaultValues: merge(
+      {},
+      initialData,
+      {
+        finance: null,
+        record: null,
+        is_closed: false,
+        // propagation: {
+        //   accommodation: '.',
+        //   organizers: '.',
+        //   working_days: 0,
+        // },
+      },
+      persistedData,
+    ),
+  })
+  const { handleSubmit, watch } = formMethods
+
+  usePersistForm('event', id, watch)
 
   const gpsInputMethods = useForm<{ gps: string }>()
   const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
@@ -102,6 +118,8 @@ const EventForm: FC<{
     gpsInputMethods.setValue('gps', gps.join(', '))
   }
 
+  const cancelPersist = useClearPersistentForm('event', id)
+
   if (
     !(
       groups &&
@@ -122,6 +140,13 @@ const EventForm: FC<{
     onSubmit(data)
   })
 
+  const handleFormReset: FormEventHandler<HTMLFormElement> = e => {
+    e.preventDefault()
+    // formMethods.reset(initialData) // this doesn't reset when initialData is empty, but triggers unnecessary watch
+    cancelPersist()
+    onCancel()
+  }
+
   const handleGpsInputSubmit = gpsInputMethods.handleSubmit(data => {
     if (!data.gps.trim()) return setCurrentGPS(undefined)
     const [lat, lng] = data.gps!.split(/,\s+/)
@@ -136,7 +161,7 @@ const EventForm: FC<{
     <div>
       <form id="gpsInputForm" onSubmit={handleGpsInputSubmit} />
       <FormProvider {...formMethods}>
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
           <Steps>
             <Step name="kategorie akce" fields={['group']}>
               <EventCategoryStep />
@@ -221,6 +246,7 @@ const EventForm: FC<{
             <Step name="organizátorský tým">
               <OrganizerStep />
               <input type="submit" value="Submit" />
+              <input type="reset" value="Reset" />
             </Step>
             <Step name="ucastnici" hidden={!eventToEdit}>
               <div>

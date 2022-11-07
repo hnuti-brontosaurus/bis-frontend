@@ -68,6 +68,7 @@ const UpdateOpportunity = () => {
     <div>
       <h1 style={{ textAlign: 'center' }}>Upravit příležitost</h1>
       <OpportunityForm
+        id={String(userId + '-' + opportunityId)}
         initialData={initialData}
         onSubmit={handleSubmit}
         onCancel={handleCancel}

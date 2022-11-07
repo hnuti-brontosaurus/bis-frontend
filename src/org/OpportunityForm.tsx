@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import merge from 'lodash/merge'
+import { FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
@@ -17,6 +18,11 @@ import {
 import { IconSelect, IconSelectGroup } from '../components/IconSelect'
 import { ImageUpload } from '../components/ImageUpload'
 import SelectLocation, { NewLocation } from '../components/SelectLocation'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from '../hooks/persistForm'
 import { getIdBySlug } from '../utils/helpers'
 import { required } from '../utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
@@ -41,21 +47,27 @@ const OpportunityForm = ({
   onSubmit,
   onCancel,
   isUpdate,
+  id,
 }: {
   initialData?: Partial<OpportunityFormShape>
   onSubmit: (data: OpportunityFormShape) => void
   onCancel: () => void
   isUpdate?: boolean
+  id: string
 }) => {
   // hack to select initial category correctly (id has to be string when using register)
   if (initialData?.category) {
     initialData.category = String(initialData.category) as unknown as number
   }
 
+  const savedData = usePersistentFormData('opportunity', id)
+
   const methods = useForm<OpportunityFormShape>({
-    defaultValues: initialData,
+    defaultValues: merge({}, initialData, savedData),
   })
   const { register, control, handleSubmit, watch, trigger, formState } = methods
+
+  usePersistForm('opportunity', id, watch)
 
   const { data: opportunityCategories } =
     api.endpoints.readOpportunityCategories.useQuery({
@@ -67,6 +79,18 @@ const OpportunityForm = ({
   const handleFormSubmit = handleSubmit(data => {
     onSubmit(data)
   })
+
+  const cancelPersist = useClearPersistentForm('opportunity', id)
+
+  const handleFormReset: FormEventHandler<HTMLFormElement> = e => {
+    e.preventDefault()
+    // reset form
+    // reset(initialData) // it doesn't reset empty form but triggers watch
+    // clear persisted changes
+    cancelPersist()
+    // and do whatever is necessary upstream
+    onCancel()
+  }
 
   const isCollaboration =
     opportunityCategories &&
@@ -95,7 +119,7 @@ Kontaktní email *
 Kontaktní telefon - nepovinné
 Fotka příležitosti *
 */}
-      <form onSubmit={handleFormSubmit}>
+      <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
         <FormSection>
           <FormSubsection
             required
@@ -325,11 +349,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
             </div>
           </FormSubsection>
           <div className={styles.actions}>
-            <button
-              className={styles.cancelAction}
-              type="button"
-              onClick={onCancel}
-            >
+            <button className={styles.cancelAction} type="reset">
               Zrušit
             </button>
             <input
