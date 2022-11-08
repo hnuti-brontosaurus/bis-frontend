@@ -10,9 +10,12 @@ import {
   EventPropagationImage,
   FinanceReceipt,
   Question,
+  User,
 } from '../app/services/testApi'
 import Loading from '../components/Loading'
+import Modal from '../components/NewApplicationModal'
 import { NewLocation } from '../components/SelectLocation'
+import { SelectUser } from '../components/SelectUsers'
 import { Step, Steps } from '../components/Steps'
 import { useDebouncedState } from '../hooks/debouncedState'
 import {
@@ -20,6 +23,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from '../hooks/persistForm'
+import styles from './EventForm.module.scss'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
 import EventDetailsStep from './EventForm/steps/EventDetailsStep'
@@ -78,12 +82,8 @@ const EventForm: FC<{
 
   const gpsInputMethods = useForm<{ gps: string }>()
   const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
-  const [birthdate, setBirthdate] = useState('')
-  const [name, debouncedName, setName] = useDebouncedState(1000, '')
-  const [secondName, debouncedSecondName, setSecondName] = useDebouncedState(
-    1000,
-    '',
-  )
+  const [openNewApplicationModal, setOpenNewApplicationModal] =
+    useState<boolean>(false)
 
   // we're loading these to make sure that we have the data before we try to render the form, to make sure that the default values are properly initialized
   // TODO check whether this is necessary
@@ -98,20 +98,106 @@ const EventForm: FC<{
     {},
   )
 
-  // gowniana linijka, ktora pewnie przyniesie problems
-  const {
-    data: userByBirthdate,
-    isLoading: isUserByBirthdateLoading,
-    error: rest,
-  } = api.endpoints.readUserByBirthdate.useQuery(
-    debouncedName && debouncedSecondName && birthdate && birthdate.length === 10
-      ? {
-          first_name: name,
-          last_name: secondName,
-          birthday: birthdate,
-        }
-      : skipToken,
+  /* PO AKCI step START*/
+
+  const [firstName, setFirstName] = useState<string>()
+  const [lastName, setLastName] = useState<string>()
+  const [birthdate, setBirthdate] = useState<string>()
+
+  const [searchQuery, debouncedSearchQuery, setSearchQuery] = useDebouncedState(
+    1000,
+    '',
   )
+
+  const { data: userOptions, isLoading: isOptionsLoading } =
+    api.endpoints.readUsers.useQuery(
+      debouncedSearchQuery.length >= 2
+        ? {
+            search: debouncedSearchQuery,
+          }
+        : skipToken,
+    )
+
+  const [patchEvent, { isLoading: isPatchingEvent }] =
+    api.endpoints.updateEvent.useMutation()
+
+  const [newParticipant, setNewParticipant] = useState<
+    number | { value: number; label: string } | undefined
+  >()
+
+  const [newParticipantBirthdate, setNewParticipantBirthdate] =
+    useState<string>('')
+  const { data: applications, isLoading: isReadApplicationsLoading } =
+    api.endpoints.readEventApplications.useQuery(
+      initialData && initialData.id
+        ? {
+            eventId: initialData.id.toString(),
+            pageSize: 10000,
+          }
+        : skipToken,
+    )
+
+  const { data: participants, isLoading: isReadParticipantsLoading } =
+    api.endpoints.readEventParticipants.useQuery(
+      initialData && initialData.id
+        ? {
+            eventId: initialData.id,
+          }
+        : skipToken,
+    )
+
+  const addSelectedUser = async (
+    participant: { label: string; value: number } | number,
+    newParticipantBirthdate: string,
+  ) => {
+    console.log('patch')
+
+    if (typeof participant !== 'number') {
+      // let newParticipants = participants
+      //   ? participants.results.map(p => p.id)
+      //   : []
+      let newParticipants = []
+      newParticipants.push(participant.value)
+
+      await patchEvent({
+        id: initialData?.id || 0,
+        event: {
+          record: {
+            participants: newParticipants,
+          },
+        },
+      })
+    }
+  }
+  const [createEventApplication, { isLoading: isSavingOpportunity }] =
+    api.endpoints.createEventApplication.useMutation()
+
+  const handleOnAddRegisteredClick = (user: User) => {
+    openAddUserToApplicationsForm()
+
+    if (initialData?.id) {
+      createEventApplication({
+        user: {
+          ...user,
+          close_person: {
+            first_name: 'mama',
+            last_name: 'moja',
+            email: 'mama@example.com',
+          },
+          email: 'ja@example.com',
+          address: {
+            city: 'my city',
+            street: 'my street',
+            zip_code: '23434',
+            region: { id: 1, name: 'Praha' },
+          },
+        },
+        eventId: initialData.id,
+      })
+    }
+  }
+
+  /* PO AKCI step END*/
 
   const handleCurrentGpsChange = (gps: LatLngTuple) => {
     setCurrentGPS(gps)
@@ -157,6 +243,13 @@ const EventForm: FC<{
     console.log('add user to registered')
   }
 
+  const openAddApplicationForm = () => {
+    setOpenNewApplicationModal(true)
+  }
+
+  const openAddUserToApplicationsForm = () => {
+    console.log('open user form')
+  }
   return (
     <div>
       <form id="gpsInputForm" onSubmit={handleGpsInputSubmit} />
@@ -249,51 +342,146 @@ const EventForm: FC<{
               <input type="reset" value="Reset" />
             </Step>
             <Step name="ucastnici" hidden={!eventToEdit}>
-              <div>
-                <div>
-                  <h3>Prihlaseni</h3>
-                  <button>Upload from file</button>
+              <div className={styles.participantsContainer}>
+                <div className={styles.ListContainer}>
+                  <h2>Prihlaseni</h2>
+                  <button type="button">Export do csv</button>
+                  <button type="button">Tisknij prezencni listinu</button>
+                  <div className={styles.searchForm}>
+                    <div className={styles.inputGroup}>
+                      <input
+                        placeholder="Jmeno"
+                        value={firstName}
+                        onChange={e => {
+                          setFirstName(e.target.value)
+                          setSearchQuery(`${e.target.value} ${lastName || ''}`)
+                        }}
+                      ></input>
+                      <input
+                        placeholder="Prijmeni"
+                        value={lastName}
+                        onChange={e => {
+                          setLastName(e.target.value)
+                          setSearchQuery(`${firstName || ''} ${e.target.value}`)
+                        }}
+                      ></input>
+                    </div>
+                    {userOptions?.results?.map((o: User) => {
+                      return (
+                        <div>
+                          {`${o.display_name}`}
+                          <button
+                            type="button"
+                            onClick={() => handleOnAddRegisteredClick(o)}
+                          >
+                            +
+                          </button>
+                        </div>
+                      )
+                    })}
+                    {!birthdate &&
+                      userOptions &&
+                      userOptions.results.length === 0 && (
+                        <div>
+                          Uzivatel o tym jmene a prujmeni neni Pridaj datum
+                          narozeni aby zobrazit toho uzivatela anebo{' '}
+                          <button>Pridaj noveho uzivatele</button>
+                        </div>
+                      )}
+                  </div>
                   <div>
-                    Novy prihlaseny
-                    <input
-                      placeholder="Jmeno"
-                      onChange={e => {
-                        setName(e.target.value)
-                        if (
-                          name !== '' &&
-                          secondName !== '' &&
-                          birthdate !== ''
-                        ) {
-                          console.log('get data')
-                        }
-                      }}
-                    ></input>
-                    {/** TODO: move to a separate component and use in Ucastnici */}
-                    <input
-                      placeholder="Prijmeni"
-                      onChange={e => setSecondName(e.target.value)}
-                    ></input>
-                    <input
-                      placeholder="Data narozeni"
-                      onChange={e => setBirthdate(e.target.value)}
-                    ></input>
-                    {userByBirthdate && (
-                      <div>
-                        NAME: {userByBirthdate?.first_name}
-                        <button onClick={addUserToRegistered}>+</button>
-                      </div>
-                    )}
+                    {/* <button type="button" onClick={openAddApplicationForm}>
+                      Add new applicant
+                    </button> */}
+
+                    {applications &&
+                      applications.results &&
+                      applications.results.map(application => (
+                        <>
+                          <div>{application.id}</div>
+                          <div>{application.first_name}</div>
+                        </>
+                      ))}
                   </div>
                 </div>
-                <div>
-                  <h3>Ucastnici</h3>
-                  <button>Upload from file</button>
+                <div className={styles.ListContainer}>
+                  <h2>Ucastnici</h2>
+                  <button type="button">Upload from file</button>
+                  <div className={styles.searchForm}>
+                    <div className={styles.inputGroup}>
+                      <input
+                        placeholder="Jmeno"
+                        onChange={e => {
+                          setFirstName(e.target.value)
+                          setSearchQuery(`${e.target.value}`)
+                        }}
+                      ></input>
+                      <input placeholder="Prijmeni"></input>
+                      <input placeholder="Datum narozeni"></input>
+                    </div>
+                    {}
+                  </div>
                   <div>
                     Novy ucastnik
-                    <input placeholder="Jmeno"></input>
-                    <input placeholder="Prijmeni"></input>
-                    <input placeholder="Data narozeni"></input>
+                    <SelectUser
+                      onChange={e => {
+                        console.log(e)
+                        setNewParticipant(e || undefined)
+                      }}
+                      fullData
+                    />
+                    {newParticipant ? (
+                      <div>
+                        {`jest uzytkownik: ${
+                          typeof newParticipant !== 'number' &&
+                          newParticipant.label
+                        }
+                        `}
+                        <input
+                          onChange={e => {
+                            setNewParticipantBirthdate(e.target.value)
+                          }}
+                        ></input>
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation()
+
+                            addSelectedUser(
+                              newParticipant,
+                              newParticipantBirthdate,
+                            )
+                          }}
+                        >
+                          Add this user
+                        </button>
+                      </div>
+                    ) : (
+                      <button type="button"> add new user</button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.stopPropagation()
+
+                        addSelectedUser(
+                          { value: 1, label: 'dzik' },
+                          newParticipantBirthdate,
+                        )
+                      }}
+                    >
+                      Add this user
+                    </button>
                   </div>
+                  {participants &&
+                    participants.results &&
+                    participants.results.map(participant => (
+                      <>
+                        <div>{participant.id}</div>
+                        <div>{participant.first_name}</div>
+                      </>
+                    ))}
+                  {}
                 </div>
               </div>
             </Step>
@@ -303,6 +491,14 @@ const EventForm: FC<{
           </Steps>
         </form>
       </FormProvider>
+      <Modal
+        open={openNewApplicationModal}
+        onClose={() => {
+          setOpenNewApplicationModal(false)
+        }}
+        onSubmit={() => {}}
+        data={initialData || {}}
+      ></Modal>
     </div>
   )
 }
