@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
+import { useShowMessage } from '../features/systemMessage/useSystemMessage'
 import { useBase64Images } from '../hooks/base64Images'
 import { event2payload } from './EditEvent'
 import EventForm, { EventFormShape } from './EventForm'
@@ -12,6 +13,8 @@ const CreateEvent = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const cloneEventId = Number(searchParams.get('klonovat'))
+
+  const showMessage = useShowMessage()
 
   const {
     data: eventToClone,
@@ -95,6 +98,7 @@ const CreateEvent = () => {
       ),
     )
     navigate(`/org/akce/${event.id}`)
+    showMessage({ message: 'Akce byla úspěšně vytvořena', type: 'success' })
   }
 
   const handleCancel = () => {
