@@ -2,16 +2,16 @@ import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { api } from '../app/services/bis'
 import { User } from '../app/services/testApi'
-import modalStyles from './Modal.module.scss'
+import modalStyles from './NewApplicationModal.module.scss'
 
-interface IModalProps {
+interface INewApplicationModalProps {
   open: boolean
   onClose: () => void
   onSubmit: () => void
   data: { id?: number }
 }
 
-const Modal: FC<IModalProps> = ({
+const NewApplicationModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -133,4 +133,4 @@ const Modal: FC<IModalProps> = ({
   )
 }
 
-export default Modal
+export default NewApplicationModal

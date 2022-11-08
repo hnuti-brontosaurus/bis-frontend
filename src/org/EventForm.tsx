@@ -13,7 +13,7 @@ import {
   User,
 } from '../app/services/testApi'
 import Loading from '../components/Loading'
-import Modal from '../components/Modal'
+import Modal from '../components/NewApplicationModal'
 import { NewLocation } from '../components/SelectLocation'
 import { SelectUser } from '../components/SelectUsers'
 import { Step, Steps } from '../components/Steps'
@@ -119,7 +119,7 @@ const EventForm: FC<{
     )
 
   const [patchEvent, { isLoading: isPatchingEvent }] =
-    api.endpoints.patchEvent.useMutation()
+    api.endpoints.updateEvent.useMutation()
 
   const [newParticipant, setNewParticipant] = useState<
     number | { value: number; label: string } | undefined
@@ -161,7 +161,7 @@ const EventForm: FC<{
 
       await patchEvent({
         id: initialData?.id || 0,
-        patchedEvent: {
+        event: {
           record: {
             participants: newParticipants,
           },
@@ -196,21 +196,6 @@ const EventForm: FC<{
       })
     }
   }
-
-  // gowniana linijka, ktora pewnie przyniesie problems
-  // const {
-  //   data: userByBirthdate,
-  //   isLoading: isUserByBirthdateLoading,
-  //   error: rest,
-  // } = api.endpoints.readUserByBirthdate.useQuery(
-  //   debouncedName && debouncedSecondName && birthdate && birthdate.length === 10
-  //     ? {
-  //         first_name: name,
-  //         last_name: secondName,
-  //         birthday: birthdate,
-  //       }
-  //     : skipToken,
-  // )
 
   /* PO AKCI step END*/
 

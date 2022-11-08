@@ -18,11 +18,10 @@ import {
   Location,
   Opportunity,
   OpportunityCategory,
-  PatchedEvent,
   Propagation,
   QualificationCategory,
   Question,
-  User,
+  User
 } from './testApi'
 
 export type PaginatedList<T> = {
@@ -443,16 +442,16 @@ export const api = createApi({
         { type: 'Event', id: 'ORGANIZED_EVENT_LIST' },
       ],
     }),
-    patchEvent: build.mutation<
-      Event,
-      { id: number; patchedEvent: PatchedEvent }
-    >({
-      query: queryArg => ({
-        url: `frontend/events/${queryArg.id}/`,
-        method: 'PATCH',
-        body: queryArg.patchedEvent,
-      }),
-    }),
+    // patchEvent: build.mutation<
+    //   Event,
+    //   { id: number; patchedEvent: PatchedEvent }
+    // >({
+    //   query: queryArg => ({
+    //     url: `frontend/events/${queryArg.id}/`,
+    //     method: 'PATCH',
+    //     body: queryArg.patchedEvent,
+    //   }),
+    // }),
     removeEvent: build.mutation<void, { id: number }>({
       query: queryArg => ({
         url: `frontend/events/${queryArg.id}/`,
@@ -642,7 +641,36 @@ export const api = createApi({
               ])
           : [],
     }),
-
+    updateFinanceReceipt: build.mutation<
+      FinanceReceipt,
+      {
+        eventId: number
+        id: number
+        patchedFinanceReceipt: Partial<FinanceReceipt>
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/finance/receipts/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedFinanceReceipt,
+      }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'FinanceReceipt', id: `${eventId}_${id}` },
+        { type: 'FinanceReceipt', id: `${eventId}_RECEIPT_LIST` },
+      ],
+    }),
+    deleteFinanceReceipt: build.mutation<void, { eventId: number; id: number }>(
+      {
+        query: queryArg => ({
+          url: `frontend/events/${queryArg.eventId}/finance/receipts/${queryArg.id}/`,
+          method: 'DELETE',
+        }),
+        invalidatesTags: (result, error, { id, eventId }) => [
+          { type: 'FinanceReceipt', id: `${eventId}_${id}` },
+          { type: 'FinanceReceipt', id: `${eventId}_RECEIPT_LIST` },
+        ],
+      },
+    ),
     readEventApplications: build.query<
       {
         count?: number | undefined
@@ -678,37 +706,6 @@ export const api = createApi({
           : []
         ).concat([{ type: 'Application' as const, id: 'APPLICATION_LIST' }]),
     }),
-
-    updateFinanceReceipt: build.mutation<
-      FinanceReceipt,
-      {
-        eventId: number
-        id: number
-        patchedFinanceReceipt: Partial<FinanceReceipt>
-      }
-    >({
-      query: queryArg => ({
-        url: `frontend/events/${queryArg.eventId}/finance/receipts/${queryArg.id}/`,
-        method: 'PATCH',
-        body: queryArg.patchedFinanceReceipt,
-      }),
-      invalidatesTags: (result, error, { id, eventId }) => [
-        { type: 'FinanceReceipt', id: `${eventId}_${id}` },
-        { type: 'FinanceReceipt', id: `${eventId}_RECEIPT_LIST` },
-      ],
-    }),
-    deleteFinanceReceipt: build.mutation<void, { eventId: number; id: number }>(
-      {
-        query: queryArg => ({
-          url: `frontend/events/${queryArg.eventId}/finance/receipts/${queryArg.id}/`,
-          method: 'DELETE',
-        }),
-        invalidatesTags: (result, error, { id, eventId }) => [
-          { type: 'FinanceReceipt', id: `${eventId}_${id}` },
-          { type: 'FinanceReceipt', id: `${eventId}_RECEIPT_LIST` },
-        ],
-      },
-    ),
     createEventApplication: build.mutation<
       User,
       { user: User; eventId: number }
