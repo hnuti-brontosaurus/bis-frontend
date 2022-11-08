@@ -4,6 +4,10 @@ import { Optional } from 'utility-types'
 import { api } from '../app/services/bis'
 import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from '../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../hooks/currentUser'
 import OpportunityForm, { OpportunityFormShape } from './OpportunityForm'
 
@@ -15,6 +19,8 @@ const UpdateOpportunity = () => {
 
   const navigate = useNavigate()
 
+  const showMessage = useShowMessage()
+
   const {
     data: opportunity,
     error,
@@ -22,7 +28,13 @@ const UpdateOpportunity = () => {
     isError,
   } = api.endpoints.readOpportunity.useQuery({ id: opportunityId, userId })
 
-  const [updateOpportunity] = api.endpoints.updateOpportunity.useMutation()
+  const [updateOpportunity, updateOpportunityStatus] =
+    api.endpoints.updateOpportunity.useMutation()
+
+  useShowApiErrorMessage(
+    updateOpportunityStatus.error,
+    'Nepodařilo se upravit příležitost',
+  )
 
   const createOrSelectLocation = useCreateOrSelectLocation()
 
@@ -56,6 +68,10 @@ const UpdateOpportunity = () => {
     }).unwrap()
 
     navigate(`/org/prilezitosti/${opportunityId}`)
+    showMessage({
+      message: 'Příležitost byla úspěšně změněna',
+      type: 'success',
+    })
   }
 
   const handleCancel = () => {
