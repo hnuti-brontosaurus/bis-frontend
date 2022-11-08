@@ -4,41 +4,47 @@ import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import { Event, EventPropagationImage, Question } from '../app/services/testApi'
 import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from '../features/systemMessage/useSystemMessage'
 import { useBase64Images } from '../hooks/base64Images'
 import EventForm, { EventFormShape } from './EventForm'
 
 const EditEvent = () => {
   const params = useParams()
-  const navigate = useNavigate()
   const eventId = Number(params.eventId)
+  const navigate = useNavigate()
+  const showMessage = useShowMessage()
   const {
     data: event,
     isLoading: isEventLoading,
     isError,
   } = api.endpoints.readEvent.useQuery({ id: eventId })
 
-  const {
-    data: images,
-    isLoading: isImagesLoading,
-    isConverting,
-  } = useBase64Images<CorrectEventPropagationImage, any, any, any>(
-    api.endpoints.readEventImages,
-    {
-      eventId,
-    },
-  )
+  const { data: images } = useBase64Images<
+    CorrectEventPropagationImage,
+    any,
+    any,
+    any
+  >(api.endpoints.readEventImages, {
+    eventId,
+  })
 
   const { data: questions } = api.endpoints.readEventQuestions.useQuery({
     eventId,
   })
 
-  const [updateEvent] = api.endpoints.updateEvent.useMutation()
+  const [updateEvent, { error: updateEventError }] =
+    api.endpoints.updateEvent.useMutation()
   const [createEventImage] = api.endpoints.createEventImage.useMutation()
   const [updateEventImage] = api.endpoints.updateEventImage.useMutation()
   const [removeEventImage] = api.endpoints.removeEventImage.useMutation()
   const [createEventQuestion] = api.endpoints.createEventQuestion.useMutation()
   const [updateEventQuestion] = api.endpoints.updateEventQuestion.useMutation()
   const [removeEventQuestion] = api.endpoints.removeEventQuestion.useMutation()
+
+  useShowApiErrorMessage(updateEventError, 'Nepodařilo se uložit změny')
 
   const createOrSelectLocation = useCreateOrSelectLocation()
 
@@ -180,6 +186,7 @@ const EditEvent = () => {
     ])
 
     navigate(`/org/akce/${eventId}`)
+    showMessage({ message: 'Akce byla úspěšně změněna', type: 'success' })
   }
 
   const handleCancel = () => {

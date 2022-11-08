@@ -1,12 +1,19 @@
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import { api } from '../app/services/bis'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from '../features/systemMessage/useSystemMessage'
 
 // open modal before before removing opportunity
 
 export const useRemoveOpportunity = () => {
   const [removeOpportunity, states] =
     api.endpoints.deleteOpportunity.useMutation()
+
+  useShowApiErrorMessage(states.error, 'Nepodařilo se smazat příležitost')
+  const showMessage = useShowMessage()
 
   const removeOpportunityWithModal = async (opportunity: {
     id: number
@@ -46,6 +53,10 @@ export const useRemoveOpportunity = () => {
     })
     if (isConfirmed) {
       await removeOpportunity(opportunity).unwrap()
+      showMessage({
+        message: 'Příležitost byla úspěšně smazána',
+        type: 'success',
+      })
     }
   }
   return [removeOpportunityWithModal, states] as const

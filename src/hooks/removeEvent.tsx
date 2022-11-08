@@ -1,11 +1,18 @@
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import { api } from '../app/services/bis'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from '../features/systemMessage/useSystemMessage'
 
 // open modal before before removing event
 
 export const useRemoveEvent = () => {
   const [removeEvent, states] = api.endpoints.removeEvent.useMutation()
+
+  useShowApiErrorMessage(states.error, 'Nepodařilo se smazat akci')
+  const showMessage = useShowMessage()
 
   const removeEventWithModal = async (event: { id: number; name: string }) => {
     // replace with custom ui
@@ -41,6 +48,10 @@ export const useRemoveEvent = () => {
     })
     if (isConfirmed) {
       await removeEvent(event).unwrap()
+      showMessage({
+        message: 'Akce byla úspěšně smazána',
+        type: 'success',
+      })
     }
   }
   return [removeEventWithModal, states] as const

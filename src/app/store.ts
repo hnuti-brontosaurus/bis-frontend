@@ -20,6 +20,7 @@ import storage from 'redux-persist/lib/storage'
 
 import authReducer from '../features/auth/authSlice'
 import formReducer from '../features/form/formSlice'
+import systemMessageReducer from '../features/systemMessage/systemMessageSlice'
 import uiReducer from '../features/ui/uiSlice'
 import { api } from './services/bis'
 // import { emptySplitApi } from './services/emptyApi'
@@ -50,6 +51,7 @@ const appReducer = combineReducers({
   [api.reducerPath]: api.reducer,
   auth: persistedAuthReducer,
   ui: uiReducer,
+  systemMessage: systemMessageReducer,
   form: persistedFormReducer,
 })
 
