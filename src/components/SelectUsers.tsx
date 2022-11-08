@@ -81,16 +81,19 @@ type SelectProps = Omit<
   'value' | 'onChange'
 > & {
   value?: number | null | undefined
-  onChange: (value: number | null | undefined) => void
+  onChange: (
+    value: number | { value: number; label: string } | null | undefined,
+  ) => void
   transform?: (user: User) => {
     label: string
     value: number
     disabled?: boolean
   }
+  fullData?: boolean
 }
 
 export const SelectUser = forwardRef<any, SelectProps>(
-  ({ value, onChange, transform: transformProp, ...rest }, ref) => {
+  ({ value, onChange, fullData, transform: transformProp, ...rest }, ref) => {
     const [searchQuery, debouncedSearchQuery, setSearchQuery] =
       useDebouncedState(1000, '')
     const { data: userOptions, isLoading: isOptionsLoading } =
@@ -138,7 +141,15 @@ export const SelectUser = forwardRef<any, SelectProps>(
               disabled?: boolean
             }
           }
-          onChange={val => onChange(val ? Number(val.value) : null)}
+          onChange={val =>
+            onChange(
+              val
+                ? fullData
+                  ? { value: val.value, label: val.label }
+                  : Number(val.value)
+                : null,
+            )
+          }
           isOptionDisabled={({ disabled }) => Boolean(disabled)}
         />
       </>

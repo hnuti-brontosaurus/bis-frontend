@@ -18,6 +18,7 @@ import {
   Location,
   Opportunity,
   OpportunityCategory,
+  PatchedEvent,
   Propagation,
   QualificationCategory,
   Question,
@@ -441,6 +442,16 @@ export const api = createApi({
         { type: 'Event', id },
         { type: 'Event', id: 'ORGANIZED_EVENT_LIST' },
       ],
+    }),
+    patchEvent: build.mutation<
+      Event,
+      { id: number; patchedEvent: PatchedEvent }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedEvent,
+      }),
     }),
     removeEvent: build.mutation<void, { id: number }>({
       query: queryArg => ({
