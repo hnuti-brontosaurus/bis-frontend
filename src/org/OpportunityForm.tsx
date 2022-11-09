@@ -17,6 +17,7 @@ import {
 } from '../components/FormLayout'
 import { IconSelect, IconSelectGroup } from '../components/IconSelect'
 import { ImageUpload } from '../components/ImageUpload'
+import RichTextEditor, { htmlRequired } from '../components/RichTextEditor'
 import SelectLocation, { NewLocation } from '../components/SelectLocation'
 import {
   useClearPersistentForm,
@@ -239,9 +240,18 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   zájemce.
                 </InfoBox>
                 <FormInputError isBlock>
-                  <textarea
-                    placeholder="introduction"
-                    {...register('introduction', { required })}
+                  <Controller
+                    name="introduction"
+                    control={control}
+                    rules={{
+                      required,
+                      validate: {
+                        required: htmlRequired(required),
+                      },
+                    }}
+                    render={({ field }) => (
+                      <RichTextEditor placeholder="introduction" {...field} />
+                    )}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -252,11 +262,18 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   příležitosti.
                 </InfoBox>
                 <FormInputError isBlock>
-                  <textarea
-                    placeholder="description"
-                    {...register('description', {
+                  <Controller
+                    name="description"
+                    control={control}
+                    rules={{
                       required,
-                    })}
+                      validate: {
+                        required: htmlRequired(required),
+                      },
+                    }}
+                    render={({ field }) => (
+                      <RichTextEditor placeholder="description" {...field} />
+                    )}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -268,11 +285,21 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                 <InfoBox>Popiš dopad a přínos činnosti pro dané místo.</InfoBox>
                 {/*nebude u spolupráce*/}
                 <FormInputError isBlock>
-                  <textarea
-                    placeholder="location_benefits"
-                    {...register('location_benefits', {
+                  <Controller
+                    name="location_benefits"
+                    control={control}
+                    rules={{
                       required: !isCollaboration && required,
-                    })}
+                      validate: {
+                        required: htmlRequired(!isCollaboration && required),
+                      },
+                    }}
+                    render={({ field }) => (
+                      <RichTextEditor
+                        placeholder="location_benefits"
+                        {...field}
+                      />
+                    )}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -283,9 +310,21 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   příležitosti.
                 </InfoBox>
                 <FormInputError isBlock>
-                  <textarea
-                    placeholder="personal_benefits"
-                    {...register('personal_benefits', { required })}
+                  <Controller
+                    name="personal_benefits"
+                    control={control}
+                    rules={{
+                      required,
+                      validate: {
+                        required: htmlRequired(required),
+                      },
+                    }}
+                    render={({ field }) => (
+                      <RichTextEditor
+                        placeholder="personal_benefits"
+                        {...field}
+                      />
+                    )}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -297,9 +336,12 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                 </InfoBox>
                 {/* optional */}
                 <FormInputError isBlock>
-                  <textarea
-                    placeholder="requirements"
-                    {...register('requirements')}
+                  <Controller
+                    name="requirements"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor placeholder="requirements" {...field} />
+                    )}
                   />
                 </FormInputError>
               </FullSizeElement>
