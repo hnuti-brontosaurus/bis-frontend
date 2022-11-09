@@ -9,11 +9,9 @@ const UnauthenticatedOutlet = () => {
   const [searchParams] = useSearchParams()
 
   if (user) {
-    return (
-      <Navigate
-        to={searchParams.get('next') ?? isOrganizer(user) ? '/org' : '/'}
-      />
-    )
+    const redirect =
+      searchParams.get('next') ?? (isOrganizer(user) ? '/org' : '/')
+    return <Navigate to={redirect} />
   } else if (isAuthenticated) {
     return <Loading>Připravujeme aplikaci</Loading>
   } else {
