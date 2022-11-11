@@ -1,11 +1,11 @@
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
+import { FaRegCheckCircle } from 'react-icons/fa'
 import { TbDotsVertical } from 'react-icons/tb'
 import { Link } from 'react-router-dom'
-import { Event } from '../app/services/testApi'
-
-import { useMemo } from 'react'
 import { api } from '../app/services/bis'
+import { Event } from '../app/services/testApi'
+import styles from '../components/Table.module.scss'
 import { useQueries } from '../hooks/queries'
 import { useRemoveEvent } from '../hooks/removeEvent'
 import { getEventStatus } from '../utils/helpers'
@@ -27,7 +27,7 @@ const EventTable: FC<{
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
 
   return (
-    <table>
+    <table className={styles.table}>
       <thead>
         <tr>
           <th>Status</th>
@@ -62,7 +62,7 @@ const EventTable: FC<{
                   title={appropriateAction.title}
                   to={appropriateAction.link}
                 >
-                  {status}
+                  {status && <FaRegCheckCircle className={styles[status]} />}
                 </Link>
               </td>
               <td>{event.name}</td>

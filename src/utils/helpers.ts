@@ -86,7 +86,7 @@ export const getEventStatus = (
   return 'inProgress'
 }
 
-// event should be finished until June next year
+// event should be finished until February next year
 const shouldBeFinishedUntil = (event: Event): number => {
   const eventEnd = new Date(event.end)
   eventEnd.getFullYear()

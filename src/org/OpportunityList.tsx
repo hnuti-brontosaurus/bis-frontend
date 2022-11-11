@@ -1,13 +1,12 @@
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
-import classNames from 'classnames'
 import { FaPlus } from 'react-icons/fa'
 import { TbDotsVertical } from 'react-icons/tb'
 import { Link } from 'react-router-dom'
 import { api } from '../app/services/bis'
-import formStyles from '../Form.module.scss'
+import ListHeader from '../components/ListHeader'
+import styles from '../components/Table.module.scss'
 import { useCurrentUser } from '../hooks/currentUser'
 import { useRemoveOpportunity } from '../hooks/removeOpportunity'
-import styles from './OpportunityList.module.scss'
 
 const OpportunityList = () => {
   const { data: currentUser } = useCurrentUser()
@@ -22,22 +21,19 @@ const OpportunityList = () => {
     useRemoveOpportunity()
   return (
     <div>
-      <header className={styles.header}>
-        <h1>Příležitosti</h1>
-        <Link to="/org/prilezitosti/vytvorit">
-          <button
-            className={classNames(
-              formStyles.actionButton,
-              styles.headerActionButton,
-            )}
-          >
+      <ListHeader
+        header="Příležitosti"
+        theme="opportunities"
+        tabs={[]}
+        actions={[
+          <Link to="/org/prilezitosti/vytvorit">
             <FaPlus />
             Nová příležitost
-          </button>
-        </Link>
-      </header>
+          </Link>,
+        ]}
+      />
       <div>
-        <table>
+        <table className={styles.table}>
           <thead>
             <tr>
               <th>Název</th>
