@@ -11,6 +11,9 @@
   color: black;
   background: none;
   font-size: 0.875rem;
+  &:hover {
+    font-weight: bold;
+  }
 }
 
 .dangerActionButton {
