@@ -61,6 +61,8 @@
   }
 
   .illustration {
+    // when the illustration gets cropped, the height will need to be different
+    // the illustration should be approximately the size of the mainMenu, or a little bit smaller
     height: 500px;
   }
 }
