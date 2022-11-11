@@ -1,16 +1,57 @@
-import { Link } from 'react-router-dom'
+import classNames from 'classnames'
+import { ReactNode } from 'react'
+import { Link, To } from 'react-router-dom'
+import illustration from '../assets/happy-earth-TODO-replace-with-original.webp'
 import styles from './Home.module.scss'
 
+const buttons: {
+  title: string
+  detail: ReactNode
+  link: To
+  theme: 'createEvent' | 'editEvent' | 'closeEvent' | 'opportunities'
+}[] = [
+  {
+    title: 'Nová akce',
+    detail: '',
+    link: '/org/akce/vytvorit',
+    theme: 'createEvent',
+  },
+  {
+    title: 'Upravit akci',
+    detail: '',
+    link: '/org/akce/aktualni',
+    theme: 'editEvent',
+  },
+  {
+    title: 'Po akci',
+    detail: 'Evidence a účastníci akce',
+    link: '/org/akce/nevyplnene',
+    theme: 'closeEvent',
+  },
+  {
+    title: 'Rozcestník',
+    detail: 'Nabídnout příležitosti',
+    link: '/org/prilezitosti',
+    theme: 'opportunities',
+  },
+]
+
 const Home = () => (
-  <div>
+  <div className={styles.container}>
     <nav className={styles.mainMenu}>
-      <Link to="/org/akce/vytvorit">Nová akce</Link>
-      <Link to="/org/akce/aktualni">Upravit akci</Link>
-      <Link to="/org/akce/nevyplnene">Po akci</Link>
-      <Link to="/org/prilezitosti">Rozcestník</Link>
+      {buttons.map(({ title, detail, link, theme }) => (
+        <Link
+          to={link}
+          key={title}
+          className={classNames(styles.menuItem, styles[theme])}
+        >
+          <header className={styles.title}>{title}</header>
+          <div className={styles.detail}>{detail}</div>
+        </Link>
+      ))}
     </nav>
 
-    <img src="asdf.txt" alt="" />
+    <img className={styles.illustration} src={illustration} alt="" />
   </div>
 )
 
