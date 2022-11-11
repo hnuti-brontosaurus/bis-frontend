@@ -1,52 +1,75 @@
+import { SerializedError } from '@reduxjs/toolkit'
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { default as classNames, default as classnames } from 'classnames'
-import { useState } from 'react'
+import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { api } from './app/services/bis'
 import FormInputError from './components/FormInputError'
+import Loading from './components/Loading'
 import formStyles from './Form.module.scss'
 import styles from './Login.module.scss'
 
 const requiredMessage = 'Toto pole je povinné!' // TODO DRY!
 
+const getErrorMessage = (
+  error: FetchBaseQueryError | SerializedError,
+): ReactNode => {
+  if ('status' in error) {
+    if (error.status === 500) {
+      return 'Problém s odesláním odkazu. Prosím zkuste to znovu.'
+    } else if (error.status === 429) {
+      return 'Příliš mnoho neúspěšných pokusů o přihlášení k vašemu účtu. Před opětovným odesláním odkazu musíte počkat 1 hodinu.'
+    } else {
+      return 'Problém s odesláním odkazu. Prosím zkuste to znovu.'
+    }
+  }
+  return 'Problém s odesláním odkazu. Prosím zkuste to znovu.'
+}
+
 const SendResetPasswordLink = () => {
-  const [error, setError] = useState('')
-  const [sendResetPasswordLink, { isLoading, isSuccess }] =
+  const [sendResetPasswordLink, { error, isLoading, isSuccess }] =
     api.endpoints.sendResetPasswordLink.useMutation()
 
   const formMethods = useForm<{ email: string }>()
   const { register, handleSubmit } = formMethods
 
   const handleFormSubmit = handleSubmit(async data => {
-    try {
-      await sendResetPasswordLink(data).unwrap()
-    } catch (e) {
-      setError((e as any).data?.detail)
-      alert(JSON.stringify(e))
-    }
+    await sendResetPasswordLink(data).unwrap()
   })
 
   if (isLoading) {
-    return <div className={styles.loginContainer}>Sending</div>
+    return <Loading hideHeader>Zpracováváme požadavek</Loading>
   }
 
   if (isSuccess) {
     return (
-      <div className={styles.loginContainer}>Success. Check your email.</div>
+      <div className={styles.loginContainer}>
+        <div className={styles.formContainer}>
+          <header className={styles.title}>Reset hesla</header>
+          <p className={styles.subtitle}>
+            Byla Ti zaslána e-mailová zpráva s pokyny, jak resetovat heslo.
+          </p>
+        </div>
+      </div>
     )
   }
 
   return (
     <div className={styles.loginContainer}>
       <div className={styles.formContainer}>
+        <header className={styles.title}>Reset hesla</header>
+        <p className={styles.subtitle}>
+          Zadej svou e-mailovou adresu použitou při registraci.
+          <br />
+          Zašleme Ti e-mail s odkazem pro resetování hesla.
+        </p>
+        {error && (
+          <div className={classNames(styles.error, styles.formElement)}>
+            {getErrorMessage(error)}
+          </div>
+        )}
         <FormProvider {...formMethods}>
           <form onSubmit={handleFormSubmit}>
-            <header className={styles.title}>Send reset password link</header>
-            <p className={styles.subtitle}>
-              Provide your email and we'll send you an email
-              <br />
-              with further steps
-            </p>
-            {error && <div>{error}</div>}
             <FormInputError isBlock>
               <input
                 className={classnames(styles.formElement)}
@@ -70,7 +93,7 @@ const SendResetPasswordLink = () => {
                 formStyles.mainActionButton,
               )}
               type="submit"
-              value="Odeslat"
+              value="Obnovit"
             />
           </form>
         </FormProvider>

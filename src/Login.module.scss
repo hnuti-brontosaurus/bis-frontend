@@ -8,8 +8,8 @@
 .title {
   text-align: center;
   font-weight: bold;
-  font-size: 1rem;
-  margin-bottom: 4px;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .subtitle {
@@ -33,4 +33,27 @@
     width: 100%;
     display: block;
   }
+}
+
+.error {
+  background-color: #f8afad;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+// for reset password strength bar
+.passwordStrengthBar {
+  margin-bottom: -1.2rem;
+  & > div > div {
+    height: 0.5rem !important;
+    border-radius: 1rem;
+    &:nth-child(even) {
+      width: 0.5rem !important;
+    }
+  }
+}
+
+.inlineLink {
+  font-weight: bold;
+  color: rgb(0, 128, 55);
 }
