@@ -1,8 +1,8 @@
 @use '../colors';
 
 .table {
-  margin: 2rem 8rem;
   table-layout: auto;
+  width: 100%;
   th,
   td {
     padding: 0.5rem;
@@ -13,12 +13,13 @@
       text-align: left;
     }
   }
-  tbody tr {
-    td {
-      border-bottom: 1px solid #d9d9d9;
-      &:first-child {
-        border-right: 1px solid #d9d9d9;
-      }
+  tbody tr td {
+    border-bottom: 1px solid #d9d9d9;
+  }
+  &.verticalLine1 {
+    tbody tr td:first-child {
+      border-right: 1px solid #d9d9d9;
+      text-align: center;
     }
   }
 }

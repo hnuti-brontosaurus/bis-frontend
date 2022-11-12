@@ -1,4 +1,5 @@
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
+import classNames from 'classnames'
 import { FC, useMemo } from 'react'
 import { FaRegCheckCircle } from 'react-icons/fa'
 import { TbDotsVertical } from 'react-icons/tb'
@@ -11,8 +12,8 @@ import { useRemoveEvent } from '../hooks/removeEvent'
 import { getEventStatus } from '../utils/helpers'
 
 const EventTable: FC<{
-  events: Event[]
-}> = ({ events }) => {
+  data: Event[]
+}> = ({ data: events }) => {
   const locationRequests = useQueries(
     api.endpoints.readLocation,
     useMemo(
@@ -27,7 +28,7 @@ const EventTable: FC<{
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
 
   return (
-    <table className={styles.table}>
+    <table className={classNames(styles.table, styles.verticalLine1)}>
       <thead>
         <tr>
           <th>Status</th>
