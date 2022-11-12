@@ -2,6 +2,8 @@
 
 .container {
   display: inline-block;
+  position: relative;
+  top: calc((0.75rem + 4px) / 2);
 }
 
 .blockContainer {
@@ -25,4 +27,5 @@
   color: colors.$error;
   font-size: 0.75rem;
   margin-bottom: 4px;
+  height: 0.75rem;
 }
