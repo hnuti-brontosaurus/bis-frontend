@@ -1,8 +1,9 @@
 import { useOutletContext } from 'react-router-dom'
 import { PaginatedList } from '../app/services/bis'
 import { Event } from '../app/services/testApi'
+import { UnscalablePaginatedList } from '../components/PaginatedList'
 import { getEventStatus } from '../utils/helpers'
-import { UnscalablePaginatedEventList } from './PaginatedEventList'
+import EventTable from './EventTable'
 
 const UnfinishedEvents = () => {
   const events = useOutletContext<PaginatedList<Event>>()
@@ -15,7 +16,7 @@ const UnfinishedEvents = () => {
     event => getEventStatus(event) === 'inProgress',
   )
 
-  return <UnscalablePaginatedEventList events={inputEvents} />
+  return <UnscalablePaginatedList table={EventTable} data={inputEvents} />
 }
 
 export default UnfinishedEvents

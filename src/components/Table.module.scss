@@ -1,0 +1,37 @@
+@use '../colors';
+
+.table {
+  table-layout: auto;
+  width: 100%;
+  th,
+  td {
+    padding: 0.5rem;
+  }
+  thead {
+    th {
+      border-bottom: 1px solid #737373;
+      text-align: left;
+    }
+  }
+  tbody tr td {
+    border-bottom: 1px solid #d9d9d9;
+  }
+  &.verticalLine1 {
+    tbody tr td:first-child {
+      border-right: 1px solid #d9d9d9;
+      text-align: center;
+    }
+  }
+}
+
+.inProgress {
+  color: colors.$bronto-light;
+}
+
+.finished {
+  color: colors.$bronto;
+}
+
+.closed {
+  color: black;
+}

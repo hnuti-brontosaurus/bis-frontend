@@ -1,45 +1,60 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import classNames from 'classnames'
-import { NavLink, Outlet } from 'react-router-dom'
+import { useMemo } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import { api } from '../app/services/bis'
+import ListHeader from '../components/ListHeader'
 import Loading from '../components/Loading'
 import { useCurrentUser } from '../hooks/currentUser'
 import { Content, Header, Layout } from '../Layout'
-import styles from './EventsLayout.module.scss'
 
 const EventsLayout = () => {
-  const { data: currentUser, isLoading: isCurrentUserLoading } =
-    useCurrentUser()
+  const { data: currentUser } = useCurrentUser()
 
-  const { data: events, isLoading: isEventsLoading } =
-    api.endpoints.readOrganizedEvents.useQuery(
-      currentUser
-        ? { userId: currentUser.id, page: 1, pageSize: 10000 } // fetch all and don't worry about it anymore
-        : skipToken,
-    )
+  const location = useLocation()
+
+  const pathnameThemes = useMemo(
+    () =>
+      ({
+        '/org/akce/aktualni': 'editEvent',
+        '/org/akce/vsechny': 'editEvent',
+        '/org/akce/nevyplnene': 'closeEvent',
+      } as const),
+    [],
+  )
+
+  const theme = pathnameThemes[location.pathname as keyof typeof pathnameThemes]
+
+  const { data: events } = api.endpoints.readOrganizedEvents.useQuery(
+    currentUser
+      ? { userId: currentUser.id, page: 1, pageSize: 10000 } // fetch all and don't worry about it anymore
+      : skipToken,
+  )
+
   return (
     <Layout>
       <Header>
-        <nav>
-          <NavLink
-            to="aktualni"
-            className={({ isActive }) => classNames(isActive && styles.active)}
-          >
-            Aktuální akce
-          </NavLink>
-          <NavLink
-            to="vsechny"
-            className={({ isActive }) => classNames(isActive && styles.active)}
-          >
-            Všechny akce
-          </NavLink>
-          <NavLink
-            to="nevyplnene"
-            className={({ isActive }) => classNames(isActive && styles.active)}
-          >
-            Nevyplněné akce
-          </NavLink>
-        </nav>
+        <ListHeader
+          header="Moje akce"
+          theme={theme}
+          tabs={[
+            {
+              key: 'aktualni',
+              to: 'aktualni',
+              name: 'Aktuální akce',
+            },
+            {
+              key: 'vsechny',
+              to: 'vsechny',
+              name: 'Všechny akce',
+            },
+            {
+              key: 'nevyplnene',
+              to: 'nevyplnene',
+              name: 'Nevyplněné akce',
+            },
+          ]}
+          actions={[]}
+        />
       </Header>
       <Content>
         {events?.results ? (
