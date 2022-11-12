@@ -50,7 +50,7 @@ export type EventFormShape = Assign<
 
 const EventForm: FC<{
   initialData?: Partial<EventFormShape>
-  onSubmit: (data: EventFormShape) => void
+  onSubmit: (data: EventFormShape) => Promise<void>
   onCancel: () => void
   eventToEdit: boolean
   id: string
@@ -219,11 +219,12 @@ const EventForm: FC<{
   )
     return <Loading>Připravujeme formulář</Loading>
 
-  const handleFormSubmit = handleSubmit(data => {
+  const handleFormSubmit = handleSubmit(async data => {
     if (data.registration) {
       data.registration.is_event_full = Boolean(data.registration.is_event_full)
     }
-    onSubmit(data)
+    await onSubmit(data)
+    cancelPersist()
   })
 
   const handleFormReset: FormEventHandler<HTMLFormElement> = e => {

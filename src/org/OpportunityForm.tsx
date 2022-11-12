@@ -51,12 +51,12 @@ const OpportunityForm = ({
   id,
 }: {
   initialData?: Partial<OpportunityFormShape>
-  onSubmit: (data: OpportunityFormShape) => void
+  onSubmit: (data: OpportunityFormShape) => Promise<void>
   onCancel: () => void
   isUpdate?: boolean
   id: string
 }) => {
-  // hack to select initial category correctly (id has to be string when using register)
+  // hack to select initial category correctly (id has to be string when using register, but we pretend it's number, to satisfy TypeScript)
   if (initialData?.category) {
     initialData.category = String(initialData.category) as unknown as number
   }
@@ -76,12 +76,13 @@ const OpportunityForm = ({
       pageSize: 1000,
     })
 
-  const categoriesList = opportunityCategories?.results
-  const handleFormSubmit = handleSubmit(data => {
-    onSubmit(data)
-  })
-
   const cancelPersist = useClearPersistentForm('opportunity', id)
+
+  const categoriesList = opportunityCategories?.results
+  const handleFormSubmit = handleSubmit(async data => {
+    await onSubmit(data)
+    cancelPersist()
+  })
 
   const handleFormReset: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
