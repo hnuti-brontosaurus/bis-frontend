@@ -1,7 +1,7 @@
 import merge from 'lodash/merge'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
-import { useForm } from 'react-hook-form'
+import { FieldErrorsImpl, useForm } from 'react-hook-form'
 import { Optional } from 'utility-types'
 import {
   Event,
@@ -14,6 +14,7 @@ import {
   SimpleStep as Step,
   SimpleSteps as Steps,
 } from '../../components/Steps'
+import { useShowMessage } from '../../features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
   usePersistentFormData,
@@ -21,6 +22,19 @@ import {
 } from '../../hooks/persistForm'
 import EvidenceStep from './EvidenceStep'
 import ParticipantsStep from './ParticipantsStep'
+
+const pickErrors = (errors: FieldErrorsImpl) => {
+  if ('message' in errors && typeof errors.message === 'string') {
+    delete errors.ref
+  } else {
+    for (const key in errors) {
+      if (key in errors) {
+        pickErrors(errors[key] as any)
+      }
+    }
+  }
+  return errors
+}
 
 // Forms setup
 export type EvidenceStepFormShape = {
@@ -89,6 +103,8 @@ const CloseEventForm = ({
     defaultValues: pickParticipantsData(initialAndSavedData),
   })
 
+  const showMessage = useShowMessage()
+
   usePersistForm(
     'closeEvent',
     id,
@@ -117,21 +133,25 @@ const CloseEventForm = ({
     let participants: ParticipantsStepFormShape =
       {} as ParticipantsStepFormShape
     let isValid = true
+    let evidenceErrors: FieldErrorsImpl<EvidenceStepFormShape> = {}
+    let participantsErrors: FieldErrorsImpl<ParticipantsStepFormShape> = {}
     await Promise.all([
       evidenceFormMethods.handleSubmit(
         data => {
           evidence = data
         },
-        () => {
+        errors => {
           isValid = false
+          evidenceErrors = errors
         },
       )(),
       participantsFormMethods.handleSubmit(
         data => {
           participants = data
         },
-        () => {
+        errors => {
           isValid = false
+          participantsErrors = errors
         },
       )(),
     ])
@@ -164,10 +184,17 @@ const CloseEventForm = ({
       if (data.record.attendance_list === initialData.record?.attendance_list)
         delete data.record.attendance_list
 
-      onSubmit(data)
+      await onSubmit(data)
+      clearPersist()
     } else {
       // TODO make nicer
-      alert('please fix validation errors')
+      showMessage({
+        message: 'Opravte, prosím, chyby ve validaci',
+        type: 'error',
+        detail: JSON.stringify(
+          pickErrors(merge({}, evidenceErrors, participantsErrors)),
+        ),
+      })
     }
   }
 

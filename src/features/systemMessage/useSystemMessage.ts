@@ -1,6 +1,6 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useAppDispatch } from '../../app/hooks'
 import { actions, SystemMessage } from './systemMessageSlice'
 
@@ -15,8 +15,8 @@ import { actions, SystemMessage } from './systemMessageSlice'
 export const useShowMessage = () => {
   const dispatch = useAppDispatch()
 
-  const showMessage = useMemo(
-    () => (message: Pick<SystemMessage, 'type' | 'message' | 'detail'>) => {
+  const showMessage = useCallback(
+    (message: Pick<SystemMessage, 'type' | 'message' | 'detail'>) => {
       const id = globalThis.crypto.randomUUID()
 
       const msg = { ...message, id, time: Date.now() }
