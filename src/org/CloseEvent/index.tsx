@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../../app/services/bis'
 import { Event, Finance } from '../../app/services/testApi'
 import Loading from '../../components/Loading'
+import { useTitle } from '../../hooks/title'
 import CloseEventForm, { CloseEventFormShape } from './CloseEventForm'
 
 const CloseEvent = () => {
@@ -16,6 +17,8 @@ const CloseEvent = () => {
   const { data: receipts } = api.endpoints.readFinanceReceipts.useQuery({
     eventId,
   })
+
+  useTitle(event ? `Uzavřít akci ${event.name}` : 'Uzavřít akci')
 
   const [updateEvent] = api.endpoints.updateEvent.useMutation()
   const [createPhoto] = api.endpoints.createEventPhoto.useMutation()

@@ -5,9 +5,11 @@ import ListHeader from '../components/ListHeader'
 import Loading from '../components/Loading'
 import { UnscalablePaginatedList } from '../components/PaginatedList'
 import { useCurrentUser } from '../hooks/currentUser'
+import { useTitle } from '../hooks/title'
 import OpportunityTable from './OpportunityList/OpportunityTable'
 
 const OpportunityList = () => {
+  useTitle('Příležitosti')
   const { data: currentUser } = useCurrentUser()
   // it's safe to assume that the user is already loaded
   const userId = currentUser!.id
@@ -28,7 +30,7 @@ const OpportunityList = () => {
         theme="opportunities"
         tabs={[]}
         actions={[
-          <Link to="/org/prilezitosti/vytvorit">
+          <Link key="new" to="/org/prilezitosti/vytvorit">
             <FaPlus />
             Nová příležitost
           </Link>,
