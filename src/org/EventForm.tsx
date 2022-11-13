@@ -23,6 +23,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from '../hooks/persistForm'
+import { joinDateTime } from '../utils/helpers'
 import styles from './EventForm.module.scss'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
@@ -45,6 +46,8 @@ export type EventFormShape = Assign<
       receipts: Optional<FinanceReceipt, 'id'>[]
     }
     location: NewLocation | Pick<CorrectLocation, 'id'>
+    startDate: string
+    startTime: string
   }
 >
 
@@ -223,6 +226,7 @@ const EventForm: FC<{
     if (data.registration) {
       data.registration.is_event_full = Boolean(data.registration.is_event_full)
     }
+    data.start = joinDateTime(data.startDate, data.startTime)
     await onSubmit(data)
     cancelPersist()
   })

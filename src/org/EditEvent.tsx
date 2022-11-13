@@ -10,6 +10,7 @@ import {
 } from '../features/systemMessage/useSystemMessage'
 import { useBase64Images } from '../hooks/base64Images'
 import { useTitle } from '../hooks/title'
+import { splitDateTime } from '../utils/helpers'
 import EventForm, { EventFormShape } from './EventForm'
 
 const EditEvent = () => {
@@ -224,9 +225,13 @@ export const event2payload = (
 ): Partial<EventFormShape> => {
   const [main_image, ...otherImages] = [...images].sort(sortOrder)
 
+  const [startDate, startTime] = splitDateTime(event?.start ?? '')
+
   return (
     event && {
       ...event,
+      startDate,
+      startTime,
       group: event?.group?.id,
       category: event?.category?.id,
       program: event?.program?.id,
