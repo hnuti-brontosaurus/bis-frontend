@@ -9,9 +9,11 @@ import {
   useShowMessage,
 } from '../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../hooks/currentUser'
+import { useTitle } from '../hooks/title'
 import OpportunityForm, { OpportunityFormShape } from './OpportunityForm'
 
 const UpdateOpportunity = () => {
+  useTitle('Upravit příležitost')
   const params = useParams()
   const opportunityId = Number(params.opportunityId)
   const { data: user } = useCurrentUser()
