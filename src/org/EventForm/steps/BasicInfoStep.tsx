@@ -36,10 +36,13 @@ const BasicInfoStep = () => {
             Od{' '}
             <FormInputError name="start">
               <input
-                type="datetime-local"
+                type="date"
                 id="start"
-                {...register('start', { required: 'required' })}
+                {...register('startDate', { required: 'required' })}
               />
+            </FormInputError>
+            <FormInputError>
+              <input type="time" {...register('startTime')} />
             </FormInputError>
           </label>
           <label htmlFor="end">

@@ -1,3 +1,4 @@
+import padStart from 'lodash/padStart'
 import { Event, User } from '../app/services/testApi'
 
 export function getIdBySlug<S extends string>(
@@ -101,3 +102,23 @@ const shouldBeFinishedUntil = (event: Event): number => {
 
 export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
   Boolean(user.roles.find(role => ['organizer', 'admin'].includes(role.slug)))
+
+export const splitDateTime = (datetime: string): [string, string] => {
+  const [date] = datetime.split('T')
+  const d = new Date(datetime)
+  const time = `${padStart(String(d.getHours()), 2, '0')}:${padStart(
+    String(d.getMinutes()),
+    2,
+    '0',
+  )}`
+  return [date, time]
+}
+
+export const joinDateTime = (date: string, time: string = ''): string => {
+  const [rawHours, rawMinutes] = time.split(':')
+  const ddRegexp = /^\d\d$/
+  const hours = ddRegexp.test(rawHours) ? rawHours : '00'
+  const minutes = ddRegexp.test(rawMinutes) ? rawMinutes : '00'
+
+  return `${date}T${hours}:${minutes}`
+}
