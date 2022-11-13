@@ -1,0 +1,360 @@
+$header-breakpoint-navigationHiddenToVisible: 39em;
+$header-breakpoint-navigationHiddenToVisible-hidden-until: 'max-width: ' +
+  $header-breakpoint-navigationHiddenToVisible;
+$header-breakpoint-navigationHiddenToVisible-visible-from: 'min-width: ' +
+  ($header-breakpoint-navigationHiddenToVisible + 0.001);
+
+.header-paddingFixContainer {
+  // ideally would be in separate place and header should be modified through page's element (in BEM terminology), but this is enough for now
+  @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+    --page-header-height: 3.3rem;
+    padding-top: var(--page-header-height);
+  }
+}
+.header-wrapper {
+  top: 0;
+  z-index: 99;
+  // background-color: $colors-default-background;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: transform 200ms ease-in-out;
+  }
+
+  @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+    position: fixed;
+    width: 100%;
+    height: var(--page-header-height);
+    overflow: hidden;
+  }
+  @media ($header-breakpoint-navigationHiddenToVisible-visible-from) {
+    position: sticky;
+  }
+
+  &.headroom {
+    &--not-top {
+      // border-bottom: 2px solid $colors-emphasizing;
+    }
+
+    &--unpinned {
+      transform: translateY(-100%);
+    }
+
+    &:not(.headroom--unpinned) {
+      transform: translateY(0);
+
+      @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+        height: auto;
+      }
+    }
+  }
+}
+.header {
+  align-items: center;
+  display: grid;
+  grid-template-areas:
+    'logo . searchBarToggler toggleNavigationLink'
+    'mainNavigation mainNavigation mainNavigation mainNavigation'
+    'futureEventsLink futureEventsLink futureEventsLink futureEventsLink'
+    'languageLink languageLink languageLink languageLink';
+  grid-template-columns: 8.6em auto 2.58em 2.58em;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 52.5em;
+  padding: vr-unit(0.5) 0 vr-unit(0.5) vr-unit(0.5);
+
+  &-logo {
+    grid-area: logo;
+    align-self: self-start;
+  }
+
+  &-searchBarToggler {
+    grid-area: searchBarToggler;
+    display: block;
+    padding: calc(#{vr-unit(0.5)} + 8px);
+    background-color: transparent;
+    // background-image: url('../images/icon-search-black.svg');
+    background-position: center center;
+    background-size: auto 17px;
+    background-repeat: no-repeat;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: background-color 200ms ease-in-out;
+    }
+  }
+
+  &-toggleNavigationLink {
+    grid-area: toggleNavigationLink;
+    padding: vr-unit(0.25) vr-unit(0.5);
+
+    // important for browsers not supporting grid
+    display: block;
+    max-width: 3em;
+    margin-left: auto;
+
+    &-image {
+      width: 100%;
+    }
+  }
+
+  &-mainNavigation-languageLink,
+  &-mainNavigation .menu > .menu-item > a,
+  &-mainNavigation-list-item-link,
+  &-futureEventsLink {
+    display: block;
+    padding: 0.3em 0 calc(0.3em - 0.15em);
+    text-decoration: none;
+
+    @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+      text-align: right;
+    }
+
+    &--active {
+      // duplicated below temporarily
+      @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+        // color: $colors-emphasizing;
+        font-weight: bold;
+      }
+    }
+  }
+  &-mainNavigation
+    .menu
+    > .menu-item:is(.active, .current_page_item, .current-page-ancestor)
+    > a {
+    // duplicated from above temporarily
+    @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+      // color: $colors-emphasizing;
+      font-weight: bold;
+    }
+  }
+
+  &-mainNavigation {
+    display: contents;
+
+    &-languageLink {
+      text-decoration: none;
+      grid-area: languageLink;
+
+      @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+        display: none;
+        margin-bottom: vr-unit(0.5);
+        margin-right: vr-unit(0.5);
+      }
+
+      &-icon {
+        max-height: 2em;
+        max-width: 1.7em;
+
+        &-label {
+          // fill: $colors-default-background;
+          font-size: 1em;
+          pointer-events: none; // otherwise hover state does not trigger on background circle
+        }
+      }
+    }
+
+    .menu,
+    &-list {
+      grid-area: mainNavigation;
+      list-style-type: none;
+
+      @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+        display: none;
+        padding-top: vr-unit(0.5);
+        margin-top: vr-unit(0.5);
+        // border-top: 2px solid $colors-emphasizing;
+        margin-right: vr-unit(0.5);
+      }
+
+      &-item {
+        &::before {
+          position: absolute; // fixes sanitize.css bug https://github.com/csstools/sanitize.css/issues/203
+        }
+      }
+    }
+  }
+  @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+    &--isOpened {
+      .header-mainNavigation-languageLink,
+      .header-mainNavigation .menu,
+      .header-mainNavigation-list {
+        display: block;
+      }
+    }
+  }
+
+  &-futureEventsLink {
+    grid-area: futureEventsLink;
+
+    @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+      display: none;
+      margin-right: vr-unit(0.5);
+    }
+  }
+  @media ($header-breakpoint-navigationHiddenToVisible-hidden-until) {
+    &--isOpened .header-futureEventsLink {
+      display: block;
+    }
+  }
+
+  @media ($header-breakpoint-navigationHiddenToVisible-visible-from) {
+    grid-template-areas:
+      'logo . searchBarToggler futureEventsLink languageLink'
+      'mainNavigation mainNavigation mainNavigation mainNavigation mainNavigation';
+    grid-template-columns: 9em auto min-content min-content min-content;
+    padding-right: vr-unit(0.5);
+
+    &-toggleNavigationLink {
+      max-height: 0;
+      max-width: 0;
+      padding: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    &-mainNavigation {
+      .menu,
+      &-list {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-left: -#{vr-unit(0.5)};
+        padding-top: vr-unit(0.5);
+      }
+
+      .menu > .menu-item > a,
+      &-list-item-link {
+        padding-left: vr-unit(0.5);
+        padding-right: vr-unit(0.5);
+        border-radius: 2em;
+
+        @media (prefers-reduced-motion: no-preference) {
+          transition: background-color 200ms linear, color 200ms linear;
+        }
+
+        // duplicated below temporarily
+        &--active {
+          padding-top: vr-unit(0.5);
+          padding-bottom: 0.4em;
+          margin-top: -0.1em;
+          // background-color: $colors-emphasizing;
+          // color: $colors-default-background !important;
+
+          &:hover {
+            // background-color: darken($colors-emphasizing, 10);
+          }
+        }
+      }
+      // duplicated from above temporarily
+      .menu
+        > .menu-item:is(.active, .current_page_item, .current-page-ancestor)
+        > a {
+        padding-top: vr-unit(0.5);
+        padding-bottom: 0.4em;
+        margin-top: -0.1em;
+        // background-color: $colors-emphasizing;
+        // color: $colors-default-background !important;
+
+        &:hover {
+          // background-color: darken($colors-emphasizing, 10);
+        }
+      }
+
+      &-languageLink {
+        border-radius: 2em;
+        text-transform: lowercase;
+        white-space: nowrap;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        position: relative;
+        padding: calc(
+          #{vr-unit(0.5)} + 8px
+        ); // we need it to be same size as futureEvents link
+
+        @media (prefers-reduced-motion: no-preference) {
+          transition: background-color 200ms linear, color 100ms linear;
+        }
+
+        &::before {
+          content: 'en';
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          margin-top: 0.1em;
+        }
+
+        &--active::before {
+          content: 'cs';
+        }
+
+        &-label {
+          opacity: 0;
+        }
+
+        &:hover,
+        &--active {
+          // background-color: $colors-emphasizing;
+          // color: $colors-default-background !important;
+        }
+        &--active:hover {
+          // background-color: darken($colors-emphasizing, 10);
+        }
+      }
+    }
+
+    &-futureEventsLink {
+      display: block;
+      padding: calc(#{vr-unit(0.5)} + 8px); // add ~half of the icon height
+      margin-right: vr-unit(0.25);
+      background-color: transparent;
+      // background-image: url('../images/icon-datetime-black.svg');
+      background-position: center center;
+      background-size: auto 18.4px; // in pixels so that the image is not blurry sometimes
+      background-repeat: no-repeat;
+      border-radius: 50%;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transition: background-color 200ms ease-in-out;
+      }
+
+      &-text {
+        display: none;
+      }
+
+      &--active,
+      &:hover {
+        // background-color: $colors-emphasizing;
+        // background-image: url('../images/icon-datetime-white.svg');
+      }
+
+      &--active {
+        &:hover {
+          // background-color: darken($colors-emphasizing, 10);
+        }
+      }
+    }
+
+    &-searchBarToggler {
+      border-radius: 50%;
+      margin-right: vr-unit(0.25);
+
+      &:hover {
+        // background-color: $colors-emphasizing;
+        // background-image: url('../images/icon-search-white.svg');
+      }
+    }
+  }
+
+  // @media ($typography-breakpoint-large-from) {
+  //   &-mainNavigation {
+  //     .menu,
+  //     &-list {
+  //       padding-left: 5px; // so that main navigation start with logo nicely
+  //     }
+  //   }
+  // }
+}

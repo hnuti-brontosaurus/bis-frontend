@@ -1,0 +1,172 @@
+@use './ViewEventWeb/header';
+
+$header-breakpoint-navigationHiddenToVisible: 100em;
+
+$events-breakpoint-oneColumnToTwoColumns: $header-breakpoint-navigationHiddenToVisible +
+  5em;
+$events-breakpoint-oneColumn-until: 'max-width: ' +
+  $events-breakpoint-oneColumnToTwoColumns;
+$events-breakpoint-twoColumns-from: 'min-width: ' +
+  ($events-breakpoint-oneColumnToTwoColumns + 0.001);
+
+$events-breakpoint-TwoToThreeColumns: 73em;
+$events-breakpoint-twoColumns-until: 'max-width: ' +
+  $events-breakpoint-TwoToThreeColumns;
+$events-breakpoint-threeColumns-from: 'min-width: ' +
+  ($events-breakpoint-TwoToThreeColumns + 0.001);
+
+.events {
+  &-filters {
+    margin-bottom: vr-unit(1);
+  }
+
+  &-event-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 19rem;
+    margin: 0 auto vr-unit(1);
+    padding: vr-unit(1);
+    grid-gap: vr-unit(1);
+
+    @media ($events-breakpoint-twoColumns-from) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 38rem;
+      margin-left: -#{vr-unit(1)};
+      margin-right: -#{vr-unit(1)};
+    }
+    @media (min-width: 47.001em) {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @media ($events-breakpoint-threeColumns-from) {
+      grid-template-columns: 1fr 1fr 1fr;
+      max-width: 62em;
+      grid-gap: vr-unit(1);
+    }
+
+    &--collapse {
+      margin-top: -#{vr-unit(1)};
+      overflow: hidden;
+      overflow-anchor: none;
+      transition: max-height 200ms ease-in-out;
+      --height: 0;
+      max-height: var(--height);
+    }
+    &:not(&--opened) {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+  &-event {
+    border-radius: 15px;
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: vr-unit(1);
+    text-decoration: none;
+    box-shadow: 0 0 12px 0 gray; //$colors-framing;
+    transition: transform 200ms linear;
+
+    &:hover {
+      color: black !important; // $colors-text !important; // overwrite `.content a` style
+      transform: scale(1.02);
+    }
+
+    &-image-wrapper {
+      margin-bottom: vr-unit(1);
+      position: relative;
+      text-align: center;
+    }
+    &-image {
+      // background-color: $colors-tinge;
+      border-radius: 15px 15px 0 0;
+      width: 100%;
+      height: 13rem; // intentionally just `height` as we want to have high images
+      object-fit: cover;
+
+      &--noThumbnail {
+        object-fit: none;
+      }
+    }
+
+    &-meta {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      justify-content: flex-end !important; // overwrite `.eventTagList` rule
+      padding: 0 vr-unit(0.5) vr-unit(0.25);
+      // border-bottom: 2px solid $colors-emphasizing;
+    }
+
+    &-header {
+      margin-bottom: vr-unit(1);
+      padding-left: vr-unit(1);
+      padding-right: vr-unit(1);
+
+      &-heading {
+        margin-bottom: 0.1em;
+        // color: $colors-emphasizing;
+        font-variant-caps: small-caps;
+        font-size: 1.5em;
+        line-height: 1;
+      }
+
+      &-meta {
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 0.8em;
+        opacity: 0.8;
+
+        &-datetime {
+          margin-right: vr-unit(0.5);
+          padding-left: 0.85rem;
+          // background-image: url('../images/icon-datetime.svg');
+          background-position: left top;
+          background-size: auto 14px; // px so that the icon is not rendered blurry...
+          background-repeat: no-repeat;
+
+          // @media ($typography-breakpoint-large-from) {
+          //   background-size: auto 16px; // ...but the we have to set new size when font becomes larger
+          //   background-position-y: 0.1em;
+          // }
+        }
+
+        &-place {
+          padding-left: 0.9em;
+          // background-image: url('../images/icon-place.svg');
+          background-position: left top;
+          background-size: auto 15px; // px so that the icon is not rendered blurry...
+          background-repeat: no-repeat;
+
+          // @media ($typography-breakpoint-large-from) {
+          //   background-size: auto 17px; // ...but the we have to set new size when font becomes larger
+          //   background-position-y: 0.1em;
+          // }
+        }
+      }
+    }
+
+    &-excerpt {
+      padding-left: 1.3rem;
+      padding-right: 1.3rem;
+      font-size: 0.9em;
+    }
+  }
+
+  &-noResults {
+    margin-top: vr-unit(3);
+    margin-bottom: vr-unit(5);
+
+    // @media ($header-breakpoint-navigationHiddenToVisible-visible-from) {
+    //   text-align: center;
+    // }
+  }
+
+  &-moreLink {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
