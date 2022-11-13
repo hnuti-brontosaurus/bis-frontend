@@ -48,7 +48,9 @@ const Header = () => {
           </MenuButton>
         }
       >
-        <MenuItem>{`${user.first_name} ${user.last_name}`}</MenuItem>
+        <MenuItem disabled>
+          <span>{`${user.first_name} ${user.last_name}`}</span>
+        </MenuItem>
         <MenuItem>
           <button onClick={handleLogout}>Logout</button>
         </MenuItem>

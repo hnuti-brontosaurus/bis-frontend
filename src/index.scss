@@ -1,5 +1,11 @@
 @import-normalize;
 @import './preflight.css';
+// fix some production style inconsistencies
+button,
+input[type='submit'],
+input[type='reset'] {
+  border: none;
+}
 
 body {
   margin: 0;
@@ -23,3 +29,5 @@ code {
 * {
   box-sizing: border-box;
 }
+
+@import './components/Menu.module';
