@@ -9,6 +9,7 @@ import {
   useShowMessage,
 } from '../features/systemMessage/useSystemMessage'
 import { useBase64Images } from '../hooks/base64Images'
+import { useTitle } from '../hooks/title'
 import EventForm, { EventFormShape } from './EventForm'
 
 const EditEvent = () => {
@@ -21,6 +22,9 @@ const EditEvent = () => {
     isLoading: isEventLoading,
     isError,
   } = api.endpoints.readEvent.useQuery({ id: eventId })
+
+  // TODO maybe: add star when data are unsaved (also persistent data)
+  useTitle(event ? `Upravit akci ${event.name}` : 'Upravit akci')
 
   const { data: images } = useBase64Images<
     CorrectEventPropagationImage,

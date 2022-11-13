@@ -6,10 +6,12 @@ import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import { useShowMessage } from '../features/systemMessage/useSystemMessage'
 import { useBase64Images } from '../hooks/base64Images'
+import { useTitle } from '../hooks/title'
 import { event2payload } from './EditEvent'
 import EventForm, { EventFormShape } from './EventForm'
 
 const CreateEvent = () => {
+  useTitle('Nová akce')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const cloneEventId = Number(searchParams.get('klonovat'))

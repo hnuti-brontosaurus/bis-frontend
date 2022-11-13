@@ -2,6 +2,7 @@ import { FC, ReactNode } from 'react'
 import { useAppSelector } from './app/hooks'
 import logo from './assets/logo.png'
 import { selectShowHeader } from './features/ui/uiSlice'
+import styles from './Header.module.scss'
 import { Content, Footer, Header, Layout } from './Layout'
 
 const UnauthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
@@ -10,7 +11,9 @@ const UnauthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
     <Layout>
       {showHeader && (
         <Header>
-          <img src={logo} alt="Brontosaurus logo" />
+          <div className={styles.container}>
+            <img className={styles.logo} src={logo} alt="Brontosaurus logo" />
+          </div>
         </Header>
       )}
       <Content>{children}</Content>

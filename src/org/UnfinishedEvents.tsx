@@ -2,10 +2,12 @@ import { useOutletContext } from 'react-router-dom'
 import { PaginatedList } from '../app/services/bis'
 import { Event } from '../app/services/testApi'
 import { UnscalablePaginatedList } from '../components/PaginatedList'
+import { useTitle } from '../hooks/title'
 import { getEventStatus } from '../utils/helpers'
 import EventTable from './EventTable'
 
 const UnfinishedEvents = () => {
+  useTitle('Moje nevyplněné akce')
   const events = useOutletContext<PaginatedList<Event>>()
 
   // here we want events that haven't been finished, and are not drafts
