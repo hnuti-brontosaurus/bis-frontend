@@ -21,7 +21,7 @@ import {
   Propagation,
   QualificationCategory,
   Question,
-  User
+  User,
 } from './testApi'
 
 export type PaginatedList<T> = {
@@ -58,6 +58,7 @@ export const api = createApi({
     'Application',
     'User',
     'Event',
+    'EventApplication',
     'EventImage',
     'EventPhoto',
     'EventQuestion',
@@ -101,6 +102,14 @@ export const api = createApi({
     getUser: build.query<User, { id: number }>({
       query: ({ id }) => `frontend/users/${id}/`,
       providesTags: (result, error, { id }) => [{ type: 'User', id }],
+    }),
+    createUser: build.mutation<User, UserPayload>({
+      query: queryArg => ({
+        url: `frontend/users/`,
+        method: 'POST',
+        body: queryArg,
+      }),
+      invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
     }),
     getEventCategories: build.query<PaginatedList<EventCategory>, void>({
       query: () => ({
@@ -679,7 +688,7 @@ export const api = createApi({
         results?: User[] | undefined
       },
       {
-        eventId: string
+        eventId: number
         id?: number[] | undefined
         page?: number | undefined
         pageSize?: number | undefined
@@ -707,15 +716,34 @@ export const api = createApi({
         ).concat([{ type: 'Application' as const, id: 'APPLICATION_LIST' }]),
     }),
     createEventApplication: build.mutation<
-      User,
-      { user: User; eventId: number }
+      EventApplication,
+      { user: EventApplication; eventId: number }
     >({
       query: ({ user, eventId }) => ({
         url: `frontend/events/${eventId}/registration/applications/`,
         method: 'POST',
         body: user,
       }),
-      invalidatesTags: () => [{ type: 'User', id: 'USER_LIST' }],
+      invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
+    }),
+    deleteEventApplication: build.mutation<
+      void,
+      { applicationId: number; eventId: number }
+    >({
+      query: ({ applicationId, eventId }) => ({
+        url: `frontend/events/${eventId}/registration/applications/${applicationId}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
+    }),
+    readEventApplication: build.query<
+      EventApplication,
+      { applicationId: number; eventId: number }
+    >({
+      query: ({ applicationId, eventId }) => ({
+        url: `frontend/events/${eventId}/registration/applications/${applicationId}/`,
+        method: 'GET',
+      }),
     }),
     readEventParticipants: build.query<
       PaginatedList<EventApplication>,
@@ -827,6 +855,8 @@ export type EventPayload = Omit<
   intended_for: number
   propagation?: PropagationPayload | null
 }
+
+export type UserPayload = Omit<User, 'id'>
 
 type CorrectImage = {
   small: string
