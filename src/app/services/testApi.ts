@@ -2620,7 +2620,7 @@ export type Propagation = {
   minimum_age?: number | null
   maximum_age?: number | null
   cost: string
-  accommodation: string
+  accommodation?: string
   working_hours?: number | null
   working_days?: number | null
   diets: DietCategory[]

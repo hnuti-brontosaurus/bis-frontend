@@ -1,10 +1,10 @@
-import { FC, FormEventHandler, useCallback } from 'react'
+import { FC, useCallback } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import { api } from '../app/services/bis'
-import { EventApplication } from '../app/services/testApi'
 
 import * as yup from 'yup'
+import { User } from '../app/services/testApi'
 import FormInputError from './FormInputError'
 interface INewApplicationModalProps {
   open: boolean
@@ -67,6 +67,7 @@ const useYupValidationResolver = (validationSchema: any) =>
         const values = await validationSchema.validate(data, {
           abortEarly: false,
         })
+
         return {
           values,
           errors: {},
@@ -92,7 +93,7 @@ const useYupValidationResolver = (validationSchema: any) =>
     [validationSchema],
   )
 
-const NewApplicationModal: FC<INewApplicationModalProps> = ({
+const AddParticipantModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -100,7 +101,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
 }) => {
   const resolver = useYupValidationResolver(validationSchema)
 
-  const methods = useForm<EventApplication>({
+  const methods = useForm<User>({
     resolver,
     defaultValues: {
       first_name: 'Talita',
@@ -127,23 +128,17 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
     watch,
   } = methods
 
-  const [createEventApplication, { isLoading: isSavingOpportunity }] =
-    api.endpoints.createEventApplication.useMutation()
+  const [createUser, { isLoading: isSavingOpportunity }] =
+    api.endpoints.createUser.useMutation()
 
-  const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
-    e.stopPropagation()
-    handleSubmit(async data => {
-      if (parentData?.id) {
-        await createEventApplication({
-          user: data,
-          eventId: parentData?.id,
-        })
+  const handleFormSubmit = handleSubmit(async data => {
+    if (parentData?.id) {
+      await createUser(data)
 
-        onClose()
-        // onSubmit()
-      }
-    })(e)
-  }
+      onClose()
+      // onSubmit()
+    }
+  })
   if (!open) return null
 
   return (
@@ -154,7 +149,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
         }}
       >
         <div>
-          <div>Pridat Noveho prihlaseneho</div>
+          <div>Add new participant</div>
           <div>{/* <input type="checkbox"></input>je to dite */}</div>
         </div>
         <div>
@@ -197,6 +192,16 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     />
                   </p>
                 </label>
+                <label>
+                  <p>
+                    Rodné příjmení:
+                    <input
+                      id="family_name"
+                      type="text"
+                      {...register('birth_name')}
+                    />
+                  </p>
+                </label>
 
                 <label>
                   <p>
@@ -206,6 +211,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     </FormInputError>
                   </p>
                 </label>
+
                 <label>
                   <p>
                     E-mail:
@@ -214,6 +220,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     </FormInputError>
                   </p>
                 </label>
+
                 <label>
                   <p>
                     Datum narozeni:
@@ -221,6 +228,53 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                       id="birthdate"
                       type="date"
                       {...register('birthday')}
+                    />
+                  </p>
+                </label>
+
+                <h3>Bliska osoba:</h3>
+
+                <label>
+                  <p>
+                    Jmeno*:
+                    <FormInputError>
+                      <input
+                        id="close_person_first_name"
+                        type="text"
+                        {...register('close_person.first_name')}
+                      />
+                    </FormInputError>
+                  </p>
+                </label>
+                <label>
+                  <p>
+                    Prijmeni*:
+                    <FormInputError>
+                      <input
+                        id="close_person_last_name"
+                        type="text"
+                        {...register('close_person.last_name')}
+                      />
+                    </FormInputError>
+                  </p>
+                </label>
+                <label>
+                  <p>
+                    Telefon:
+                    <input
+                      id="close_person_phone"
+                      type="text"
+                      {...register('close_person.phone')}
+                    />
+                  </p>
+                </label>
+                <label>
+                  <p>
+                    E-mail:
+                    <input
+                      id="close_person_email"
+                      type="text"
+                      {...register('close_person.email')}
                     />
                   </p>
                 </label>
@@ -258,6 +312,17 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                       {...register('sex')}
                       value={0}
                     />
+                  </p>
+                </label>
+
+                <label>
+                  <p>
+                    Odbira novinky:
+                    <input
+                      id="donor_subscribed_to_newsletter"
+                      type="checkbox"
+                      {...register('donor.subscribed_to_newsletter')}
+                    ></input>
                   </p>
                 </label>
 
@@ -310,52 +375,6 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     </FormInputError>
                   </p>
                 </label>
-                <h3>Bliska osoba:</h3>
-
-                <label>
-                  <p>
-                    Jmeno*:
-                    <FormInputError>
-                      <input
-                        id="close_person_first_name"
-                        type="text"
-                        {...register('close_person.first_name')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    Prijmeni*:
-                    <FormInputError>
-                      <input
-                        id="close_person_last_name"
-                        type="text"
-                        {...register('close_person.last_name')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    Telefon:
-                    <input
-                      id="close_person_phone"
-                      type="text"
-                      {...register('close_person.phone')}
-                    />
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    E-mail:
-                    <input
-                      id="close_person_email"
-                      type="text"
-                      {...register('close_person.email')}
-                    />
-                  </p>
-                </label>
 
                 <input type="submit" value="Add aplication" />
               </>
@@ -367,4 +386,4 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
   )
 }
 
-export default NewApplicationModal
+export default AddParticipantModal
