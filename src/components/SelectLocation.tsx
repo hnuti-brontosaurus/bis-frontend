@@ -5,7 +5,6 @@ import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { api, CorrectLocation } from '../app/services/bis'
-import type { Location } from '../app/services/testApi'
 import { required } from '../utils/validationMessages'
 import FormInputError from './FormInputError'
 import Map, { ClearBounds, MarkerType } from './Map'
@@ -17,7 +16,7 @@ export type NewLocation = Overwrite<
   { gps_location?: Omit<Required<CorrectLocation>['gps_location'], 'type'> }
 >
 
-export type SelectedOrNewLocation = NewLocation | Pick<Location, 'id'>
+export type SelectedOrNewLocation = NewLocation | Pick<CorrectLocation, 'id'>
 
 const SelectLocation = forwardRef<
   any,
@@ -330,9 +329,9 @@ export const useCreateOrSelectLocation = () => {
   const [createLocation] = api.endpoints.createLocation.useMutation()
 
   const createOrSelectLocation = async (
-    location: NewLocation | Pick<CorrectLocation, 'id'>,
+    location: NewLocation | Pick<CorrectLocation, 'id'> | null,
   ) => {
-    if ('id' in location) {
+    if (location && 'id' in location) {
       return location.id
     } else {
       // create new location

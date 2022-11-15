@@ -4,7 +4,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api, CorrectEventPropagationImage } from '../app/services/bis'
 import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
-import { useShowMessage } from '../features/systemMessage/useSystemMessage'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from '../features/systemMessage/useSystemMessage'
 import { useBase64Images } from '../hooks/base64Images'
 import { useTitle } from '../hooks/title'
 import { event2payload } from './EditEvent'
@@ -40,7 +43,7 @@ const CreateEvent = () => {
     cloneEventId > 0 ? { eventId: cloneEventId } : skipToken,
   )
 
-  const [createEvent, { isLoading: isSavingEvent }] =
+  const [createEvent, { isLoading: isSavingEvent, error: saveEventError }] =
     api.endpoints.createEvent.useMutation()
   const [createEventQuestion, { isLoading: isSavingQuestions }] =
     api.endpoints.createEventQuestion.useMutation()
@@ -48,6 +51,8 @@ const CreateEvent = () => {
     api.endpoints.createEventImage.useMutation()
 
   const createOrSelectLocation = useCreateOrSelectLocation()
+
+  useShowApiErrorMessage(saveEventError, 'Nepodařilo se nám uložit akci')
 
   if (isEventToCloneErrored) return <>Event not found (or different error)</>
 
@@ -66,15 +71,12 @@ const CreateEvent = () => {
     questions,
     ...data
   }: EventFormShape) => {
-    if (data.registration) {
-      data.registration.is_event_full = Boolean(data.registration.is_event_full)
-    }
     // ***location***
     const locationId = await createOrSelectLocation(data.location)
 
     // save the new event
     const event = await createEvent(
-      merge({}, data, { location: locationId, record: null }),
+      merge({}, data, { location: locationId, record: null, finance: null }),
     ).unwrap()
     if (questions) {
       await Promise.all(

@@ -6,7 +6,7 @@ import {
 } from '../../../app/services/testApi'
 
 export const canBeMainOrganizer = (
-  event: Pick<Event, 'intended_for' | 'group' | 'category'>,
+  event: Partial<Pick<Event, 'intended_for' | 'group' | 'category'>>,
   user: User,
   allQualifications: QualificationCategory[],
 ): boolean => {
@@ -26,9 +26,9 @@ export const canBeMainOrganizer = (
     'public__other__for_public',
   ]
 
-  const intendedFor = event.intended_for.slug
-  const group = event.group.slug
-  const category = event.category.slug
+  const intendedFor = event.intended_for?.slug ?? ''
+  const group = event.group?.slug ?? ''
+  const category = event.category?.slug ?? ''
 
   if (!qualificationRequiredForCategories.includes(category)) return true
 
