@@ -331,7 +331,9 @@ export const useCreateOrSelectLocation = () => {
   const createOrSelectLocation = async (
     location: NewLocation | Pick<CorrectLocation, 'id'> | null,
   ) => {
-    if (location && 'id' in location) {
+    if (!location) {
+      return null
+    } else if ('id' in location) {
       return location.id
     } else {
       // create new location
