@@ -61,7 +61,11 @@ export type EventFormShape = //UnionToIntersection<StepShapes[keyof StepShapes]>
       }
       startDate: string
       startTime: string
-      location: NewLocation | Pick<CorrectLocation, 'id'>
+      location: NewLocation | Pick<CorrectLocation, 'id'> | null
+      // online is an internal variable
+      // it doesn't get sent to API
+      // we only keep track of whether to save location or online_link
+      online: boolean
       main_image: Optional<EventPropagationImage, 'id' | 'order'>
       images: Optional<EventPropagationImage, 'id' | 'order'>[]
     }
@@ -93,7 +97,7 @@ const shapes = {
     'registration',
     'questions',
   ],
-  location: ['location'],
+  location: ['location', 'online', 'online_link'],
   propagation: [
     'propagation.cost',
     'propagation.minimum_age',
@@ -128,7 +132,12 @@ export type StepShapes = Overwrite<
   {
     [Property in StepName]: DeepPick<EventFormShape, ShapeTypes[Property]>
   },
-  { location: Pick<EventFormShape, 'location'> }
+  {
+    location: Assign<
+      DeepPick<EventFormShape, ShapeTypes['location']>,
+      Pick<EventFormShape, 'location'>
+    >
+  }
 >
 
 export type MethodsShapes = {
@@ -149,7 +158,13 @@ const EventForm: FC<{
   const savedData = usePersistentFormData('event', id)
 
   const initialAndSavedData = useMemo(
-    () => merge({}, initialData, savedData),
+    () =>
+      merge(
+        {},
+        initialData,
+        { online: initialData?.online_link ? true : false },
+        savedData,
+      ),
     [initialData, savedData],
   )
 
@@ -227,6 +242,12 @@ const EventForm: FC<{
         data.propagation.vip_propagation =
           data.propagation.vip_propagation ?? null
       }
+      if (data.online) {
+        data.location = null
+      } else {
+        data.online_link = null
+      }
+      delete data.online
       data.start = joinDateTime(data.startDate, data.startTime)
       await onSubmit(data)
       cancelPersist()
