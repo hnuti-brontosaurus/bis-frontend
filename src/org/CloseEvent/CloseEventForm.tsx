@@ -20,21 +20,10 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from '../../hooks/persistForm'
+import { pickErrors } from '../../utils/helpers'
+import ParticipantsStep from '../EventForm/steps/ParticipantsStep'
 import EvidenceStep from './EvidenceStep'
-import ParticipantsStep from './ParticipantsStep'
-
-const pickErrors = (errors: FieldErrorsImpl) => {
-  if ('message' in errors && typeof errors.message === 'string') {
-    delete errors.ref
-  } else {
-    for (const key in errors) {
-      if (key in errors) {
-        pickErrors(errors[key] as any)
-      }
-    }
-  }
-  return errors
-}
+import ParticipantsStepWIP from './ParticipantsStep'
 
 // Forms setup
 export type EvidenceStepFormShape = {
@@ -222,10 +211,11 @@ const CloseEventForm = ({
           Object.keys(participantsFormMethods.formState.errors).length > 0
         }
       >
-        <ParticipantsStep
+        <ParticipantsStepWIP
           areParticipantsRequired={areParticipantsRequired}
           methods={participantsFormMethods}
         />
+        <ParticipantsStep eventId={event.id} />
       </Step>
       <Step
         name="práce"

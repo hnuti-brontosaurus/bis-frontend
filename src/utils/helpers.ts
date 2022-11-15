@@ -1,4 +1,6 @@
+import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
+import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
 import { Event, User } from '../app/services/testApi'
 
 export function getIdBySlug<S extends string>(
@@ -122,3 +124,22 @@ export const joinDateTime = (date: string, time: string = ''): string => {
 
   return `${date}T${hours}:${minutes}`
 }
+
+// A little function which prepares react-hook-forms errors for stringifying
+// in particular, it removes circular references caused by error.ref
+export const pickErrors = (errors: FieldErrorsImpl) => {
+  if ('message' in errors && typeof errors.message === 'string') {
+    delete errors.ref
+  } else {
+    for (const key in errors) {
+      if (key in errors) {
+        pickErrors(errors[key] as any)
+      }
+    }
+  }
+  return errors
+}
+
+export const hasFormError = <T extends FieldValues>(
+  methods: UseFormReturn<T>,
+): boolean => !isEmpty(methods.formState.errors)
