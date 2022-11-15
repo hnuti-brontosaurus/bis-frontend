@@ -1,8 +1,9 @@
-import type { LatLngTuple } from 'leaflet'
-import merge from 'lodash/merge'
-import { FC, FormEventHandler, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import type { Assign, Optional } from 'utility-types'
+import { merge } from 'lodash'
+import pick from 'lodash/pick'
+import { FC, useMemo } from 'react'
+import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
+import { DeepPick } from 'ts-deep-pick'
+import type { Assign, Optional, Overwrite } from 'utility-types'
 import { api, CorrectLocation, EventPayload } from '../app/services/bis'
 import {
   EventPhoto,
@@ -12,13 +13,20 @@ import {
 } from '../app/services/testApi'
 import Loading from '../components/Loading'
 import { NewLocation } from '../components/SelectLocation'
-import { Step, Steps } from '../components/Steps'
+import { SimpleStep as Step, SimpleSteps as Steps } from '../components/Steps'
+import { useShowMessage } from '../features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
   usePersistentFormData,
   usePersistForm,
 } from '../hooks/persistForm'
-import { joinDateTime } from '../utils/helpers'
+import {
+  getIdBySlug,
+  getIdsBySlugs,
+  hasFormError,
+  joinDateTime,
+  pickErrors,
+} from '../utils/helpers'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
 import EventDetailsStep from './EventForm/steps/EventDetailsStep'
@@ -28,23 +36,108 @@ import OrganizerStep from './EventForm/steps/OrganizerStep'
 import ParticipantsStep from './EventForm/steps/ParticipantsStep'
 import PropagationStep from './EventForm/steps/PropagationStep'
 import RegistrationStep from './EventForm/steps/RegistrationStep'
-import WorkStep from './EventForm/steps/WorkStep'
 
-export type EventFormShape = Assign<
-  EventPayload,
-  {
-    questions: Optional<Question, 'id' | 'order'>[]
-    main_image?: Optional<EventPropagationImage, 'id' | 'order'>
-    images: Optional<EventPropagationImage, 'id' | 'order'>[]
-    recordData: {
-      photos: Optional<EventPhoto, 'id'>[]
-      receipts: Optional<FinanceReceipt, 'id'>[]
+const steps = [
+  'category',
+  'basicInfo',
+  'intendedFor',
+  'registration',
+  'location',
+  'propagation',
+  'details',
+  'organizers',
+] as const
+
+type StepName = typeof steps[number]
+
+export type EventFormShape = //UnionToIntersection<StepShapes[keyof StepShapes]>
+  Assign<
+    EventPayload,
+    {
+      questions: Optional<Question, 'id' | 'order'>[]
+      recordData: {
+        photos: Optional<EventPhoto, 'id'>[]
+        receipts: Optional<FinanceReceipt, 'id'>[]
+      }
+      startDate: string
+      startTime: string
+      location: NewLocation | Pick<CorrectLocation, 'id'>
+      main_image: Optional<EventPropagationImage, 'id' | 'order'>
+      images: Optional<EventPropagationImage, 'id' | 'order'>[]
     }
-    location: NewLocation | Pick<CorrectLocation, 'id'>
-    startDate: string
-    startTime: string
-  }
+  >
+
+const shapes = {
+  category: ['group'],
+  basicInfo: [
+    'name',
+    'start',
+    'startDate',
+    'startTime',
+    'end',
+    'number_of_sub_events',
+    'category',
+    'program',
+    'administration_units',
+  ],
+  intendedFor: [
+    'intended_for',
+    'propagation.vip_propagation.goals_of_event',
+    'propagation.vip_propagation.program',
+    'propagation.vip_propagation.short_invitation_text',
+    'propagation.vip_propagation.rover_propagation',
+  ],
+  registration: [
+    'is_internal',
+    'propagation.is_shown_on_web',
+    'registration',
+    'questions',
+  ],
+  location: ['location'],
+  propagation: [
+    'propagation.cost',
+    'propagation.minimum_age',
+    'propagation.maximum_age',
+    'propagation.accommodation',
+    'propagation.diets',
+    'propagation.working_hours',
+    'propagation.working_days',
+    'propagation.contact_person',
+    'propagation.contact_name',
+    'propagation.contact_email',
+    'propagation.contact_phone',
+    'propagation.web_url',
+  ],
+  details: [
+    'internal_note',
+    'propagation.invitation_text_introduction',
+    'propagation.invitation_text_practical_information',
+    'propagation.invitation_text_work_description',
+    'propagation.invitation_text_about_us',
+    'main_image',
+    'images',
+  ],
+  organizers: ['main_organizer', 'other_organizers'],
+} as const
+
+type ShapeTypes = {
+  [Property in keyof typeof shapes]: typeof shapes[Property][number]
+}
+
+export type StepShapes = Overwrite<
+  {
+    [Property in StepName]: DeepPick<EventFormShape, ShapeTypes[Property]>
+  },
+  { location: Pick<EventFormShape, 'location'> }
 >
+
+export type MethodsShapes = {
+  [K in keyof StepShapes]: UseFormReturn<StepShapes[K]>
+}
+
+type ErrorShapes = {
+  [K in StepName]: FieldErrorsImpl<StepShapes[K]>
+}
 
 const EventForm: FC<{
   initialData?: Partial<EventFormShape>
@@ -53,33 +146,26 @@ const EventForm: FC<{
   eventToEdit: boolean
   id: string
 }> = ({ onSubmit, onCancel, initialData, eventToEdit, id }) => {
-  let i = 0
+  const savedData = usePersistentFormData('event', id)
 
-  const persistedData = usePersistentFormData('event', id)
+  const initialAndSavedData = useMemo(
+    () => merge({}, initialData, savedData),
+    [initialData, savedData],
+  )
 
-  const formMethods = useForm<EventFormShape>({
-    defaultValues: merge(
-      {},
-      initialData,
-      {
-        finance: null,
-        record: null,
-        is_closed: false,
-        // propagation: {
-        //   accommodation: '.',
-        //   organizers: '.',
-        //   working_days: 0,
-        // },
-      },
-      persistedData,
-    ),
-  })
-  const { handleSubmit, watch } = formMethods
+  const methods = steps.reduce((prev, key) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const methods = useForm<StepShapes[typeof key]>({
+      defaultValues: pick(initialAndSavedData, shapes[key]),
+    })
+    prev[key] = methods as any
 
-  usePersistForm('event', id, watch)
+    return prev
+  }, {} as MethodsShapes)
 
-  const gpsInputMethods = useForm<{ gps: string }>()
-  const [currentGPS, setCurrentGPS] = useState<LatLngTuple>()
+  usePersistForm('event', id, ...Object.values(methods).map(m => m.watch))
+
+  const showMessage = useShowMessage()
 
   // we're loading these to make sure that we have the data before we try to render the form, to make sure that the default values are properly initialized
   // TODO check whether this is necessary
@@ -93,11 +179,6 @@ const EventForm: FC<{
   const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
     {},
   )
-
-  const handleCurrentGpsChange = (gps: LatLngTuple) => {
-    setCurrentGPS(gps)
-    gpsInputMethods.setValue('gps', gps.join(', '))
-  }
 
   const cancelPersist = useClearPersistentForm('event', id)
 
@@ -114,129 +195,132 @@ const EventForm: FC<{
   )
     return <Loading>Připravujeme formulář</Loading>
 
-  const handleFormSubmit = handleSubmit(async data => {
-    if (data.registration) {
-      data.registration.is_event_full = Boolean(data.registration.is_event_full)
-    }
-    data.start = joinDateTime(data.startDate, data.startTime)
-    await onSubmit(data)
-    cancelPersist()
-  })
+  const handleFormSubmit = async () => {
+    const datas = {} as StepShapes
+    const errors = {} as ErrorShapes
+    const areValid = {} as { [K in StepName]: boolean }
+    await Promise.all(
+      steps.map(key =>
+        methods[key].handleSubmit(
+          data => {
+            areValid[key] = true
+            datas[key] = data as any
+          },
+          ers => {
+            areValid[key] = false
+            errors[key] = ers as any
+          },
+        )(),
+      ),
+    )
 
-  const handleFormReset: FormEventHandler<HTMLFormElement> = e => {
-    e.preventDefault()
+    if (Object.values(areValid).every(a => a)) {
+      const data = merge({}, ...Object.values(datas))
+      if (data.registration) {
+        data.registration.is_event_full = Boolean(
+          data.registration.is_event_full,
+        )
+      }
+      if (data.propagation) {
+        // TODO make a field for this
+        data.propagation.organizers = data.propagation.organizers ?? '.'
+        data.propagation.vip_propagation =
+          data.propagation.vip_propagation ?? null
+      }
+      data.start = joinDateTime(data.startDate, data.startTime)
+      await onSubmit(data)
+      cancelPersist()
+    } else {
+      showMessage({
+        message: 'Opravte, prosím, chyby ve validaci',
+        type: 'error',
+        detail: JSON.stringify(pickErrors(merge({}, ...Object.values(errors)))),
+      })
+    }
+  }
+
+  const handleFormReset = () => {
     // formMethods.reset(initialData) // this doesn't reset when initialData is empty, but triggers unnecessary watch
     cancelPersist()
     onCancel()
   }
 
-  const handleGpsInputSubmit = gpsInputMethods.handleSubmit(data => {
-    if (!data.gps.trim()) return setCurrentGPS(undefined)
-    const [lat, lng] = data.gps!.split(/,\s+/)
-    setCurrentGPS([+lat, +lng])
-  })
+  const isWeekendEvent =
+    getIdBySlug(groups?.results ?? [], 'weekend_event') ===
+    methods.category.watch('group')
+  const isCamp =
+    getIdBySlug(groups?.results ?? [], 'camp') ===
+    methods.category.watch('group')
+  const isVolunteering = getIdsBySlugs(categories?.results ?? [], [
+    'public__volunteering__only_volunteering',
+    'public__volunteering__with_experience',
+  ]).includes(+methods.basicInfo.watch('category'))
+  const mainOrganizerDependencies = {
+    intended_for: intendedFor?.results.find(
+      c => c.id === +methods.intendedFor.watch('intended_for'),
+    ),
+    group: groups.results.find(g => g.id === +methods.category.watch('group')),
+    category: categories.results.find(
+      c => c.id === +methods.basicInfo.watch('category'),
+    ),
+  }
 
   return (
-    <div>
-      <form id="gpsInputForm" onSubmit={handleGpsInputSubmit} />
-      <FormProvider {...formMethods}>
-        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
-          <Steps>
-            <Step name="kategorie akce" fields={['group']}>
-              <EventCategoryStep />
-            </Step>
-            <Step
-              name="základní info"
-              fields={[
-                'name',
-                'start',
-                'end',
-                'number_of_sub_events',
-                'category',
-                'program',
-                'administration_units',
-              ]}
-            >
-              <BasicInfoStep />
-            </Step>
-            <Step
-              name="pro koho"
-              fields={[
-                'intended_for',
-                'propagation.vip_propagation.goals_of_event',
-                'propagation.vip_propagation.program',
-                'propagation.vip_propagation.short_invitation_text',
-                'propagation.vip_propagation.rover_propagation',
-              ]}
-            >
-              <IntendedForStep />
-            </Step>
-            <Step
-              name="přihlášení"
-              fields={[
-                'is_internal',
-                'propagation.is_shown_on_web',
-                'registration',
-              ]}
-            >
-              <RegistrationStep />
-            </Step>
-            <Step name="lokace" fields={['location']}>
-              <LocationStep
-                i={i++}
-                gpsInputMethods={gpsInputMethods}
-                currentGPS={currentGPS}
-                onCurrentGPSChange={handleCurrentGpsChange}
-              />
-            </Step>
-            <Step
-              name="info pro účastníky"
-              fields={[
-                'propagation.cost',
-                'propagation.minimum_age',
-                'propagation.maximum_age',
-                'propagation.accommodation',
-                'propagation.diets',
-                'propagation.working_hours',
-                'propagation.working_days',
-                'propagation.contact_person',
-                'propagation.contact_name',
-                'propagation.contact_email',
-                'propagation.contact_phone',
-                'propagation.web_url',
-              ]}
-            >
-              <PropagationStep />
-            </Step>
-            <Step
-              name="detaily akce"
-              fields={[
-                'internal_note',
-                'propagation.invitation_text_introduction',
-                'propagation.invitation_text_practical_information',
-                'propagation.invitation_text_work_description',
-                'propagation.invitation_text_about_us',
-                'main_image',
-                'images',
-              ]}
-            >
-              <EventDetailsStep />
-            </Step>
-            <Step name="organizátorský tým">
-              <OrganizerStep />
-              <input type="submit" value="Submit" />
-              <input type="reset" value="Reset" />
-            </Step>
-            <Step name="ucastnici" hidden={!eventToEdit}>
-              {initialData?.id && <ParticipantsStep eventId={initialData.id} />}
-            </Step>
-            <Step name="práce" hidden={!eventToEdit}>
-              <WorkStep />
-            </Step>
-          </Steps>
-        </form>
-      </FormProvider>
-    </div>
+    <Steps
+      onSubmit={handleFormSubmit}
+      onCancel={handleFormReset}
+      actions={[
+        {
+          name: 'Uložit',
+          props: {},
+        },
+      ]}
+    >
+      <Step name="kategorie akce" hasError={hasFormError(methods.category)}>
+        <EventCategoryStep methods={methods.category} />
+      </Step>
+      <Step name="základní info" hasError={hasFormError(methods.basicInfo)}>
+        <BasicInfoStep methods={methods.basicInfo} />
+      </Step>
+      <Step name="pro koho" hasError={hasFormError(methods.intendedFor)}>
+        <IntendedForStep methods={methods.intendedFor} isCamp={isCamp} />
+      </Step>
+      <Step name="přihlášení" hasError={hasFormError(methods.registration)}>
+        <RegistrationStep methods={methods.registration} />
+      </Step>
+      <Step name="lokalita" hasError={hasFormError(methods.location)}>
+        <LocationStep methods={methods.location} />
+      </Step>
+      <Step
+        name="info pro účastníky"
+        hasError={hasFormError(methods.propagation)}
+      >
+        <PropagationStep
+          methods={methods.propagation}
+          isVolunteering={isVolunteering}
+          isWeekendEvent={isWeekendEvent}
+          isCamp={isCamp}
+        />
+      </Step>
+      <Step name="pozvánka" hasError={hasFormError(methods.details)}>
+        <EventDetailsStep
+          isVolunteering={isVolunteering}
+          methods={methods.details}
+        />
+      </Step>
+      <Step
+        name="organizátorský tým"
+        hasError={hasFormError(methods.organizers)}
+      >
+        <OrganizerStep
+          methods={methods.organizers}
+          mainOrganizerDependencies={mainOrganizerDependencies}
+        />
+      </Step>
+      <Step name="přihlášky" hidden={!initialData?.id}>
+        {initialData?.id && <ParticipantsStep eventId={initialData.id} />}
+      </Step>
+    </Steps>
   )
 }
 
