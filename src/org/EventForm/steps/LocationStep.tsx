@@ -10,19 +10,37 @@ const LocationStep = ({
 }: {
   methods: UseFormReturn<StepShapes['location']>
 }) => {
+  const { watch, register, control } = methods
+
   return (
     <FormProvider {...methods}>
       <form>
         <FormSection>
-          <FormSubsection header="Lokace" required>
-            <FormInputError>
-              <Controller
-                name="location"
-                control={methods.control}
-                rules={{ required }}
-                render={({ field }) => <SelectLocation {...field} />}
-              />
-            </FormInputError>
+          <FormSubsection header="Místo konání" required>
+            <label>
+              <input type="checkbox" {...register('online')} /> Akce se koná
+              online
+            </label>
+            {watch('online') ? (
+              <div>
+                Odkaz na online setkání{' '}
+                <FormInputError>
+                  <input
+                    type="url"
+                    {...register('online_link', { required })}
+                  />
+                </FormInputError>
+              </div>
+            ) : (
+              <FormInputError>
+                <Controller
+                  name="location"
+                  control={control}
+                  rules={{ required }}
+                  render={({ field }) => <SelectLocation {...field} />}
+                />
+              </FormInputError>
+            )}
           </FormSubsection>
         </FormSection>
       </form>
