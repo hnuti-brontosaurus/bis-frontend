@@ -106,11 +106,18 @@ export const Label = ({
   required,
   ...rest
 }: HTMLProps<HTMLLabelElement> & { required?: boolean }) => (
-  <label className={classNames(required && styles.required, className)}>
+  <label
+    {...rest}
+    className={classNames(required && styles.required, className)}
+  >
     {children}
   </label>
 )
 
 export const FullSizeElement = ({ children }: HTMLProps<HTMLDivElement>) => (
   <div className={styles.fullSize}>{children}</div>
+)
+
+export const InlineSection = ({ children }: HTMLProps<HTMLDivElement>) => (
+  <div className={styles.inline}>{children}</div>
 )

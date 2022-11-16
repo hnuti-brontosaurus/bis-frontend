@@ -5,6 +5,7 @@ import { AdministrationUnit } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
 import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import Loading from '../../../components/Loading'
+import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
 
 const BasicInfoStep = ({
@@ -43,7 +44,7 @@ const BasicInfoStep = ({
                 <input
                   type="date"
                   id="start"
-                  {...register('startDate', { required: 'required' })}
+                  {...register('startDate', { required })}
                 />
               </FormInputError>
               <FormInputError>
@@ -56,7 +57,7 @@ const BasicInfoStep = ({
                 <input
                   type="date"
                   id="end"
-                  {...register('end', { required: 'required' })}
+                  {...register('end', { required })}
                 />
               </FormInputError>
             </label>
@@ -70,7 +71,7 @@ const BasicInfoStep = ({
               <input
                 type="number"
                 {...register('number_of_sub_events', {
-                  required: 'required',
+                  required,
                   valueAsNumber: true,
                 })}
               />
@@ -80,10 +81,7 @@ const BasicInfoStep = ({
         <FormSection startIndex={5}>
           <FormSubsection header="Typ akce" required>
             <FormInputError>
-              <select
-                {...register('category', { required: 'required' })}
-                defaultValue=""
-              >
+              <select {...register('category', { required })} defaultValue="">
                 <option disabled value="" />
                 {categories &&
                   categories.results!.map(category => (
