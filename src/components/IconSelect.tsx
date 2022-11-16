@@ -4,6 +4,7 @@ import styles from './IconSelect.module.scss'
 
 interface IconSelectProps extends InputHTMLAttributes<HTMLInputElement> {
   text: string
+  detail?: ReactNode
   icon: React.FunctionComponent<
     React.SVGProps<SVGSVGElement> & {
       title?: string | undefined
@@ -14,7 +15,7 @@ interface IconSelectProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const IconSelect = forwardRef(
   (
-    { text, icon, id, ...rest }: IconSelectProps,
+    { text, detail, icon, id, ...rest }: IconSelectProps,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const Icon = icon
@@ -34,6 +35,7 @@ export const IconSelect = forwardRef(
             </div>
           </div>
           <span>{text}</span>
+          {detail && <span className={styles.detail}>{detail}</span>}
         </label>
       </>
     )

@@ -2,6 +2,7 @@
 
 .group {
   display: inline-flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 5rem;
 }
@@ -34,6 +35,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 14rem;
+
+  .detail {
+    text-align: center;
+    font-size: smaller;
+  }
 }
 
 // set up color for opportunities

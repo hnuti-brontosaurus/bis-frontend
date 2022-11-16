@@ -1,5 +1,5 @@
 import merge from 'lodash/merge'
-import { FormEventHandler, useEffect } from 'react'
+import { FormEventHandler, ReactNode, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
@@ -35,6 +35,14 @@ const categoryIcons = {
 } as const
 
 type OpportunityCategorySlug = keyof typeof categoryIcons
+
+const categoryDetails: Record<OpportunityCategorySlug, ReactNode> = {
+  organizing: 'Příležitosti organizovat či pomáhat s pořádáním našich akcí.',
+  collaboration:
+    'Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.',
+  location_help:
+    'Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.',
+}
 
 export type OpportunityFormShape = Overwrite<
   OpportunityPayload,
@@ -150,6 +158,11 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                         id={category.slug}
                         key={category.slug}
                         text={category.name}
+                        detail={
+                          categoryDetails[
+                            category.slug as OpportunityCategorySlug
+                          ]
+                        }
                         icon={Icon}
                         value={category.id}
                         {...register('category', { required })}
