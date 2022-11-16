@@ -245,7 +245,7 @@ const CreateLocation = ({
   const handleConfirm = methods.handleSubmit(data => onFinish(data))
 
   const handleCancel = () => {
-    methods.reset()
+    methods.reset({})
     onFinish()
   }
 
@@ -301,12 +301,13 @@ const CreateLocation = ({
         </FormInputError>
       </div>
       <div>
-        <button type="reset" form={formId} onClick={handleCancel}>
-          zrušit
-        </button>{' '}
-        <button type="submit" form={formId} onClick={handleConfirm}>
-          ok
-        </button>
+        <input
+          type="reset"
+          value="zrušit"
+          form={formId}
+          onClick={handleCancel}
+        />{' '}
+        <input type="submit" value="ok" form={formId} onClick={handleConfirm} />
       </div>
     </FormProvider>
   )

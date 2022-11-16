@@ -222,7 +222,6 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
           </FormSubsection>
           <FormSubsection header="Místo konání" required>
             Lokalita
-            {/*TODO: this input is just a placeholder for something better*/}
             <FormInputError>
               <Controller
                 name="location"
