@@ -48,7 +48,11 @@ const IntendedForStep = ({
     <FormProvider {...methods}>
       <form>
         <FormSection startIndex={8}>
-          <FormSubsection required header="Pro koho">
+          <FormSubsection
+            required
+            header="Pro koho"
+            help="vyberte na koho je akce zaměřená"
+          >
             <FormInputError>
               <Controller
                 name="intended_for"
@@ -183,7 +187,11 @@ const IntendedForStep = ({
                         */
                     isCamp && (
                       <FullSizeElement>
-                        <FormSubheader required>
+                        <FormSubheader
+                          required
+                          help="Placená propagace vaší vícedenní akce v časopisu
+                            Roverský kmen za poplatek 100 Kč."
+                        >
                           Propagovat akci v Roverském kmeni
                         </FormSubheader>
                         <FormInputError>

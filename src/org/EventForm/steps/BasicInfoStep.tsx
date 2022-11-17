@@ -31,7 +31,7 @@ const BasicInfoStep = ({
               <input
                 type="text"
                 {...register('name', {
-                  required: 'Toto pole je povinné',
+                  required,
                 })}
               />
             </FormInputError>
@@ -108,7 +108,7 @@ const BasicInfoStep = ({
               </select>
             </FormInputError>
           </FormSubsection>
-          <FormSubsection header="Pořádající ZČ/Klub/RC/ústředí" required>
+          <FormSubsection header="Pořádající organizační jednotka" required>
             <FormInputError>
               <Controller
                 name="administration_units"
