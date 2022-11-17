@@ -13,6 +13,7 @@ import {
   FormSubsection,
   FullSizeElement,
   InfoBox,
+  InlineSection,
   Label,
 } from '../components/FormLayout'
 import { IconSelect, IconSelectGroup } from '../components/IconSelect'
@@ -182,7 +183,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
             </FormInputError>
           </FormSubsection>
           <FormSubsection header="Datum">
-            <div>
+            <InlineSection>
               <Label required htmlFor="start">
                 Od
               </Label>{' '}
@@ -205,10 +206,10 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('end', { required })}
                 />
               </FormInputError>
-            </div>
+            </InlineSection>
           </FormSubsection>
           <FormSubsection header="Zobrazit na webu">
-            <div>
+            <InlineSection>
               <Label required htmlFor="on_web_start">
                 Od
               </Label>{' '}
@@ -231,7 +232,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('on_web_end', { required })}
                 />
               </FormInputError>
-            </div>
+            </InlineSection>
           </FormSubsection>
           <FormSubsection header="Místo konání" required>
             Lokalita
@@ -366,7 +367,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
             </FormInputError>
           </FormSubsection>
           <FormSubsection header="Kontaktní osoba">
-            <div>
+            <InlineSection>
               <Label required htmlFor="contact_name">
                 Jméno kontaktní osoby
               </Label>{' '}
@@ -378,8 +379,8 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('contact_name', { required })}
                 />
               </FormInputError>
-            </div>
-            <div>
+            </InlineSection>
+            <InlineSection>
               <Label required htmlFor="contact_email">
                 Kontaktní email
               </Label>{' '}
@@ -391,8 +392,8 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('contact_email', { required })}
                 />
               </FormInputError>
-            </div>
-            <div>
+            </InlineSection>
+            <InlineSection>
               <Label htmlFor="contact_phone">Kontaktní telefon</Label>{' '}
               <FormInputError>
                 <input
@@ -401,7 +402,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('contact_phone')}
                 />
               </FormInputError>
-            </div>
+            </InlineSection>
           </FormSubsection>
           <div className={styles.actions}>
             <button className={styles.cancelAction} type="reset">
