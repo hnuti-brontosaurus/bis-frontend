@@ -4,6 +4,7 @@ import logo from './assets/logo.png'
 import { selectShowHeader } from './features/ui/uiSlice'
 import styles from './Header.module.scss'
 import { Content, Footer, Header, Layout } from './Layout'
+import LinkFooter from './LinkFooter'
 
 const UnauthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const showHeader = useAppSelector(selectShowHeader)
@@ -17,7 +18,11 @@ const UnauthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
         </Header>
       )}
       <Content>{children}</Content>
-      <Footer></Footer>
+      {showHeader && (
+        <Footer>
+          <LinkFooter />
+        </Footer>
+      )}
     </Layout>
   )
 }

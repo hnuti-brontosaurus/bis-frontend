@@ -4,6 +4,7 @@ import SystemMessages from './features/systemMessage/SystemMessages'
 import { selectShowHeader } from './features/ui/uiSlice'
 import Header from './Header'
 import { Content, Footer, Header as LayoutHeader, Layout } from './Layout'
+import LinkFooter from './LinkFooter'
 
 const AuthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const showHeader = useAppSelector(selectShowHeader)
@@ -18,7 +19,11 @@ const AuthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
         <SystemMessages />
         {children}
       </Content>
-      <Footer></Footer>
+      {showHeader && (
+        <Footer>
+          <LinkFooter />
+        </Footer>
+      )}
     </Layout>
   )
 }

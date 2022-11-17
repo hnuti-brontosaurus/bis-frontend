@@ -8,13 +8,11 @@ import { useCurrentUser } from './hooks/currentUser'
 import { isOrganizer } from './utils/helpers'
 
 const Header = () => {
-  const { data: user, isLoading } = useCurrentUser()
+  const { data: user } = useCurrentUser()
   const [logout, { isLoading: isLoggingOut }] =
     api.endpoints.logout.useMutation()
 
   const navigate = useNavigate()
-
-  if (!user || isLoading) return <div>loading...</div>
 
   const handleLogout = async () => {
     // logout with endpoint
@@ -35,26 +33,30 @@ const Header = () => {
       </nav>
       <div className={styles.spacer}></div>
       <div>
-        <Link to={isOrganizer(user) ? '/org' : ''}>
-          {isOrganizer(user) ? 'Organizátor' : 'Uživatel'}
-        </Link>
+        {user ? (
+          <Link to={isOrganizer(user) ? '/org' : ''}>
+            {isOrganizer(user) ? 'Organizátor' : 'Uživatel'}
+          </Link>
+        ) : null}
       </div>
-      <Menu
-        menuButton={
-          <MenuButton>
-            <div title={`${user.first_name} ${user.last_name}`}>
-              <FaRegUser fontSize={20} />
-            </div>
-          </MenuButton>
-        }
-      >
-        <MenuItem disabled>
-          <span>{`${user.first_name} ${user.last_name}`}</span>
-        </MenuItem>
-        <MenuItem>
-          <button onClick={handleLogout}>Logout</button>
-        </MenuItem>
-      </Menu>
+      {user ? (
+        <Menu
+          menuButton={
+            <MenuButton>
+              <div title={`${user.first_name} ${user.last_name}`}>
+                <FaRegUser fontSize={20} />
+              </div>
+            </MenuButton>
+          }
+        >
+          <MenuItem disabled>
+            <span>{`${user.first_name} ${user.last_name}`}</span>
+          </MenuItem>
+          <MenuItem>
+            <button onClick={handleLogout}>Logout</button>
+          </MenuItem>
+        </Menu>
+      ) : null}
     </div>
   )
 }
