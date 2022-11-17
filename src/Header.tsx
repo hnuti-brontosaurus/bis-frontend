@@ -2,6 +2,7 @@ import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import { FaBars, FaRegUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from './app/services/bis'
+import logoMini from './assets/logo-mini.png'
 import logo from './assets/logo.png'
 import styles from './Header.module.scss'
 import { useCurrentUser } from './hooks/currentUser'
@@ -45,9 +46,10 @@ const Header = () => {
           </MenuItem>
         </Menu>
       </nav>
-      <nav>
+      <nav className={styles.logoWrapper}>
         <Link to="/" title="Domů">
           <img src={logo} alt="" className={styles.logo} />
+          <img src={logoMini} alt="" className={styles.logoMini} />
         </Link>
       </nav>
       <div className={styles.spacer}></div>
