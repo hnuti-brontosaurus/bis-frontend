@@ -18,7 +18,7 @@ const CloseEvent = () => {
     eventId,
   })
 
-  useTitle(event ? `Uzavřít akci ${event.name}` : 'Uzavřít akci')
+  useTitle(event ? `Evidence akce ${event.name}` : 'Evidence akce')
 
   const [updateEvent] = api.endpoints.updateEvent.useMutation()
   const [createPhoto] = api.endpoints.createEventPhoto.useMutation()
