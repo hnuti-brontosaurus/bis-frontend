@@ -9,8 +9,7 @@ import { isOrganizer } from './utils/helpers'
 
 const Header = () => {
   const { data: user } = useCurrentUser()
-  const [logout, { isLoading: isLoggingOut }] =
-    api.endpoints.logout.useMutation()
+  const [logout] = api.endpoints.logout.useMutation()
 
   const navigate = useNavigate()
 
@@ -27,35 +26,65 @@ const Header = () => {
 
   return (
     <div className={styles.container}>
-      <nav>{<FaBars fontSize={20} />}</nav>
       <nav>
-        <img src={logo} alt="" className={styles.logo} />
-      </nav>
-      <div className={styles.spacer}></div>
-      <div>
-        {user ? (
-          <Link to={isOrganizer(user) ? '/org' : ''}>
-            {isOrganizer(user) ? 'Organizátor' : 'Uživatel'}
-          </Link>
-        ) : null}
-      </div>
-      {user ? (
         <Menu
           menuButton={
             <MenuButton>
-              <div title={`${user.first_name} ${user.last_name}`}>
-                <FaRegUser fontSize={20} />
-              </div>
+              <FaBars fontSize={20} />
             </MenuButton>
           }
         >
-          <MenuItem disabled>
-            <span>{`${user.first_name} ${user.last_name}`}</span>
+          <MenuItem>
+            <span>Tady</span>
           </MenuItem>
           <MenuItem>
-            <button onClick={handleLogout}>Logout</button>
+            <span>Bude</span>
+          </MenuItem>
+          <MenuItem>
+            <span>Navigace</span>
           </MenuItem>
         </Menu>
+      </nav>
+      <nav>
+        <Link to="/" title="Domů">
+          <img src={logo} alt="" className={styles.logo} />
+        </Link>
+      </nav>
+      <div className={styles.spacer}></div>
+      {user ? (
+        <nav>
+          <Link to={isOrganizer(user) ? '/org' : ''}>
+            {isOrganizer(user) ? 'Organizátor' : 'Uživatel'}
+          </Link>
+        </nav>
+      ) : null}
+      {user ? (
+        <nav>
+          <Menu
+            menuButton={
+              <MenuButton
+                className={styles.userButton}
+                title={`${user.first_name} ${user.last_name}`}
+              >
+                <div>
+                  {user.first_name} {user.last_name}
+                </div>
+                <FaRegUser fontSize={20} />
+              </MenuButton>
+            }
+          >
+            <MenuItem disabled>
+              <span>
+                {`${user.first_name} ${user.last_name}`}
+                <br />
+                {user.email}
+              </span>
+            </MenuItem>
+            <MenuItem>
+              <button onClick={handleLogout}>Logout</button>
+            </MenuItem>
+          </Menu>
+        </nav>
       ) : null}
     </div>
   )
