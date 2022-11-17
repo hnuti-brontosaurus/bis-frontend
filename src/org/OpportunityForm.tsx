@@ -1,5 +1,5 @@
 import merge from 'lodash/merge'
-import { FormEventHandler, useEffect } from 'react'
+import { FormEventHandler, ReactNode, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
@@ -13,6 +13,7 @@ import {
   FormSubsection,
   FullSizeElement,
   InfoBox,
+  InlineSection,
   Label,
 } from '../components/FormLayout'
 import { IconSelect, IconSelectGroup } from '../components/IconSelect'
@@ -35,6 +36,14 @@ const categoryIcons = {
 } as const
 
 type OpportunityCategorySlug = keyof typeof categoryIcons
+
+const categoryDetails: Record<OpportunityCategorySlug, ReactNode> = {
+  organizing: 'Příležitosti organizovat či pomáhat s pořádáním našich akcí.',
+  collaboration:
+    'Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.',
+  location_help:
+    'Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.',
+}
 
 export type OpportunityFormShape = Overwrite<
   OpportunityPayload,
@@ -150,6 +159,11 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                         id={category.slug}
                         key={category.slug}
                         text={category.name}
+                        detail={
+                          categoryDetails[
+                            category.slug as OpportunityCategorySlug
+                          ]
+                        }
                         icon={Icon}
                         value={category.id}
                         {...register('category', { required })}
@@ -169,7 +183,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
             </FormInputError>
           </FormSubsection>
           <FormSubsection header="Datum">
-            <div>
+            <InlineSection>
               <Label required htmlFor="start">
                 Od
               </Label>{' '}
@@ -192,10 +206,10 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('end', { required })}
                 />
               </FormInputError>
-            </div>
+            </InlineSection>
           </FormSubsection>
           <FormSubsection header="Zobrazit na webu">
-            <div>
+            <InlineSection>
               <Label required htmlFor="on_web_start">
                 Od
               </Label>{' '}
@@ -218,11 +232,10 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('on_web_end', { required })}
                 />
               </FormInputError>
-            </div>
+            </InlineSection>
           </FormSubsection>
           <FormSubsection header="Místo konání" required>
             Lokalita
-            {/*TODO: this input is just a placeholder for something better*/}
             <FormInputError>
               <Controller
                 name="location"
@@ -354,7 +367,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
             </FormInputError>
           </FormSubsection>
           <FormSubsection header="Kontaktní osoba">
-            <div>
+            <InlineSection>
               <Label required htmlFor="contact_name">
                 Jméno kontaktní osoby
               </Label>{' '}
@@ -366,8 +379,8 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('contact_name', { required })}
                 />
               </FormInputError>
-            </div>
-            <div>
+            </InlineSection>
+            <InlineSection>
               <Label required htmlFor="contact_email">
                 Kontaktní email
               </Label>{' '}
@@ -379,8 +392,8 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('contact_email', { required })}
                 />
               </FormInputError>
-            </div>
-            <div>
+            </InlineSection>
+            <InlineSection>
               <Label htmlFor="contact_phone">Kontaktní telefon</Label>{' '}
               <FormInputError>
                 <input
@@ -389,7 +402,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   {...register('contact_phone')}
                 />
               </FormInputError>
-            </div>
+            </InlineSection>
           </FormSubsection>
           <div className={styles.actions}>
             <button className={styles.cancelAction} type="reset">

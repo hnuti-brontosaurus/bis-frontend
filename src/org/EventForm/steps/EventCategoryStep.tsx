@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import { ReactComponent as OneTreeIcon } from '../../../assets/one-tree.svg'
@@ -8,13 +9,48 @@ import { FormSection, FormSubsection } from '../../../components/FormLayout'
 import { IconSelect, IconSelectGroup } from '../../../components/IconSelect'
 import { StepShapes } from '../../EventForm'
 
-const groupIcons = {
-  weekend_event: ThreeTreesIcon,
-  other: OneTreeIcon,
-  camp: TentIcon,
-}
+type EventGroupSlug = 'weekend_event' | 'other' | 'camp'
 
-type EventGroupSlug = keyof typeof groupIcons
+type IconType = React.FunctionComponent<
+  React.SVGProps<SVGSVGElement> & {
+    title?: string | undefined
+  }
+>
+
+const groupConfig: Record<
+  EventGroupSlug,
+  { icon: IconType; name: ReactNode; help: ReactNode }
+> = {
+  weekend_event: {
+    icon: ThreeTreesIcon,
+    name: (
+      <>
+        Víkendovka,
+        <br />
+        Akce s adresářem,
+        <br />
+        Brďo schůzky
+      </>
+    ),
+    help: 'Víkendovky jsou akce trvající 2-5 dnů',
+  },
+  other: {
+    icon: OneTreeIcon,
+    name: (
+      <>
+        Jednodenní akce,
+        <br />
+        Akce bez adresáře
+      </>
+    ),
+    help: 'Akce trvající 1 den a méně. Akce bez povinné prezenční listiny jsou speciální akce, kde nelze vyplňovat prezenční listinu např. dlouhodobé výstavy, velké akce pro veřejnost…',
+  },
+  camp: {
+    icon: TentIcon,
+    name: 'Tábory',
+    help: 'Tábory jsou akce konající se 6 a více dní',
+  },
+}
 
 // Create Event Form Step for Event Category
 // In api, Category is called Group
@@ -41,12 +77,17 @@ const EventCategoryStep = ({
                 render={({ field }) => (
                   <IconSelectGroup>
                     {groups &&
-                      groups.results!.map(({ id, name, slug }) => {
-                        const Icon = groupIcons[slug as EventGroupSlug]
+                      [...groups.results].reverse().map(({ id, slug }) => {
+                        const {
+                          icon: Icon,
+                          name,
+                          help,
+                        } = groupConfig[slug as EventGroupSlug]
                         return (
                           <IconSelect
                             key={id}
                             text={name}
+                            help={help}
                             icon={Icon}
                             id={slug}
                             ref={field.ref}

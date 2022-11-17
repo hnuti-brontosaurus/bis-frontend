@@ -91,7 +91,7 @@ const Login = () => {
               )}
               to="/send-reset-password-link"
             >
-              Nemám / Zapomněl jsem heslo
+              přihlašuji se poprvé/zapomněl(a) jsem heslo
             </Link>
           </form>
         </FormProvider>

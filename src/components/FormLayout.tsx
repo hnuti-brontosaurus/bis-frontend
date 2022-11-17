@@ -6,13 +6,15 @@ import Help from './Help'
 export const FormNumberedHeader = ({
   children,
   required,
+  help,
 }: {
   children: ReactNode
   required?: boolean
+  help?: ReactNode
 }) => {
   return (
     <header className={classNames(styles.header, required && styles.required)}>
-      {children}
+      {help && <Help>{help}</Help>} {children}
     </header>
   )
 }
@@ -20,13 +22,15 @@ export const FormNumberedHeader = ({
 export const FormSubheader = ({
   children,
   required,
+  help,
 }: {
   children: ReactNode
   required?: boolean
+  help?: ReactNode
 }) => {
   return (
     <header className={classNames(required && styles.required)}>
-      {children}
+      {help && <Help>{help}</Help>} {children}
     </header>
   )
 }
@@ -61,8 +65,8 @@ export const FormSubsection = ({
 }) => {
   return (
     <div className={styles.subsection}>
-      <FormNumberedHeader required={required}>
-        {help && <Help>{help}</Help>} {header}
+      <FormNumberedHeader required={required} help={help}>
+        {header}
       </FormNumberedHeader>
       {children}
     </div>
@@ -82,8 +86,8 @@ export const FormSubsubsection = ({
 }) => {
   return (
     <div className={styles.subsection}>
-      <FormSubheader required={required}>
-        {help && <Help>{help}</Help>} {header}
+      <FormSubheader required={required} help={help}>
+        {header}
       </FormSubheader>
       {children}
     </div>
@@ -106,11 +110,18 @@ export const Label = ({
   required,
   ...rest
 }: HTMLProps<HTMLLabelElement> & { required?: boolean }) => (
-  <label className={classNames(required && styles.required, className)}>
+  <label
+    {...rest}
+    className={classNames(required && styles.required, className)}
+  >
     {children}
   </label>
 )
 
 export const FullSizeElement = ({ children }: HTMLProps<HTMLDivElement>) => (
   <div className={styles.fullSize}>{children}</div>
+)
+
+export const InlineSection = ({ children }: HTMLProps<HTMLDivElement>) => (
+  <div className={styles.inline}>{children}</div>
 )

@@ -9,6 +9,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import App from './App'
 import { persistor, store } from './app/store'
 import { ErrorBoundary, ErrorBoundaryFallback } from './config/sentry'
+import './config/yup'
 import reportWebVitals from './reportWebVitals'
 
 const container = document.getElementById('root')!
