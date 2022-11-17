@@ -1,12 +1,15 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
 import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
+import * as yup from 'yup'
 import { api, CorrectLocation } from '../app/services/bis'
 import { required } from '../utils/validationMessages'
 import FormInputError from './FormInputError'
+import { InlineSection, Label } from './FormLayout'
 import Map, { ClearBounds, MarkerType } from './Map'
 import styles from './SelectLocation.module.scss'
 import { SelectByQuery } from './SelectUsers'
@@ -15,6 +18,22 @@ export type NewLocation = Overwrite<
   Pick<CorrectLocation, 'gps_location' | 'name' | 'address' | 'description'>,
   { gps_location?: Omit<Required<CorrectLocation>['gps_location'], 'type'> }
 >
+
+const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
+  name: yup.string().trim().required(),
+  gps_location: yup
+    .object({
+      coordinates: yup
+        .tuple([
+          yup.number().required().min(-180).max(180),
+          yup.number().required().min(-90).max(90),
+        ])
+        .required(),
+    })
+    .required(),
+  address: yup.string(),
+  description: yup.string(),
+})
 
 export type SelectedOrNewLocation = NewLocation | Pick<CorrectLocation, 'id'>
 
@@ -36,7 +55,9 @@ const SelectLocation = forwardRef<
       : skipToken,
   )
 
-  const newLocationMethods = useForm<NewLocation>()
+  const newLocationMethods = useForm<NewLocation>({
+    resolver: yupResolver(newLocationSchema),
+  })
 
   const locationsWithGPS = useMemo(
     () =>
@@ -70,6 +91,7 @@ const SelectLocation = forwardRef<
         'gps_location.coordinates.1',
         newLocationCoordinates[0],
       )
+      newLocationMethods.trigger('gps_location')
     }
   }, [newLocationCoordinates, newLocationMethods])
 
@@ -251,21 +273,27 @@ const CreateLocation = ({
 
   return (
     <FormProvider {...methods}>
-      <div>
-        Název:{' '}
+      <InlineSection>
+        <Label htmlFor="location.name" required>
+          Název:
+        </Label>
         <FormInputError>
           <input
+            id="location.name"
             type="text"
             form={formId}
             {...methods.register('name', { required })}
           />
         </FormInputError>
-      </div>
-      <div>
-        GPS:{' '}
+      </InlineSection>
+      <InlineSection>
+        <Label htmlFor="location.gps" required>
+          GPS:
+        </Label>
         <FormInputError>
           <input
             type="text"
+            id="location.gps"
             placeholder="50.01234567"
             form={formId}
             {...registerLatitude}
@@ -274,7 +302,8 @@ const CreateLocation = ({
               blurLatitude(e)
             }}
           />
-        </FormInputError>{' '}
+        </FormInputError>
+        N{' '}
         <FormInputError>
           <input
             type="text"
@@ -287,28 +316,38 @@ const CreateLocation = ({
             }}
           />
         </FormInputError>
-      </div>
-      <div>
-        Adresa:{' '}
+        E
+      </InlineSection>
+      <InlineSection>
+        <Label htmlFor="location.address">Adresa:</Label>{' '}
         <FormInputError>
-          <input type="text" form={formId} {...methods.register('address')} />
+          <input
+            type="text"
+            id="location.address"
+            form={formId}
+            {...methods.register('address')}
+          />
         </FormInputError>
-      </div>
-      <div>
-        Popis:{' '}
+      </InlineSection>
+      <InlineSection>
+        <Label htmlFor="location.description">Popis:</Label>
         <FormInputError>
-          <textarea form={formId} {...methods.register('description')} />
+          <textarea
+            id="location.description"
+            form={formId}
+            {...methods.register('description')}
+          />
         </FormInputError>
-      </div>
-      <div>
+      </InlineSection>
+      <InlineSection>
         <input
           type="reset"
           value="zrušit"
           form={formId}
           onClick={handleCancel}
-        />{' '}
+        />
         <input type="submit" value="ok" form={formId} onClick={handleConfirm} />
-      </div>
+      </InlineSection>
     </FormProvider>
   )
 }
