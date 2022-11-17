@@ -1,9 +1,12 @@
 import classNames from 'classnames'
 import { ForwardedRef, forwardRef, InputHTMLAttributes, ReactNode } from 'react'
+import Help from './Help'
 import styles from './IconSelect.module.scss'
 
 interface IconSelectProps extends InputHTMLAttributes<HTMLInputElement> {
-  text: string
+  text: ReactNode
+  detail?: ReactNode
+  help?: ReactNode
   icon: React.FunctionComponent<
     React.SVGProps<SVGSVGElement> & {
       title?: string | undefined
@@ -14,7 +17,7 @@ interface IconSelectProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const IconSelect = forwardRef(
   (
-    { text, icon, id, ...rest }: IconSelectProps,
+    { text, detail, help, icon, id, ...rest }: IconSelectProps,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const Icon = icon
@@ -33,7 +36,15 @@ export const IconSelect = forwardRef(
               <Icon height={60} width={60} />
             </div>
           </div>
-          <span>{text}</span>
+          <span className={styles.title}>
+            {help && (
+              <>
+                <Help>{help}</Help>{' '}
+              </>
+            )}
+            {text}
+          </span>
+          {detail && <span className={styles.detail}>{detail}</span>}
         </label>
       </>
     )

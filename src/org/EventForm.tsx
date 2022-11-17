@@ -160,7 +160,7 @@ const EventForm: FC<{
   const initialAndSavedData = useMemo(
     () =>
       merge(
-        {},
+        { number_of_sub_events: 1 },
         initialData,
         { online: initialData?.online_link ? true : false },
         savedData,

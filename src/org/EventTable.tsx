@@ -96,7 +96,7 @@ const EventTable: FC<{
                     </Link>
                   </MenuItem>
                   <MenuItem>
-                    <Link to={`/org/akce/${event.id}/uzavrit`}>uzavřít</Link>
+                    <Link to={`/org/akce/${event.id}/uzavrit`}>po akci</Link>
                   </MenuItem>
                   <MenuItem>
                     <button

@@ -25,12 +25,15 @@ const validationSchema = yup.object().shape(
       .string()
       .email()
       .when('phone', {
+        // @ts-ignore
         is: (phone: string) => !phone || phone.length === 0,
         then: yup.string().email().required('email or phone is required'),
         otherwise: yup.string(),
       }),
     phone: yup.string().when('email', {
+      // @ts-ignore
       is: (email: string) => !email || email.length === 0,
+      // @ts-ignore
       then: yup
         .string()
         .when('phone', {
