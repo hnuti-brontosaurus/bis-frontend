@@ -33,7 +33,10 @@ const PropagationStep = ({
     <FormProvider {...methods}>
       <form>
         <FormSection>
-          <FormSubsection header="Účastnický poplatek">
+          <FormSubsection
+            header="Účastnický poplatek"
+            help="Napište výši vašeho účastnického poplatku. Označení Kč se přidá automaticky. Pokud máte více cen (studentskou nebo naopak mecenášskou), výše dalších poplatků napište za lomítko. Můžete uvést i rozmezí cen. Např. 150/200/250 nebo 150-250)"
+          >
             <InlineSection>
               <Label required htmlFor="propagation.cost">
                 částka{' '}
