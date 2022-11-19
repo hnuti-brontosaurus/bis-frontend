@@ -448,6 +448,9 @@ export const api = createApi({
       query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
       providesTags: (result, error, { id }) => [{ type: 'Event', id }],
     }),
+    readWebEvent: build.query<Event, { id: number }>({
+      query: queryArg => ({ url: `web/events/${queryArg.id}/` }),
+    }),
     updateEvent: build.mutation<
       Event,
       { id: number; event: Partial<EventPayload> }

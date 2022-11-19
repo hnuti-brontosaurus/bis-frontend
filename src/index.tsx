@@ -8,8 +8,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import App from './App'
 import { persistor, store } from './app/store'
+import './config'
 import { ErrorBoundary, ErrorBoundaryFallback } from './config/sentry'
-import './config/yup'
 import reportWebVitals from './reportWebVitals'
 
 const container = document.getElementById('root')!
