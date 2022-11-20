@@ -6,6 +6,7 @@ import Loading from '../components/Loading'
 import { UnscalablePaginatedList } from '../components/PaginatedList'
 import { useCurrentUser } from '../hooks/currentUser'
 import { useTitle } from '../hooks/title'
+import { ClearPageMargin } from '../Layout'
 import OpportunityTable from './OpportunityList/OpportunityTable'
 
 const OpportunityList = () => {
@@ -24,7 +25,7 @@ const OpportunityList = () => {
   }
 
   return (
-    <div>
+    <ClearPageMargin>
       <ListHeader
         header="Příležitosti"
         theme="opportunities"
@@ -40,7 +41,7 @@ const OpportunityList = () => {
         data={opportunities.results}
         table={OpportunityTable}
       />
-    </div>
+    </ClearPageMargin>
   )
 }
 

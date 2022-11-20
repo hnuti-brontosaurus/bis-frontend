@@ -9,21 +9,19 @@ import LinkFooter from './LinkFooter'
 const AuthenticatedLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const showHeader = useAppSelector(selectShowHeader)
   return (
-    <Layout>
+    <Layout page>
       {showHeader && (
         <LayoutHeader>
           <Header />
         </LayoutHeader>
       )}
-      <Content>
-        <SystemMessages />
-        {children}
-      </Content>
+      <Content>{children}</Content>
       {showHeader && (
         <Footer>
           <LinkFooter />
         </Footer>
       )}
+      <SystemMessages />
     </Layout>
   )
 }

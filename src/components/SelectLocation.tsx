@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import classNames from 'classnames'
 import { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
 import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
@@ -164,7 +165,7 @@ const SelectLocation = forwardRef<
       Vyber lokalitu podle názvu
       <br />
       <SelectByQuery
-        className={styles.aboveMap}
+        className={classNames(styles.aboveMap, styles.fullWidth)}
         value={value && 'id' in value ? value.id : undefined}
         onChange={id => {
           if (typeof id === 'number') onChange({ id })
@@ -272,83 +273,90 @@ const CreateLocation = ({
   }
 
   return (
-    <FormProvider {...methods}>
-      <InlineSection>
-        <Label htmlFor="location.name" required>
-          Název:
-        </Label>
-        <FormInputError>
+    <div className={styles.container}>
+      <FormProvider {...methods}>
+        <InlineSection>
+          <Label htmlFor="location.name" required>
+            Název:
+          </Label>
+          <FormInputError>
+            <input
+              id="location.name"
+              type="text"
+              form={formId}
+              {...methods.register('name', { required })}
+            />
+          </FormInputError>
+        </InlineSection>
+        <InlineSection>
+          <Label htmlFor="location.gps" required>
+            GPS:
+          </Label>
+          <FormInputError>
+            <input
+              type="text"
+              id="location.gps"
+              placeholder="50.01234567"
+              form={formId}
+              {...registerLatitude}
+              onBlur={e => {
+                handleGPSBlur(e)
+                blurLatitude(e)
+              }}
+            />
+          </FormInputError>
+          N{' '}
+          <FormInputError>
+            <input
+              type="text"
+              placeholder="14.98765432"
+              form={formId}
+              {...registerLongitude}
+              onBlur={e => {
+                handleGPSBlur(e)
+                blurLongitude(e)
+              }}
+            />
+          </FormInputError>
+          E
+        </InlineSection>
+        <InlineSection>
+          <Label htmlFor="location.address">Adresa:</Label>{' '}
+          <FormInputError>
+            <input
+              type="text"
+              id="location.address"
+              form={formId}
+              {...methods.register('address')}
+            />
+          </FormInputError>
+        </InlineSection>
+        <InlineSection>
+          <Label htmlFor="location.description">Popis:</Label>
+          <FormInputError>
+            <textarea
+              id="location.description"
+              form={formId}
+              {...methods.register('description')}
+            />
+          </FormInputError>
+        </InlineSection>
+        <InlineSection>
           <input
-            id="location.name"
-            type="text"
+            type="reset"
+            value="zrušit"
             form={formId}
-            {...methods.register('name', { required })}
+            onClick={handleCancel}
           />
-        </FormInputError>
-      </InlineSection>
-      <InlineSection>
-        <Label htmlFor="location.gps" required>
-          GPS:
-        </Label>
-        <FormInputError>
           <input
-            type="text"
-            id="location.gps"
-            placeholder="50.01234567"
+            type="submit"
+            value="ok"
             form={formId}
-            {...registerLatitude}
-            onBlur={e => {
-              handleGPSBlur(e)
-              blurLatitude(e)
-            }}
+            onClick={handleConfirm}
           />
-        </FormInputError>
-        N{' '}
-        <FormInputError>
-          <input
-            type="text"
-            placeholder="14.98765432"
-            form={formId}
-            {...registerLongitude}
-            onBlur={e => {
-              handleGPSBlur(e)
-              blurLongitude(e)
-            }}
-          />
-        </FormInputError>
-        E
-      </InlineSection>
-      <InlineSection>
-        <Label htmlFor="location.address">Adresa:</Label>{' '}
-        <FormInputError>
-          <input
-            type="text"
-            id="location.address"
-            form={formId}
-            {...methods.register('address')}
-          />
-        </FormInputError>
-      </InlineSection>
-      <InlineSection>
-        <Label htmlFor="location.description">Popis:</Label>
-        <FormInputError>
-          <textarea
-            id="location.description"
-            form={formId}
-            {...methods.register('description')}
-          />
-        </FormInputError>
-      </InlineSection>
-      <InlineSection>
-        <input
-          type="reset"
-          value="zrušit"
-          form={formId}
-          onClick={handleCancel}
-        />
-        <input type="submit" value="ok" form={formId} onClick={handleConfirm} />
-      </InlineSection>
-    </FormProvider>
+        </InlineSection>
+      </FormProvider>
+    </div>
   )
 }
 const ViewLocation = ({ location }: { location?: NewLocation }) => {
