@@ -1,19 +1,26 @@
+@use '../media';
+
 .section {
   position: relative;
+  // these next two lines make sure flex cross axis won't stretch
+  width: 0;
   min-width: 100%;
   counter-reset: section;
   border: 1px solid lightgray;
   margin: 1rem 0;
   padding: 2rem;
+  @include media.for-phone-only {
+    padding: 16px;
+  }
   gap: 2rem;
   display: flex;
   flex-grow: 0;
-  width: 0;
   flex-direction: column;
   align-items: center;
 }
 
 .subsection {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,7 +82,11 @@
   gap: 0.5rem;
   position: relative;
   align-self: stretch;
-  textarea {
+  min-width: 100%;
+  width: 0;
+  textarea,
+  input,
+  select {
     display: block;
     width: 100%;
   }

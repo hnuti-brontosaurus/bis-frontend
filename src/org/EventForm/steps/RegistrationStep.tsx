@@ -5,6 +5,7 @@ import {
   FormSection,
   FormSubsection,
   FormSubsubsection,
+  InlineSection,
 } from '../../../components/FormLayout'
 import { requireBoolean } from '../../../utils/helpers'
 import { MethodsShapes } from '../../EventForm'
@@ -37,12 +38,12 @@ const RegistrationStep = ({
                   ...requireBoolean,
                 }}
                 render={({ field }) => (
-                  <>
+                  <InlineSection>
                     {[
                       { name: 'Na členy', value: true },
                       { name: 'Na nečleny', value: false },
                     ].map(({ name, value }) => (
-                      <Fragment key={name}>
+                      <div key={name}>
                         <input
                           ref={field.ref}
                           type="radio"
@@ -59,11 +60,11 @@ const RegistrationStep = ({
                                 : undefined,
                             )
                           }
-                        />
+                        />{' '}
                         <label htmlFor={name}>{name}</label>
-                      </Fragment>
+                      </div>
                     ))}
-                  </>
+                  </InlineSection>
                 )}
               />
             </FormInputError>
@@ -79,33 +80,35 @@ const RegistrationStep = ({
                 control={control}
                 rules={{ ...requireBoolean }}
                 render={({ field }) => (
-                  <>
-                    {[
-                      { name: 'Ano', value: true },
-                      { name: 'Ne', value: false },
-                    ].map(({ name, value }) => (
-                      <Fragment key={name}>
-                        <input
-                          ref={field.ref}
-                          type="radio"
-                          name={field.name}
-                          id={name}
-                          value={String(value)}
-                          checked={field.value === value}
-                          onChange={e =>
-                            field.onChange(
-                              e.target.value === 'true'
-                                ? true
-                                : e.target.value === 'false'
-                                ? false
-                                : undefined,
-                            )
-                          }
-                        />
-                        <label htmlFor={name}>{name}</label>
-                      </Fragment>
-                    ))}
-                  </>
+                  <fieldset>
+                    <InlineSection>
+                      {[
+                        { name: 'Ano', value: true },
+                        { name: 'Ne', value: false },
+                      ].map(({ name, value }) => (
+                        <div key={name}>
+                          <input
+                            ref={field.ref}
+                            type="radio"
+                            name={field.name}
+                            id={name}
+                            value={String(value)}
+                            checked={field.value === value}
+                            onChange={e =>
+                              field.onChange(
+                                e.target.value === 'true'
+                                  ? true
+                                  : e.target.value === 'false'
+                                  ? false
+                                  : undefined,
+                              )
+                            }
+                          />{' '}
+                          <label htmlFor={name}>{name}</label>
+                        </div>
+                      ))}
+                    </InlineSection>
+                  </fieldset>
                 )}
               />
             </FormInputError>

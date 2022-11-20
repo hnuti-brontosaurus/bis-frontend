@@ -8,6 +8,7 @@ import {
   FormSubsection,
   FullSizeElement,
   InfoBox,
+  InlineSection,
 } from '../../../components/FormLayout'
 import Loading from '../../../components/Loading'
 import { getIdBySlug, requireBoolean } from '../../../utils/helpers'
@@ -60,24 +61,26 @@ const IntendedForStep = ({
                 rules={{ required }}
                 render={({ field }) => (
                   <fieldset>
-                    {intendedFor &&
-                      intendedFor.results!.map(({ id, name, slug }) => (
-                        <Fragment key={id}>
-                          <input
-                            ref={field.ref}
-                            key={id}
-                            type="radio"
-                            name={field.name}
-                            id={slug}
-                            value={id}
-                            checked={id === field.value}
-                            onChange={e =>
-                              field.onChange(parseInt(e.target.value))
-                            }
-                          />
-                          <label htmlFor={slug}>{name}</label>
-                        </Fragment>
-                      ))}
+                    <InlineSection>
+                      {intendedFor &&
+                        intendedFor.results!.map(({ id, name, slug }) => (
+                          <div key={id}>
+                            <input
+                              ref={field.ref}
+                              key={id}
+                              type="radio"
+                              name={field.name}
+                              id={slug}
+                              value={id}
+                              checked={id === field.value}
+                              onChange={e =>
+                                field.onChange(parseInt(e.target.value))
+                              }
+                            />{' '}
+                            <label htmlFor={slug}>{name}</label>
+                          </div>
+                        ))}
+                    </InlineSection>
                   </fieldset>
                 )}
               />
