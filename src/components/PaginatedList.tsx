@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import { FC } from 'react'
 import { useSearchParamsState } from '../hooks/searchParamsState'
-import styles from './PaginatedList.module.scss'
 import Pagination from './Pagination'
 
 export const UnscalablePaginatedList = <T,>({
@@ -21,7 +20,7 @@ export const UnscalablePaginatedList = <T,>({
   const tableData = data.slice((page - 1) * pageSize, page * pageSize)
 
   return (
-    <div className={classNames(styles.container, className)}>
+    <div className={classNames(className)}>
       <Table data={tableData} />
       <Pagination
         page={page}

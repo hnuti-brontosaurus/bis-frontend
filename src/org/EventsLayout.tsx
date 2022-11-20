@@ -5,7 +5,7 @@ import { api } from '../app/services/bis'
 import ListHeader from '../components/ListHeader'
 import Loading from '../components/Loading'
 import { useCurrentUser } from '../hooks/currentUser'
-import { Content, Header, Layout } from '../Layout'
+import { ClearPageMargin, Content, Header, Layout } from '../Layout'
 
 const EventsLayout = () => {
   const { data: currentUser } = useCurrentUser()
@@ -31,39 +31,41 @@ const EventsLayout = () => {
   )
 
   return (
-    <Layout>
-      <Header>
-        <ListHeader
-          header="Moje akce"
-          theme={theme}
-          tabs={[
-            {
-              key: 'aktualni',
-              to: 'aktualni',
-              name: 'Aktuální akce',
-            },
-            {
-              key: 'vsechny',
-              to: 'vsechny',
-              name: 'Všechny akce',
-            },
-            {
-              key: 'nevyplnene',
-              to: 'nevyplnene',
-              name: 'Nevyplněné akce',
-            },
-          ]}
-          actions={[]}
-        />
-      </Header>
-      <Content>
-        {events?.results ? (
-          <Outlet context={events} />
-        ) : (
-          <Loading>Stahujeme akce...</Loading>
-        )}
-      </Content>
-    </Layout>
+    <ClearPageMargin>
+      <Layout>
+        <Header>
+          <ListHeader
+            header="Moje akce"
+            theme={theme}
+            tabs={[
+              {
+                key: 'aktualni',
+                to: 'aktualni',
+                name: 'Aktuální akce',
+              },
+              {
+                key: 'vsechny',
+                to: 'vsechny',
+                name: 'Všechny akce',
+              },
+              {
+                key: 'nevyplnene',
+                to: 'nevyplnene',
+                name: 'Nevyplněné akce',
+              },
+            ]}
+            actions={[]}
+          />
+        </Header>
+        <Content>
+          {events?.results ? (
+            <Outlet context={events} />
+          ) : (
+            <Loading>Stahujeme akce...</Loading>
+          )}
+        </Content>
+      </Layout>
+    </ClearPageMargin>
   )
 }
 
