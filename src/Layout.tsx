@@ -8,8 +8,15 @@ interface ChildrenProps {
   children?: ReactNode
 }
 
-export const Layout = ({ children }: ChildrenProps) => {
-  return <div className={styles.box}>{children}</div>
+export const Layout = ({
+  children,
+  page,
+}: ChildrenProps & { page?: boolean }) => {
+  return (
+    <div className={classNames(styles.box, page && styles.page)}>
+      {children}
+    </div>
+  )
 }
 
 export const Header = ({ children }: ChildrenProps) => (
@@ -22,4 +29,8 @@ export const Content = ({ children }: ChildrenProps) => (
 
 export const Footer = ({ children }: ChildrenProps) => (
   <div className={classNames(styles.row, styles.footer)}>{children}</div>
+)
+
+export const ClearPageMargin = ({ children }: ChildrenProps) => (
+  <div className={styles.noPageMargin}>{children}</div>
 )

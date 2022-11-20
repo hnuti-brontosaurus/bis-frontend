@@ -1,4 +1,5 @@
 @use '../colors';
+@use '../media';
 
 .header {
   display: flex;
@@ -7,6 +8,22 @@
   // TODO let's make the spacing of header more responsive
   // e.g. some form of max-width
   padding: 2rem 8rem 4rem;
+
+  @include media.for-phone-only {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+
+  @include media.for-tablet-portrait-up {
+    padding-left: 70px;
+    padding-right: 70px;
+  }
+
+  @include media.for-desktop-up {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+
   position: relative;
 
   // themes

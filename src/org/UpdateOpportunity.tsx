@@ -40,6 +40,10 @@ const UpdateOpportunity = () => {
 
   const createOrSelectLocation = useCreateOrSelectLocation()
 
+  if (updateOpportunityStatus.isLoading) {
+    return <Loading>Ukládáme změny</Loading>
+  }
+
   if (isError)
     return (
       <>Opportunity not found (or different error) {JSON.stringify(error)}</>

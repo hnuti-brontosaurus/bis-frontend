@@ -1,6 +1,7 @@
 import merge from 'lodash/merge'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../app/services/bis'
+import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import {
   useShowApiErrorMessage,
@@ -25,6 +26,10 @@ const CreateOpportunity = () => {
     createOpportunityStatus.error,
     'Nepodařilo se vytvořit příležitost',
   )
+
+  if (createOpportunityStatus.isLoading) {
+    return <Loading>Ukládáme příležitost</Loading>
+  }
 
   const handleSubmit = async (data: OpportunityFormShape) => {
     const locationId = await createOrSelectLocation(data.location)
