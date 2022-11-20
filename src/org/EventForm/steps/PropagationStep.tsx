@@ -9,7 +9,6 @@ import {
   Label,
 } from '../../../components/FormLayout'
 import Loading from '../../../components/Loading'
-import { SelectUser } from '../../../components/SelectUsers'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
 
@@ -173,64 +172,8 @@ const PropagationStep = ({
               </InlineSection>
             )}
           </FormSubsection>
-          <FormSubsection header="Kontaktní osoba">
-            <label>
-              <input type="checkbox" /> stejná jako hlavní organizátor
-            </label>
-            {/* TODO if checkbox is checked, autofill, or figure out what happens */}
-            <FormInputError>
-              <Controller
-                name="propagation.contact_person"
-                control={control}
-                render={({ field }) => <SelectUser {...field} />}
-              />
-            </FormInputError>
-            {/*
-                TODO figure out what happens with name when contact person is filled
-                maybe fill when not already filled
-                */}
+          <FormSubsection header="Web o akci">
             <InlineSection>
-              <Label required htmlFor="propagation.contact_name">
-                Jméno kontaktní osoby
-              </Label>
-              <FormInputError>
-                <input
-                  type="text"
-                  id="propagation.contact_name"
-                  {...register('propagation.contact_name', {
-                    required,
-                  })}
-                />
-              </FormInputError>
-            </InlineSection>
-            <InlineSection>
-              <Label required htmlFor="propagation.contact_email">
-                Kontaktní email
-              </Label>
-              <FormInputError>
-                <input
-                  id="propagation.contact_email"
-                  type="email"
-                  {...register('propagation.contact_email', {
-                    required,
-                  })}
-                />
-              </FormInputError>
-            </InlineSection>
-            <InlineSection>
-              <Label htmlFor="propagation.contact_phone">
-                Kontaktní telefon
-              </Label>
-              <FormInputError>
-                <input
-                  id="propagation.contact_phone"
-                  type="tel"
-                  {...register('propagation.contact_phone', {})}
-                />
-              </FormInputError>
-            </InlineSection>
-            <InlineSection>
-              <Label htmlFor="propagation.web_url">Web o akci</Label>
               <FormInputError>
                 <input
                   type="url"
