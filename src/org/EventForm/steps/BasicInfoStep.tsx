@@ -3,7 +3,13 @@ import Select from 'react-select'
 import { api } from '../../../app/services/bis'
 import { AdministrationUnit } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
-import { FormSection, FormSubsection } from '../../../components/FormLayout'
+import {
+  FormSection,
+  FormSubsection,
+  FullSizeElement,
+  InlineSection,
+  Label,
+} from '../../../components/FormLayout'
 import Loading from '../../../components/Loading'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
@@ -37,30 +43,36 @@ const BasicInfoStep = ({
             </FormInputError>
           </FormSubsection>
           <FormSubsection header="Kdy bude akce?">
-            <label htmlFor="start">
-              {/* TODO add required star to these fields */}
-              Od{' '}
-              <FormInputError>
-                <input
-                  type="date"
-                  id="start"
-                  {...register('startDate', { required })}
-                />
-              </FormInputError>
-              <FormInputError>
-                <input type="time" {...register('startTime')} />
-              </FormInputError>
-            </label>
-            <label htmlFor="end">
-              Do{' '}
-              <FormInputError>
-                <input
-                  type="date"
-                  id="end"
-                  {...register('end', { required })}
-                />
-              </FormInputError>
-            </label>
+            <InlineSection>
+              <InlineSection>
+                <Label htmlFor="start" required>
+                  {/* TODO add required star to these fields */}
+                  Od
+                </Label>
+                <FormInputError>
+                  <input
+                    type="date"
+                    id="start"
+                    {...register('startDate', { required })}
+                  />
+                </FormInputError>
+                <FormInputError>
+                  <input type="time" {...register('startTime')} />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label htmlFor="end" required>
+                  Do
+                </Label>
+                <FormInputError>
+                  <input
+                    type="date"
+                    id="end"
+                    {...register('end', { required })}
+                  />
+                </FormInputError>
+              </InlineSection>
+            </InlineSection>
           </FormSubsection>
           <FormSubsection
             header="Počet akcí v uvedeném období"
@@ -80,68 +92,74 @@ const BasicInfoStep = ({
         </FormSection>
         <FormSection startIndex={5}>
           <FormSubsection header="Typ akce" required>
-            <FormInputError>
-              <select {...register('category', { required })} defaultValue="">
-                <option disabled value="" />
-                {categories &&
-                  categories.results!.map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-              </select>
-            </FormInputError>
+            <FullSizeElement>
+              <FormInputError>
+                <select {...register('category', { required })} defaultValue="">
+                  <option disabled value="" />
+                  {categories &&
+                    categories.results!.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                </select>
+              </FormInputError>
+            </FullSizeElement>
           </FormSubsection>
           <FormSubsection header="Program" required>
-            <FormInputError>
-              <select
-                {...register('program', { required: 'required' })}
-                defaultValue=""
-              >
-                <option disabled value="" />
-                {programs &&
-                  programs.results!.map(program => (
-                    <option key={program.id} value={program.id}>
-                      {program.name}
-                    </option>
-                  ))}
-              </select>
-            </FormInputError>
+            <FullSizeElement>
+              <FormInputError>
+                <select
+                  {...register('program', { required: 'required' })}
+                  defaultValue=""
+                >
+                  <option disabled value="" />
+                  {programs &&
+                    programs.results!.map(program => (
+                      <option key={program.id} value={program.id}>
+                        {program.name}
+                      </option>
+                    ))}
+                </select>
+              </FormInputError>
+            </FullSizeElement>
           </FormSubsection>
           <FormSubsection header="Pořádající organizační jednotka" required>
-            <FormInputError>
-              <Controller
-                name="administration_units"
-                rules={{ required: 'required' }}
-                control={control}
-                render={({ field: { onChange, value, name, ref } }) => (
-                  <Select
-                    isMulti
-                    options={
-                      administrationUnits
-                        ? administrationUnits.results.map(unit => ({
-                            label: `${unit.category.name} ${unit.name}`,
-                            value: unit.id,
-                          }))
-                        : []
-                    }
-                    onChange={val => onChange(val.map(val => val.value))}
-                    defaultValue={(
-                      (getValues('administration_units') ?? [])
-                        .map(id =>
-                          administrationUnits.results.find(
-                            unit => id === unit.id,
-                          ),
-                        )
-                        .filter(a => !!a) as AdministrationUnit[]
-                    ).map(unit => ({
-                      label: `${unit.category.name} ${unit.name}`,
-                      value: unit.id,
-                    }))}
-                  />
-                )}
-              />
-            </FormInputError>
+            <FullSizeElement>
+              <FormInputError>
+                <Controller
+                  name="administration_units"
+                  rules={{ required: 'required' }}
+                  control={control}
+                  render={({ field: { onChange, value, name, ref } }) => (
+                    <Select
+                      isMulti
+                      options={
+                        administrationUnits
+                          ? administrationUnits.results.map(unit => ({
+                              label: `${unit.category.name} ${unit.name}`,
+                              value: unit.id,
+                            }))
+                          : []
+                      }
+                      onChange={val => onChange(val.map(val => val.value))}
+                      defaultValue={(
+                        (getValues('administration_units') ?? [])
+                          .map(id =>
+                            administrationUnits.results.find(
+                              unit => id === unit.id,
+                            ),
+                          )
+                          .filter(a => !!a) as AdministrationUnit[]
+                      ).map(unit => ({
+                        label: `${unit.category.name} ${unit.name}`,
+                        value: unit.id,
+                      }))}
+                    />
+                  )}
+                />
+              </FormInputError>
+            </FullSizeElement>
           </FormSubsection>
         </FormSection>
       </form>

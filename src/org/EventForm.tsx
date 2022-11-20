@@ -106,10 +106,6 @@ const shapes = {
     'propagation.diets',
     'propagation.working_hours',
     'propagation.working_days',
-    'propagation.contact_person',
-    'propagation.contact_name',
-    'propagation.contact_email',
-    'propagation.contact_phone',
     'propagation.web_url',
   ],
   details: [
@@ -121,7 +117,14 @@ const shapes = {
     'main_image',
     'images',
   ],
-  organizers: ['main_organizer', 'other_organizers'],
+  organizers: [
+    'main_organizer',
+    'other_organizers',
+    'propagation.contact_person',
+    'propagation.contact_name',
+    'propagation.contact_email',
+    'propagation.contact_phone',
+  ],
 } as const
 
 type ShapeTypes = {
