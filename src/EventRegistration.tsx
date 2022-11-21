@@ -8,11 +8,27 @@ const EventRegistration = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
 
+  // fetch event
   const {
     data: event,
     isError: isEventError,
     error: eventError,
   } = api.endpoints.readWebEvent.useQuery({ id: eventId })
+  // fetch event questions
+  const questions = [
+    {
+      id: 5,
+      question: 'To be or not to be?',
+    },
+    {
+      id: 8,
+      question: "What's up?",
+    },
+    {
+      id: 11,
+      question: "What's your favourite color?",
+    },
+  ]
 
   if (isEventError) return <Error error={eventError}></Error>
 
@@ -26,8 +42,10 @@ const EventRegistration = () => {
         {new Date(event.end).toLocaleDateString('cs')}
       </div>
       <EventRegistrationForm
+        id={String(eventId)}
+        questions={questions}
         onSubmit={data => {
-          console.log(data)
+          console.log(data, 'submitted')
         }}
       />
     </div>

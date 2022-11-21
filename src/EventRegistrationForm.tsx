@@ -19,15 +19,25 @@ type PersonalDataShape = Pick<
 
 type QuestionnaireShape = { answers: { questionId: number; answer: string }[] }
 
+export type RegistrationFormShape = PersonalDataShape & QuestionnaireShape
+
 const EventRegistrationForm = ({
+  id,
+  questions,
   onSubmit,
 }: {
+  id: string
+  questions: Question[]
   onSubmit: (data: any) => void
 }) => {
   const [step, setStep] = useState(0)
   const handleSubmitPersonalData = (data: PersonalDataShape) => {
+    if (questions.length > 0) {
+      setStep(1)
+    } else {
+      onSubmit({ ...data })
+    }
     console.log(data)
-    setStep(1)
   }
   const handleSubmitQuestionnaire = (data: QuestionnaireShape) => {
     console.log(data)
@@ -36,20 +46,7 @@ const EventRegistrationForm = ({
     <PersonalDataForm onSubmit={handleSubmitPersonalData} />
   ) : (
     <QuestionnaireForm
-      questions={[
-        {
-          id: 5,
-          question: 'To be or not to be?',
-        },
-        {
-          id: 8,
-          question: "What's up?",
-        },
-        {
-          id: 11,
-          question: "What's your favourite color?",
-        },
-      ]}
+      questions={questions}
       onSubmit={handleSubmitQuestionnaire}
     />
   )
