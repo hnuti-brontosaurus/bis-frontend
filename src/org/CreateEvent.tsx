@@ -11,7 +11,7 @@ import {
 import { useBase64Images } from '../hooks/base64Images'
 import { useTitle } from '../hooks/title'
 import { event2payload } from './EditEvent'
-import EventForm, { EventFormShape } from './EventForm'
+import EventForm, { SubmitShape } from './EventForm'
 
 const CreateEvent = () => {
   useTitle('Nová akce')
@@ -70,7 +70,7 @@ const CreateEvent = () => {
     images,
     questions,
     ...data
-  }: EventFormShape) => {
+  }: SubmitShape) => {
     // ***location***
     const locationId = await createOrSelectLocation(data.location)
 

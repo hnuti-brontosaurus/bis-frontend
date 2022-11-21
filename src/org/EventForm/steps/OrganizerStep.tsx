@@ -1,20 +1,29 @@
+import { get, uniqBy } from 'lodash'
+import { useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import {
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
+  User,
 } from '../../../app/services/testApi'
 import FormInputError from '../../../components/FormInputError'
 import {
   FormSection,
   FormSubsection,
+  FormSubsubsection,
   FullSizeElement,
   InlineSection,
   Label,
 } from '../../../components/FormLayout'
 import Loading from '../../../components/Loading'
-import SelectUsers, { SelectUser } from '../../../components/SelectUsers'
+import {
+  SelectFullUser,
+  SelectFullUsers,
+  SelectUser,
+} from '../../../components/SelectUsers'
+import { joinAnd } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
 import {
@@ -33,12 +42,57 @@ const OrganizerStep = ({
     category?: EventCategory
   }
 }) => {
-  const { control, watch, register } = methods
+  const { control, watch, register, setValue, getValues } = methods
   const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
     {},
   )
 
-  const [readUser] = api.endpoints.getUser.useLazyQuery()
+  const getDisabledMainOrganizer = useCallback(
+    (user: User) =>
+      !canBeMainOrganizer2(
+        mainOrganizerDependencies,
+        user,
+        allQualifications!.results,
+      ),
+    [allQualifications, mainOrganizerDependencies],
+  )
+  const getMainOrganizerLabel = useCallback(
+    (user: User) =>
+      `${user.display_name} (${
+        user.qualifications
+          .filter(
+            q =>
+              new Date(q.valid_since) <= new Date() &&
+              new Date() <= new Date(q.valid_till),
+          )
+          .map(q => q.category.name)
+          .join(', ') || 'bez kvalifikace'
+      })`,
+    [],
+  )
+  /**
+   * Automatically fill organizer team
+   */
+  useEffect(() => {
+    const subscription = watch((data, { name, value }) => {
+      if (name === 'main_organizer' || name === 'other_organizers') {
+        const mainOrganizer = get(data, 'main_organizer')
+        const otherOrganizers = get(data, 'other_organizers', [])
+
+        const team = uniqBy([mainOrganizer, ...otherOrganizers], 'id').filter(
+          org => Boolean(org),
+        ) as User[]
+
+        const teamString = joinAnd(
+          team.map(org => org.nickname || org.first_name),
+        )
+
+        if (get(data, 'propagation.organizers') !== teamString)
+          setValue('propagation.organizers', teamString)
+      }
+    })
+    return subscription.unsubscribe
+  }, [getValues, setValue, watch])
 
   if (!allQualifications) return <Loading>Připravujeme formulář</Loading>
 
@@ -46,7 +100,11 @@ const OrganizerStep = ({
     <FormProvider {...methods}>
       <form>
         <FormSection>
-          <FormSubsection header="Hlavní organizátor/ka">
+          <FormSubsection
+            header="Hlavní organizátor/ka"
+            required
+            help="Hlavní organizátor musí mít náležité kvalifikace a za celou akci zodpovídá. Je nutné zadávat hlavního organizátora do BIS před akcí, aby měl automaticky sjednané pojištění odpovědnosti za škodu a úrazové pojištění."
+          >
             <FullSizeElement>
               <FormInputError>
                 <Controller
@@ -54,11 +112,8 @@ const OrganizerStep = ({
                   control={control}
                   rules={{
                     required: 'Toto pole je povinné!',
-                    validate: async () => {
+                    validate: async user => {
                       try {
-                        const userId = watch('main_organizer')
-                        if (!userId) return 'Toto pole je povinné!'
-                        const user = await readUser({ id: userId }).unwrap()
                         return canBeMainOrganizer(
                           mainOrganizerDependencies,
                           user,
@@ -71,43 +126,49 @@ const OrganizerStep = ({
                     },
                   }}
                   render={({ field }) => (
-                    <SelectUser
+                    <SelectFullUser
                       {...field}
-                      transform={user => ({
-                        label: `${user.display_name} (${user.qualifications
-                          .filter(
-                            q =>
-                              new Date(q.valid_since) <= new Date() &&
-                              new Date() <= new Date(q.valid_till),
-                          )
-                          .map(q => q.category.name)
-                          .join(', ')})`,
-                        value: user.id,
-                        disabled: !canBeMainOrganizer2(
-                          mainOrganizerDependencies,
-                          user,
-                          allQualifications.results,
-                        ),
-                      })}
+                      getDisabled={getDisabledMainOrganizer}
+                      getLabel={getMainOrganizerLabel}
                     />
                   )}
                 />
               </FormInputError>
             </FullSizeElement>
           </FormSubsection>
-          <FormSubsection header="Organizátorský tým">
+          <FormSubsection
+            header="Organizační tým"
+            help="Vyberte jména dalších organizátorů. Organizátory je možné ještě připojistit na úrazové pojištění a pojištění odpovědnosti za škodu."
+          >
             {/* TODO make sure that event creator adds themself here or as main organizer, so they can edit the event */}
             <FullSizeElement>
               <FormInputError>
                 <Controller
                   name="other_organizers"
                   control={control}
-                  render={({ field }) => <SelectUsers {...field} />}
+                  render={({ field }) => <SelectFullUsers {...field} />}
                 />
+                {/* <Controller
+                  name="other_organizers"
+                  control={control}
+                  render={({ field }) => <SelectUsers {...field} />}
+                /> */}
               </FormInputError>
             </FullSizeElement>
+            <FormSubsubsection
+              header="Těší se na Tebe..."
+              onWeb
+              required
+              help="Takto se organizační tým zobrazí na webu. Pole můžeš nechat vyplněno automaticky, nebo změnit podle potřeby."
+            >
+              <FullSizeElement>
+                <FormInputError>
+                  <input type="text" {...register('propagation.organizers')} />
+                </FormInputError>
+              </FullSizeElement>
+            </FormSubsubsection>
           </FormSubsection>
-          <FormSubsection header="Kontaktní osoba">
+          <FormSubsection header="Kontaktní osoba" onWeb>
             <label>
               <input type="checkbox" /> stejná jako hlavní organizátor
             </label>

@@ -33,13 +33,13 @@ const PropagationStep = ({
       <form>
         <FormSection>
           <FormSubsection
+            onWeb
+            required
             header="Účastnický poplatek"
             help="Napište výši vašeho účastnického poplatku. Označení Kč se přidá automaticky. Pokud máte více cen (studentskou nebo naopak mecenášskou), výše dalších poplatků napište za lomítko. Můžete uvést i rozmezí cen. Např. 150/200/250 nebo 150-250)"
           >
             <InlineSection>
-              <Label required htmlFor="propagation.cost">
-                částka{' '}
-              </Label>
+              <Label htmlFor="propagation.cost">částka</Label>
               <FormInputError>
                 <input
                   type="text"
@@ -49,12 +49,13 @@ const PropagationStep = ({
                   {...register('propagation.cost', {
                     required: 'required',
                   })}
+                  placeholder="100, 150/200, 150-250"
                 />
               </FormInputError>{' '}
               Kč
             </InlineSection>
           </FormSubsection>
-          <FormSubsection header="Věk">
+          <FormSubsection header="Věk" onWeb>
             <InlineSection>
               <Label required htmlFor="propagation.minimum_age">
                 Od
@@ -92,7 +93,7 @@ const PropagationStep = ({
           </FormSubsection>
           {(isWeekendEvent || isCamp) && ( // only camp and weekend
             <FullSizeElement>
-              <FormSubsection required header="Ubytování">
+              <FormSubsection required header="Ubytování" onWeb>
                 <textarea
                   style={{ maxWidth: '40rem' }}
                   {...register('propagation.accommodation', {
@@ -103,7 +104,12 @@ const PropagationStep = ({
             </FullSizeElement>
           )}
           {(isWeekendEvent || isCamp) && ( // only camp and weekend
-            <FormSubsection header="Strava" required>
+            <FormSubsection
+              header="Strava"
+              required
+              onWeb
+              help="Můžete vybrat více druhů stravy."
+            >
               <FormInputError>
                 <Controller
                   name="propagation.diets"
@@ -144,7 +150,7 @@ const PropagationStep = ({
             </FormSubsection>
           )}
           {/* TODO povinné pouze u dobrovolnických */}
-          <FormSubsection header="Práce">
+          <FormSubsection header="Práce" onWeb>
             <InlineSection>
               <Label required={isVolunteering}>Denní pracovní doba</Label>
               <FormInputError>
@@ -172,16 +178,26 @@ const PropagationStep = ({
               </InlineSection>
             )}
           </FormSubsection>
-          <FormSubsection header="Web o akci">
-            <InlineSection>
-              <FormInputError>
-                <input
-                  type="url"
-                  id="propagation.web_url"
-                  {...register('propagation.web_url', {})}
-                />
-              </FormInputError>
-            </InlineSection>
+          <FormSubsection
+            header="Web o akci"
+            help="Možnost přidat odkaz na webovou stránku vaší akce."
+            onWeb
+          >
+            <FormInputError>
+              <input
+                type="url"
+                id="propagation.web_url"
+                {...register('propagation.web_url', {})}
+              />
+            </FormInputError>
+          </FormSubsection>
+          <FormSubsection
+            header="Poznámka"
+            help="Možnost přidat interní poznámku. Poznámku uvidí pouze lidé, kteří si mohou tuto akci zobrazit přímo v BISu"
+          >
+            <FormInputError>
+              <input type="text" {...register('internal_note', {})} />
+            </FormInputError>
           </FormSubsection>
         </FormSection>
       </form>

@@ -15,4 +15,8 @@
   :global .ql-container {
     border: none;
   }
+
+  :global .ql-editor {
+    min-height: 4rem;
+  }
 }
