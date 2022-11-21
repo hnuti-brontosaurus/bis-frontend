@@ -1,6 +1,7 @@
-import { merge } from 'lodash'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { merge, omit } from 'lodash'
 import pick from 'lodash/pick'
-import { FC, useMemo } from 'react'
+import { FC, useEffect, useMemo } from 'react'
 import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
@@ -10,6 +11,7 @@ import {
   EventPropagationImage,
   FinanceReceipt,
   Question,
+  User,
 } from '../app/services/testApi'
 import Loading from '../components/Loading'
 import { NewLocation } from '../components/SelectLocation'
@@ -29,8 +31,8 @@ import {
 } from '../utils/helpers'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
-import EventDetailsStep from './EventForm/steps/EventDetailsStep'
 import IntendedForStep from './EventForm/steps/IntendedForStep'
+import InvitationStep from './EventForm/steps/InvitationStep'
 import LocationStep from './EventForm/steps/LocationStep'
 import OrganizerStep from './EventForm/steps/OrganizerStep'
 import ParticipantsStep from './EventForm/steps/ParticipantsStep'
@@ -41,35 +43,42 @@ const steps = [
   'category',
   'basicInfo',
   'intendedFor',
-  'registration',
   'location',
+  'registration',
   'propagation',
-  'details',
+  'invitation',
   'organizers',
 ] as const
 
 type StepName = typeof steps[number]
 
-export type EventFormShape = //UnionToIntersection<StepShapes[keyof StepShapes]>
-  Assign<
-    EventPayload,
-    {
-      questions: Optional<Question, 'id' | 'order'>[]
-      recordData: {
-        photos: Optional<EventPhoto, 'id'>[]
-        receipts: Optional<FinanceReceipt, 'id'>[]
-      }
-      startDate: string
-      startTime: string
-      location: NewLocation | Pick<CorrectLocation, 'id'> | null
-      // online is an internal variable
-      // it doesn't get sent to API
-      // we only keep track of whether to save location or online_link
-      online: boolean
-      main_image: Optional<EventPropagationImage, 'id' | 'order'>
-      images: Optional<EventPropagationImage, 'id' | 'order'>[]
+export type SubmitShape = Assign<
+  EventPayload,
+  {
+    questions: Optional<Question, 'id' | 'order'>[]
+    recordData: {
+      photos: Optional<EventPhoto, 'id'>[]
+      receipts: Optional<FinanceReceipt, 'id'>[]
     }
-  >
+    startDate: string
+    startTime: string
+    location: NewLocation | Pick<CorrectLocation, 'id'> | null
+    // online is an internal variable
+    // it doesn't get sent to API
+    // we only keep track of whether to save location or online_link
+    online: boolean
+    main_image: Optional<EventPropagationImage, 'id' | 'order'>
+    images: Optional<EventPropagationImage, 'id' | 'order'>[]
+  }
+>
+
+export type EventFormShape = Assign<
+  SubmitShape,
+  {
+    main_organizer: User
+    other_organizers: User[]
+  }
+>
 
 const shapes = {
   category: ['group'],
@@ -107,9 +116,9 @@ const shapes = {
     'propagation.working_hours',
     'propagation.working_days',
     'propagation.web_url',
-  ],
-  details: [
     'internal_note',
+  ],
+  invitation: [
     'propagation.invitation_text_introduction',
     'propagation.invitation_text_practical_information',
     'propagation.invitation_text_work_description',
@@ -120,6 +129,7 @@ const shapes = {
   organizers: [
     'main_organizer',
     'other_organizers',
+    'propagation.organizers',
     'propagation.contact_person',
     'propagation.contact_name',
     'propagation.contact_email',
@@ -152,34 +162,112 @@ type ErrorShapes = {
 }
 
 const EventForm: FC<{
-  initialData?: Partial<EventFormShape>
-  onSubmit: (data: EventFormShape) => Promise<void>
+  initialData?: Partial<SubmitShape>
+  onSubmit: (data: SubmitShape) => Promise<void>
   onCancel: () => void
   eventToEdit: boolean
   id: string
 }> = ({ onSubmit, onCancel, initialData, eventToEdit, id }) => {
-  const savedData = usePersistentFormData('event', id)
+  const savedData = usePersistentFormData('event', id) as
+    | Partial<EventFormShape>
+    | undefined
 
-  const initialAndSavedData = useMemo(
+  const initialAndSavedData: Partial<EventFormShape> = useMemo(
     () =>
       merge(
         { number_of_sub_events: 1 },
-        initialData,
+        omit(initialData, ['main_organizer', 'other_organizers']),
         { online: initialData?.online_link ? true : false },
         savedData,
       ),
     [initialData, savedData],
   )
 
-  const methods = steps.reduce((prev, key) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const methods = useForm<StepShapes[typeof key]>({
-      defaultValues: pick(initialAndSavedData, shapes[key]),
-    })
-    prev[key] = methods as any
+  const categoryForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.category),
+  })
+  const basicInfoForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.basicInfo),
+  })
+  const intendedForForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.intendedFor),
+  })
+  const locationForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.location),
+  })
+  const registrationForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.registration),
+  })
+  const propagationForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.propagation),
+  })
+  const invitationForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.invitation),
+  })
+  const organizersForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.organizers),
+  })
 
-    return prev
-  }, {} as MethodsShapes)
+  const methods: MethodsShapes = useMemo(
+    () =>
+      ({
+        category: categoryForm,
+        basicInfo: basicInfoForm,
+        intendedFor: intendedForForm,
+        location: locationForm,
+        registration: registrationForm,
+        propagation: propagationForm,
+        invitation: invitationForm,
+        organizers: organizersForm,
+      } as MethodsShapes),
+    [
+      basicInfoForm,
+      categoryForm,
+      intendedForForm,
+      invitationForm,
+      locationForm,
+      organizersForm,
+      propagationForm,
+      registrationForm,
+    ],
+  )
+
+  /**
+   * Fetch initial organizers, and update form with them
+   */
+  const { data: initialMainOrganizer } = api.endpoints.getUser.useQuery(
+    initialData?.main_organizer
+      ? { id: initialData.main_organizer }
+      : skipToken,
+  )
+
+  const { data: initialOtherOrganizersData } = api.endpoints.readUsers.useQuery(
+    initialData?.other_organizers
+      ? { id: initialData.other_organizers }
+      : skipToken,
+  )
+
+  const initialOtherOrganizers = useMemo(
+    () =>
+      initialOtherOrganizersData ? initialOtherOrganizersData.results : [],
+    [initialOtherOrganizersData],
+  )
+
+  // when initial main organizer is fetched, set it in form
+  useEffect(() => {
+    // don't overwrite unsaved value
+    if (initialMainOrganizer && !savedData?.main_organizer)
+      methods.organizers.setValue('main_organizer', initialMainOrganizer)
+  }, [initialMainOrganizer, methods.organizers, savedData?.main_organizer])
+
+  useEffect(() => {
+    // don't overwrite unsaved values
+    if (!savedData?.other_organizers)
+      methods.organizers.setValue(
+        'other_organizers',
+        initialOtherOrganizers.filter(user => Boolean(user)) as User[],
+      )
+  }, [initialOtherOrganizers, methods.organizers, savedData?.other_organizers])
 
   usePersistForm('event', id, ...Object.values(methods).map(m => m.watch))
 
@@ -208,7 +296,11 @@ const EventForm: FC<{
       categories &&
       intendedFor &&
       allQualifications &&
-      administrationUnits
+      administrationUnits &&
+      // if main organizer id is provided, wait until we download main organizer
+      (!initialData?.main_organizer || initialMainOrganizer) &&
+      // wait until we download all other_organizers
+      initialOtherOrganizers.every(user => Boolean(user))
     )
   )
     return <Loading>Připravujeme formulář</Loading>
@@ -233,22 +325,23 @@ const EventForm: FC<{
     )
 
     if (Object.values(areValid).every(a => a)) {
-      const data = merge({}, ...Object.values(datas))
+      const data = merge({}, ...Object.values(datas), {
+        main_organizer: datas.organizers.main_organizer.id,
+        other_organizers: datas.organizers.other_organizers.map(({ id }) => id),
+      })
       if (data.registration) {
         data.registration.is_event_full = Boolean(
           data.registration.is_event_full,
         )
       }
       if (data.propagation) {
-        // TODO make a field for this
-        data.propagation.organizers = data.propagation.organizers ?? '.'
         data.propagation.vip_propagation =
           data.propagation.vip_propagation ?? null
       }
       if (data.online) {
         data.location = null
       } else {
-        data.online_link = null
+        data.online_link = ''
       }
       delete data.online
       data.start = joinDateTime(data.startDate, data.startTime)
@@ -309,11 +402,11 @@ const EventForm: FC<{
       <Step name="pro koho" hasError={hasFormError(methods.intendedFor)}>
         <IntendedForStep methods={methods.intendedFor} isCamp={isCamp} />
       </Step>
-      <Step name="přihlášení" hasError={hasFormError(methods.registration)}>
-        <RegistrationStep methods={methods.registration} />
-      </Step>
       <Step name="lokalita" hasError={hasFormError(methods.location)}>
         <LocationStep methods={methods.location} />
+      </Step>
+      <Step name="přihlášení" hasError={hasFormError(methods.registration)}>
+        <RegistrationStep methods={methods.registration} />
       </Step>
       <Step
         name="info pro účastníky"
@@ -326,10 +419,10 @@ const EventForm: FC<{
           isCamp={isCamp}
         />
       </Step>
-      <Step name="pozvánka" hasError={hasFormError(methods.details)}>
-        <EventDetailsStep
+      <Step name="pozvánka" hasError={hasFormError(methods.invitation)}>
+        <InvitationStep
           isVolunteering={isVolunteering}
-          methods={methods.details}
+          methods={methods.invitation}
         />
       </Step>
       <Step

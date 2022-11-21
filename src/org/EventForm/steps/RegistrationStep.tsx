@@ -28,7 +28,7 @@ const RegistrationStep = ({
           <FormSubsection
             required
             header="Na koho je akce zaměřená"
-            help="Akce zaměřená na členy jsou interní akce HB - valné hromady, týmovky atd."
+            help="Akce zaměřená na členy jsou interní akce HB - valné hromady, týmovky, strategická plánování atd."
           >
             <FormInputError>
               <Controller
@@ -120,7 +120,12 @@ const RegistrationStep = ({
           jet”:
         </header>
           </div>*/}
-          <FormSubsection header="Je požadována registrace?" required>
+          <FormSubsection
+            header="Způsob přihlášení"
+            required
+            onWeb
+            help="Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se zobrazí po kliknutí na tlačítko “chci jet”"
+          >
             <FormInputError>
               <Controller
                 name={'registration.is_registration_required'}
@@ -172,7 +177,10 @@ const RegistrationStep = ({
           </FormSubsection>
 
           {watch('registration.is_registration_required') && (
-            <FormSubsubsection header="Přihláška">
+            <FormSubsubsection
+              header="Přihláška"
+              help="Zde můžeš připsat svoje doplňující otázky pro účastníky, které se zobrazí u standartní přihlášky na brontowebu"
+            >
               <div>
                 <FormInputError>
                   <textarea
