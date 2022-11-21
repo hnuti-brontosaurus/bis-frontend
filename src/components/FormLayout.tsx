@@ -2,37 +2,41 @@ import classNames from 'classnames'
 import { HTMLAttributes, HTMLProps, ReactNode } from 'react'
 import styles from './FormLayout.module.scss'
 import Help from './Help'
+import Web from './Web'
 
-export const FormNumberedHeader = ({
-  children,
-  required,
-  help,
-}: {
+interface HeaderProps {
   children: ReactNode
   required?: boolean
   help?: ReactNode
+  onWeb?: boolean
+}
+
+export const FormHeader = ({
+  children,
+  required,
+  help,
+  onWeb,
+  numbered,
+}: HeaderProps & {
+  numbered?: boolean
 }) => {
   return (
-    <header className={classNames(styles.header, required && styles.required)}>
-      {help && <Help>{help}</Help>} {children}
+    <header className={classNames(numbered && styles.header)}>
+      {help && <Help>{help}</Help>}{' '}
+      <span className={classNames(required && styles.required)}>
+        {children}
+      </span>{' '}
+      {onWeb && <Web />}
     </header>
   )
 }
 
-export const FormSubheader = ({
-  children,
-  required,
-  help,
-}: {
-  children: ReactNode
-  required?: boolean
-  help?: ReactNode
-}) => {
-  return (
-    <header className={classNames(required && styles.required)}>
-      {help && <Help>{help}</Help>} {children}
-    </header>
-  )
+export const FormNumberedHeader = (props: HeaderProps) => {
+  return <FormHeader {...props} numbered />
+}
+
+export const FormSubheader = (props: HeaderProps) => {
+  return <FormHeader {...props} />
 }
 
 export const FormSection = ({
@@ -57,15 +61,17 @@ export const FormSubsection = ({
   header,
   help,
   required,
+  onWeb,
 }: {
   children: ReactNode
   header: ReactNode
   help?: ReactNode
   required?: boolean
+  onWeb?: boolean
 }) => {
   return (
     <div className={styles.subsection}>
-      <FormNumberedHeader required={required} help={help}>
+      <FormNumberedHeader required={required} help={help} onWeb={onWeb}>
         {header}
       </FormNumberedHeader>
       {children}
@@ -78,15 +84,17 @@ export const FormSubsubsection = ({
   header,
   help,
   required,
+  onWeb,
 }: {
   children: ReactNode
   header: ReactNode
   help?: ReactNode
   required?: boolean
+  onWeb?: boolean
 }) => {
   return (
     <div className={styles.subsection}>
-      <FormSubheader required={required} help={help}>
+      <FormSubheader required={required} help={help} onWeb={onWeb}>
         {header}
       </FormSubheader>
       {children}

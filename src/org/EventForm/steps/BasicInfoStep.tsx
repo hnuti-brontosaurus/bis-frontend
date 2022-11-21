@@ -32,7 +32,7 @@ const BasicInfoStep = ({
     <FormProvider {...methods}>
       <form>
         <FormSection startIndex={2}>
-          <FormSubsection header="Název" required>
+          <FormSubsection header="Název" required onWeb>
             <FormInputError>
               <input
                 type="text"
@@ -42,7 +42,7 @@ const BasicInfoStep = ({
               />
             </FormInputError>
           </FormSubsection>
-          <FormSubsection header="Kdy bude akce?">
+          <FormSubsection header="Kdy bude akce?" onWeb>
             <InlineSection>
               <InlineSection>
                 <Label htmlFor="start" required>
@@ -81,6 +81,7 @@ const BasicInfoStep = ({
           >
             <FormInputError>
               <input
+                size={2}
                 type="number"
                 {...register('number_of_sub_events', {
                   required,
@@ -124,7 +125,11 @@ const BasicInfoStep = ({
               </FormInputError>
             </FullSizeElement>
           </FormSubsection>
-          <FormSubsection header="Pořádající organizační jednotka" required>
+          <FormSubsection
+            header="Pořádající organizační jednotka"
+            required
+            onWeb
+          >
             <FullSizeElement>
               <FormInputError>
                 <Controller

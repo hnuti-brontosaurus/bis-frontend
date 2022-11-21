@@ -3,7 +3,7 @@ import FormInputError from '../../../components/FormInputError'
 import {
   FormSection,
   FormSubheader,
-  FormSubsection,
+  FormSubsubsection,
   FullSizeElement,
 } from '../../../components/FormLayout'
 import { ImagesUpload, ImageUpload } from '../../../components/ImageUpload'
@@ -13,26 +13,27 @@ import RichTextEditor, {
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
 
-const EventDetailsStep = ({
+const InvitationStep = ({
   methods,
   isVolunteering,
 }: {
-  methods: MethodsShapes['details']
+  methods: MethodsShapes['invitation']
   isVolunteering: boolean
 }) => {
-  const { register, control } = methods
+  const { control } = methods
 
   return (
     <FormProvider {...methods}>
       <form>
         <FormSection>
-          <FormSubsection header="Poznámka" help="asdf">
-            <FormInputError>
-              <input type="text" {...register('internal_note', {})} />
-            </FormInputError>
-          </FormSubsection>
           <FullSizeElement>
-            <FormSubheader required>Zvací text: Co nás čeká</FormSubheader>
+            <FormSubheader
+              required
+              onWeb
+              help="Prvních několik vět se zobrazí v přehledu akcí na webu. První věty jsou k upoutání pozornosti nejdůležitější, proto se na ně zaměř a shrň na co se účastníci mohou těšit."
+            >
+              Zvací text: Co nás čeká
+            </FormSubheader>
             <FormInputError isBlock>
               <Controller
                 name="propagation.invitation_text_introduction"
@@ -53,7 +54,9 @@ const EventDetailsStep = ({
             </FormInputError>
           </FullSizeElement>
           <FullSizeElement>
-            <FormSubheader required>Zvací text: Co, kde a jak</FormSubheader>
+            <FormSubheader required onWeb>
+              Zvací text: Co, kde a jak
+            </FormSubheader>
             <FormInputError isBlock>
               <Controller
                 name="propagation.invitation_text_practical_information"
@@ -74,7 +77,7 @@ const EventDetailsStep = ({
             </FormInputError>
           </FullSizeElement>
           <FullSizeElement>
-            <FormSubheader required={isVolunteering}>
+            <FormSubheader required={isVolunteering} onWeb>
               Zvací text: Dobrovolnická pomoc
             </FormSubheader>
             <FormInputError isBlock>
@@ -97,7 +100,12 @@ const EventDetailsStep = ({
             </FormInputError>
           </FullSizeElement>
           <FullSizeElement>
-            <FormSubheader>Zvací text: Malá ochutnávka</FormSubheader>
+            <FormSubheader
+              onWeb
+              help="Malá ochutnávka uvádí fotky, které k akci přiložíte"
+            >
+              Zvací text: Malá ochutnávka
+            </FormSubheader>
             <FormInputError isBlock>
               <Controller
                 name="propagation.invitation_text_about_us"
@@ -112,14 +120,25 @@ const EventDetailsStep = ({
               />
             </FormInputError>
           </FullSizeElement>
-          <div>Hlavní foto</div>
-          <ImageUpload name="main_image.image" />
-          <div>Fotky k malé ochutnávce</div>
-          <ImagesUpload name="images" />
+          <FormSubsubsection
+            header="Hlavní foto"
+            required
+            onWeb
+            help="Hlavní foto se zobrazí v náhledu akce na webu"
+          >
+            <ImageUpload required name="main_image.image" />
+          </FormSubsubsection>
+          <FormSubsubsection
+            header="Fotky k malé ochutnávce"
+            onWeb
+            help="Další fotky, které se zobrazí u akce."
+          >
+            <ImagesUpload name="images" />
+          </FormSubsubsection>
         </FormSection>
       </form>
     </FormProvider>
   )
 }
 
-export default EventDetailsStep
+export default InvitationStep

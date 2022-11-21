@@ -16,7 +16,7 @@ const LocationStep = ({
     <FormProvider {...methods}>
       <form>
         <FormSection>
-          <FormSubsection header="Místo konání" required>
+          <FormSubsection header="Místo konání" required onWeb>
             <label>
               <input type="checkbox" {...register('online')} /> Akce se koná
               online

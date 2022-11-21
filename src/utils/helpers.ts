@@ -143,3 +143,15 @@ export const pickErrors = (errors: FieldErrorsImpl) => {
 export const hasFormError = <T extends FieldValues>(
   methods: UseFormReturn<T>,
 ): boolean => !isEmpty(methods.formState.errors)
+
+/**
+ * Take array of strings and return string
+ * element0, element1, element2, element3 a element4
+ */
+export const joinAnd = (values: string[]): string => {
+  const formatter = new Intl.ListFormat('cs', {
+    style: 'long',
+    type: 'conjunction',
+  })
+  return formatter.format(values)
+}

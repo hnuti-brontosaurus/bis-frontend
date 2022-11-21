@@ -7,10 +7,56 @@ import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
 import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
 import { forwardRef, InputHTMLAttributes, Ref, useMemo } from 'react'
 import Select from 'react-select'
+import { Assign } from 'utility-types'
 import { api, PaginatedList } from '../app/services/bis'
 import { User } from '../app/services/testApi'
 import { useDebouncedState } from '../hooks/debouncedState'
 import { useQueries } from '../hooks/queries'
+
+type SelectUsersProps = Omit<
+  Assign<
+    InputHTMLAttributes<HTMLInputElement>,
+    {
+      value?: User[]
+      onChange: (value: readonly User[]) => void
+    }
+  >,
+  'defaultValue'
+>
+/**
+ * This component expects - and provides - not only user id, but full user as value
+ */
+export const SelectFullUsers = forwardRef<any, SelectUsersProps>(
+  ({ value, onChange, ...rest }, ref) => {
+    const [searchQuery, debouncedSearchQuery, setSearchQuery] =
+      useDebouncedState(1000, '')
+    const { data: userOptions, isLoading: isOptionsLoading } =
+      api.endpoints.readUsers.useQuery(
+        debouncedSearchQuery.length >= 2
+          ? {
+              search: debouncedSearchQuery,
+            }
+          : skipToken,
+      )
+
+    return (
+      <Select
+        {...rest}
+        isLoading={isOptionsLoading}
+        ref={ref}
+        isMulti
+        isClearable
+        options={userOptions ? userOptions.results : []}
+        inputValue={searchQuery}
+        onInputChange={input => setSearchQuery(input)}
+        value={value}
+        onChange={onChange}
+        getOptionLabel={user => user.display_name}
+        getOptionValue={user => String(user.id)}
+      />
+    )
+  },
+)
 
 type SelectMultiProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -72,6 +118,53 @@ const SelectUsers = forwardRef<any, SelectMultiProps>(
           onChange={val => onChange(val.map(v => Number(v.value)))}
         />
       </>
+    )
+  },
+)
+
+type SelectUserProps = Omit<
+  Assign<
+    InputHTMLAttributes<HTMLInputElement>,
+    {
+      value?: User
+      onChange: (value: User | null) => void
+      getDisabled?: (value: User) => boolean
+      getLabel?: (value: User) => string
+    }
+  >,
+  'defaultValue'
+>
+
+/**
+ * This component expects - and provides - not only user id, but full user as value
+ */
+export const SelectFullUser = forwardRef<any, SelectUserProps>(
+  ({ value, onChange, getDisabled, getLabel, ...rest }, ref) => {
+    const [searchQuery, debouncedSearchQuery, setSearchQuery] =
+      useDebouncedState(1000, '')
+    const { data: userOptions, isLoading: isOptionsLoading } =
+      api.endpoints.readUsers.useQuery(
+        debouncedSearchQuery.length >= 2
+          ? {
+              search: debouncedSearchQuery,
+            }
+          : skipToken,
+      )
+
+    return (
+      <Select<User>
+        {...rest}
+        isLoading={isOptionsLoading}
+        ref={ref}
+        isClearable
+        options={userOptions ? userOptions.results : []}
+        inputValue={searchQuery}
+        onInputChange={input => setSearchQuery(input)}
+        value={value}
+        onChange={onChange}
+        isOptionDisabled={getDisabled}
+        getOptionLabel={getLabel ?? (user => user.display_name)}
+      />
     )
   },
 )
@@ -156,44 +249,6 @@ export const SelectUser = forwardRef<any, SelectProps>(
     )
   },
 )
-
-/*
-type SelectOneProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'value' | 'onChange'
-> & {
-  value?: number | null | undefined
-  onChange: (value: number | null | undefined) => void
-  queryGet: ApiEndpointQuery<Q, D>
-  querySearch:
-}
-*/
-type SelectByQueryProps<
-  ReturnType,
-  QOne extends QueryDefinition<{ id: number }, any, any, ReturnType, any>,
-  QMany extends QueryDefinition<
-    { search: string },
-    any,
-    any,
-    PaginatedList<ReturnType>,
-    any
-  >,
-  D extends EndpointDefinitions,
-> = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> & {
-  value?: number | null | undefined
-  onChange: (value: number | null | undefined) => void
-  queryRead: ApiEndpointQuery<QOne, D> & QueryHooks<QOne>
-  querySearch: ApiEndpointQuery<QMany, D> & QueryHooks<QMany>
-}
-
-type QOne<T> = QueryDefinition<{ id: number }, any, any, T, any>
-type QMany<T> = QueryDefinition<
-  { search: string },
-  any,
-  any,
-  PaginatedList<T>,
-  any
->
 
 export const SelectByQuery = <
   ReturnType,
