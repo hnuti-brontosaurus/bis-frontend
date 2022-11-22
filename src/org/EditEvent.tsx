@@ -10,7 +10,6 @@ import {
 } from '../features/systemMessage/useSystemMessage'
 import { useBase64Images } from '../hooks/base64Images'
 import { useTitle } from '../hooks/title'
-import { splitDateTime } from '../utils/helpers'
 import EventForm, { SubmitShape } from './EventForm'
 
 const EditEvent = () => {
@@ -40,23 +39,40 @@ const EditEvent = () => {
     eventId,
   })
 
-  const [updateEvent, { error: updateEventError }] =
+  const [updateEvent, { error: updateEventError, isLoading: isUpdatingEvent }] =
     api.endpoints.updateEvent.useMutation()
-  const [createEventImage] = api.endpoints.createEventImage.useMutation()
-  const [updateEventImage] = api.endpoints.updateEventImage.useMutation()
-  const [removeEventImage] = api.endpoints.removeEventImage.useMutation()
-  const [createEventQuestion] = api.endpoints.createEventQuestion.useMutation()
-  const [updateEventQuestion] = api.endpoints.updateEventQuestion.useMutation()
-  const [removeEventQuestion] = api.endpoints.removeEventQuestion.useMutation()
+  const [createEventImage, { isLoading: isCreatingImage }] =
+    api.endpoints.createEventImage.useMutation()
+  const [updateEventImage, { isLoading: isUpdatingImage }] =
+    api.endpoints.updateEventImage.useMutation()
+  const [removeEventImage, { isLoading: isRemovingImage }] =
+    api.endpoints.removeEventImage.useMutation()
+  const [createEventQuestion, { isLoading: isCreatingQuestion }] =
+    api.endpoints.createEventQuestion.useMutation()
+  const [updateEventQuestion, { isLoading: isUpdatingQuestion }] =
+    api.endpoints.updateEventQuestion.useMutation()
+  const [removeEventQuestion, { isLoading: isRemovingQuestion }] =
+    api.endpoints.removeEventQuestion.useMutation()
 
   useShowApiErrorMessage(updateEventError, 'Nepodařilo se uložit změny')
 
   const createOrSelectLocation = useCreateOrSelectLocation()
 
-  if (isEventLoading || !event || !images || !questions)
-    return <Loading>Stahujeme akci</Loading>
+  if (
+    isUpdatingEvent ||
+    isCreatingImage ||
+    isUpdatingImage ||
+    isRemovingImage ||
+    isCreatingQuestion ||
+    isUpdatingQuestion ||
+    isRemovingQuestion
+  )
+    return <Loading>Ukládáme změny</Loading>
 
   if (isError) return <>Event not found (or different error)</>
+
+  if (isEventLoading || !event || !images || !questions)
+    return <Loading>Stahujeme akci</Loading>
 
   const handleSubmit: Parameters<typeof EventForm>[0]['onSubmit'] = async ({
     main_image: updatedMainImage,
@@ -147,6 +163,8 @@ const EditEvent = () => {
       ...patchedImagePromises,
       ...deletedImagePromises,
     ])
+    //TODO inform users when something fails
+
     // ***questions***
     // save every new question
     // get order from position
@@ -189,6 +207,7 @@ const EditEvent = () => {
       ...patchedQuestionPromises,
       ...deletedQuestionPromises,
     ])
+    //TODO inform users when something fails
 
     navigate(`/org/akce/${eventId}`)
     showMessage({ message: 'Akce byla úspěšně změněna', type: 'success' })
@@ -225,13 +244,9 @@ export const event2payload = (
 ): Partial<SubmitShape> => {
   const [main_image, ...otherImages] = [...images].sort(sortOrder)
 
-  const [startDate, startTime] = splitDateTime(event?.start ?? '')
-
   return (
     event && {
       ...event,
-      startDate,
-      startTime,
       group: event?.group?.id,
       category: event?.category?.id,
       program: event?.program?.id,
