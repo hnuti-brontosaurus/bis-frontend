@@ -2,6 +2,7 @@
 @import './preflight.css';
 // fix some production style inconsistencies
 button,
+fieldset,
 input[type='submit'],
 input[type='reset'] {
   border: none;
