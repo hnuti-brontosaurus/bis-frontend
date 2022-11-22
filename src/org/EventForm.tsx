@@ -1,18 +1,12 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { merge, omit } from 'lodash'
+import { clone, merge, omit } from 'lodash'
 import pick from 'lodash/pick'
 import { FC, useEffect, useMemo } from 'react'
 import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
 import { api, CorrectLocation, EventPayload } from '../app/services/bis'
-import {
-  EventPhoto,
-  EventPropagationImage,
-  FinanceReceipt,
-  Question,
-  User,
-} from '../app/services/testApi'
+import { EventPropagationImage, Question, User } from '../app/services/testApi'
 import Loading from '../components/Loading'
 import { NewLocation } from '../components/SelectLocation'
 import { SimpleStep as Step, SimpleSteps as Steps } from '../components/Steps'
@@ -28,6 +22,7 @@ import {
   hasFormError,
   joinDateTime,
   pickErrors,
+  splitDateTime,
 } from '../utils/helpers'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
@@ -56,17 +51,11 @@ export type SubmitShape = Assign<
   EventPayload,
   {
     questions: Optional<Question, 'id' | 'order'>[]
-    recordData: {
-      photos: Optional<EventPhoto, 'id'>[]
-      receipts: Optional<FinanceReceipt, 'id'>[]
-    }
-    startDate: string
-    startTime: string
+    // recordData: {
+    //   photos: Optional<EventPhoto, 'id'>[]
+    //   receipts: Optional<FinanceReceipt, 'id'>[]
+    // }
     location: NewLocation | Pick<CorrectLocation, 'id'> | null
-    // online is an internal variable
-    // it doesn't get sent to API
-    // we only keep track of whether to save location or online_link
-    online: boolean
     main_image: Optional<EventPropagationImage, 'id' | 'order'>
     images: Optional<EventPropagationImage, 'id' | 'order'>[]
   }
@@ -75,8 +64,15 @@ export type SubmitShape = Assign<
 export type EventFormShape = Assign<
   SubmitShape,
   {
+    startDate: string
+    startTime: string
+    // online is an internal variable
+    // it doesn't get sent to API
+    // we only keep track of whether to save location or online_link
+    online: boolean
     main_organizer: User
     other_organizers: User[]
+    registrationMethod: 'standard' | 'other' | 'none' | 'full'
   }
 >
 
@@ -103,6 +99,7 @@ const shapes = {
   registration: [
     'is_internal',
     'propagation.is_shown_on_web',
+    'registrationMethod',
     'registration',
     'questions',
   ],
@@ -145,6 +142,7 @@ export type StepShapes = Overwrite<
   {
     [Property in StepName]: DeepPick<EventFormShape, ShapeTypes[Property]>
   },
+  // we have to type location separately because of some error with DeepPick
   {
     location: Assign<
       DeepPick<EventFormShape, ShapeTypes['location']>,
@@ -161,6 +159,67 @@ type ErrorShapes = {
   [K in StepName]: FieldErrorsImpl<StepShapes[K]>
 }
 
+const initialData2form = (
+  data?: Partial<SubmitShape>,
+): Partial<EventFormShape> => {
+  const returnData: Partial<EventFormShape> = merge(
+    { number_of_sub_events: 1 },
+    omit(clone(data), ['main_organizer', 'other_organizers']),
+  )
+
+  const registrationMethod = data?.registration?.is_event_full
+    ? 'full'
+    : data?.registration?.is_registration_required === false
+    ? 'none'
+    : data?.registration?.is_registration_required === true
+    ? 'standard'
+    : ''
+
+  if (registrationMethod) {
+    returnData.registrationMethod = registrationMethod
+  }
+
+  returnData.online = data?.online_link ? true : false
+  const [startDate, startTime] = splitDateTime(data?.start ?? '')
+  returnData.startDate = startDate
+  returnData.startTime = startTime
+
+  return returnData
+}
+
+const form2finalData = (data: EventFormShape): SubmitShape => {
+  const finalData: SubmitShape = merge(
+    {},
+    omit(data, ['online', 'registrationMethod']),
+    {
+      // map users to user ids
+      main_organizer: data.main_organizer.id,
+      other_organizers: data.other_organizers.map(({ id }) => id),
+    },
+  )
+
+  // when event is full, set it full, and vice-versa
+  finalData.registration!.is_event_full = data.registrationMethod === 'full'
+
+  if (data.registrationMethod === 'none') {
+    finalData.registration!.is_registration_required = false
+  } else if (data.registrationMethod === 'standard') {
+    finalData.registration!.is_registration_required = true
+  }
+
+  if (data.propagation) {
+    finalData.propagation!.vip_propagation =
+      data.propagation.vip_propagation ?? null
+  }
+  if (data.online) {
+    finalData.location = null
+  } else {
+    finalData.online_link = ''
+  }
+  finalData.start = joinDateTime(data.startDate, data.startTime)
+  return finalData
+}
+
 const EventForm: FC<{
   initialData?: Partial<SubmitShape>
   onSubmit: (data: SubmitShape) => Promise<void>
@@ -173,13 +232,7 @@ const EventForm: FC<{
     | undefined
 
   const initialAndSavedData: Partial<EventFormShape> = useMemo(
-    () =>
-      merge(
-        { number_of_sub_events: 1 },
-        omit(initialData, ['main_organizer', 'other_organizers']),
-        { online: initialData?.online_link ? true : false },
-        savedData,
-      ),
+    () => merge(initialData2form(initialData), savedData),
     [initialData, savedData],
   )
 
@@ -325,26 +378,7 @@ const EventForm: FC<{
     )
 
     if (Object.values(areValid).every(a => a)) {
-      const data = merge({}, ...Object.values(datas), {
-        main_organizer: datas.organizers.main_organizer.id,
-        other_organizers: datas.organizers.other_organizers.map(({ id }) => id),
-      })
-      if (data.registration) {
-        data.registration.is_event_full = Boolean(
-          data.registration.is_event_full,
-        )
-      }
-      if (data.propagation) {
-        data.propagation.vip_propagation =
-          data.propagation.vip_propagation ?? null
-      }
-      if (data.online) {
-        data.location = null
-      } else {
-        data.online_link = ''
-      }
-      delete data.online
-      data.start = joinDateTime(data.startDate, data.startTime)
+      const data = form2finalData(merge({}, ...Object.values(datas)))
       await onSubmit(data)
       cancelPersist()
     } else {

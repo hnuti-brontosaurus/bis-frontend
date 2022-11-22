@@ -1,13 +1,17 @@
-import { Fragment } from 'react'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
+import { FaTrashAlt } from 'react-icons/fa'
 import FormInputError from '../../../components/FormInputError'
 import {
   FormSection,
   FormSubsection,
   FormSubsubsection,
+  FullSizeElement,
   InlineSection,
+  Label,
 } from '../../../components/FormLayout'
+import formStyles from '../../../Form.module.scss'
 import { requireBoolean } from '../../../utils/helpers'
+import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
 
 const RegistrationStep = ({
@@ -124,47 +128,61 @@ const RegistrationStep = ({
             header="Způsob přihlášení"
             required
             onWeb
-            help="Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se zobrazí po kliknutí na tlačítko “chci jet”"
+            help={
+              <>
+                Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se
+                zobrazí po kliknutí na tlačítko “chci jet”:
+                <ul>
+                  <li>
+                    standardní přihláška na brontowebu (doporučujeme!) - Je
+                    jednotná pro celé HB. Do této přihlášky si můžete přidat
+                    vlastní otázky. Vyplněné údaje se pak rovnou zobrazí v BIS,
+                    což tobě i kanceláři ulehčí práci.
+                  </li>
+                  <li>
+                    Registrace není potřeba, stačí přijít - Zobrazí se jako text
+                    u tvojí akce na webu.
+                  </li>
+                  <li>
+                    Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se
+                    jako text u tvojí akce na webu.)
+                  </li>
+                </ul>
+              </>
+            }
           >
-            <FormInputError>
-              <Controller
-                name={'registration.is_registration_required'}
-                control={control}
-                rules={{
-                  ...requireBoolean,
-                }}
-                render={({ field }) => (
-                  <>
-                    {[
-                      { name: 'Ano', value: true },
-                      { name: 'Ne', value: false },
-                    ].map(({ name, value }) => (
-                      <Fragment key={name}>
-                        <input
-                          ref={field.ref}
-                          type="radio"
-                          name={field.name}
-                          id={name}
-                          value={String(value)}
-                          checked={field.value === value}
-                          onChange={e => {
-                            field.onChange(
-                              e.target.value === 'true'
-                                ? true
-                                : e.target.value === 'false'
-                                ? false
-                                : undefined,
-                            )
-                          }}
-                        />
-                        <label htmlFor={name}>{name}</label>
-                      </Fragment>
-                    ))}
-                  </>
-                )}
-              />
+            <FormInputError name="registrationMethod">
+              <fieldset>
+                {[
+                  {
+                    name: 'Standardní přihláška na brontowebu',
+                    value: 'standard',
+                  },
+                  { name: 'Jiná elektronická přihláška', value: 'other' },
+                  {
+                    name: 'Registrace není potřeba, stačí přijít',
+                    value: 'none',
+                  },
+                  {
+                    name: 'Máme bohužel plno, zkuste jinou z našich akcí',
+                    value: 'full',
+                  },
+                ].map(({ name, value }) => (
+                  <div key={value}>
+                    <input
+                      type="radio"
+                      value={value}
+                      id={`registration-method-${value}`}
+                      {...register('registrationMethod', { required })}
+                    />{' '}
+                    <label htmlFor={`registration-method-${value}`}>
+                      {name}
+                    </label>
+                  </div>
+                ))}
+              </fieldset>
             </FormInputError>
-            <div>
+            {/* <div>
               <FormInputError>
                 <input
                   type="checkbox"
@@ -173,66 +191,93 @@ const RegistrationStep = ({
                 />
               </FormInputError>
               <label htmlFor="is_event_full">Akce je plná</label>
-            </div>
+            </div> */}
           </FormSubsection>
 
-          {watch('registration.is_registration_required') && (
+          {watch('registrationMethod') === 'other' && (
+            <InlineSection>
+              <Label>Odkaz na přihlášku</Label>{' '}
+              <FormInputError>
+                <input
+                  type="url"
+                  placeholder="toto pole zatím nefunguje https://example.com"
+                />
+              </FormInputError>
+            </InlineSection>
+          )}
+
+          {/* {watch('registration.is_registration_required') && ( */}
+          {watch('registrationMethod') === 'standard' && (
             <FormSubsubsection
               header="Přihláška"
-              help="Zde můžeš připsat svoje doplňující otázky pro účastníky, které se zobrazí u standartní přihlášky na brontowebu"
+              help="Zde můžeš připsat svoje doplňující otázky pro účastníky, které se zobrazí u standardní přihlášky na brontowebu"
             >
-              <div>
-                <FormInputError>
-                  <textarea
-                    placeholder="úvod"
-                    {...register('registration.questionnaire.introduction')}
-                  />
-                </FormInputError>
-              </div>
-              <div>
-                <FormInputError>
-                  <textarea
-                    placeholder="text po odeslání"
-                    {...register(
-                      'registration.questionnaire.after_submit_text',
-                    )}
-                  />
-                </FormInputError>
-              </div>
-              <div>
-                <header>Otázky</header>
+              <FormSubsubsection header="Úvod k dotazníku">
+                <FullSizeElement>
+                  <FormInputError>
+                    <textarea
+                      placeholder="úvod"
+                      {...register('registration.questionnaire.introduction')}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+              </FormSubsubsection>
+              <FormSubsubsection header="Text po odeslání">
+                <FullSizeElement>
+                  <FormInputError>
+                    <textarea
+                      placeholder="text, který se zobrazí poté, co zájemce/zájemkyně odešle formulář"
+                      {...register(
+                        'registration.questionnaire.after_submit_text',
+                      )}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+              </FormSubsubsection>
+              <FormSubsubsection header="Otázky">
                 <ul>
                   {questionFields.fields.map((item, index) => (
                     <li key={item.id}>
-                      <input
-                        type="text"
-                        {...register(`questions.${index}.question` as const)}
-                      />
-                      <label>
-                        <input
-                          type="checkbox"
-                          {...register(
-                            `questions.${index}.is_required` as const,
-                          )}
-                        />{' '}
-                        povinné?
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => questionFields.remove(index)}
-                      >
-                        Delete
-                      </button>
+                      <InlineSection>
+                        <FormInputError>
+                          <input
+                            type="text"
+                            {...register(
+                              `questions.${index}.question` as const,
+                              {
+                                required,
+                              },
+                            )}
+                          />
+                        </FormInputError>
+                        <label>
+                          <input
+                            type="checkbox"
+                            {...register(
+                              `questions.${index}.is_required` as const,
+                            )}
+                          />{' '}
+                          povinné?
+                        </label>
+                        <button
+                          type="button"
+                          className={formStyles.dangerActionButton}
+                          onClick={() => questionFields.remove(index)}
+                        >
+                          <FaTrashAlt />
+                        </button>
+                      </InlineSection>
                     </li>
                   ))}
                 </ul>
                 <button
                   type="button"
+                  className=""
                   onClick={() => questionFields.append({ question: '' })}
                 >
-                  append
+                  Přidat otázku
                 </button>
-              </div>
+              </FormSubsubsection>
             </FormSubsubsection>
           )}
           {/*

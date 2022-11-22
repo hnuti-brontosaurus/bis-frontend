@@ -1,6 +1,10 @@
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
 import FormInputError from '../../../components/FormInputError'
-import { FormSection, FormSubsection } from '../../../components/FormLayout'
+import {
+  FormSection,
+  FormSubsection,
+  InlineSection,
+} from '../../../components/FormLayout'
 import SelectLocation from '../../../components/SelectLocation'
 import { required } from '../../../utils/validationMessages'
 import { StepShapes } from '../../EventForm'
@@ -22,7 +26,7 @@ const LocationStep = ({
               online
             </label>
             {watch('online') ? (
-              <div>
+              <InlineSection>
                 Odkaz na online setkání{' '}
                 <FormInputError>
                   <input
@@ -30,7 +34,7 @@ const LocationStep = ({
                     {...register('online_link', { required })}
                   />
                 </FormInputError>
-              </div>
+              </InlineSection>
             ) : (
               <FormInputError>
                 <Controller

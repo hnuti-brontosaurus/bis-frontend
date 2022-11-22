@@ -37,7 +37,11 @@ const Help = ({ children }: { children: ReactNode }) => {
   return (
     <Tooltip
       useDefaultStyles
-      content={<div ref={helpRef}>{children}</div>}
+      content={
+        <div className={styles.tooltip} ref={helpRef}>
+          {children}
+        </div>
+      }
       tagName="span"
       isOpen={isOpen}
     >
