@@ -28,7 +28,7 @@ const RegistrationStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection>
+        <FormSection startIndex={10}>
           <FormSubsection
             required
             header="Na koho je akce zaměřená"

@@ -21,7 +21,6 @@ import Loading from '../../../components/Loading'
 import {
   SelectFullUser,
   SelectFullUsers,
-  SelectUser,
 } from '../../../components/SelectUsers'
 import { joinAnd } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
@@ -94,12 +93,18 @@ const OrganizerStep = ({
     return subscription.unsubscribe
   }, [getValues, setValue, watch])
 
+  // automatically fill contact person's data
+
   if (!allQualifications) return <Loading>Připravujeme formulář</Loading>
+
+  const contactPerson = watch('contactPersonIsMainOrganizer')
+    ? watch('main_organizer')
+    : watch('propagation.contact_person')
 
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection>
+        <FormSection startIndex={20}>
           <FormSubsection
             header="Hlavní organizátor/ka"
             required
@@ -168,64 +173,80 @@ const OrganizerStep = ({
               </FullSizeElement>
             </FormSubsubsection>
           </FormSubsection>
-          <FormSubsection header="Kontaktní osoba" onWeb>
+          <FormSubsection header="Kontaktní osoba" required onWeb>
             <label>
-              <input type="checkbox" /> stejná jako hlavní organizátor
+              <input
+                type="checkbox"
+                {...register('contactPersonIsMainOrganizer')}
+              />{' '}
+              stejná jako hlavní organizátor
             </label>
             {/* TODO if checkbox is checked, autofill, or figure out what happens */}
-            <FullSizeElement>
-              <FormInputError>
-                <Controller
-                  name="propagation.contact_person"
-                  control={control}
-                  render={({ field }) => <SelectUser {...field} />}
-                />
-              </FormInputError>
-            </FullSizeElement>
+            {!watch('contactPersonIsMainOrganizer') && (
+              <FullSizeElement>
+                <FormInputError>
+                  <Controller
+                    name="propagation.contact_person"
+                    control={control}
+                    rules={{ required }}
+                    render={({ field }) => <SelectFullUser {...field} />}
+                  />
+                </FormInputError>
+              </FullSizeElement>
+            )}
             {/*
                 TODO figure out what happens with name when contact person is filled
                 maybe fill when not already filled
                 */}
-            <InlineSection>
-              <Label required htmlFor="propagation.contact_name">
-                Jméno kontaktní osoby
-              </Label>
-              <FormInputError>
-                <input
-                  type="text"
-                  id="propagation.contact_name"
-                  {...register('propagation.contact_name', {
-                    required,
-                  })}
-                />
-              </FormInputError>
-            </InlineSection>
-            <InlineSection>
-              <Label required htmlFor="propagation.contact_email">
-                Kontaktní email
-              </Label>
-              <FormInputError>
-                <input
-                  id="propagation.contact_email"
-                  type="email"
-                  {...register('propagation.contact_email', {
-                    required,
-                  })}
-                />
-              </FormInputError>
-            </InlineSection>
-            <InlineSection>
-              <Label htmlFor="propagation.contact_phone">
-                Kontaktní telefon
-              </Label>
-              <FormInputError>
-                <input
-                  id="propagation.contact_phone"
-                  type="tel"
-                  {...register('propagation.contact_phone', {})}
-                />
-              </FormInputError>
-            </InlineSection>
+            <FormSubsubsection
+              header="Kontaktní údaje"
+              help="Pokud necháte kontaktní údaje prázdné, použije se jméno/email/telefon kontaktní osoby."
+            >
+              <InlineSection>
+                <Label htmlFor="propagation.contact_name">
+                  Jméno kontaktní osoby
+                </Label>
+                <FormInputError>
+                  <input
+                    type="text"
+                    id="propagation.contact_name"
+                    {...register('propagation.contact_name')}
+                    placeholder={
+                      contactPerson &&
+                      (contactPerson.nickname
+                        ? `${contactPerson.nickname} (${contactPerson.first_name} ${contactPerson.last_name})`
+                        : `${contactPerson.first_name} ${contactPerson.last_name}`)
+                    }
+                  />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label htmlFor="propagation.contact_email">
+                  Kontaktní email
+                </Label>
+                <FormInputError>
+                  <input
+                    id="propagation.contact_email"
+                    type="email"
+                    {...register('propagation.contact_email')}
+                    placeholder={contactPerson.email ?? undefined}
+                  />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label htmlFor="propagation.contact_phone">
+                  Kontaktní telefon
+                </Label>
+                <FormInputError>
+                  <input
+                    id="propagation.contact_phone"
+                    type="tel"
+                    {...register('propagation.contact_phone')}
+                    placeholder={contactPerson.phone}
+                  />
+                </FormInputError>
+              </InlineSection>
+            </FormSubsubsection>
           </FormSubsection>
         </FormSection>
       </form>
