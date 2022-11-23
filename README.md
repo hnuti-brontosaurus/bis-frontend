@@ -41,3 +41,11 @@ And the proxy will run on `http://localhost:8080` and you can do `http://localho
 ### Run the app
 
 Use the command: `REACT_APP_API_BASE_URL="http://localhost:8080/https://dev.bis.lomic.cz/api/" REACT_APP_CORS_PROXY="http://localhost:8080/" yarn start`
+
+## Analyzing bundle size
+
+```sh
+yarn analyze
+```
+
+https://create-react-app.dev/docs/analyzing-the-bundle-size/
