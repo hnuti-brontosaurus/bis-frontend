@@ -2,11 +2,12 @@ import { FaPlus } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import ListHeader from '../components/ListHeader'
+import listStyles from '../components/ListHeader.module.scss'
 import Loading from '../components/Loading'
 import { UnscalablePaginatedList } from '../components/PaginatedList'
 import { useCurrentUser } from '../hooks/currentUser'
 import { useTitle } from '../hooks/title'
-import { ClearPageMargin } from '../Layout'
+import { ClearPageMargin, Content, Header, Layout } from '../Layout'
 import OpportunityTable from './OpportunityList/OpportunityTable'
 
 const OpportunityList = () => {
@@ -20,27 +21,34 @@ const OpportunityList = () => {
     pageSize: 10000,
   })
 
-  if (!opportunities) {
-    return <Loading>Stahujeme příležitosti</Loading>
-  }
-
   return (
-    <ClearPageMargin>
-      <ListHeader
-        header="Příležitosti"
-        theme="opportunities"
-        tabs={[]}
-        actions={[
-          <Link key="new" to="/org/prilezitosti/vytvorit">
-            <FaPlus />
-            Nová příležitost
-          </Link>,
-        ]}
-      />
-      <UnscalablePaginatedList
-        data={opportunities.results}
-        table={OpportunityTable}
-      />
+    <ClearPageMargin style={{ height: '100%' }}>
+      <Layout>
+        <Header>
+          <ListHeader
+            header="Příležitosti"
+            theme="opportunities"
+            tabs={[]}
+            actions={[
+              <Link key="new" to="/org/prilezitosti/vytvorit">
+                <FaPlus />
+                Nová příležitost
+              </Link>,
+            ]}
+          />
+        </Header>
+        <Content>
+          {opportunities ? (
+            <UnscalablePaginatedList
+              data={opportunities.results}
+              table={OpportunityTable}
+              className={listStyles.listContent}
+            />
+          ) : (
+            <Loading>Stahujeme příležitosti</Loading>
+          )}
+        </Content>
+      </Layout>
     </ClearPageMargin>
   )
 }

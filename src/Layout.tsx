@@ -1,7 +1,7 @@
 // inspired by https://stackoverflow.com/a/24979148
 
 import classNames from 'classnames'
-import { ReactNode } from 'react'
+import { HTMLProps, ReactNode } from 'react'
 import styles from './Layout.module.scss'
 
 interface ChildrenProps {
@@ -31,6 +31,12 @@ export const Footer = ({ children }: ChildrenProps) => (
   <div className={classNames(styles.row, styles.footer)}>{children}</div>
 )
 
-export const ClearPageMargin = ({ children }: ChildrenProps) => (
-  <div className={styles.noPageMargin}>{children}</div>
+export const ClearPageMargin = ({
+  children,
+  className,
+  ...rest
+}: HTMLProps<HTMLDivElement>) => (
+  <div className={classNames(styles.noPageMargin, className)} {...rest}>
+    {children}
+  </div>
 )
