@@ -155,3 +155,17 @@ export const joinAnd = (values: string[]): string => {
   })
   return formatter.format(values)
 }
+
+/**
+ * Make nicely formatted date range
+ * i.e. don't repeat year and month and day when it's the same
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatRange
+ */
+export const formatDateRange = (startDate: string, endDate: string) => {
+  const dateTimeFormat = new Intl.DateTimeFormat('cs', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+  return dateTimeFormat.formatRange(new Date(startDate), new Date(endDate))
+}
