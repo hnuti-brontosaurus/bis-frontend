@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import ListHeader from '../components/ListHeader'
+import listStyles from '../components/ListHeader.module.scss'
 import Loading from '../components/Loading'
 import { useCurrentUser } from '../hooks/currentUser'
 import { ClearPageMargin, Content, Header, Layout } from '../Layout'
@@ -31,7 +32,7 @@ const EventsLayout = () => {
   )
 
   return (
-    <ClearPageMargin>
+    <ClearPageMargin style={{ height: '100%' }}>
       <Layout>
         <Header>
           <ListHeader
@@ -59,7 +60,9 @@ const EventsLayout = () => {
         </Header>
         <Content>
           {events?.results ? (
-            <Outlet context={events} />
+            <div className={listStyles.listContent}>
+              <Outlet context={events} />
+            </div>
           ) : (
             <Loading>Stahujeme akce...</Loading>
           )}

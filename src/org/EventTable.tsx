@@ -9,7 +9,7 @@ import { Event } from '../app/services/testApi'
 import styles from '../components/Table.module.scss'
 import { useQueries } from '../hooks/queries'
 import { useRemoveEvent } from '../hooks/removeEvent'
-import { getEventStatus } from '../utils/helpers'
+import { formatDateRange, getEventStatus } from '../utils/helpers'
 
 const EventTable: FC<{
   data: Event[]
@@ -35,7 +35,6 @@ const EventTable: FC<{
           <th>Název</th>
           <th>Termín</th>
           <th>Lokalita</th>
-          <th>Typ</th>
           <th></th>
         </tr>
       </thead>
@@ -66,19 +65,17 @@ const EventTable: FC<{
                   {status && <FaRegCheckCircle className={styles[status]} />}
                 </Link>
               </td>
-              <td>{event.name}</td>
               <td>
-                {new Date(event.start).toLocaleDateString('cs')} -{' '}
-                {new Date(event.end).toLocaleDateString('cs')}
+                <Link to={`/org/akce/${event.id}`}>{event.name}</Link>
               </td>
+              <td>{formatDateRange(event.start, event.end)}</td>
               <td>
-                {
-                  locationRequests.find(
-                    request => request.data?.id === event?.location,
-                  )?.data?.name
-                }
+                {event.online_link
+                  ? 'online'
+                  : locationRequests.find(
+                      request => request.data?.id === event?.location,
+                    )?.data?.name}
               </td>
-              <td>{event.category.name}</td>
               <td>
                 <Menu
                   menuButton={

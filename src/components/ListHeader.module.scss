@@ -1,6 +1,31 @@
 @use '../colors';
 @use '../media';
 
+// we use this to style content under this header
+// to set similar margins as header
+.listContent {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
+  @include media.for-phone-only {
+    // padding-left: 35px;
+    // padding-right: 35px;
+    // on phone we want to save as much space as possible for the table
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  @include media.for-tablet-portrait-up {
+    padding-left: 70px;
+    padding-right: 70px;
+  }
+
+  @include media.for-desktop-up {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+}
+
 .header {
   display: flex;
   justify-content: space-between;
