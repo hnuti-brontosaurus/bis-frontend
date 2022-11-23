@@ -51,10 +51,6 @@ export type SubmitShape = Assign<
   EventPayload,
   {
     questions: Optional<Question, 'id' | 'order'>[]
-    // recordData: {
-    //   photos: Optional<EventPhoto, 'id'>[]
-    //   receipts: Optional<FinanceReceipt, 'id'>[]
-    // }
     location: NewLocation | Pick<CorrectLocation, 'id'> | null
     main_image: Optional<EventPropagationImage, 'id' | 'order'>
     images: Optional<EventPropagationImage, 'id' | 'order'>[]
@@ -72,7 +68,14 @@ export type EventFormShape = Assign<
     online: boolean
     main_organizer: User
     other_organizers: User[]
+    propagation: Assign<
+      NonNullable<SubmitShape['propagation']>,
+      { contact_person: User }
+    > | null
+    // registrationMethod is internal, doesn't get sent to API
     registrationMethod: 'standard' | 'other' | 'none' | 'full'
+    // contactPersonIsMainOrganizer is internal, doesn't get sent to API
+    contactPersonIsMainOrganizer: boolean
   }
 >
 
@@ -126,6 +129,7 @@ const shapes = {
   organizers: [
     'main_organizer',
     'other_organizers',
+    'contactPersonIsMainOrganizer',
     'propagation.organizers',
     'propagation.contact_person',
     'propagation.contact_name',
@@ -164,8 +168,12 @@ const initialData2form = (
 ): Partial<EventFormShape> => {
   const returnData: Partial<EventFormShape> = merge(
     { number_of_sub_events: 1 },
-    omit(clone(data), ['main_organizer', 'other_organizers']),
-  )
+    omit(clone(data), [
+      'main_organizer',
+      'other_organizers',
+      'propagation.contact_person', // seems like lodash's omit can't properly get type when omitting nested properties
+    ]),
+  ) as Partial<EventFormShape>
 
   const registrationMethod = data?.registration?.is_event_full
     ? 'full'
@@ -190,11 +198,20 @@ const initialData2form = (
 const form2finalData = (data: EventFormShape): SubmitShape => {
   const finalData: SubmitShape = merge(
     {},
-    omit(data, ['online', 'registrationMethod']),
+    omit(data, [
+      'online',
+      'registrationMethod',
+      'contactPersonIsMainOrganizer',
+    ]),
     {
       // map users to user ids
       main_organizer: data.main_organizer.id,
       other_organizers: data.other_organizers.map(({ id }) => id),
+      propagation: merge({}, data.propagation, {
+        contact_person: data.contactPersonIsMainOrganizer
+          ? data.main_organizer.id
+          : data.propagation!.contact_person.id,
+      }),
     },
   )
 
@@ -300,6 +317,12 @@ const EventForm: FC<{
       : skipToken,
   )
 
+  const { data: initialContactPerson } = api.endpoints.getUser.useQuery(
+    initialData?.propagation?.contact_person
+      ? { id: initialData.propagation.contact_person }
+      : skipToken,
+  )
+
   const initialOtherOrganizers = useMemo(
     () =>
       initialOtherOrganizersData ? initialOtherOrganizersData.results : [],
@@ -307,20 +330,31 @@ const EventForm: FC<{
   )
 
   // when initial main organizer is fetched, set it in form
+  // TODO if useForm was in different form than fetching these, we could provide these as default values
+  //   this is just hacking around that issue (that we don't have the data at the time of initializing useForm)
   useEffect(() => {
     // don't overwrite unsaved value
-    if (initialMainOrganizer && !savedData?.main_organizer)
+    if (initialMainOrganizer && !savedData)
       methods.organizers.setValue('main_organizer', initialMainOrganizer)
-  }, [initialMainOrganizer, methods.organizers, savedData?.main_organizer])
+  }, [initialMainOrganizer, methods.organizers, savedData])
 
   useEffect(() => {
     // don't overwrite unsaved values
-    if (!savedData?.other_organizers)
+    if (!savedData)
       methods.organizers.setValue(
         'other_organizers',
         initialOtherOrganizers.filter(user => Boolean(user)) as User[],
       )
-  }, [initialOtherOrganizers, methods.organizers, savedData?.other_organizers])
+  }, [initialOtherOrganizers, methods.organizers, savedData])
+
+  useEffect(() => {
+    // don't overwrite unsaved value
+    if (initialContactPerson && !savedData)
+      methods.organizers.setValue(
+        'propagation.contact_person',
+        initialContactPerson,
+      )
+  }, [initialContactPerson, methods.organizers, savedData])
 
   usePersistForm('event', id, ...Object.values(methods).map(m => m.watch))
 

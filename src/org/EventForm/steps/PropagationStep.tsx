@@ -31,7 +31,7 @@ const PropagationStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection>
+        <FormSection startIndex={13}>
           <FormSubsection
             onWeb
             required
