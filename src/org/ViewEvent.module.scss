@@ -1,26 +1,117 @@
 @use '../colors';
+@use '../media';
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.name {
-  font-size: 2rem;
-  font-weight: bold;
-  font-variant-caps: small-caps;
-  color: colors.$bronto;
-}
-
-.infoBox {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  > * {
+.wrapper {
+  .actions {
     display: flex;
-    gap: 0.5rem;
-    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1rem 0;
+
+    @include media.for-phone-only {
+      > * {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  .name {
+    font-size: 2rem;
+    font-weight: bold;
+    font-variant-caps: small-caps;
+    // color: colors.$bronto;
+  }
+
+  .infoBox {
+    margin: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    > * {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+  }
+
+  .image {
+    max-height: 16rem;
+    width: 26rem;
+    max-width: 100%;
+    object-fit: cover;
+  }
+
+  .data {
+    margin: 1rem 0;
+    padding: 1rem;
+    max-width: 100%;
+    overflow: scroll;
+    background-color: #eee;
+  }
+
+  .infoBoxDetail {
+    .imageWrapper {
+      position: relative;
+      .image {
+        border-top-left-radius: 32px;
+        border-top-right-radius: 32px;
+        border-bottom: 2px solid colors.$bronto;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        .tag {
+          text-transform: lowercase;
+          padding: 0.325rem 0.65rem;
+          background-color: rgba(255, 255, 255, 0.9);
+          border-radius: 2rem;
+        }
+        margin: 0.5rem 1rem;
+      }
+    }
+
+    border-radius: 32px;
+    background-color: #f0f3f2;
+    table {
+      th {
+        padding-right: 1rem;
+        text-align: right;
+      }
+      th,
+      td {
+        vertical-align: top;
+      }
+    }
+  }
+
+  .invitationTexts {
+    header {
+      font-size: 1.25rem;
+      margin: 1.3rem 0 0.65rem;
+      font-weight: 700;
+    }
+
+    section {
+      ul {
+        list-style-type: disc;
+        margin-left: 1.5rem;
+      }
+    }
+  }
+
+  .imageList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .image {
+      border-radius: 20px;
+    }
   }
 }
