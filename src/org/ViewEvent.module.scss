@@ -1,0 +1,26 @@
+@use '../colors';
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.name {
+  font-size: 2rem;
+  font-weight: bold;
+  font-variant-caps: small-caps;
+  color: colors.$bronto;
+}
+
+.infoBox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  > * {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}
