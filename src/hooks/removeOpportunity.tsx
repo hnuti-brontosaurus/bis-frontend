@@ -17,7 +17,7 @@ export const useRemoveOpportunity = () => {
 
   const removeOpportunityWithModal = async (opportunity: {
     id: number
-    userId: number
+    userId: string
     name: string
   }) => {
     // replace with custom ui
