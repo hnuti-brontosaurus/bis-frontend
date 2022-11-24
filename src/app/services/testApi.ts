@@ -612,6 +612,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/organizers/`,
         params: {
+          _search_id: queryArg._search_id,
           id: queryArg.id,
           page: queryArg.page,
           page_size: queryArg.pageSize,
@@ -694,6 +695,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/record/participants/`,
         params: {
+          _search_id: queryArg._search_id,
           id: queryArg.id,
           page: queryArg.page,
           page_size: queryArg.pageSize,
@@ -776,6 +778,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/events/${queryArg.eventId}/registered/`,
         params: {
+          _search_id: queryArg._search_id,
           id: queryArg.id,
           page: queryArg.page,
           page_size: queryArg.pageSize,
@@ -1016,6 +1019,19 @@ const injectedRtkApi = api.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    frontendSearchUsersList: build.query<
+      FrontendSearchUsersListApiResponse,
+      FrontendSearchUsersListApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/search_users/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
     frontendUsersList: build.query<
       FrontendUsersListApiResponse,
       FrontendUsersListApiArg
@@ -1023,6 +1039,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/api/frontend/users/`,
         params: {
+          _search_id: queryArg._search_id,
           id: queryArg.id,
           page: queryArg.page,
           page_size: queryArg.pageSize,
@@ -1709,9 +1726,11 @@ export type FrontendEventsFinanceReceiptsDestroyApiArg = {
 export type FrontendEventsOrganizersListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsOrganizersListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  _search_id?: string[]
   eventId: string
   /** Více hodnot lze oddělit čárkami. */
-  id?: number[]
+  id?: string[]
   /** A page number within the paginated result set. */
   page?: number
   /** Number of results to return per page. */
@@ -1723,8 +1742,8 @@ export type FrontendEventsOrganizersRetrieveApiResponse =
   /** status 200  */ User
 export type FrontendEventsOrganizersRetrieveApiArg = {
   eventId: string
-  /** A unique integer value identifying this Uživatel. */
-  id: number
+  /** A UUID string identifying this Uživatel. */
+  id: string
 }
 export type FrontendEventsPropagationImagesListApiResponse =
   /** status 200  */ PaginatedEventPropagationImageList
@@ -1775,9 +1794,11 @@ export type FrontendEventsPropagationImagesDestroyApiArg = {
 export type FrontendEventsRecordParticipantsListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsRecordParticipantsListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  _search_id?: string[]
   eventId: string
   /** Více hodnot lze oddělit čárkami. */
-  id?: number[]
+  id?: string[]
   /** A page number within the paginated result set. */
   page?: number
   /** Number of results to return per page. */
@@ -1789,8 +1810,8 @@ export type FrontendEventsRecordParticipantsRetrieveApiResponse =
   /** status 200  */ User
 export type FrontendEventsRecordParticipantsRetrieveApiArg = {
   eventId: string
-  /** A unique integer value identifying this Uživatel. */
-  id: number
+  /** A UUID string identifying this Uživatel. */
+  id: string
 }
 export type FrontendEventsRecordPhotosListApiResponse =
   /** status 200  */ PaginatedEventPhotoList
@@ -1841,9 +1862,11 @@ export type FrontendEventsRecordPhotosDestroyApiArg = {
 export type FrontendEventsRegisteredListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsRegisteredListApiArg = {
+  /** Více hodnot lze oddělit čárkami. */
+  _search_id?: string[]
   eventId: string
   /** Více hodnot lze oddělit čárkami. */
-  id?: number[]
+  id?: string[]
   /** A page number within the paginated result set. */
   page?: number
   /** Number of results to return per page. */
@@ -1855,8 +1878,8 @@ export type FrontendEventsRegisteredRetrieveApiResponse =
   /** status 200  */ User
 export type FrontendEventsRegisteredRetrieveApiArg = {
   eventId: string
-  /** A unique integer value identifying this Uživatel. */
-  id: number
+  /** A UUID string identifying this Uživatel. */
+  id: string
 }
 export type FrontendEventsRegistrationApplicationsListApiResponse =
   /** status 200  */ PaginatedEventApplicationList
@@ -2017,10 +2040,22 @@ export type FrontendLocationsDestroyApiArg = {
   /** A unique integer value identifying this Lokalita. */
   id: number
 }
+export type FrontendSearchUsersListApiResponse =
+  /** status 200  */ PaginatedUserSearchList
+export type FrontendSearchUsersListApiArg = {
+  /** A page number within the paginated result set. */
+  page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
+}
 export type FrontendUsersListApiResponse = /** status 200  */ PaginatedUserList
 export type FrontendUsersListApiArg = {
   /** Více hodnot lze oddělit čárkami. */
-  id?: number[]
+  _search_id?: string[]
+  /** Více hodnot lze oddělit čárkami. */
+  id?: string[]
   /** A page number within the paginated result set. */
   page?: number
   /** Number of results to return per page. */
@@ -2034,25 +2069,25 @@ export type FrontendUsersCreateApiArg = {
 }
 export type FrontendUsersRetrieveApiResponse = /** status 200  */ User
 export type FrontendUsersRetrieveApiArg = {
-  /** A unique integer value identifying this Uživatel. */
-  id: number
+  /** A UUID string identifying this Uživatel. */
+  id: string
 }
 export type FrontendUsersUpdateApiResponse = /** status 200  */ User
 export type FrontendUsersUpdateApiArg = {
-  /** A unique integer value identifying this Uživatel. */
-  id: number
+  /** A UUID string identifying this Uživatel. */
+  id: string
   user: User
 }
 export type FrontendUsersPartialUpdateApiResponse = /** status 200  */ User
 export type FrontendUsersPartialUpdateApiArg = {
-  /** A unique integer value identifying this Uživatel. */
-  id: number
+  /** A UUID string identifying this Uživatel. */
+  id: string
   patchedUser: PatchedUser
 }
 export type FrontendUsersDestroyApiResponse = unknown
 export type FrontendUsersDestroyApiArg = {
-  /** A unique integer value identifying this Uživatel. */
-  id: number
+  /** A UUID string identifying this Uživatel. */
+  id: string
 }
 export type FrontendUsersEventsWhereWasOrganizerListApiResponse =
   /** status 200  */ PaginatedEventList
@@ -2631,7 +2666,7 @@ export type Propagation = {
   invitation_text_practical_information: string
   invitation_text_work_description?: string
   invitation_text_about_us?: string
-  contact_person: number
+  contact_person: string
   contact_name?: string
   contact_phone?: string
   contact_email?: string
@@ -2650,7 +2685,7 @@ export type Record = {
   total_hours_worked?: number | null
   comment_on_work_done?: string
   attendance_list?: string | null
-  participants?: number[]
+  participants?: string[]
   number_of_participants?: number | null
   number_of_participants_under_26?: number | null
   note?: string
@@ -2670,8 +2705,8 @@ export type Event = {
   program: EventProgramCategory
   intended_for: EventIntendedForCategory
   administration_units: number[]
-  main_organizer: number
-  other_organizers?: number[]
+  main_organizer: string
+  other_organizers?: string[]
   is_attendance_list_required?: boolean
   is_internal?: boolean
   internal_note?: string
@@ -2759,7 +2794,7 @@ export type Qualification = {
   approved_by: QualificationApprovedBy
 }
 export type User = {
-  id: number
+  id: string
   first_name: string
   last_name: string
   nickname?: string
@@ -2831,9 +2866,19 @@ export type EventApplicationAddress = {
   zip_code: string
   region: Region
 }
+export type Question = {
+  id: number
+  question: string
+  is_required?: boolean
+  order?: number
+}
+export type Answer = {
+  question: Question
+  answer: string
+}
 export type EventApplication = {
   id: number
-  user?: number | null
+  user: string | null
   first_name: string
   last_name: string
   nickname?: string
@@ -2845,6 +2890,7 @@ export type EventApplication = {
   created_at: string
   close_person: EventApplicationClosePerson
   address: EventApplicationAddress
+  answers: Answer[]
 }
 export type PaginatedEventApplicationList = {
   count?: number
@@ -2854,7 +2900,7 @@ export type PaginatedEventApplicationList = {
 }
 export type PatchedEventApplication = {
   id?: number
-  user?: number | null
+  user?: string | null
   first_name?: string
   last_name?: string
   nickname?: string
@@ -2866,12 +2912,7 @@ export type PatchedEventApplication = {
   created_at?: string
   close_person?: EventApplicationClosePerson
   address?: EventApplicationAddress
-}
-export type Question = {
-  id: number
-  question: string
-  is_required?: boolean
-  order?: number
+  answers?: Answer[]
 }
 export type PaginatedQuestionList = {
   count?: number
@@ -2900,8 +2941,8 @@ export type PatchedEvent = {
   program?: number
   intended_for?: number
   administration_units?: number[]
-  main_organizer?: number
-  other_organizers?: number[]
+  main_organizer?: string
+  other_organizers?: string[]
   is_attendance_list_required?: boolean
   is_internal?: boolean
   internal_note?: string
@@ -2984,8 +3025,20 @@ export type PatchedLocation = {
   }
   region?: number
 }
+export type UserSearch = {
+  _search_id: string
+  display_name: string
+  first_name: string
+  last_name: string
+}
+export type PaginatedUserSearchList = {
+  count?: number
+  next?: string | null
+  previous?: string | null
+  results?: UserSearch[]
+}
 export type PatchedUser = {
-  id?: number
+  id?: string
   first_name?: string
   last_name?: string
   nickname?: string
@@ -3180,6 +3233,7 @@ export const {
   useFrontendLocationsUpdateMutation,
   useFrontendLocationsPartialUpdateMutation,
   useFrontendLocationsDestroyMutation,
+  useFrontendSearchUsersListQuery,
   useFrontendUsersListQuery,
   useFrontendUsersCreateMutation,
   useFrontendUsersRetrieveQuery,
