@@ -169,3 +169,15 @@ export const formatDateRange = (startDate: string, endDate: string) => {
   })
   return dateTimeFormat.formatRange(new Date(startDate), new Date(endDate))
 }
+
+export const formatDateTime = (datetime: string): string => {
+  const dateTimeFormat = new Intl.DateTimeFormat('cs', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  })
+
+  return dateTimeFormat.format(new Date(datetime))
+}

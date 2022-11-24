@@ -311,7 +311,7 @@ const EventForm: FC<{
       : skipToken,
   )
 
-  const { data: initialOtherOrganizersData } = api.endpoints.readUsers.useQuery(
+  const { data: initialOtherOrganizers } = api.endpoints.readUsers.useQuery(
     initialData?.other_organizers
       ? { id: initialData.other_organizers }
       : skipToken,
@@ -321,12 +321,6 @@ const EventForm: FC<{
     initialData?.propagation?.contact_person
       ? { id: initialData.propagation.contact_person }
       : skipToken,
-  )
-
-  const initialOtherOrganizers = useMemo(
-    () =>
-      initialOtherOrganizersData ? initialOtherOrganizersData.results : [],
-    [initialOtherOrganizersData],
   )
 
   // when initial main organizer is fetched, set it in form
@@ -340,11 +334,13 @@ const EventForm: FC<{
 
   useEffect(() => {
     // don't overwrite unsaved values
-    if (!savedData)
+    if (initialOtherOrganizers && !savedData) {
+      console.log(initialOtherOrganizers)
       methods.organizers.setValue(
         'other_organizers',
-        initialOtherOrganizers.filter(user => Boolean(user)) as User[],
+        initialOtherOrganizers.results.filter(user => Boolean(user)) as User[],
       )
+    }
   }, [initialOtherOrganizers, methods.organizers, savedData])
 
   useEffect(() => {
@@ -385,9 +381,13 @@ const EventForm: FC<{
       allQualifications &&
       administrationUnits &&
       // if main organizer id is provided, wait until we download main organizer
-      (!initialData?.main_organizer || initialMainOrganizer) &&
+      (savedData?.main_organizer ||
+        !initialData?.main_organizer ||
+        initialMainOrganizer) &&
       // wait until we download all other_organizers
-      initialOtherOrganizers.every(user => Boolean(user))
+      (savedData?.other_organizers ||
+        !initialData?.other_organizers ||
+        initialOtherOrganizers)
     )
   )
     return <Loading>Připravujeme formulář</Loading>

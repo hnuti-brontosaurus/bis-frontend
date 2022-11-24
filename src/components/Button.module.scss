@@ -1,0 +1,41 @@
+@use '../colors';
+
+.button {
+  border-radius: 100px; // completely rounded
+  padding: 4px 32px;
+  cursor: pointer;
+  text-align: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.success {
+  color: white;
+  background-color: colors.$bronto;
+  border: 2px solid colors.$bronto;
+  font-size: 1rem;
+}
+
+:global .opportunitySection {
+  :local .success {
+    background-color: colors.$opportunities;
+    border-color: colors.$opportunities;
+  }
+}
+
+.danger {
+  background-color: colors.$error;
+  color: black;
+}
+
+.secondary {
+  color: black;
+  background: none;
+  font-size: 0.875rem;
+  &:hover {
+    font-weight: bold;
+  }
+}
