@@ -28,7 +28,7 @@ export const UnscalablePaginatedList = <T,>({
       <Table data={tableData} />
       <Pagination
         page={page}
-        pages={Math.ceil((data.length as number) / pageSize)}
+        pages={Math.max(1, Math.ceil((data.length as number) / pageSize))}
         onPageChange={setPage}
       />
     </div>
