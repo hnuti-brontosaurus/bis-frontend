@@ -80,7 +80,7 @@ const ParticipantsStep: FC<{
     api.endpoints.updateEvent.useMutation()
 
   const [newParticipant, setNewParticipant] = useState<
-    number | { value: number; label: string } | undefined
+    string | { value: string; label: string } | undefined
   >()
   const [deleteEventApplication] =
     api.endpoints.deleteEventApplication.useMutation()
@@ -107,12 +107,12 @@ const ParticipantsStep: FC<{
     api.endpoints.readEventParticipants.useQuery({ eventId })
 
   const addSelectedUser = async (
-    participant: { label: string; value: number } | number,
+    participant: { label: string; value: string } | string,
     newParticipantBirthdate: string,
   ) => {
     console.log('patch')
 
-    if (typeof participant !== 'number') {
+    if (typeof participant !== 'string') {
       // let newParticipants = participants
       //   ? participants.results.map(p => p.id)
       //   : []
@@ -270,7 +270,7 @@ const ParticipantsStep: FC<{
           {newParticipant ? (
             <div>
               {`jest uzytkownik: ${
-                typeof newParticipant !== 'number' && newParticipant.label
+                typeof newParticipant !== 'string' && newParticipant.label
               }
                         `}
               <input
@@ -298,7 +298,7 @@ const ParticipantsStep: FC<{
               e.stopPropagation()
 
               addSelectedUser(
-                { value: 1, label: 'dzik' },
+                { value: 'asdf', label: 'dzik' },
                 newParticipantBirthdate,
               )
             }}

@@ -95,11 +95,11 @@ export const api = createApi({
         body,
       }),
     }),
-    whoami: build.query<{ id: number }, void>({
+    whoami: build.query<{ id: string }, void>({
       query: () => 'auth/whoami/',
     }),
     // frontendUsersRetrieve
-    getUser: build.query<User, { id: number }>({
+    getUser: build.query<User, { id: string }>({
       query: ({ id }) => `frontend/users/${id}/`,
       providesTags: (result, error, { id }) => [{ type: 'User', id }],
     }),
@@ -180,7 +180,7 @@ export const api = createApi({
     }),
     readUsers: build.query<
       PaginatedList<User>,
-      { id?: number[]; search?: string }
+      { id?: string[]; search?: string }
     >({
       query: ({ id, search }) => ({
         url: `frontend/users/`,
@@ -282,7 +282,7 @@ export const api = createApi({
     }),
     readOpportunity: build.query<
       CorrectOpportunity,
-      { userId: number; id: number }
+      { userId: string; id: number }
     >({
       query: queryArg => ({
         url: `frontend/users/${queryArg.userId}/opportunities/${queryArg.id}/`,
@@ -292,7 +292,7 @@ export const api = createApi({
     readOpportunities: build.query<
       PaginatedList<CorrectOpportunity>,
       {
-        userId: number
+        userId: string
         id?: number[]
         page?: number
         pageSize?: number
@@ -322,7 +322,7 @@ export const api = createApi({
     }),
     createOpportunity: build.mutation<
       CorrectOpportunity,
-      { userId: number; opportunity: OpportunityPayload }
+      { userId: string; opportunity: OpportunityPayload }
     >({
       query: ({ userId, opportunity }) => ({
         url: `frontend/users/${userId}/opportunities/`,
@@ -335,7 +335,7 @@ export const api = createApi({
       CorrectOpportunity,
       {
         id: number
-        userId: number
+        userId: string
         patchedOpportunity: Partial<OpportunityPayload>
       }
     >({
@@ -349,7 +349,7 @@ export const api = createApi({
         { type: 'Opportunity', id },
       ],
     }),
-    deleteOpportunity: build.mutation<void, { id: number; userId: number }>({
+    deleteOpportunity: build.mutation<void, { id: number; userId: string }>({
       query: queryArg => ({
         url: `frontend/users/${queryArg.userId}/opportunities/${queryArg.id}/`,
         method: 'DELETE',
@@ -362,7 +362,7 @@ export const api = createApi({
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
       {
-        userId: number
+        userId: string
         id?: number[]
         page?: number
         pageSize?: number
@@ -681,12 +681,7 @@ export const api = createApi({
       },
     ),
     readEventApplications: build.query<
-      {
-        count?: number | undefined
-        next?: string | null | undefined
-        previous?: string | null | undefined
-        results?: User[] | undefined
-      },
+      PaginatedList<EventApplication>,
       {
         eventId: number
         id?: number[] | undefined
@@ -746,7 +741,7 @@ export const api = createApi({
       }),
     }),
     readEventParticipants: build.query<
-      PaginatedList<EventApplication>,
+      PaginatedList<User>,
       {
         eventId: number
         page?: number

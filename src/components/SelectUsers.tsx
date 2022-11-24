@@ -62,8 +62,8 @@ type SelectMultiProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'value' | 'onChange'
 > & {
-  value?: number[]
-  onChange: (newValues: number[]) => void
+  value?: string[]
+  onChange: (newValues: string[]) => void
 }
 
 const SelectUsers = forwardRef<any, SelectMultiProps>(
@@ -115,7 +115,7 @@ const SelectUsers = forwardRef<any, SelectMultiProps>(
           onInputChange={input => setSearchQuery(input)}
           value={(selectedUsers as User[]).map(user => transform(user))}
           defaultValue={undefined}
-          onChange={val => onChange(val.map(v => Number(v.value)))}
+          onChange={val => onChange(val.map(v => v.value))}
         />
       </>
     )
@@ -173,13 +173,13 @@ type SelectProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'value' | 'onChange'
 > & {
-  value?: number | null | undefined
+  value?: string | null | undefined
   onChange: (
-    value: number | { value: number; label: string } | null | undefined,
+    value: string | { value: string; label: string } | null | undefined,
   ) => void
   transform?: (user: User) => {
     label: string
-    value: number
+    value: string
     disabled?: boolean
   }
   fullData?: boolean
@@ -203,7 +203,7 @@ export const SelectUser = forwardRef<any, SelectProps>(
 
     const transform =
       transformProp ??
-      ((user: User): { label: string; value: number; disabled?: boolean } => ({
+      ((user: User): { label: string; value: string; disabled?: boolean } => ({
         label: user.display_name,
         value: user.id,
       }))
@@ -225,12 +225,12 @@ export const SelectUser = forwardRef<any, SelectProps>(
           value={
             value && selectedUser && !isSelectedUserLoading
               ? transform(selectedUser)
-              : { label: '', value: 0 }
+              : { label: '', value: '' }
           }
           defaultValue={
-            { label: '', value: 0 } as {
+            { label: '', value: '' } as {
               label: string
-              value: number
+              value: string
               disabled?: boolean
             }
           }
@@ -239,7 +239,7 @@ export const SelectUser = forwardRef<any, SelectProps>(
               val
                 ? fullData
                   ? { value: val.value, label: val.label }
-                  : Number(val.value)
+                  : val.value
                 : null,
             )
           }
