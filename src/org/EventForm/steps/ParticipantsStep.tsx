@@ -5,11 +5,12 @@ import Participants from './registration/Participants'
 
 const ParticipantsStep: FC<{
   eventId: number
-}> = ({ eventId }) => {
+  onlyApplications?: boolean
+}> = ({ eventId, onlyApplications }) => {
   return (
     <div className={styles.participantsContainer}>
       <Applications eventId={eventId} />
-      <Participants eventId={eventId} />
+      {!onlyApplications && <Participants eventId={eventId} />}
     </div>
   )
 }
