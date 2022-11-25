@@ -24,7 +24,6 @@ import LocationStep from './EventForm/steps/LocationStep'
 import OrganizerStep from './EventForm/steps/OrganizerStep'
 import PropagationStep from './EventForm/steps/PropagationStep'
 import ParticipantsStep from './EventForm/steps/registration/Applications'
-import Participants from './EventForm/steps/registration/Participants'
 import RegistrationStep from './EventForm/steps/RegistrationStep'
 
 const steps = [
