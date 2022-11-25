@@ -35,3 +35,10 @@
 .closed {
   color: black;
 }
+
+.cellWithButton > *:first-child {
+  display: block;
+  width: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}

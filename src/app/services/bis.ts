@@ -111,6 +111,17 @@ export const api = createApi({
       }),
       invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
     }),
+    updateUser: build.mutation<User, { patchedUser: UserPayload; id: string }>({
+      query: ({ id, patchedUser }) => ({
+        url: `frontend/users/${id}/`,
+        method: 'PATCH',
+        body: patchedUser,
+      }),
+      invalidatesTags: (results, _, { id }) => [
+        { type: 'User' as const, id: 'USER_LIST' },
+        { type: 'User', id },
+      ],
+    }),
     getEventCategories: build.query<PaginatedList<EventCategory>, void>({
       query: () => ({
         url: `categories/event_categories/`,
@@ -449,18 +460,10 @@ export const api = createApi({
       invalidatesTags: (result, error, { id }) => [
         { type: 'Event', id },
         { type: 'Event', id: 'ORGANIZED_EVENT_LIST' },
+        { type: 'Participant', id },
+        { type: 'Participant', id: 'PARTICIPANT_LIST' },
       ],
     }),
-    // patchEvent: build.mutation<
-    //   Event,
-    //   { id: number; patchedEvent: PatchedEvent }
-    // >({
-    //   query: queryArg => ({
-    //     url: `frontend/events/${queryArg.id}/`,
-    //     method: 'PATCH',
-    //     body: queryArg.patchedEvent,
-    //   }),
-    // }),
     removeEvent: build.mutation<void, { id: number }>({
       query: queryArg => ({
         url: `frontend/events/${queryArg.id}/`,
