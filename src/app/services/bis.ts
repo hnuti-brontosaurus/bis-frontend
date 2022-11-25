@@ -21,7 +21,7 @@ import {
   Propagation,
   QualificationCategory,
   Question,
-  User,
+  User
 } from './testApi'
 
 export type PaginatedList<T> = {
@@ -108,6 +108,14 @@ export const api = createApi({
         url: `frontend/users/`,
         method: 'POST',
         body: queryArg,
+      }),
+      invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
+    }),
+    updateUser: build.mutation<User, { patchedUser: UserPayload; id: string }>({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedUser,
       }),
       invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
     }),
@@ -449,18 +457,10 @@ export const api = createApi({
       invalidatesTags: (result, error, { id }) => [
         { type: 'Event', id },
         { type: 'Event', id: 'ORGANIZED_EVENT_LIST' },
+        { type: 'Participant', id },
+        { type: 'Participant', id: 'PARTICIPANT_LIST' },
       ],
     }),
-    // patchEvent: build.mutation<
-    //   Event,
-    //   { id: number; patchedEvent: PatchedEvent }
-    // >({
-    //   query: queryArg => ({
-    //     url: `frontend/events/${queryArg.id}/`,
-    //     method: 'PATCH',
-    //     body: queryArg.patchedEvent,
-    //   }),
-    // }),
     removeEvent: build.mutation<void, { id: number }>({
       query: queryArg => ({
         url: `frontend/events/${queryArg.id}/`,

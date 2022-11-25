@@ -1,16 +1,15 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { FC, FormEventHandler, useCallback } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import Modal from 'react-modal'
+import * as yup from 'yup'
 import { api } from '../app/services/bis'
 import { EventApplication } from '../app/services/testApi'
-
-import * as yup from 'yup'
 import FormInputError from './FormInputError'
 interface INewApplicationModalProps {
   open: boolean
   onClose: () => void
-  onSubmit: () => void
-  data: { id?: number }
+  eventId: number
 }
 
 const phoneRegExp = /^(\+|00){0,1}[0-9]{1,3}[0-9]{4,14}(?:x.+)?$/
@@ -27,23 +26,36 @@ const validationSchema = yup.object().shape(
       .when('phone', {
         // @ts-ignore
         is: (phone: string) => !phone || phone.length === 0,
-        then: yup.string().email().required('email or phone is required'),
-        otherwise: yup.string(),
+        then: schema => schema.email().required('email or phone is required'),
+        // otherwise: schema => schema.string(),
       }),
-    phone: yup.string().when('email', {
-      // @ts-ignore
-      is: (email: string) => !email || email.length === 0,
-      // @ts-ignore
-      then: yup
-        .string()
-        .when('phone', {
-          is: (phone: string) => !phone || phone.length === 0,
-          then: yup.string().required('email or phone is required'),
-        })
-        .required()
-        .matches(phoneRegExp, 'Phone number is not valid'),
-      otherwise: yup.string(),
-    }),
+    // let schema = object({
+    //   isBig: boolean(),
+    //   count: number()
+    //     .when('isBig', {
+    //       is: true, // alternatively: (val) => val == true
+    //       then: (schema) => schema.min(5),
+    //       otherwise: (schema) => schema.min(0),
+    //     })
+    //     .when('$other', ([other], schema) =>
+    //       other === 4 ? schema.max(6) : schema,
+    //     ),
+    // });
+
+    // phone: yup.string().when('email', {
+    //   // @ts-ignore
+    //   is: (email: string) => !email || email.length === 0,
+    //   // @ts-ignore
+    //   then: yup
+    //     .string()
+    //     .when('phone', {
+    //       is: (phone: string) => !phone || phone.length === 0,
+    //       then: yup.string().required('email or phone is required'),
+    //     })
+    //     .required()
+    //     .matches(phoneRegExp, 'Phone number is not valid'),
+    //   otherwise: yup.string(),
+    // }),
     birthday: yup
       .date()
       .nullable()
@@ -70,6 +82,7 @@ const useYupValidationResolver = (validationSchema: any) =>
         const values = await validationSchema.validate(data, {
           abortEarly: false,
         })
+
         return {
           values,
           errors: {},
@@ -95,16 +108,17 @@ const useYupValidationResolver = (validationSchema: any) =>
     [validationSchema],
   )
 
+// TODO: This modal is still WIP (no need to review atm)
+
 const NewApplicationModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
-  onSubmit,
-  data: parentData,
+  eventId,
 }) => {
   const resolver = useYupValidationResolver(validationSchema)
 
   const methods = useForm<EventApplication>({
-    resolver,
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       first_name: 'Talita',
       last_name: 'Dzik',
@@ -126,8 +140,6 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
-    watch,
   } = methods
 
   const [createEventApplication, { isLoading: isSavingOpportunity }] =
@@ -136,15 +148,11 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.stopPropagation()
     handleSubmit(async data => {
-      if (parentData?.id) {
-        await createEventApplication({
-          user: data,
-          eventId: parentData?.id,
-        })
-
-        onClose()
-        // onSubmit()
-      }
+      await createEventApplication({
+        user: { ...data, answers: [] },
+        eventId,
+      })
+      onClose()
     })(e)
   }
   if (!open) return null
