@@ -21,7 +21,7 @@ import {
   Propagation,
   QualificationCategory,
   Question,
-  User
+  User,
 } from './testApi'
 
 export type PaginatedList<T> = {
@@ -112,12 +112,15 @@ export const api = createApi({
       invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
     }),
     updateUser: build.mutation<User, { patchedUser: UserPayload; id: string }>({
-      query: queryArg => ({
-        url: `frontend/users/${queryArg.id}/`,
+      query: ({ id, patchedUser }) => ({
+        url: `frontend/users/${id}/`,
         method: 'PATCH',
-        body: queryArg.patchedUser,
+        body: patchedUser,
       }),
-      invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
+      invalidatesTags: (results, _, { id }) => [
+        { type: 'User' as const, id: 'USER_LIST' },
+        { type: 'User', id },
+      ],
     }),
     getEventCategories: build.query<PaginatedList<EventCategory>, void>({
       query: () => ({

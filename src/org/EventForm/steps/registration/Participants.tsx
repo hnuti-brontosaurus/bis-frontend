@@ -7,34 +7,8 @@ import styles from '../ParticipantsStep.module.scss'
 const Participants: FC<{
   eventId: number
 }> = ({ eventId }) => {
-  // we're loading these to make sure that we have the data before we try to render the form, to make sure that the default values are properly initialized
-  // TODO check whether this is necessary
-  const { data: categories } = api.endpoints.getEventCategories.useQuery()
-  const { data: groups } = api.endpoints.getEventGroups.useQuery()
-  const { data: programs } = api.endpoints.getPrograms.useQuery()
-  const { data: intendedFor } = api.endpoints.getIntendedFor.useQuery()
-  const { data: diets } = api.endpoints.getDiets.useQuery()
-  const { data: administrationUnits } =
-    api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
-  const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
-    {},
-  )
-
   const { data: participants, isLoading: isReadParticipantsLoading } =
     api.endpoints.readEventParticipants.useQuery({ eventId })
-
-  if (
-    !(
-      groups &&
-      diets &&
-      programs &&
-      categories &&
-      intendedFor &&
-      allQualifications &&
-      administrationUnits
-    )
-  )
-    return <Loading>Připravujeme formulář</Loading>
 
   return (
     <div className={styles.ListContainer}>

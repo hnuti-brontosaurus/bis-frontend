@@ -31,7 +31,7 @@ import InvitationStep from './EventForm/steps/InvitationStep'
 import LocationStep from './EventForm/steps/LocationStep'
 import OrganizerStep from './EventForm/steps/OrganizerStep'
 import PropagationStep from './EventForm/steps/PropagationStep'
-import Participants from './EventForm/steps/registration/Participants'
+import Applications from './EventForm/steps/registration/Applications'
 import RegistrationStep from './EventForm/steps/RegistrationStep'
 
 const steps = [
@@ -503,7 +503,7 @@ const EventForm: FC<{
         />
       </Step>
       <Step name="přihlášky" hidden={!initialData?.id}>
-        {initialData?.id && <Participants eventId={initialData.id} />}
+        {initialData?.id && <Applications eventId={initialData.id} />}
       </Step>
     </Steps>
   )
