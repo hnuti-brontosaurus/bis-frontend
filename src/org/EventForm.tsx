@@ -503,7 +503,9 @@ const EventForm: FC<{
         />
       </Step>
       <Step name="přihlášky" hidden={!initialData?.id}>
-        {initialData?.id && <ParticipantsStep eventId={initialData.id} />}
+        {initialData?.id && (
+          <ParticipantsStep eventId={initialData.id} onlyApplications />
+        )}
       </Step>
     </Steps>
   )

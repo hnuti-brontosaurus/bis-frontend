@@ -57,7 +57,7 @@ const EventTable: FC<{
           }
           return (
             <tr key={event.id}>
-              <td>
+              <td className={styles.cellWithButton}>
                 <Link
                   title={appropriateAction.title}
                   to={appropriateAction.link}
@@ -76,13 +76,14 @@ const EventTable: FC<{
                       request => request.data?.id === event?.location,
                     )?.data?.name}
               </td>
-              <td>
+              <td className={styles.cellWithButton}>
                 <Menu
                   menuButton={
                     <MenuButton>
                       <TbDotsVertical />
                     </MenuButton>
                   }
+                  className={styles.buttonInsideCell}
                 >
                   <MenuItem>
                     <Link to={`/org/akce/${event.id}/upravit`}>upravit</Link>

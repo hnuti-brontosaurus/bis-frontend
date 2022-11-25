@@ -1,0 +1,105 @@
+h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  font-size: 1.7rem;
+}
+
+.table {
+  table-layout: auto;
+  width: 100%;
+  margin-top: 16px;
+  th,
+  td {
+    padding: 0.5rem;
+  }
+  thead {
+    th {
+      border-bottom: 1px solid #737373;
+      text-align: left;
+    }
+  }
+
+  tbody {
+    td {
+      text-align: center;
+      &:nth-child(1),
+      &:nth-child(2) {
+        border-right: 1px solid #d9d9d9;
+      }
+      &:nth-child(1) {
+        text-align: left;
+      }
+      &:nth-child(2) {
+        width: 50px;
+      }
+      &:last-child {
+        width: 50px;
+      }
+      &:hover {
+        background-color: #f8f8fa;
+      }
+    }
+  }
+
+  tbody tr td {
+    border-bottom: 1px solid #d9d9d9;
+  }
+  &.verticalLine1 {
+    tbody tr td:first-child {
+      border-right: 1px solid #d9d9d9;
+      text-align: center;
+    }
+  }
+}
+
+.participantsContainer {
+  width: 80%;
+  border: 2px solid rgb(240, 238, 238);
+  margin: 50px auto 0;
+  display: flex;
+  flex-direction: row;
+
+  .ListContainer {
+    width: 50%;
+    padding: 40px;
+
+    .buttonsContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-top: 16px;
+      button {
+        border: 1px solid black;
+        border-radius: 4px;
+        margin-right: 8px;
+      }
+
+      button:hover {
+        background-color: rgba(211, 216, 221, 0.7);
+      }
+    }
+
+    .searchContainer {
+      background-color: #f8f8fa;
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+      .searchBox {
+        margin-left: 12px;
+
+        button {
+          border: 1px solid black;
+          border-radius: 4px;
+          margin-right: 8px;
+          background-color: none;
+        }
+
+        button:hover {
+          background-color: rgba(211, 216, 221, 0.7);
+        }
+      }
+    }
+  }
+}
