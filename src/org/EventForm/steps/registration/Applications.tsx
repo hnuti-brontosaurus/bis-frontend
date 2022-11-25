@@ -112,6 +112,7 @@ const ParticipantsStep: FC<{
                             eventId,
                           })
                         }}
+                        className={styles.cellWithButton}
                       >
                         X
                       </td>
@@ -120,6 +121,7 @@ const ParticipantsStep: FC<{
                           setCurrentApplicationId(application.id)
                           setShowAddParticipantModal(true)
                         }}
+                        className={styles.cellWithButton}
                       >
                         {'->'}
                       </td>
