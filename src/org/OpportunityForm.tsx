@@ -20,6 +20,7 @@ import { IconSelect, IconSelectGroup } from '../components/IconSelect'
 import { ImageUpload } from '../components/ImageUpload'
 import RichTextEditor, { htmlRequired } from '../components/RichTextEditor'
 import SelectLocation, { NewLocation } from '../components/SelectLocation'
+import { useCurrentUser } from '../hooks/currentUser'
 import {
   useClearPersistentForm,
   usePersistentFormData,
@@ -78,6 +79,9 @@ const OpportunityForm = ({
   const { register, control, handleSubmit, watch, trigger, formState } = methods
 
   usePersistForm('opportunity', id, watch)
+
+  // when contact info isn't specified, the contact info of the opportunity creator (current user) is used
+  const { data: defaultContactPerson } = useCurrentUser()
 
   const { data: opportunityCategories } =
     api.endpoints.readOpportunityCategories.useQuery({
@@ -366,30 +370,34 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
               <ImageUpload name="image" required />
             </FormInputError>
           </FormSubsection>
-          <FormSubsection header="Kontaktní osoba">
+          <FormSubsection
+            header="Kontaktní osoba"
+            help="Pokud necháš kontaktní údaje prázdné, použije se Tvé jméno/email/telefon."
+          >
             <InlineSection>
-              <Label required htmlFor="contact_name">
-                Jméno kontaktní osoby
-              </Label>{' '}
+              <Label htmlFor="contact_name">Jméno kontaktní osoby</Label>{' '}
               <FormInputError>
                 <input
                   type="text"
                   id="contact_name"
-                  placeholder="Jana Nováková"
-                  {...register('contact_name', { required })}
+                  {...register('contact_name')}
+                  placeholder={
+                    defaultContactPerson &&
+                    (defaultContactPerson.nickname
+                      ? `${defaultContactPerson.nickname} (${defaultContactPerson.first_name} ${defaultContactPerson.last_name})`
+                      : `${defaultContactPerson.first_name} ${defaultContactPerson.last_name}`)
+                  }
                 />
               </FormInputError>
             </InlineSection>
             <InlineSection>
-              <Label required htmlFor="contact_email">
-                Kontaktní email
-              </Label>{' '}
+              <Label htmlFor="contact_email">Kontaktní email</Label>{' '}
               <FormInputError>
                 <input
                   type="email"
                   id="contact_email"
-                  placeholder="jana.novakova@example.com"
-                  {...register('contact_email', { required })}
+                  placeholder={defaultContactPerson?.email ?? undefined}
+                  {...register('contact_email')}
                 />
               </FormInputError>
             </InlineSection>
@@ -400,6 +408,7 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
                   type="tel"
                   id="contact_phone"
                   {...register('contact_phone')}
+                  placeholder={defaultContactPerson?.phone}
                 />
               </FormInputError>
             </InlineSection>
