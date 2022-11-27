@@ -1,20 +1,28 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import merge from 'lodash/merge'
-import { DeepPartial } from 'utility-types'
+import { DeepPartial, ValuesType } from 'utility-types'
 import { RootState } from '../../app/store'
 import { RegistrationFormShape } from '../../EventRegistrationForm'
 import { CloseEventFormShape } from '../../org/CloseEvent/CloseEventForm'
 import { EventFormShape } from '../../org/EventForm'
 import { OpportunityFormShape } from '../../org/OpportunityForm'
 
-type FormState<K extends string = string> = {
+export type FormState<K extends string = string> = {
   event: Record<K, EventFormShape>
   closeEvent: Record<K, CloseEventFormShape>
   opportunity: Record<K, OpportunityFormShape>
   registration: Record<K, RegistrationFormShape>
 }
 
-export type PersistentFormType = keyof FormState
+export type PersistentFormType =
+  | 'event'
+  | 'closeEvent'
+  | 'opportunity'
+  | 'registration'
+
+export type PersistentFormValue<K extends PersistentFormType> = ValuesType<
+  FormState[K]
+>
 
 type SaveEventPayload<
   K extends string = string,
@@ -33,6 +41,7 @@ const slice = createSlice({
     event: {},
     closeEvent: {},
     opportunity: {},
+    registration: {},
   } as FormState<string>,
   reducers: {
     saveForm: (state, { payload }: PayloadAction<SaveEventPayload>) => {

@@ -10,6 +10,7 @@ import App from './App'
 import { persistor, store } from './app/store'
 import './config'
 import { ErrorBoundary, ErrorBoundaryFallback } from './config/sentry'
+import SystemMessages from './features/systemMessage/SystemMessages'
 import reportWebVitals from './reportWebVitals'
 
 const container = document.getElementById('root')!
@@ -22,6 +23,7 @@ root.render(
         <PersistGate loading={null} persistor={persistor}>
           <BrowserRouter>
             <App />
+            <SystemMessages />
           </BrowserRouter>
         </PersistGate>
       </Provider>

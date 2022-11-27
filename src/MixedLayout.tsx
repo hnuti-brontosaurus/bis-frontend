@@ -9,7 +9,7 @@ import MixedHeader from './MixedHeader'
 const MixedLayout = ({ children }: { children: ReactNode }) => {
   const showHeader = useAppSelector(selectShowHeader)
   return (
-    <Layout>
+    <Layout page>
       {showHeader && (
         <Header>
           <MixedHeader />

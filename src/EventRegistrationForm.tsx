@@ -1,54 +1,160 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import dayjs from 'dayjs'
-import { padStart, startsWith } from 'lodash'
-import { useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { merge, mergeWith, omit, padStart, pick, startsWith } from 'lodash'
+import { FormEventHandler, useEffect } from 'react'
+import {
+  FieldErrorsImpl,
+  FormProvider,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form'
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import * as yup from 'yup'
+import { EventApplicationPayload, WebQuestionnaire } from './app/services/bis'
 import { EventApplication, Question } from './app/services/testApi'
+import { Button } from './components/Button'
 import FormInputError from './components/FormInputError'
 import {
+  FormSection,
   FormSubsubsection,
   InlineSection,
   Label,
 } from './components/FormLayout'
+import { useShowMessage } from './features/systemMessage/useSystemMessage'
+import {
+  useClearPersistentForm,
+  useDirectPersistForm,
+  usePersistentFormData,
+  usePersistForm,
+} from './hooks/persistForm'
+import { required } from './utils/validationMessages'
 
 type PersonalDataShape = Pick<
   EventApplication,
   'first_name' | 'last_name' | 'email' | 'phone' | 'birthday'
 > & { note?: string }
 
-type QuestionnaireShape = { answers: { questionId: number; answer: string }[] }
+type QuestionnaireShape = Pick<EventApplicationPayload, 'answers'>
 
-export type RegistrationFormShape = PersonalDataShape & QuestionnaireShape
+export type RegistrationFormShape = PersonalDataFormShape &
+  QuestionnaireShape & { step: 'personal' | 'questions' | 'finished' }
 
 const EventRegistrationForm = ({
   id,
-  questions,
+  questionnaire,
   onSubmit,
+  onFinish,
+  onCancel,
 }: {
   id: string
-  questions: Question[]
-  onSubmit: (data: any) => void
+  questionnaire?: WebQuestionnaire
+  onSubmit: (data: EventApplicationPayload) => void
+  onFinish: () => void
+  onCancel: () => void
 }) => {
-  const [step, setStep] = useState(0)
-  const handleSubmitPersonalData = (data: PersonalDataShape) => {
-    if (questions.length > 0) {
-      setStep(1)
-    } else {
-      onSubmit({ ...data })
-    }
-    console.log(data)
+  const data = usePersistentFormData(
+    'registration',
+    id,
+  ) as RegistrationFormShape
+
+  const clearPersistentData = useClearPersistentForm('registration', id)
+  const persist = useDirectPersistForm('registration', id)
+
+  const showMessage = useShowMessage()
+
+  const handleSubmit = async () => {
+    const birthday = `${data.birthdate.year}-${padStart(
+      data.birthdate.month,
+      2,
+      '0',
+    )}-${padStart(data.birthdate.day, 2, '0')}`
+
+    const answers = data.answers.filter(a => a.answer) ?? []
+
+    const submitData = omit(
+      mergeWith(
+        {},
+        data,
+        {
+          birthday,
+          answers,
+          close_person: null,
+          address: null,
+        },
+        // mergeWith and this argument make sure arrays get overwritten, not merged
+        // https://stackoverflow.com/a/66247134
+        (a, b) => (Array.isArray(b) ? b : undefined),
+      ),
+      ['birthdate', 'step'],
+    )
+    await onSubmit(submitData)
+    clearPersistentData()
+    persist({ step: 'finished' })
   }
-  const handleSubmitQuestionnaire = (data: QuestionnaireShape) => {
-    console.log(data)
+
+  const handleReset: FormEventHandler<HTMLFormElement> = e => {
+    e.preventDefault()
+    clearPersistentData()
+    onCancel()
   }
-  return step === 0 ? (
-    <PersonalDataForm onSubmit={handleSubmitPersonalData} />
-  ) : (
-    <QuestionnaireForm
-      questions={questions}
-      onSubmit={handleSubmitQuestionnaire}
+
+  const handleRestart = () => {
+    clearPersistentData()
+    persist({ step: 'personal' })
+  }
+
+  const showQuestionStep = Boolean(
+    questionnaire && questionnaire.questions.length > 0,
+  )
+
+  const handleClickFinish = () => {
+    clearPersistentData()
+    onFinish()
+  }
+
+  const handleError = (e: any) => {
+    showMessage({
+      type: 'error',
+      message: 'Opravte, prosím, chyby ve formuláři',
+      detail: 'TODO better message',
+    })
+  }
+
+  return !data?.step || data.step === 'personal' ? (
+    <PersonalDataForm
+      isNextStep={showQuestionStep}
+      id={id}
+      onSubmit={() => {
+        if (showQuestionStep) {
+          persist({ step: 'questions' })
+        } else {
+          handleSubmit()
+        }
+      }}
+      onReset={handleReset}
+      onError={e => handleError(e)}
     />
+  ) : questionnaire && showQuestionStep && data.step === 'questions' ? (
+    <QuestionnaireForm
+      onBack={() => persist({ step: 'personal' })}
+      id={id}
+      questions={questionnaire.questions}
+      onSubmit={handleSubmit}
+      onReset={handleReset}
+      onError={e => handleError(e)}
+    />
+  ) : data.step === 'finished' ? (
+    <div>
+      {questionnaire?.after_submit_text || 'Děkujeme za přihlášku!'}
+      <Button success onClick={handleClickFinish}>
+        Hotovo!
+      </Button>
+      <Button success onClick={handleRestart}>
+        Přihlásit někoho dalšího
+      </Button>
+    </div>
+  ) : (
+    <>Toto se nemělo stát</>
   )
 }
 
@@ -96,53 +202,68 @@ const personalDataSchema: yup.ObjectSchema<PersonalDataFormShape> = yup.object({
 })
 
 const PersonalDataForm = ({
+  id,
+  isNextStep,
   onSubmit,
+  onReset,
+  onError,
 }: {
-  onSubmit?: (data: PersonalDataShape) => void
+  id: string
+  isNextStep: boolean
+  onSubmit: (data: PersonalDataShape) => void
+  onReset: FormEventHandler<HTMLFormElement>
+  onError: (e?: FieldErrorsImpl) => void
 }) => {
+  const persistedData = usePersistentFormData(
+    'registration',
+    id,
+  ) as Partial<RegistrationFormShape>
   const methods = useForm<PersonalDataFormShape>({
     resolver: yupResolver(personalDataSchema),
+    defaultValues: persistedData,
   })
 
   const { register, watch, trigger } = methods
+  usePersistForm('registration', id, watch)
 
   const handleSubmit = methods.handleSubmit(
     data => {
-      onSubmit?.(data)
+      onSubmit(data)
     },
     error => {
-      console.log(error)
+      onError(error)
     },
   )
 
   // revalidate birthdate when day, month or year is changed
   useEffect(() => {
     const subscription = watch((data, { name, value }) => {
-      if (startsWith(name, 'birthdate')) trigger('birthdate')
+      if (methods.formState.isSubmitted && startsWith(name, 'birthdate'))
+        trigger('birthdate')
     })
     return () => subscription.unsubscribe()
-  }, [trigger, watch])
+  }, [methods.formState.isSubmitted, trigger, watch])
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit}>
-        <InlineSection>
-          <Label required>Jméno</Label>
-          <FormInputError>
-            <input type="text" {...register('first_name')} />
-          </FormInputError>
-        </InlineSection>
-        <InlineSection>
-          <Label required>Příjmení</Label>
-          <FormInputError>
-            <input type="text" {...register('last_name')} />
-          </FormInputError>
-        </InlineSection>
-        <InlineSection>
-          <Label required>Datum narození</Label>
-          <FormInputError name="birthdate">
-            <div>
-              <FormInputError>
+      <form onSubmit={handleSubmit} onReset={onReset}>
+        <FormSection>
+          <InlineSection>
+            <Label required>Jméno</Label>
+            <FormInputError>
+              <input type="text" {...register('first_name')} />
+            </FormInputError>
+          </InlineSection>
+          <InlineSection>
+            <Label required>Příjmení</Label>
+            <FormInputError>
+              <input type="text" {...register('last_name')} />
+            </FormInputError>
+          </InlineSection>
+          <InlineSection>
+            <Label required>Datum narození</Label>
+            <FormInputError name="birthdate">
+              <div>
                 <input
                   type="text"
                   placeholder="DD"
@@ -150,8 +271,6 @@ const PersonalDataForm = ({
                   size={2}
                   {...register('birthdate.day')}
                 />
-              </FormInputError>
-              <FormInputError>
                 <input
                   type="text"
                   placeholder="MM"
@@ -159,8 +278,6 @@ const PersonalDataForm = ({
                   size={2}
                   {...register('birthdate.month')}
                 />
-              </FormInputError>
-              <FormInputError>
                 <input
                   type="text"
                   placeholder="RRRR"
@@ -168,75 +285,125 @@ const PersonalDataForm = ({
                   size={4}
                   {...register('birthdate.year')}
                 />
-              </FormInputError>
-            </div>
-          </FormInputError>
-        </InlineSection>
-        <InlineSection>
-          <Label>Telefon</Label>
-          <FormInputError>
-            <input type="tel" {...register('phone')} />
-          </FormInputError>
-        </InlineSection>
-        <InlineSection>
-          <Label required>E-mail</Label>
-          <FormInputError>
-            <input type="email" {...register('email')} />
-          </FormInputError>
-        </InlineSection>
-        <InlineSection>
-          <Label>Poznámka</Label>
-          <FormInputError>
-            <textarea {...register('note')} />
-          </FormInputError>
-        </InlineSection>
-        <input type="reset" value="Zrušit" />
-        <input type="submit" value="Pokračovat na dotazník" />
+              </div>
+            </FormInputError>
+          </InlineSection>
+          <InlineSection>
+            <Label>Telefon</Label>
+            <FormInputError>
+              <input type="tel" {...register('phone')} />
+            </FormInputError>
+          </InlineSection>
+          <InlineSection>
+            <Label required>E-mail</Label>
+            <FormInputError>
+              <input type="email" {...register('email')} />
+            </FormInputError>
+          </InlineSection>
+          <InlineSection>
+            <Label>Poznámka</Label>
+            <FormInputError>
+              <textarea {...register('note')} />
+            </FormInputError>
+          </InlineSection>
+          <nav>
+            <Button type="reset">Zrušit</Button>
+            <Button success type="submit">
+              {isNextStep ? (
+                <>
+                  Pokračovat na dotazník <FaAngleRight />
+                </>
+              ) : (
+                <>Odeslat přihlášku</>
+              )}
+            </Button>
+          </nav>
+        </FormSection>
       </form>
     </FormProvider>
   )
 }
 
 const QuestionnaireForm = ({
-  onSubmit,
+  id,
   questions,
+  onSubmit,
+  onReset,
+  onBack,
+  onError,
 }: {
-  onSubmit?: (data: QuestionnaireShape) => void
+  id: string
   questions: Question[]
+  onSubmit: (data: QuestionnaireShape) => void
+  onReset: FormEventHandler<HTMLFormElement>
+  onBack: () => void
+  onError: (e?: FieldErrorsImpl) => void
 }) => {
+  const persistedData = usePersistentFormData(
+    'registration',
+    id,
+  ) as Partial<RegistrationFormShape>
+
   const methods = useForm<QuestionnaireShape>({
-    defaultValues: {
-      answers: questions.map(question => ({
-        questionId: question.id,
-        answer: '',
-      })),
-    },
+    defaultValues: merge(
+      {
+        answers: questions.map(
+          question =>
+            ({
+              question: question.id,
+              answer: '',
+            } as unknown as EventApplication['answers'][0]),
+        ),
+      },
+      pick(persistedData, 'answers'),
+    ),
   })
-  const { register } = methods
+  const { register, watch, control } = methods
+  usePersistForm('registration', id, watch)
 
   const handleSubmit = methods.handleSubmit(
     data => {
-      onSubmit?.(data)
+      onSubmit(data)
     },
     errors => {
-      console.log(errors)
+      onError(errors)
     },
   )
 
+  const { fields } = useFieldArray({ control, name: 'answers' })
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit}>
-        {questions.map(question => (
-          <FormSubsubsection
-            key={question.id}
-            header={question.question}
-            required={question.is_required}
-          >
-            <textarea
-              {...register(`answers.${question.id}.answer` as const)}
-            ></textarea>
-          </FormSubsubsection>
-        ))}
+      <form onSubmit={handleSubmit} onReset={onReset}>
+        <FormSection>
+          {fields.map((field, index) => {
+            const question = questions[index]
+            return (
+              <FormSubsubsection
+                key={field.id}
+                header={question.question}
+                required={question.is_required}
+              >
+                <FormInputError>
+                  <textarea
+                    {...register(`answers.${index}.answer` as const, {
+                      required: question.is_required && required,
+                    })}
+                  ></textarea>
+                </FormInputError>
+              </FormSubsubsection>
+            )
+          })}
+          <nav>
+            <Button type="button" onClick={onBack}>
+              <FaAngleLeft /> Zpět na osobní údaje
+            </Button>
+            <Button type="reset">Zrušit</Button>
+            <Button success type="submit">
+              Odeslat přihlášku
+            </Button>
+          </nav>
+        </FormSection>
       </form>
     </FormProvider>
   )
