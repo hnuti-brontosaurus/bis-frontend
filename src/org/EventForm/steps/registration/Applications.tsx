@@ -2,17 +2,24 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { FC, useState } from 'react'
 import { api } from '../../../../app/services/bis'
 import { EventApplication } from '../../../../app/services/testApi'
+import { ReactComponent as Bin } from '../../../../assets/trash-solid.svg'
+import { ReactComponent as AddUser } from '../../../../assets/user-plus-solid.svg'
 import AddParticipantModal from '../../../../components/AddParticipantModal'
 import Loading from '../../../../components/Loading'
 import NewApplicationModal from '../../../../components/NewApplicationModal'
+import ShowApplicationModal from '../../../../components/ShowApplicationModal'
+import stylesTable from '../../../../components/Table.module.scss'
 import styles from '../ParticipantsStep.module.scss'
 
-const ParticipantsStep: FC<{
+const Applications: FC<{
   eventId: number
-}> = ({ eventId }) => {
+  eventName: string
+}> = ({ eventId, eventName }) => {
   const [showNewApplicationModal, setShowNewApplicationModal] =
     useState<boolean>(false)
   const [showAddParticipantModal, setShowAddParticipantModal] =
+    useState<boolean>(false)
+  const [showShowApplicationModal, setShowShowApplicationModal] =
     useState<boolean>(false)
   const [currentApplicationId, setCurrentApplicationId] = useState<number>()
 
@@ -38,13 +45,36 @@ const ParticipantsStep: FC<{
       pageSize: 10000,
     })
 
+  const handleShowApplication = (id: number) => {
+    setCurrentApplicationId(id)
+    setShowShowApplicationModal(true)
+  }
+
+  const thereAreApplications =
+    applications && applications.results && applications.results.length !== 0
+
+  console.log('emptyyy?', thereAreApplications)
   return (
     <>
       <div className={styles.ListContainer}>
         <h2>Prihlaseni</h2>
         <div className={styles.buttonsContainer}>
-          <button type="button">Export do csv (WIP)</button>
-          <button type="button">Tisknij prezencni listinu (WIP)</button>
+          <button
+            type="button"
+            className={
+              !thereAreApplications ? styles.disabledButton : undefined
+            }
+          >
+            Export do csv (WIP)
+          </button>
+          <button
+            type="button"
+            className={
+              !thereAreApplications ? styles.disabledButton : undefined
+            }
+          >
+            Tisknij prezencni listinu (WIP)
+          </button>
         </div>
         <div className={styles.searchContainer}>
           <div className={styles.searchBox}>
@@ -60,9 +90,7 @@ const ParticipantsStep: FC<{
         </div>
         {!isReadApplicationsLoading ? (
           <div>
-            {applications &&
-            applications.results &&
-            applications.results.length !== 0 ? (
+            {thereAreApplications ? (
               <table className={styles.table}>
                 <thead>
                   <tr>
@@ -74,10 +102,19 @@ const ParticipantsStep: FC<{
                 <tbody>
                   {applications.results.map((application: EventApplication) => (
                     <tr>
-                      <td>
+                      <td onClick={() => handleShowApplication(application.id)}>
                         {application.first_name}, {application.last_name}
                         {application.birthday && ', '}
                         {application.birthday}
+                      </td>
+                      <td
+                        onClick={() => {
+                          setCurrentApplicationId(application.id)
+                          setShowAddParticipantModal(true)
+                        }}
+                        className={stylesTable.cellWithButton}
+                      >
+                        <AddUser className={styles.addUserIconContainer} />
                       </td>
                       <td
                         onClick={() => {
@@ -86,25 +123,24 @@ const ParticipantsStep: FC<{
                             eventId,
                           })
                         }}
-                        className={styles.cellWithButton}
+                        className={stylesTable.cellWithButton}
                       >
-                        X
-                      </td>
-                      <td
-                        onClick={() => {
-                          setCurrentApplicationId(application.id)
-                          setShowAddParticipantModal(true)
-                        }}
-                        className={styles.cellWithButton}
-                      >
-                        {'->'}
+                        {/* <div className={styles.binIconContainer}> */}
+                        <Bin className={styles.binIconContainer}></Bin>
+                        {/* </div> */}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <>Pusty seznam</>
+              <div className={styles.emptyListBox}>
+                <img
+                  src="https://i.ibb.co/m0GQt2K/kroliczek.png"
+                  width="200"
+                ></img>
+                <div>Jesce se nikdo neprihlasil</div>
+              </div>
             )}
           </div>
         ) : (
@@ -132,9 +168,23 @@ const ParticipantsStep: FC<{
             }
           />
         )}
+        {currentApplication && (
+          <ShowApplicationModal
+            open={showShowApplicationModal}
+            onClose={() => {
+              setShowShowApplicationModal(false)
+            }}
+            currentApplication={currentApplication}
+            eventName={eventName}
+            eventId={eventId}
+            setCurrentApplicationId={setCurrentApplicationId}
+            setShowAddParticipantModal={setShowAddParticipantModal}
+            deleteEventApplication={deleteEventApplication}
+          ></ShowApplicationModal>
+        )}
       </div>
     </>
   )
 }
 
-export default ParticipantsStep
+export default Applications

@@ -1,11 +1,15 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { FC, FormEventHandler, useCallback } from 'react'
+import { FC, FormEventHandler } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import * as yup from 'yup'
 import { api } from '../app/services/bis'
 import { EventApplication } from '../app/services/testApi'
+import { required } from '../utils/validationMessages'
 import FormInputError from './FormInputError'
+import { FullSizeElement, InlineSection, Label } from './FormLayout'
+import styles from './NewApplicationModal.module.scss'
+
 interface INewApplicationModalProps {
   open: boolean
   onClose: () => void
@@ -15,99 +19,6 @@ interface INewApplicationModalProps {
 const phoneRegExp = /^(\+|00){0,1}[0-9]{1,3}[0-9]{4,14}(?:x.+)?$/
 const zipcodeRegExp = /\d{3} ?\d{2}/
 
-const validationSchema = yup.object().shape(
-  {
-    first_name: yup.string().required('Required').trim(),
-    last_name: yup.string().required('Required'),
-    nickname: yup.string().trim(),
-    email: yup
-      .string()
-      .email()
-      .when('phone', {
-        // @ts-ignore
-        is: (phone: string) => !phone || phone.length === 0,
-        then: schema => schema.email().required('email or phone is required'),
-        // otherwise: schema => schema.string(),
-      }),
-    // let schema = object({
-    //   isBig: boolean(),
-    //   count: number()
-    //     .when('isBig', {
-    //       is: true, // alternatively: (val) => val == true
-    //       then: (schema) => schema.min(5),
-    //       otherwise: (schema) => schema.min(0),
-    //     })
-    //     .when('$other', ([other], schema) =>
-    //       other === 4 ? schema.max(6) : schema,
-    //     ),
-    // });
-
-    // phone: yup.string().when('email', {
-    //   // @ts-ignore
-    //   is: (email: string) => !email || email.length === 0,
-    //   // @ts-ignore
-    //   then: yup
-    //     .string()
-    //     .when('phone', {
-    //       is: (phone: string) => !phone || phone.length === 0,
-    //       then: yup.string().required('email or phone is required'),
-    //     })
-    //     .required()
-    //     .matches(phoneRegExp, 'Phone number is not valid'),
-    //   otherwise: yup.string(),
-    // }),
-    birthday: yup
-      .date()
-      .nullable()
-      .transform((curr, orig) => (orig === '' ? null : curr)),
-    close_person: yup.object().shape({
-      first_name: yup.string().required(),
-      last_name: yup.string().required(),
-      email: yup.string().email().required('email or phone is required'),
-    }),
-    address: yup.object().shape({
-      street: yup.string().required(),
-      city: yup.string().required(),
-      zip_code: yup.string().required().matches(zipcodeRegExp),
-      region: yup.string().required(),
-    }),
-  },
-  [['email', 'phone']],
-)
-
-const useYupValidationResolver = (validationSchema: any) =>
-  useCallback(
-    async (data: any) => {
-      try {
-        const values = await validationSchema.validate(data, {
-          abortEarly: false,
-        })
-
-        return {
-          values,
-          errors: {},
-        }
-      } catch (errors: any) {
-        return {
-          values: {},
-          errors:
-            errors?.inner &&
-            errors?.inner.reduce(
-              (allErrors: any, currentError: any) => ({
-                ...allErrors,
-                [currentError.path]: {
-                  type: currentError.type ?? 'validation',
-                  message: currentError.message,
-                },
-              }),
-              {},
-            ),
-        }
-      }
-    },
-    [validationSchema],
-  )
-
 // TODO: This modal is still WIP (no need to review atm)
 
 const NewApplicationModal: FC<INewApplicationModalProps> = ({
@@ -115,258 +26,268 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
   onClose,
   eventId,
 }) => {
-  const resolver = useYupValidationResolver(validationSchema)
+  const [createEventApplication, { isLoading: isSavingOpportunity }] =
+    api.endpoints.createEventApplication.useMutation()
+
+  const { data: questions } = api.endpoints.readEventQuestions.useQuery({
+    eventId,
+  })
+
+  const validationSchema = yup.object().shape(
+    {
+      // first_name: yup.string().required('Required').trim(),
+      last_name: yup.string().required('Required'),
+      nickname: yup.string().trim(),
+      email: yup.string().email().required('email or phone is required'),
+      // otherwise: schema => schema.string(),
+      phone: yup
+        .string()
+        .required()
+        .matches(phoneRegExp, 'Phone number is not valid'),
+      birthday: yup
+        .date()
+        .nullable()
+        .transform((curr, orig) => (orig === '' ? null : curr)),
+      close_person: yup.object().shape({
+        first_name: yup.string().required(),
+        last_name: yup.string().required(),
+        email: yup.string().email().required('email or phone is required'),
+      }),
+      answers: yup.array().of(
+        yup.object({
+          is_required: yup.boolean(),
+          answer: yup.string().when('is_required', {
+            is: true,
+            then: schema => schema.required('Musisz odpvedet na tu otazku'),
+          }),
+        }),
+      ),
+    },
+    [['email', 'phone']],
+  )
 
   const methods = useForm<EventApplication>({
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-      first_name: 'Talita',
-      last_name: 'Dzik',
-      email: 'examplke@exaple.com',
-      address: {
-        street: 'Slowicza',
-        zip_code: '05807',
-        city: 'Podkowa Lesna',
-        //TODO: region: 1, //{ id: 1, name: 'praha' },
-      },
-      close_person: {
-        first_name: 'close',
-        last_name: 'jdjdjdjdjd',
-        email: 'dzik@example.com',
-      },
-    },
+    // defaultValues: {
+    //   first_name: 'Talita',
+    //   last_name: 'Dzik',
+    //   email: 'examplke@exaple.com',
+    //   address: {
+    //     street: 'Slowicza',
+    //     zip_code: '05807',
+    //     city: 'Podkowa Lesna',
+    //     //TODO: region: 1, //{ id: 1, name: 'praha' },
+    //   },
+    //   close_person: {
+    //     first_name: 'close',
+    //     last_name: 'jdjdjdjdjd',
+    //     email: 'dzik@example.com',
+    //   },
+    // },
   })
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = methods
-
-  const [createEventApplication, { isLoading: isSavingOpportunity }] =
-    api.endpoints.createEventApplication.useMutation()
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.stopPropagation()
     handleSubmit(async data => {
-      await createEventApplication({
-        application: { ...data, answers: [] },
+      // await createEventApplication({
+      //   application: { ...data, answers: [] },
+      //   eventId,
+      // }
+      const filteredAnswers = data.answers
+        .filter(answer => answer.answer !== '')
+        .map(answer => ({ ...answer, question: answer.question.id }))
+
+      const eventDataWithAnswers = {
+        application: { ...data, answers: filteredAnswers },
         eventId,
-      })
+      }
+      console.log('ANSWERS DATA', eventDataWithAnswers)
+
+      await createEventApplication(eventDataWithAnswers)
       onClose()
     })(e)
   }
   if (!open) return null
 
   return (
-    <Modal isOpen={open} onRequestClose={onClose} contentLabel="Example Modal">
+    <Modal
+      isOpen={open}
+      onRequestClose={() => {
+        onClose()
+        reset()
+      }}
+      contentLabel="Example Modal"
+      className={styles.modal}
+      overlayClassName={styles.overlay}
+    >
       <div
         onClick={e => {
           e.stopPropagation()
         }}
+        className={styles.content}
       >
-        <div>
-          <div>Pridat Noveho prihlaseneho</div>
-          <div>{/* <input type="checkbox"></input>je to dite */}</div>
+        <div className={styles.modalTitleBox}>
+          <h2>Nova prihlaska</h2>
         </div>
-        <div>
+        <div className={styles.modalFormBox}>
           <FormProvider {...methods}>
             <form onSubmit={handleFormSubmit}>
               <>
-                <label>
-                  <p>
-                    Jmeno*:
-                    <FormInputError>
-                      <input
-                        id="first_name"
-                        type="text"
-                        {...register('first_name', { required: true })}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                {errors.first_name?.message}
+                <h3>Dane prihlaseneho:</h3>
 
-                <label>
-                  <p>
-                    Prijmeni*:
-                    <FormInputError>
-                      <input
-                        id="last_name"
-                        type="text"
-                        {...register('last_name')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    Prezdivka:
+                <InlineSection>
+                  <Label htmlFor="first_name" required>
+                    Jmeno
+                  </Label>
+                  <FormInputError>
                     <input
-                      id="nickname"
                       type="text"
+                      id="first_name"
+                      {...register('first_name', { required: 'jaaaaaaaaa' })}
+                    />
+                  </FormInputError>
+                  <Label htmlFor="last_name" required>
+                    Prijmeni
+                  </Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      id="last_name"
+                      {...register('last_name', { required })}
+                    />
+                  </FormInputError>
+                </InlineSection>
+
+                <InlineSection>
+                  <Label htmlFor="nickname">Prezdivka</Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      id="nickname"
                       {...register('nickname')}
                     />
-                  </p>
-                </label>
+                  </FormInputError>
+                </InlineSection>
 
-                <label>
-                  <p>
-                    Telefon:
-                    <FormInputError>
-                      <input id="phone" type="text" {...register('phone')} />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    E-mail:
-                    <FormInputError>
-                      <input id="email" type="text" {...register('email')} />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    Datum narozeni:
+                <InlineSection>
+                  <Label htmlFor="phone" required>
+                    Telefon
+                  </Label>
+                  <FormInputError>
+                    <input type="tel" id="phone" {...register('phone')} />
+                  </FormInputError>
+                  <Label htmlFor="email" required>
+                    E-mail
+                  </Label>
+                  <FormInputError>
+                    <input type="email" id="email" {...register('email')} />
+                  </FormInputError>
+                </InlineSection>
+
+                <InlineSection>
+                  <Label htmlFor="birthday">Datum narozeni</Label>
+                  <FormInputError>
                     <input
-                      id="birthdate"
                       type="date"
+                      id="birthday"
                       {...register('birthday')}
                     />
-                  </p>
-                </label>
-                <label>
-                  <p>
+                  </FormInputError>
+                </InlineSection>
+
+                <InlineSection>
+                  <Label htmlFor="health_issues">
                     Alergie a zdravotni omezeni:
-                    <input
+                  </Label>
+                  <FormInputError>
+                    <textarea
                       id="health_issues"
-                      type="text"
                       {...register('health_issues')}
                     />
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    Pohlavi*:
-                    <label htmlFor="male">Male</label>
-                    <input
-                      id="male"
-                      type="radio"
-                      {...register('sex')}
-                      value={1}
-                    />
-                    <label htmlFor="female">Female</label>
-                    <input
-                      id="female"
-                      type="radio"
-                      {...register('sex')}
-                      value={2}
-                    />
-                    <label htmlFor="other">Other</label>
-                    <input
-                      id="other"
-                      type="radio"
-                      {...register('sex')}
-                      value={0}
-                    />
-                  </p>
-                </label>
+                  </FormInputError>
+                </InlineSection>
 
-                <h3>Trvala adresa:</h3>
-                <label>
-                  Ulice*:
-                  <p>
-                    <FormInputError>
-                      <input
-                        id="address_street"
-                        type="text"
-                        {...register('address.street')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  PSC*:
-                  <p>
-                    <FormInputError>
-                      <input
-                        id="address_zip_code"
-                        type="text"
-                        {...register('address.zip_code')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  Mesto*:
-                  <p>
-                    <FormInputError>
-                      <input
-                        id="address_city"
-                        type="text"
-                        {...register('address.city')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  Region*:
-                  <p>
-                    <FormInputError>
-                      <input
-                        id="address_region"
-                        type="text"
-                        {...register('address.region')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
                 <h3>Bliska osoba:</h3>
 
-                <label>
-                  <p>
-                    Jmeno*:
-                    <FormInputError>
-                      <input
-                        id="close_person_first_name"
-                        type="text"
-                        {...register('close_person.first_name')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    Prijmeni*:
-                    <FormInputError>
-                      <input
-                        id="close_person_last_name"
-                        type="text"
-                        {...register('close_person.last_name')}
-                      />
-                    </FormInputError>
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    Telefon:
+                <InlineSection>
+                  <Label htmlFor="close_person_first_name">Jmeno</Label>
+                  <FormInputError>
                     <input
-                      id="close_person_phone"
                       type="text"
+                      id="close_person_first_name"
+                      {...register('close_person.first_name')}
+                    />
+                  </FormInputError>
+                  <Label htmlFor="close_person_last_name">Prijmeni</Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      id="close_person_last_name"
+                      {...register('close_person.last_name')}
+                    />
+                  </FormInputError>
+                </InlineSection>
+
+                <InlineSection>
+                  <Label htmlFor="close_person_phone">Telefon</Label>
+                  <FormInputError>
+                    <input
+                      type="date"
+                      id="close_person_phone"
                       {...register('close_person.phone')}
                     />
-                  </p>
-                </label>
-                <label>
-                  <p>
-                    E-mail:
+                  </FormInputError>
+                  <Label htmlFor="close_person_email">E-mail</Label>
+                  <FormInputError>
                     <input
+                      type="date"
                       id="close_person_email"
-                      type="text"
                       {...register('close_person.email')}
                     />
-                  </p>
-                </label>
+                  </FormInputError>
+                </InlineSection>
+                {questions && (
+                  <>
+                    <h3>Otazky:</h3>
+                    {questions.results.map((question: any, i) => {
+                      console.log(question.is_required)
+
+                      return (
+                        <>
+                          {' '}
+                          <p>
+                            <Label
+                              htmlFor={`answers.${i}`}
+                              required={question.is_required ? true : false}
+                            >
+                              {question.question}
+                            </Label>
+                          </p>
+                          <FullSizeElement>
+                            <FormInputError>
+                              <textarea
+                                id={`answers.${i}`}
+                                {...register(`answers.${i}`, {
+                                  setValueAs: v => ({
+                                    is_required: question?.is_required,
+                                    answer: v,
+                                    question: question.id,
+                                  }),
+                                })}
+                              />
+                            </FormInputError>
+                          </FullSizeElement>
+                        </>
+                      )
+                    })}
+                  </>
+                )}
 
                 <input type="submit" value="Add aplication" />
               </>

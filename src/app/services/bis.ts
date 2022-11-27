@@ -24,7 +24,7 @@ import {
   Question,
   Questionnaire,
   Registration,
-  User,
+  User
 } from './testApi'
 
 export type PaginatedList<T> = {

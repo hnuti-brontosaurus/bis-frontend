@@ -1,3 +1,5 @@
+@use '../../../colors';
+
 h2 {
   font-family: Arial, Helvetica, sans-serif;
   font-weight: 600;
@@ -21,6 +23,7 @@ h2 {
 
   tbody {
     td {
+      cursor: pointer;
       text-align: center;
       &:nth-child(1),
       &:nth-child(2) {
@@ -49,6 +52,26 @@ h2 {
       border-right: 1px solid #d9d9d9;
       text-align: center;
     }
+  }
+}
+
+.binIconContainer {
+  width: 14px;
+  path {
+    fill: colors.$edit-event-main;
+  }
+}
+.addUserIconContainer {
+  width: 20px;
+  path {
+    fill: colors.$close-event-main;
+  }
+}
+
+.editUserIconContainer {
+  width: 20px;
+  path {
+    fill: colors.$edit;
   }
 }
 
@@ -94,6 +117,7 @@ h2 {
           border-radius: 4px;
           margin-right: 8px;
           background-color: none;
+          cursor: pointer;
         }
 
         button:hover {
@@ -101,5 +125,29 @@ h2 {
         }
       }
     }
+
+    .emptyListBox {
+      width: 100%;
+      height: 300px;
+      border: solid 2px #f8f8fa;
+      color: #737373;
+      img {
+        width: 80px;
+        margin: 80px auto 0;
+      }
+      div {
+        margin: 0px auto 70px;
+        width: 210px;
+      }
+    }
+  }
+}
+
+.disabledButton {
+  border: 1px solid #f8f8fa !important;
+  cursor: not-allowed !important;
+  color: #737373 !important;
+  &:hover {
+    background-color: white !important;
   }
 }
