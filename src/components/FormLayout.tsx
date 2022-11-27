@@ -133,3 +133,7 @@ export const FullSizeElement = ({ children }: HTMLProps<HTMLDivElement>) => (
 export const InlineSection = ({ children }: HTMLProps<HTMLDivElement>) => (
   <div className={styles.inline}>{children}</div>
 )
+
+export const Actions = ({ children }: HTMLProps<HTMLElement>) => (
+  <nav className={styles.actions}>{children}</nav>
+)

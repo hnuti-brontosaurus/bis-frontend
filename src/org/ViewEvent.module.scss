@@ -2,20 +2,6 @@
 @use '../media';
 
 .wrapper {
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin: 1rem 0;
-
-    @include media.for-phone-only {
-      > * {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-  }
-
   .name {
     font-size: 2rem;
     font-weight: bold;

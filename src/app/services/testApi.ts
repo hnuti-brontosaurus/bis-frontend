@@ -2888,9 +2888,10 @@ export type EventApplication = {
   health_issues?: string
   sex: SexCategory
   created_at: string
-  close_person: EventApplicationClosePerson
-  address: EventApplicationAddress
+  close_person: EventApplicationClosePerson | null
+  address: EventApplicationAddress | null
   answers: Answer[]
+  note?: string
 }
 export type PaginatedEventApplicationList = {
   count?: number
@@ -2910,9 +2911,10 @@ export type PatchedEventApplication = {
   health_issues?: string
   sex?: number | null
   created_at?: string
-  close_person?: EventApplicationClosePerson
-  address?: EventApplicationAddress
+  close_person?: EventApplicationClosePerson | null
+  address?: EventApplicationAddress | null
   answers?: Answer[]
+  note?: string
 }
 export type PaginatedQuestionList = {
   count?: number

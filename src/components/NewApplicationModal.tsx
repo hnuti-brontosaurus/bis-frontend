@@ -149,7 +149,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
     e.stopPropagation()
     handleSubmit(async data => {
       await createEventApplication({
-        user: { ...data, answers: [] },
+        application: { ...data, answers: [] },
         eventId,
       })
       onClose()
