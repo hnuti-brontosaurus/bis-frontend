@@ -212,7 +212,7 @@ const CloseEventForm = ({
           areParticipantsRequired={areParticipantsRequired}
           methods={participantsFormMethods}
         />
-        <ParticipantsStep eventId={event.id} />
+        <ParticipantsStep eventId={event.id} eventName={event.name} />
       </Step>
       <Step
         name="práce"
