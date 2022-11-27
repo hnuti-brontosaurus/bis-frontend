@@ -53,11 +53,11 @@ const BasicInfoStep = ({
                   <input
                     type="date"
                     id="start"
-                    {...register('startDate', { required })}
+                    {...register('start', { required })}
                   />
                 </FormInputError>
                 <FormInputError>
-                  <input type="time" {...register('startTime')} />
+                  <input type="time" {...register('start_time')} />
                 </FormInputError>
               </InlineSection>
               <InlineSection>

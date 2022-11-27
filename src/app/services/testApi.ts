@@ -2696,6 +2696,7 @@ export type Event = {
   is_canceled?: boolean
   is_closed?: boolean
   start: string
+  start_time?: string | null
   end: string
   number_of_sub_events?: number
   location?: number | null
@@ -2934,6 +2935,7 @@ export type PatchedEvent = {
   is_canceled?: boolean
   is_closed?: boolean
   start?: string
+  start_time?: string | null
   end?: string
   number_of_sub_events?: number
   location?: number | null
