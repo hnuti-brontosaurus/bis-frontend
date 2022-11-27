@@ -1,9 +1,12 @@
+@use 'colors';
+
 .header {
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
 }
 
+// styling of the information about event (date, location)
 .infoBox {
   margin: 1rem;
   display: flex;
@@ -15,4 +18,13 @@
     gap: 0.5rem;
     align-items: center;
   }
+}
+
+// styling of messages before and after event
+.info {
+  white-space: pre-wrap;
+  background-color: colors.$bronto;
+  color: white;
+  font-weight: bold;
+  padding: 1rem;
 }

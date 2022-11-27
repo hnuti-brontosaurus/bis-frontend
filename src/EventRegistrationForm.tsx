@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import dayjs from 'dayjs'
 import { merge, mergeWith, omit, padStart, pick, startsWith } from 'lodash'
-import { FormEventHandler, useEffect } from 'react'
+import { FormEventHandler, MouseEventHandler, useEffect } from 'react'
 import {
   FieldErrorsImpl,
   FormProvider,
@@ -15,11 +15,13 @@ import { EventApplication, Question, User } from './app/services/testApi'
 import { Button } from './components/Button'
 import FormInputError from './components/FormInputError'
 import {
+  Actions,
   FormSection,
   FormSubsubsection,
   InlineSection,
   Label,
 } from './components/FormLayout'
+import styles from './EventRegistration.module.scss'
 import { useShowMessage } from './features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -117,7 +119,7 @@ const EventRegistrationForm = ({
     persist({ step: 'finished' })
   }
 
-  const handleReset: FormEventHandler<HTMLFormElement> = e => {
+  const handleCancel: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
     clearPersistentData()
     onCancel()
@@ -132,7 +134,7 @@ const EventRegistrationForm = ({
     questionnaire && questionnaire.questions.length > 0,
   )
 
-  const handleClickFinish = () => {
+  const handleFinish = () => {
     clearPersistentData()
     onFinish()
   }
@@ -147,6 +149,7 @@ const EventRegistrationForm = ({
 
   return !data?.step || data.step === 'personal' ? (
     <PersonalDataForm
+      introduction={questionnaire?.introduction}
       initialData={initialPersonalData}
       isNextStep={showQuestionStep}
       id={id}
@@ -157,7 +160,7 @@ const EventRegistrationForm = ({
           handleSubmit()
         }
       }}
-      onReset={handleReset}
+      onCancel={handleCancel}
       onError={e => handleError(e)}
     />
   ) : questionnaire && showQuestionStep && data.step === 'questions' ? (
@@ -166,19 +169,15 @@ const EventRegistrationForm = ({
       id={id}
       questions={questionnaire.questions}
       onSubmit={handleSubmit}
-      onReset={handleReset}
+      onCancel={handleCancel}
       onError={e => handleError(e)}
     />
   ) : data.step === 'finished' ? (
-    <div>
-      {questionnaire?.after_submit_text || 'Děkujeme za přihlášku!'}
-      <Button success onClick={handleClickFinish}>
-        Hotovo!
-      </Button>
-      <Button success onClick={handleRestart}>
-        Přihlásit někoho dalšího
-      </Button>
-    </div>
+    <FinishedStep
+      message={questionnaire?.after_submit_text || 'Děkujeme za přihlášku!'}
+      onRestart={handleRestart}
+      onFinish={handleFinish}
+    />
   ) : (
     <>Toto se nemělo stát</>
   )
@@ -197,7 +196,7 @@ const personalDataSchema: yup.ObjectSchema<PersonalDataFormShape> = yup.object({
   first_name: yup.string().trim().required(),
   last_name: yup.string().trim().required(),
   email: yup.string().email().required(),
-  phone: yup.string(),
+  phone: yup.string().required(),
   note: yup.string(),
   birthdate: yup
     .object({
@@ -229,17 +228,19 @@ const personalDataSchema: yup.ObjectSchema<PersonalDataFormShape> = yup.object({
 
 const PersonalDataForm = ({
   id,
+  introduction,
   initialData,
   isNextStep,
   onSubmit,
-  onReset,
+  onCancel,
   onError,
 }: {
   id: string
+  introduction?: string
   initialData?: Partial<PersonalDataShape>
   isNextStep: boolean
   onSubmit: (data: PersonalDataShape) => void
-  onReset: FormEventHandler<HTMLFormElement>
+  onCancel: FormEventHandler<HTMLFormElement>
   onError: (e?: FieldErrorsImpl) => void
 }) => {
   const persistedData = usePersistentFormData(
@@ -274,82 +275,85 @@ const PersonalDataForm = ({
   }, [methods.formState.isSubmitted, trigger, watch])
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit} onReset={onReset}>
-        <FormSection>
-          <InlineSection>
-            <Label required>Jméno</Label>
-            <FormInputError>
-              <input type="text" {...register('first_name')} />
-            </FormInputError>
-          </InlineSection>
-          <InlineSection>
-            <Label required>Příjmení</Label>
-            <FormInputError>
-              <input type="text" {...register('last_name')} />
-            </FormInputError>
-          </InlineSection>
-          <InlineSection>
-            <Label required>Datum narození</Label>
-            <FormInputError name="birthdate">
-              <div>
-                <input
-                  type="text"
-                  placeholder="DD"
-                  maxLength={2}
-                  size={2}
-                  {...register('birthdate.day')}
-                />
-                <input
-                  type="text"
-                  placeholder="MM"
-                  maxLength={2}
-                  size={2}
-                  {...register('birthdate.month')}
-                />
-                <input
-                  type="text"
-                  placeholder="RRRR"
-                  maxLength={4}
-                  size={4}
-                  {...register('birthdate.year')}
-                />
-              </div>
-            </FormInputError>
-          </InlineSection>
-          <InlineSection>
-            <Label>Telefon</Label>
-            <FormInputError>
-              <input type="tel" {...register('phone')} />
-            </FormInputError>
-          </InlineSection>
-          <InlineSection>
-            <Label required>E-mail</Label>
-            <FormInputError>
-              <input type="email" {...register('email')} />
-            </FormInputError>
-          </InlineSection>
-          <InlineSection>
-            <Label>Poznámka</Label>
-            <FormInputError>
-              <textarea {...register('note')} />
-            </FormInputError>
-          </InlineSection>
-          <nav>
-            <Button type="reset">Zrušit</Button>
-            <Button success type="submit">
-              {isNextStep ? (
-                <>
-                  Pokračovat na dotazník <FaAngleRight />
-                </>
-              ) : (
-                <>Odeslat přihlášku</>
-              )}
-            </Button>
-          </nav>
-        </FormSection>
-      </form>
-    </FormProvider>
+    <>
+      {introduction && <div className={styles.info}>{introduction}</div>}
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit} onReset={onCancel}>
+          <FormSection>
+            <InlineSection>
+              <Label required>Jméno</Label>
+              <FormInputError>
+                <input type="text" {...register('first_name')} />
+              </FormInputError>
+            </InlineSection>
+            <InlineSection>
+              <Label required>Příjmení</Label>
+              <FormInputError>
+                <input type="text" {...register('last_name')} />
+              </FormInputError>
+            </InlineSection>
+            <InlineSection>
+              <Label required>Datum narození</Label>
+              <FormInputError name="birthdate">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="DD"
+                    maxLength={2}
+                    size={2}
+                    {...register('birthdate.day')}
+                  />
+                  <input
+                    type="text"
+                    placeholder="MM"
+                    maxLength={2}
+                    size={2}
+                    {...register('birthdate.month')}
+                  />
+                  <input
+                    type="text"
+                    placeholder="RRRR"
+                    maxLength={4}
+                    size={4}
+                    {...register('birthdate.year')}
+                  />
+                </div>
+              </FormInputError>
+            </InlineSection>
+            <InlineSection>
+              <Label required>Telefon</Label>
+              <FormInputError>
+                <input type="tel" {...register('phone')} />
+              </FormInputError>
+            </InlineSection>
+            <InlineSection>
+              <Label required>E-mail</Label>
+              <FormInputError>
+                <input type="email" {...register('email')} />
+              </FormInputError>
+            </InlineSection>
+            <InlineSection>
+              <Label>Poznámka</Label>
+              <FormInputError>
+                <textarea {...register('note')} />
+              </FormInputError>
+            </InlineSection>
+            <nav>
+              <Button type="reset">Zrušit</Button>
+              <Button success type="submit">
+                {isNextStep ? (
+                  <>
+                    Pokračovat na dotazník <FaAngleRight />
+                  </>
+                ) : (
+                  <>Odeslat přihlášku</>
+                )}
+              </Button>
+            </nav>
+          </FormSection>
+        </form>
+      </FormProvider>
+    </>
   )
 }
 
@@ -357,14 +361,14 @@ const QuestionnaireForm = ({
   id,
   questions,
   onSubmit,
-  onReset,
+  onCancel,
   onBack,
   onError,
 }: {
   id: string
   questions: Question[]
   onSubmit: (data: QuestionnaireShape) => void
-  onReset: FormEventHandler<HTMLFormElement>
+  onCancel: FormEventHandler<HTMLFormElement>
   onBack: () => void
   onError: (e?: FieldErrorsImpl) => void
 }) => {
@@ -403,7 +407,7 @@ const QuestionnaireForm = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit} onReset={onReset}>
+      <form onSubmit={handleSubmit} onReset={onCancel}>
         <FormSection>
           {fields.map((field, index) => {
             const question = questions[index]
@@ -435,5 +439,29 @@ const QuestionnaireForm = ({
         </FormSection>
       </form>
     </FormProvider>
+  )
+}
+
+export const FinishedStep = ({
+  message,
+  onFinish,
+  onRestart,
+}: {
+  message: string
+  onFinish: MouseEventHandler<HTMLButtonElement>
+  onRestart: MouseEventHandler<HTMLButtonElement>
+}) => {
+  return (
+    <div>
+      <div className={styles.info}>{message}</div>
+      <Actions>
+        <Button success onClick={onFinish}>
+          Hotovo!
+        </Button>
+        <Button success onClick={onRestart}>
+          Přihlásit někoho dalšího
+        </Button>
+      </Actions>
+    </div>
   )
 }
