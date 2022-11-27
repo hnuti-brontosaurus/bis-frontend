@@ -20,9 +20,7 @@ import {
   getIdBySlug,
   getIdsBySlugs,
   hasFormError,
-  joinDateTime,
   pickErrors,
-  splitDateTime,
 } from '../utils/helpers'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
@@ -60,8 +58,6 @@ export type SubmitShape = Assign<
 export type EventFormShape = Assign<
   SubmitShape,
   {
-    startDate: string
-    startTime: string
     // online is an internal variable
     // it doesn't get sent to API
     // we only keep track of whether to save location or online_link
@@ -84,8 +80,7 @@ const shapes = {
   basicInfo: [
     'name',
     'start',
-    'startDate',
-    'startTime',
+    'start_time',
     'end',
     'number_of_sub_events',
     'category',
@@ -188,9 +183,6 @@ const initialData2form = (
   }
 
   returnData.online = data?.online_link ? true : false
-  const [startDate, startTime] = splitDateTime(data?.start ?? '')
-  returnData.startDate = startDate
-  returnData.startTime = startTime
 
   return returnData
 }
@@ -233,7 +225,11 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
   } else {
     finalData.online_link = ''
   }
-  finalData.start = joinDateTime(data.startDate, data.startTime)
+
+  if (!data.start_time) {
+    finalData.start_time = null
+  }
+
   return finalData
 }
 
@@ -335,7 +331,6 @@ const EventForm: FC<{
   useEffect(() => {
     // don't overwrite unsaved values
     if (initialOtherOrganizers && !savedData) {
-      console.log(initialOtherOrganizers)
       methods.organizers.setValue(
         'other_organizers',
         initialOtherOrganizers.results.filter(user => Boolean(user)) as User[],
