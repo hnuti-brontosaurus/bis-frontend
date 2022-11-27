@@ -170,14 +170,28 @@ export const formatDateRange = (startDate: string, endDate: string) => {
   return dateTimeFormat.formatRange(new Date(startDate), new Date(endDate))
 }
 
-export const formatDateTime = (datetime: string): string => {
-  const dateTimeFormat = new Intl.DateTimeFormat('cs', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  })
-
-  return dateTimeFormat.format(new Date(datetime))
+/**
+ * provide date as YYYY-MM-DD and time (optionally) as hh:mm
+ * and this function returns nicely formated datetime (or date (if time is omitted))
+ * locale is czech, feel free to make the function more generic if you need
+ */
+export const formatDateTime = (date: string, time?: string): string => {
+  if (time) {
+    const dateTimeFormat = new Intl.DateTimeFormat('cs', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    })
+    const datetime = joinDateTime(date, time)
+    return dateTimeFormat.format(new Date(datetime))
+  } else {
+    const dateTimeFormat = new Intl.DateTimeFormat('cs', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    })
+    return dateTimeFormat.format(new Date(date))
+  }
 }

@@ -128,7 +128,9 @@ const ViewEvent = () => {
             </tr>
             <tr>
               <th>Začátek akce</th>
-              <td>{formatDateTime(event.start)}</td>
+              <td>
+                {formatDateTime(event.start, event.start_time ?? undefined)}
+              </td>
             </tr>
             <tr>
               <th>Cena</th>
