@@ -1,10 +1,11 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Overwrite } from 'utility-types'
+import { Assign, Overwrite } from 'utility-types'
 import { ClearBounds } from '../../components/Map'
 import { RootState } from '../store'
 import {
   AdministrationUnit,
+  Answer,
   DietCategory,
   Event,
   EventApplication,
@@ -21,6 +22,8 @@ import {
   Propagation,
   QualificationCategory,
   Question,
+  Questionnaire,
+  Registration,
   User,
 } from './testApi'
 
@@ -448,6 +451,9 @@ export const api = createApi({
       query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
       providesTags: (result, error, { id }) => [{ type: 'Event', id }],
     }),
+    readWebEvent: build.query<WebEvent, { id: number }>({
+      query: queryArg => ({ url: `web/events/${queryArg.id}/` }),
+    }),
     updateEvent: build.mutation<
       Event,
       { id: number; event: Partial<EventPayload> }
@@ -715,12 +721,12 @@ export const api = createApi({
     }),
     createEventApplication: build.mutation<
       EventApplication,
-      { user: EventApplication; eventId: number }
+      { application: EventApplicationPayload; eventId: number }
     >({
-      query: ({ user, eventId }) => ({
+      query: ({ application, eventId }) => ({
         url: `frontend/events/${eventId}/registration/applications/`,
         method: 'POST',
-        body: user,
+        body: application,
       }),
       invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
     }),
@@ -895,3 +901,24 @@ export type CorrectLocation = Overwrite<
     }
   }
 >
+
+export type WebQuestionnaire = Assign<Questionnaire, { questions: Question[] }>
+type WebRegistration = Overwrite<
+  Registration,
+  { questionnaire: WebQuestionnaire | null }
+>
+
+export type WebEvent = Overwrite<
+  Event,
+  {
+    registration: WebRegistration | null
+    location?: Location
+  }
+>
+
+export type AnswerPayload = Overwrite<Answer, { question: number }>
+
+export type EventApplicationPayload = Pick<
+  EventApplication,
+  'first_name' | 'last_name' | 'phone' | 'email' | 'birthday'
+> & { answers: AnswerPayload[] }

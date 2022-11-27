@@ -5,7 +5,7 @@ import UnauthenticatedLayout from '../UnauthenticatedLayout'
 import { isOrganizer } from './helpers'
 
 const UnauthenticatedOutlet = () => {
-  const { data: user, isLoading, isAuthenticated } = useCurrentUser()
+  const { data: user, isAuthenticated } = useCurrentUser()
   const [searchParams] = useSearchParams()
 
   if (user) {

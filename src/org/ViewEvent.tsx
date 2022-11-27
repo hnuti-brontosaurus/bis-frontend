@@ -11,6 +11,7 @@ import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import { Button, ButtonLink } from '../components/Button'
+import { Actions } from '../components/FormLayout'
 import Loading from '../components/Loading'
 import { useRemoveEvent } from '../hooks/removeEvent'
 import { formatDateRange, formatDateTime } from '../utils/helpers'
@@ -54,7 +55,7 @@ const ViewEvent = () => {
   return (
     <div className={styles.wrapper}>
       <header className={styles.name}>{event.name}</header>
-      <nav className={styles.actions}>
+      <Actions>
         <ButtonLink success to={`/org/akce/${eventId}/upravit`}>
           <FaPencilAlt /> upravit
         </ButtonLink>
@@ -67,7 +68,7 @@ const ViewEvent = () => {
         <Button danger onClick={() => removeEvent(event)}>
           <FaTrashAlt /> smazat
         </Button>
-      </nav>
+      </Actions>
 
       <div className={styles.infoBox}>
         <div>

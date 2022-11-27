@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { UseFormWatch } from 'react-hook-form'
+import { DeepPartial } from 'utility-types'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   actions,
   PersistentFormType,
+  PersistentFormValue,
   selectFormByTypeAndId,
 } from '../features/form/formSlice'
 import { useDebouncedDispatch } from '../hooks/debouncedDispatch'
@@ -61,6 +63,21 @@ export const usePersistForm = (
       return () => subscription.unsubscribe()
     }, [watch, debouncedDispatch, id, type])
   }
+}
+
+/**
+ * Given the type and id from react-hook-forms
+ * this hook will return method for saving partial form declaratively
+ *
+ * Usage:
+ * const persist = useDirectPersistForm('opportunity', id)
+ * persist({ asdf: 'ghjkl' })
+ */
+export const useDirectPersistForm = (type: PersistentFormType, id: string) => {
+  const dispatch = useAppDispatch()
+  const persist = (data: DeepPartial<PersistentFormValue<typeof type>>) =>
+    dispatch(actions.saveForm({ type, id, data }))
+  return persist
 }
 
 /**

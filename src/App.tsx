@@ -1,6 +1,7 @@
 import { Route } from 'react-router-dom'
 import AdminRedirect from './AdminRedirect'
 import { Routes } from './config/sentry'
+import EventRegistration from './EventRegistration'
 import Home from './Home'
 import Login from './Login'
 import NotFound from './NotFound'
@@ -20,12 +21,19 @@ import ViewOpportunity from './org/ViewOpportunity'
 import ResetPassword from './ResetPassword'
 import SendResetPasswordLink from './SendResetPasswordLink'
 import AuthenticatedOutlet from './utils/AuthenticatedOutlet'
+import MixedOutlet from './utils/MixedOutlet'
 import OrganizerOutlet from './utils/OrganizerOutlet'
 import UnauthenticatedOutlet from './utils/UnauthenticatedOutlet'
 
 function App() {
   return (
     <Routes>
+      <Route element={<MixedOutlet />}>
+        <Route
+          path="/akce/:eventId/prihlasit"
+          element={<EventRegistration />}
+        />
+      </Route>
       <Route element={<UnauthenticatedOutlet />}>
         <Route path="/login" element={<Login />} />
         <Route
