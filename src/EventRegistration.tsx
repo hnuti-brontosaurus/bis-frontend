@@ -6,12 +6,14 @@ import Error from './components/Error'
 import Loading from './components/Loading'
 import styles from './EventRegistration.module.scss'
 import EventRegistrationForm from './EventRegistrationForm'
+import { useCurrentUser } from './hooks/currentUser'
 import { useTitle } from './hooks/title'
 import { formatDateRange } from './utils/helpers'
 
 const EventRegistration = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
+  const { data: user, isAuthenticated } = useCurrentUser()
 
   // fetch event
   const {
@@ -28,6 +30,8 @@ const EventRegistration = () => {
   if (isEventError) return <Error error={eventError}></Error>
 
   if (isLoading) return <Loading>Ukládáme přihlášku</Loading>
+
+  if (isAuthenticated && !user) return <Loading>Ověřujeme uživatele</Loading>
 
   if (!event) return <Loading>Připravujeme přihlášku</Loading>
 
@@ -63,6 +67,7 @@ const EventRegistration = () => {
       </div>
       <EventRegistrationForm
         id={String(eventId)}
+        user={user}
         questionnaire={event.registration.questionnaire ?? undefined}
         onSubmit={async data => {
           await createEventApplication({
@@ -75,8 +80,9 @@ const EventRegistration = () => {
           globalThis.location.href = 'https://brontosaurus.cz'
         }}
         onCancel={() => {
-          // redirect back to previous page
-          globalThis.history.back()
+          // redirect to event detail on brontosaurus.cz
+          // TODO set a more generic address (not always dobrovolnicke-akce)
+          globalThis.location.href = `https://brontosaurus.cz/dobrovolnicke-akce/detail/${eventId}/`
         }}
       />
     </div>

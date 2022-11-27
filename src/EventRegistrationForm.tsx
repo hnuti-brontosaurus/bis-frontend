@@ -11,7 +11,7 @@ import {
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import * as yup from 'yup'
 import { EventApplicationPayload, WebQuestionnaire } from './app/services/bis'
-import { EventApplication, Question } from './app/services/testApi'
+import { EventApplication, Question, User } from './app/services/testApi'
 import { Button } from './components/Button'
 import FormInputError from './components/FormInputError'
 import {
@@ -42,12 +42,14 @@ export type RegistrationFormShape = PersonalDataFormShape &
 const EventRegistrationForm = ({
   id,
   questionnaire,
+  user,
   onSubmit,
   onFinish,
   onCancel,
 }: {
   id: string
   questionnaire?: WebQuestionnaire
+  user?: User
   onSubmit: (data: EventApplicationPayload) => void
   onFinish: () => void
   onCancel: () => void
@@ -59,6 +61,29 @@ const EventRegistrationForm = ({
 
   const clearPersistentData = useClearPersistentForm('registration', id)
   const persist = useDirectPersistForm('registration', id)
+
+  const initialPersonalData = user
+    ? merge(
+        pick(
+          user,
+          'first_name',
+          'last_name',
+          'phone',
+          'email',
+          'close_person',
+          'address',
+        ),
+        user?.birthday
+          ? {
+              birthdate: {
+                day: dayjs(new Date(user.birthday)).date(),
+                month: dayjs(new Date(user.birthday)).month() + 1,
+                year: dayjs(new Date(user.birthday)).year(),
+              },
+            }
+          : {},
+      )
+    : undefined
 
   const showMessage = useShowMessage()
 
@@ -122,6 +147,7 @@ const EventRegistrationForm = ({
 
   return !data?.step || data.step === 'personal' ? (
     <PersonalDataForm
+      initialData={initialPersonalData}
       isNextStep={showQuestionStep}
       id={id}
       onSubmit={() => {
@@ -203,12 +229,14 @@ const personalDataSchema: yup.ObjectSchema<PersonalDataFormShape> = yup.object({
 
 const PersonalDataForm = ({
   id,
+  initialData,
   isNextStep,
   onSubmit,
   onReset,
   onError,
 }: {
   id: string
+  initialData?: Partial<PersonalDataShape>
   isNextStep: boolean
   onSubmit: (data: PersonalDataShape) => void
   onReset: FormEventHandler<HTMLFormElement>
@@ -218,9 +246,10 @@ const PersonalDataForm = ({
     'registration',
     id,
   ) as Partial<RegistrationFormShape>
+
   const methods = useForm<PersonalDataFormShape>({
     resolver: yupResolver(personalDataSchema),
-    defaultValues: persistedData,
+    defaultValues: merge({}, initialData, persistedData),
   })
 
   const { register, watch, trigger } = methods
