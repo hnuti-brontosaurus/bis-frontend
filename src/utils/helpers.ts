@@ -103,7 +103,11 @@ const shouldBeFinishedUntil = (event: Event): number => {
 }
 
 export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
-  Boolean(user.roles.find(role => ['organizer', 'admin'].includes(role.slug)))
+  Boolean(
+    user.roles.find(role =>
+      ['organizer', 'admin', 'main_organizer'].includes(role.slug),
+    ),
+  )
 
 export const splitDateTime = (datetime: string): [string, string] => {
   const [date] = datetime.split('T')

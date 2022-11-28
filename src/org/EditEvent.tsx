@@ -1,43 +1,31 @@
 import merge from 'lodash/merge'
 import { useNavigate, useParams } from 'react-router-dom'
-import { api, CorrectEventPropagationImage } from '../app/services/bis'
-import { Event, EventPropagationImage, Question } from '../app/services/testApi'
+import { Optional } from 'utility-types'
+import { api } from '../app/services/bis'
 import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import {
   useShowApiErrorMessage,
   useShowMessage,
 } from '../features/systemMessage/useSystemMessage'
-import { useBase64Images } from '../hooks/base64Images'
+import { FullEvent, useReadFullEvent } from '../hooks/readFullEvent'
 import { useTitle } from '../hooks/title'
-import EventForm, { SubmitShape } from './EventForm'
+import EventForm, { InitialEventData } from './EventForm'
 
 const EditEvent = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const navigate = useNavigate()
   const showMessage = useShowMessage()
+
   const {
     data: event,
     isLoading: isEventLoading,
     isError,
-  } = api.endpoints.readEvent.useQuery({ id: eventId })
+  } = useReadFullEvent(eventId)
 
   // TODO maybe: add star when data are unsaved (also persistent data)
   useTitle(event ? `Upravit akci ${event.name}` : 'Upravit akci')
-
-  const { data: images } = useBase64Images<
-    CorrectEventPropagationImage,
-    any,
-    any,
-    any
-  >(api.endpoints.readEventImages, {
-    eventId,
-  })
-
-  const { data: questions } = api.endpoints.readEventQuestions.useQuery({
-    eventId,
-  })
 
   const [updateEvent, { error: updateEventError, isLoading: isUpdatingEvent }] =
     api.endpoints.updateEvent.useMutation()
@@ -71,9 +59,9 @@ const EditEvent = () => {
 
   if (isError) return <>Event not found (or different error)</>
 
-  if (isEventLoading || !event || !images || !questions)
-    return <Loading>Stahujeme akci</Loading>
+  if (isEventLoading || !event) return <Loading>Stahujeme akci</Loading>
 
+  const { images, questions } = event
   const handleSubmit: Parameters<typeof EventForm>[0]['onSubmit'] = async ({
     main_image: updatedMainImage,
     images: updatedImages,
@@ -119,7 +107,7 @@ const EditEvent = () => {
 
         // if they're same, ignore
         if (
-          originalImage!.image === image.image &&
+          originalImage!.image.original === image.image &&
           originalImage!.order === image.order
         )
           return
@@ -132,7 +120,7 @@ const EditEvent = () => {
           if (originalImage!.order !== image.order)
             imageToPatch.order = image.order
           // update any image that changed
-          if (originalImage!.image !== image.image)
+          if (originalImage!.image.original !== image.image)
             imageToPatch.image = image.image
 
           return imagesToPatch.push(imageToPatch)
@@ -179,7 +167,7 @@ const EditEvent = () => {
     // update any changed questions
     const patchedQuestionPromises = questionsWithOrder
       .filter(question => {
-        const oldQuestion = questions.results!.find(oq => oq.id === question.id)
+        const oldQuestion = questions.find(oq => oq.id === question.id)
         // if something is different, patch
         return (
           oldQuestion &&
@@ -197,9 +185,7 @@ const EditEvent = () => {
 
     // delete any question that is missing
     const deletedQuestionPromises = questions
-      .results!.filter(
-        q => !questionsWithOrder.find(question => question.id === q.id),
-      )
+      .filter(q => !questionsWithOrder.find(question => question.id === q.id))
       .map(({ id }) => removeEventQuestion({ eventId, id }).unwrap())
 
     await Promise.allSettled([
@@ -220,7 +206,7 @@ const EditEvent = () => {
   return (
     <EventForm
       id={String(eventId)}
-      initialData={event2payload(event, questions?.results ?? [], images ?? [])}
+      initialData={event2payload(event)}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
       eventToEdit={true}
@@ -238,11 +224,14 @@ const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
 }
 
 export const event2payload = (
-  event: Partial<Event>,
-  questions: Question[],
-  images: EventPropagationImage[],
-): Partial<SubmitShape> => {
-  const [main_image, ...otherImages] = [...images].sort(sortOrder)
+  event: Optional<FullEvent, 'id' | 'start' | 'start_time' | 'end' | 'record'>,
+): Partial<InitialEventData> => {
+  const [main_image, ...otherImages] = event.images
+    .map(img => ({
+      ...img,
+      image: img.image.original,
+    }))
+    .sort(sortOrder)
 
   return (
     event && {
@@ -257,7 +246,7 @@ export const event2payload = (
       },
       main_image,
       images: otherImages,
-      questions: [...questions].sort(sortOrder),
+      questions: [...event.questions].sort(sortOrder),
       location: event.location ? { id: event.location } : undefined,
     }
   )
