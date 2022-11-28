@@ -4,6 +4,7 @@ import { sanitize } from 'dompurify'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import { Button, ButtonLink } from '../components/Button'
+import { Actions } from '../components/FormLayout'
 import Loading from '../components/Loading'
 import { useCurrentUser } from '../hooks/currentUser'
 import { useRemoveOpportunity } from '../hooks/removeOpportunity'
@@ -49,14 +50,14 @@ const ViewOpportunity = () => {
   return (
     <div className={classNames(styles.wrapper, 'opportunitySection')}>
       <header className={styles.name}>{opportunity.name}</header>
-      <nav className={styles.actions}>
+      <Actions>
         <ButtonLink success to={`/org/prilezitosti/${opportunityId}/upravit`}>
           upravit
         </ButtonLink>
         <Button danger onClick={handleClickRemove}>
           smazat
         </Button>
-      </nav>
+      </Actions>
       <div className={styles.infoBoxDetail}>
         <div className={styles.imageWrapper}>
           <img className={styles.image} src={opportunity.image.medium} alt="" />
