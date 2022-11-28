@@ -22,6 +22,7 @@ import {
   SelectFullUser,
   SelectFullUsers,
 } from '../../../components/SelectUsers'
+import { useCurrentUser } from '../../../hooks/currentUser'
 import { joinAnd } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
@@ -45,6 +46,8 @@ const OrganizerStep = ({
   const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
     {},
   )
+
+  const { data: currentUser } = useCurrentUser()
 
   const getDisabledMainOrganizer = useCallback(
     (user: User) =>
@@ -93,7 +96,8 @@ const OrganizerStep = ({
     return subscription.unsubscribe
   }, [getValues, setValue, watch])
 
-  if (!allQualifications) return <Loading>Připravujeme formulář</Loading>
+  if (!(allQualifications && currentUser))
+    return <Loading>Připravujeme formulář</Loading>
 
   const contactPerson: User | undefined = watch('contactPersonIsMainOrganizer')
     ? watch('main_organizer')
@@ -150,6 +154,23 @@ const OrganizerStep = ({
                   name="other_organizers"
                   control={control}
                   render={({ field }) => <SelectFullUsers {...field} />}
+                  rules={{
+                    validate: organizers => {
+                      const isMainOrganizer =
+                        methods.getValues('main_organizer.id') ===
+                        currentUser.id
+                      const isOrganizer =
+                        organizers.findIndex(
+                          org => org.id === currentUser.id,
+                        ) >= 0
+
+                      return (
+                        isMainOrganizer ||
+                        isOrganizer ||
+                        'Musíš být v organizátorském týmu.'
+                      )
+                    },
+                  }}
                 />
                 {/* <Controller
                   name="other_organizers"

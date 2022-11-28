@@ -13,6 +13,7 @@ import { api } from '../app/services/bis'
 import { Button, ButtonLink } from '../components/Button'
 import { Actions } from '../components/FormLayout'
 import Loading from '../components/Loading'
+import { useReadFullEvent } from '../hooks/readFullEvent'
 import { useRemoveEvent } from '../hooks/removeEvent'
 import { formatDateRange, formatDateTime } from '../utils/helpers'
 import styles from './ViewEvent.module.scss'
@@ -24,14 +25,8 @@ const ViewEvent = () => {
     data: event,
     isLoading: isEventLoading,
     isError,
-  } = api.endpoints.readEvent.useQuery({ id: eventId })
-  const { data: contactPerson } = api.endpoints.getUser.useQuery(
-    event?.propagation ? { id: event.propagation.contact_person } : skipToken,
-  )
-  const { data: images } = api.endpoints.readEventImages.useQuery({ eventId })
-  const { data: questions } = api.endpoints.readEventQuestions.useQuery({
-    eventId,
-  })
+  } = useReadFullEvent(eventId)
+
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
   const { data: location } = api.endpoints.readLocation.useQuery(
     event?.location
@@ -43,12 +38,11 @@ const ViewEvent = () => {
 
   if (isError) return <>Nepodařilo se nám najít akci</>
 
-  if (isEventLoading || !event || !images || !questions)
-    return <Loading>Stahujeme akci</Loading>
+  if (isEventLoading || !event) return <Loading>Stahujeme akci</Loading>
 
   if (isEventRemoving) return <Loading>Mažeme akci</Loading>
 
-  const [mainImage, ...otherImages] = [...images.results].sort(
+  const [mainImage, ...otherImages] = [...event.images].sort(
     (a, b) => a.order - b.order,
   )
 
@@ -91,7 +85,14 @@ const ViewEvent = () => {
       </div>
       <div className={styles.infoBoxDetail}>
         <div className={styles.imageWrapper}>
-          <img className={styles.image} src={mainImage.image.medium} alt="" />
+          {mainImage ? (
+            <img className={styles.image} src={mainImage.image.medium} alt="" />
+          ) : (
+            <div className={styles.imageMissing}>
+              Obrázek chybí
+              <ButtonLink to="upravit?krok=7">Přidat</ButtonLink>
+            </div>
+          )}
           <div className={styles.tags}>
             <div className={styles.tag}>{event.program.name}</div>
             <div className={styles.tag}>{event.group.name}</div>
@@ -141,13 +142,15 @@ const ViewEvent = () => {
               <td>
                 <div>
                   {event.propagation?.contact_name ||
-                    contactPerson?.display_name}
+                    event.propagation.contact_person.display_name}
                 </div>
                 <div>
-                  {event.propagation?.contact_phone || contactPerson?.phone}
+                  {event.propagation?.contact_phone ||
+                    event.propagation.contact_person.phone}
                 </div>
                 <div>
-                  {event.propagation?.contact_email || contactPerson?.email}
+                  {event.propagation?.contact_email ||
+                    event.propagation.contact_person.email}
                 </div>
               </td>
             </tr>
@@ -197,8 +200,6 @@ const ViewEvent = () => {
         </div>
       </div>
       <pre className={styles.data}>{JSON.stringify(event, null, '  ')}</pre>
-      <pre className={styles.data}>{JSON.stringify(images, null, '  ')}</pre>
-      <pre className={styles.data}>{JSON.stringify(questions, null, '  ')}</pre>
     </div>
   )
 }
