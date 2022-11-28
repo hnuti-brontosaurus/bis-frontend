@@ -1,15 +1,18 @@
-import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { omit, startsWith } from 'lodash'
 import merge from 'lodash/merge'
+import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { api, CorrectEventPropagationImage } from '../app/services/bis'
+import { api } from '../app/services/bis'
 import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import {
   useShowApiErrorMessage,
   useShowMessage,
 } from '../features/systemMessage/useSystemMessage'
-import { useBase64Images } from '../hooks/base64Images'
+import { useCurrentUser } from '../hooks/currentUser'
+import { useReadFullEvent } from '../hooks/readFullEvent'
 import { useTitle } from '../hooks/title'
+import { toDataURL } from '../utils/helpers'
 import { event2payload } from './EditEvent'
 import EventForm, { SubmitShape } from './EventForm'
 
@@ -19,29 +22,17 @@ const CreateEvent = () => {
   const [searchParams] = useSearchParams()
   const cloneEventId = Number(searchParams.get('klonovat'))
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const showMessage = useShowMessage()
+
+  const { data: currentUser } = useCurrentUser()
 
   const {
     data: eventToClone,
     isLoading: isEventToCloneLoading,
     isError: isEventToCloneErrored,
-  } = api.endpoints.readEvent.useQuery(
-    cloneEventId > 0 ? { id: cloneEventId } : skipToken,
-  )
-
-  // TODO images are urls, currently API doesn't accept them
-  const {
-    data: images,
-    isLoading: isImagesLoading,
-    isConverting,
-  } = useBase64Images<CorrectEventPropagationImage, any, any, any>(
-    api.endpoints.readEventImages,
-    cloneEventId > 0 ? { eventId: cloneEventId } : skipToken,
-  )
-
-  const { data: questions } = api.endpoints.readEventQuestions.useQuery(
-    cloneEventId > 0 ? { eventId: cloneEventId } : skipToken,
-  )
+  } = useReadFullEvent(cloneEventId)
 
   const [createEvent, { isLoading: isSavingEvent, error: saveEventError }] =
     api.endpoints.createEvent.useMutation()
@@ -54,15 +45,25 @@ const CreateEvent = () => {
 
   useShowApiErrorMessage(saveEventError, 'Nepodařilo se nám uložit akci')
 
+  const initialData = useMemo(() => {
+    if (!eventToClone)
+      return { other_organizers: currentUser ? [currentUser] : [] }
+    const eventToCloneFixed = omit(eventToClone, [
+      'id',
+      'start',
+      'start_time',
+      'end',
+      'record',
+    ])
+    return event2payload(eventToCloneFixed)
+  }, [currentUser, eventToClone])
+
   if (isEventToCloneErrored) return <>Event not found (or different error)</>
 
-  if (
-    cloneEventId > 0 &&
-    (isEventToCloneLoading || !eventToClone || !images || !questions)
-  )
+  if (cloneEventId > 0 && (isEventToCloneLoading || !eventToClone))
     return <Loading>Stahujeme akci ke zklonování</Loading>
 
-  if (isSavingEvent || isSavingQuestions || isSavingImages)
+  if (isSubmitting || isSavingEvent || isSavingQuestions || isSavingImages)
     return <Loading>Ukládáme akci</Loading>
 
   const handleSubmit = async ({
@@ -71,61 +72,72 @@ const CreateEvent = () => {
     questions,
     ...data
   }: SubmitShape) => {
-    // ***location***
-    const locationId = await createOrSelectLocation(data.location)
+    try {
+      setIsSubmitting(true)
+      // ***location***
+      const locationId = await createOrSelectLocation(data.location)
 
-    // save the new event
-    const event = await createEvent(
-      merge({}, data, { location: locationId, record: null, finance: null }),
-    ).unwrap()
-    if (questions) {
+      // save the new event
+      const event = await createEvent(
+        merge({}, data, { location: locationId, record: null, finance: null }),
+      ).unwrap()
+      if (questions) {
+        await Promise.all(
+          questions.map((question, order) =>
+            createEventQuestion({
+              eventId: event.id,
+              question: { ...question, order },
+            }).unwrap(),
+          ),
+        )
+      }
+
+      // get all images and convert them to base64 and save them
+      // because api saves images only in base64 form
+      // collect
+      const allImagesMixed = [
+        ...(main_image ? [main_image.image] : []),
+        ...(images.map(image => image.image) ?? []),
+      ].filter(image => Boolean(image))
+      // convert to base64
+      const allImagesBase64 = (
+        (
+          await Promise.allSettled(
+            allImagesMixed.map(image =>
+              startsWith(image, 'data:') ? image : toDataURL(image),
+            ),
+          )
+        ).filter(
+          result => result.status === 'fulfilled',
+        ) as PromiseFulfilledResult<string>[]
+      ).map(result => result.value)
+      // save
       await Promise.all(
-        questions.map((question, order) =>
-          createEventQuestion({
+        allImagesBase64.map((image, order) =>
+          createEventImage({
             eventId: event.id,
-            question: { ...question, order },
+            image: { image, order },
           }).unwrap(),
         ),
       )
-    }
 
-    const allImages = [
-      ...(main_image ? [main_image] : []),
-      ...(images ?? []),
-    ].filter(({ image }) => Boolean(image))
-    await Promise.all(
-      allImages.map((image, order) =>
-        createEventImage({
-          eventId: event.id,
-          image: { ...image, order },
-        }).unwrap(),
-      ),
-    )
-    navigate(`/org/akce/${event.id}`)
-    showMessage({ message: 'Akce byla úspěšně vytvořena', type: 'success' })
+      navigate(`/org/akce/${event.id}`)
+      showMessage({ message: 'Akce byla úspěšně vytvořena', type: 'success' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleCancel = () => {
     navigate('/org')
   }
 
-  const eventToCloneFixed = { ...eventToClone }
-  delete eventToCloneFixed.id
-  delete eventToCloneFixed.start
-  delete eventToCloneFixed.end
-  delete eventToCloneFixed.record
-
   return (
     <EventForm
       id={cloneEventId ? `clone-${cloneEventId}` : 'new'}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
-      initialData={
-        eventToClone &&
-        images &&
-        questions &&
-        event2payload(eventToCloneFixed, questions.results ?? [], images ?? [])
-      }
+      initialData={initialData}
       eventToEdit={false}
     />
   )

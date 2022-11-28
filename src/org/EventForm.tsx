@@ -1,7 +1,6 @@
-import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { clone, merge, omit } from 'lodash'
+import { merge, mergeWith, omit } from 'lodash'
 import pick from 'lodash/pick'
-import { FC, useEffect, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
@@ -55,19 +54,25 @@ export type SubmitShape = Assign<
   }
 >
 
-export type EventFormShape = Assign<
+export type InitialEventData = Overwrite<
   SubmitShape,
+  {
+    main_organizer: User
+    other_organizers: User[]
+    propagation: Overwrite<
+      NonNullable<SubmitShape['propagation']>,
+      { contact_person: User }
+    > | null
+  }
+>
+
+export type EventFormShape = Assign<
+  InitialEventData,
   {
     // online is an internal variable
     // it doesn't get sent to API
     // we only keep track of whether to save location or online_link
     online: boolean
-    main_organizer: User
-    other_organizers: User[]
-    propagation: Assign<
-      NonNullable<SubmitShape['propagation']>,
-      { contact_person: User }
-    > | null
     // registrationMethod is internal, doesn't get sent to API
     registrationMethod: 'standard' | 'other' | 'none' | 'full'
     // contactPersonIsMainOrganizer is internal, doesn't get sent to API
@@ -159,15 +164,11 @@ type ErrorShapes = {
 }
 
 const initialData2form = (
-  data?: Partial<SubmitShape>,
+  data?: Partial<InitialEventData>,
 ): Partial<EventFormShape> => {
   const returnData: Partial<EventFormShape> = merge(
     { number_of_sub_events: 1 },
-    omit(clone(data), [
-      'main_organizer',
-      'other_organizers',
-      'propagation.contact_person', // seems like lodash's omit can't properly get type when omitting nested properties
-    ]),
+    data,
   ) as Partial<EventFormShape>
 
   const registrationMethod = data?.registration?.is_event_full
@@ -234,7 +235,7 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
 }
 
 const EventForm: FC<{
-  initialData?: Partial<SubmitShape>
+  initialData?: Partial<InitialEventData>
   onSubmit: (data: SubmitShape) => Promise<void>
   onCancel: () => void
   eventToEdit: boolean
@@ -245,7 +246,10 @@ const EventForm: FC<{
     | undefined
 
   const initialAndSavedData: Partial<EventFormShape> = useMemo(
-    () => merge(initialData2form(initialData), savedData),
+    () =>
+      mergeWith(initialData2form(initialData), savedData, (a, b) =>
+        Array.isArray(b) ? b : undefined,
+      ),
     [initialData, savedData],
   )
 
@@ -298,55 +302,6 @@ const EventForm: FC<{
     ],
   )
 
-  /**
-   * Fetch initial organizers, and update form with them
-   */
-  const { data: initialMainOrganizer } = api.endpoints.getUser.useQuery(
-    initialData?.main_organizer
-      ? { id: initialData.main_organizer }
-      : skipToken,
-  )
-
-  const { data: initialOtherOrganizers } = api.endpoints.readUsers.useQuery(
-    initialData?.other_organizers
-      ? { id: initialData.other_organizers }
-      : skipToken,
-  )
-
-  const { data: initialContactPerson } = api.endpoints.getUser.useQuery(
-    initialData?.propagation?.contact_person
-      ? { id: initialData.propagation.contact_person }
-      : skipToken,
-  )
-
-  // when initial main organizer is fetched, set it in form
-  // TODO if useForm was in different form than fetching these, we could provide these as default values
-  //   this is just hacking around that issue (that we don't have the data at the time of initializing useForm)
-  useEffect(() => {
-    // don't overwrite unsaved value
-    if (initialMainOrganizer && !savedData)
-      methods.organizers.setValue('main_organizer', initialMainOrganizer)
-  }, [initialMainOrganizer, methods.organizers, savedData])
-
-  useEffect(() => {
-    // don't overwrite unsaved values
-    if (initialOtherOrganizers && !savedData) {
-      methods.organizers.setValue(
-        'other_organizers',
-        initialOtherOrganizers.results.filter(user => Boolean(user)) as User[],
-      )
-    }
-  }, [initialOtherOrganizers, methods.organizers, savedData])
-
-  useEffect(() => {
-    // don't overwrite unsaved value
-    if (initialContactPerson && !savedData)
-      methods.organizers.setValue(
-        'propagation.contact_person',
-        initialContactPerson,
-      )
-  }, [initialContactPerson, methods.organizers, savedData])
-
   usePersistForm('event', id, ...Object.values(methods).map(m => m.watch))
 
   const showMessage = useShowMessage()
@@ -374,15 +329,7 @@ const EventForm: FC<{
       categories &&
       intendedFor &&
       allQualifications &&
-      administrationUnits &&
-      // if main organizer id is provided, wait until we download main organizer
-      (savedData?.main_organizer ||
-        !initialData?.main_organizer ||
-        initialMainOrganizer) &&
-      // wait until we download all other_organizers
-      (savedData?.other_organizers ||
-        !initialData?.other_organizers ||
-        initialOtherOrganizers)
+      administrationUnits
     )
   )
     return <Loading>Připravujeme formulář</Loading>
