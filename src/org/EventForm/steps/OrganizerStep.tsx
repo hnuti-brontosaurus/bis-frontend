@@ -42,7 +42,7 @@ const OrganizerStep = ({
     category?: EventCategory
   }
 }) => {
-  const { control, watch, register, setValue, getValues } = methods
+  const { control, watch, trigger, register, setValue, getValues } = methods
   const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
     {},
   )
@@ -95,6 +95,17 @@ const OrganizerStep = ({
     })
     return subscription.unsubscribe
   }, [getValues, setValue, watch])
+
+  // trigger validation of organizer team when main_organizer is changed
+  // to check whether current user is in the team
+  useEffect(() => {
+    const subscription = watch((data, { name }) => {
+      if (name === 'main_organizer' && methods.formState.isSubmitted)
+        trigger('other_organizers')
+    })
+
+    return () => subscription.unsubscribe()
+  }, [methods.formState.isSubmitted, trigger, watch])
 
   if (!(allQualifications && currentUser))
     return <Loading>Připravujeme formulář</Loading>
@@ -157,8 +168,7 @@ const OrganizerStep = ({
                   rules={{
                     validate: organizers => {
                       const isMainOrganizer =
-                        methods.getValues('main_organizer.id') ===
-                        currentUser.id
+                        getValues('main_organizer')?.id === currentUser.id
                       const isOrganizer =
                         organizers.findIndex(
                           org => org.id === currentUser.id,
@@ -172,11 +182,6 @@ const OrganizerStep = ({
                     },
                   }}
                 />
-                {/* <Controller
-                  name="other_organizers"
-                  control={control}
-                  render={({ field }) => <SelectUsers {...field} />}
-                /> */}
               </FormInputError>
             </FullSizeElement>
             <FormSubsubsection
@@ -200,7 +205,6 @@ const OrganizerStep = ({
               />{' '}
               stejná jako hlavní organizátor
             </label>
-            {/* TODO if checkbox is checked, autofill, or figure out what happens */}
             {!watch('contactPersonIsMainOrganizer') && (
               <FullSizeElement>
                 <FormInputError>
@@ -213,10 +217,6 @@ const OrganizerStep = ({
                 </FormInputError>
               </FullSizeElement>
             )}
-            {/*
-                TODO figure out what happens with name when contact person is filled
-                maybe fill when not already filled
-                */}
             <FormSubsubsection
               header="Kontaktní údaje"
               help="Pokud necháš kontaktní údaje prázdné, použije se jméno/email/telefon kontaktní osoby."
