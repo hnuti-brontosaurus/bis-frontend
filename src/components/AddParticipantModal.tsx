@@ -83,9 +83,10 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
   const methods = useForm<UserPayload>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      ...(defaultUserData as Partial<UserPayload>),
+      ...defaultUserData,
       birthday: defaultUserData.birthday || undefined,
-    },
+      sex: defaultUserData.sex?.id ?? null,
+    } as Partial<UserPayload>,
   })
 
   const [showAddParticipantForm, setShowAddParticipantForm] = useState(false)
@@ -179,7 +180,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                         setCreatingANewUser(false)
                         console.log(result)
                         setSelectedUser(result)
-                        reset(selectedUser)
+                        reset({ ...selectedUser, sex: selectedUser?.sex?.id })
                         setShowAddParticipantForm(true)
                       }}
                     >
@@ -193,7 +194,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                           // check if i know his birthdate
                           setCreatingANewUser(false)
                           setSelectedUser(result)
-                          reset(selectedUser)
+                          reset({ ...selectedUser, sex: selectedUser?.sex?.id })
                           setShowAddParticipantForm(true)
                         }}
                       >
@@ -208,9 +209,10 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                   onClick={() => {
                     setCreatingANewUser(true)
                     reset({
-                      ...(defaultUserData as Partial<UserPayload>),
+                      ...defaultUserData,
                       birthday: defaultUserData.birthday || undefined,
-                    })
+                      sex: defaultUserData.sex?.id,
+                    } as Partial<UserPayload>)
                     setShowAddParticipantForm(true)
                   }}
                 >

@@ -24,6 +24,7 @@ import {
   Question,
   Questionnaire,
   Registration,
+  SexCategory,
   User,
 } from './testApi'
 
@@ -114,7 +115,10 @@ export const api = createApi({
       }),
       invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
     }),
-    updateUser: build.mutation<User, { patchedUser: UserPayload; id: string }>({
+    updateUser: build.mutation<
+      User,
+      { patchedUser: Partial<UserPayload>; id: string }
+    >({
       query: ({ id, patchedUser }) => ({
         url: `frontend/users/${id}/`,
         method: 'PATCH',
@@ -174,17 +178,20 @@ export const api = createApi({
     }),
     readQualifications: build.query<
       PaginatedList<QualificationCategory>,
-      {
-        /** A page number within the paginated result set. */
-        page?: number
-        /** Number of results to return per page. */
-        pageSize?: number
-        /** A search term. */
-        search?: string
-      }
+      ListArguments
     >({
       query: queryArg => ({
         url: `categories/qualification_categories/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readSexes: build.query<PaginatedList<SexCategory>, ListArguments>({
+      query: queryArg => ({
+        url: `categories/sex_categories/`,
         params: {
           page: queryArg.page,
           page_size: queryArg.pageSize,
@@ -860,7 +867,12 @@ export type EventPayload = Omit<
   propagation?: PropagationPayload | null
 }
 
-export type UserPayload = Omit<User, 'id'>
+export type UserPayload = Overwrite<
+  Omit<User, 'id'>,
+  {
+    sex: number | null
+  }
+>
 
 type CorrectImage = {
   small: string

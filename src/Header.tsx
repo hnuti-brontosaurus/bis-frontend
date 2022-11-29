@@ -83,6 +83,12 @@ const Header = () => {
               </span>
             </MenuItem>
             <MenuItem>
+              <Link to={`/profil`}>Můj profil</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link to={`/profil/${user.id}/upravit`}>Upravit profil</Link>
+            </MenuItem>
+            <MenuItem>
               <button onClick={handleLogout}>Logout</button>
             </MenuItem>
           </Menu>
