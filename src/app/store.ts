@@ -34,6 +34,9 @@ const persistConfig = {
 
 const listenerMiddleware = createListenerMiddleware()
 
+/**
+ * Clear persistent state after (successful or unsuccessful) log out api call
+ */
 listenerMiddleware.startListening({
   matcher: isAnyOf(
     api.endpoints.logout.matchFulfilled,
@@ -59,6 +62,7 @@ const appReducer = combineReducers({
   form: persistedFormReducer,
 })
 
+// clear redux state after (successful or unsuccessful) log out api call
 const rootReducer: Reducer<RootState> = (state, action) => {
   if (
     isAnyOf(
