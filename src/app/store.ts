@@ -3,6 +3,7 @@ import {
   combineReducers,
   configureStore,
   createListenerMiddleware,
+  isAnyOf,
   Reducer,
   ThunkAction,
 } from '@reduxjs/toolkit'
@@ -34,7 +35,10 @@ const persistConfig = {
 const listenerMiddleware = createListenerMiddleware()
 
 listenerMiddleware.startListening({
-  matcher: api.endpoints.logout.matchFulfilled,
+  matcher: isAnyOf(
+    api.endpoints.logout.matchFulfilled,
+    api.endpoints.logout.matchRejected,
+  ),
   effect: async (action, listenerApi) => {
     await resetStore()
   },
@@ -56,8 +60,13 @@ const appReducer = combineReducers({
 })
 
 const rootReducer: Reducer<RootState> = (state, action) => {
-  if (api.endpoints.logout.matchFulfilled(action)) {
-    state = {} as RootState
+  if (
+    isAnyOf(
+      api.endpoints.logout.matchFulfilled,
+      api.endpoints.logout.matchRejected,
+    )(action)
+  ) {
+    return appReducer(undefined, action)
   }
 
   return appReducer(state, action)
@@ -80,6 +89,7 @@ export const persistor = persistStore(store)
 export const resetStore = async () => {
   await persistor.purge()
   await persistor.flush()
+  await persistor.persist()
 }
 
 export type AppDispatch = typeof store.dispatch
