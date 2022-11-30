@@ -2699,7 +2699,7 @@ export type Event = {
   start_time?: string | null
   end: string
   number_of_sub_events?: number
-  location?: number | null
+  location: number | null
   online_link?: string
   group: EventGroupCategory
   category: EventCategory
@@ -2796,6 +2796,7 @@ export type Qualification = {
 }
 export type User = {
   id: string
+  _search_id: string
   first_name: string
   last_name: string
   nickname?: string
@@ -2938,7 +2939,7 @@ export type PatchedEvent = {
   start_time?: string | null
   end?: string
   number_of_sub_events?: number
-  location?: number | null
+  location?: number
   online_link?: string
   group?: number
   category?: number
@@ -3043,6 +3044,7 @@ export type PaginatedUserSearchList = {
 }
 export type PatchedUser = {
   id?: string
+  _search_id?: string
   first_name?: string
   last_name?: string
   nickname?: string

@@ -92,7 +92,7 @@ const ShowParticipantModal: FC<IShowApplicationModalProps> = ({
           <span>{currentApplication.phone}</span>
         </div>
       )}
-      {currentApplication.address.street && (
+      {/* {currentApplication.address.street && (
         <div>
           <span>Adresa: </span>
           <span>{`${currentApplication.address.street || ''} ${
@@ -101,7 +101,7 @@ const ShowParticipantModal: FC<IShowApplicationModalProps> = ({
             currentApplication.address.region || ''
           }`}</span>
         </div>
-      )}
+      )} */}
       {currentApplication.health_issues && (
         <div>
           <span>Zdravotni omezeni: </span>

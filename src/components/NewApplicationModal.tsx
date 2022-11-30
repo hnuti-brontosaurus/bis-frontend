@@ -3,7 +3,7 @@ import { FC, FormEventHandler } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import * as yup from 'yup'
-import { api } from '../app/services/bis'
+import { AnswerPayload, api } from '../app/services/bis'
 import { EventApplication } from '../app/services/testApi'
 import { required } from '../utils/validationMessages'
 import FormInputError from './FormInputError'
@@ -40,18 +40,18 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
       nickname: yup.string().trim(),
       email: yup.string().email().required('email or phone is required'),
       // otherwise: schema => schema.string(),
-      phone: yup
-        .string()
-        .required()
-        .matches(phoneRegExp, 'Phone number is not valid'),
+      phone: yup.string().required(),
+      // .matches(phoneRegExp, 'Phone number is not valid'),
       birthday: yup
         .date()
         .nullable()
         .transform((curr, orig) => (orig === '' ? null : curr)),
       close_person: yup.object().shape({
-        first_name: yup.string().required(),
-        last_name: yup.string().required(),
-        email: yup.string().email().required('email or phone is required'),
+        first_name: yup.string(),
+        last_name: yup.string(),
+        email: yup.string().email(),
+        //TODO: fix this phone typoe checking
+        phone: yup.string(), //.matches(phoneRegExp, 'Phone number is not valid'),
       }),
       answers: yup.array().of(
         yup.object({
@@ -99,12 +99,26 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
       //   application: { ...data, answers: [] },
       //   eventId,
       // }
-      const filteredAnswers = data.answers
-        .filter(answer => answer.answer !== '')
-        .map(answer => ({ ...answer, question: answer.question.id }))
+      let filteredAnswers: AnswerPayload[] = []
+      if (data.answers) {
+        filteredAnswers = data.answers
+          .filter(answer => answer.answer !== '')
+          .map(answer => ({
+            answer: answer.answer,
+            question: answer.question.id,
+          }))
+      }
 
+      console.log('MMMMMMMMMMMMMMMMM', filteredAnswers)
+      // TODO: change the type of event data woith answers
       const eventDataWithAnswers = {
-        application: { ...data, answers: filteredAnswers },
+        application: {
+          ...data,
+          answers: filteredAnswers,
+          address: null,
+          close_person: null,
+          birthday: '1910-10-10',
+        },
         eventId,
       }
       console.log('ANSWERS DATA', eventDataWithAnswers)
@@ -238,7 +252,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   <Label htmlFor="close_person_phone">Telefon</Label>
                   <FormInputError>
                     <input
-                      type="date"
+                      type="phone"
                       id="close_person_phone"
                       {...register('close_person.phone')}
                     />
@@ -246,7 +260,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   <Label htmlFor="close_person_email">E-mail</Label>
                   <FormInputError>
                     <input
-                      type="date"
+                      type="email"
                       id="close_person_email"
                       {...register('close_person.email')}
                     />
@@ -277,7 +291,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                                   setValueAs: v => ({
                                     is_required: question?.is_required,
                                     answer: v,
-                                    question: question.id,
+                                    question: { id: question.id },
                                   }),
                                 })}
                               />

@@ -2,6 +2,7 @@ $error: #e72424;
 $bronto: #00a340;
 $bronto-light: #beecd5;
 $bronto-super-light: #dcf5e8;
+
 $opportunities: #3f7089;
 $opportunities-light: #d8e6ed;
 
@@ -12,9 +13,9 @@ $opportunities-main: $opportunities-light;
 
 $edit: #fae572;
 
-$gray-100: rgb(244, 248, 250);
-$gray-200: rgb(226, 233, 238);
-$gray-300: rgb(200, 209, 216);
+$gray-100: rgb(235, 233, 233);
+$gray-200: rgb(209, 215, 219);
+$gray-300: rgb(152, 160, 163);
 $gray-400: rgb(102, 112, 116);
 $gray-500: rgb(55, 58, 63);
 
@@ -32,4 +33,10 @@ $gray-500: rgb(55, 58, 63);
   opportunities-main: opportunities-light;
 
   edit: #fae572;
+
+  gray100: rgb(244, 248, 250);
+  gray200: rgb(226, 233, 238);
+  gray300: rgb(152, 160, 163);
+  gray400: rgb(102, 112, 116);
+  gray500: rgb(55, 58, 63);
 }

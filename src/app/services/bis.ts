@@ -24,7 +24,8 @@ import {
   Question,
   Questionnaire,
   Registration,
-  User
+  User,
+  UserSearch,
 } from './testApi'
 
 export type PaginatedList<T> = {
@@ -60,6 +61,7 @@ export const api = createApi({
   tagTypes: [
     'Application',
     'User',
+    'UserSearch',
     'Event',
     'EventApplication',
     'EventImage',
@@ -213,6 +215,26 @@ export const api = createApi({
           ? results.results.map(user => ({
               type: 'User',
               id: user.id,
+            }))
+          : [],
+    }),
+    readAllUsers: build.query<
+      PaginatedList<UserSearch>,
+      { page?: number; pageSize?: number; search?: string }
+    >({
+      query: queryArg => ({
+        url: `frontend/search_users/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        results?.results
+          ? results.results.map(user => ({
+              type: 'UserSearch',
+              id: user._search_id,
             }))
           : [],
     }),
