@@ -83,9 +83,10 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
   const methods = useForm<UserPayload>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      ...(defaultUserData as Partial<UserPayload>),
+      ...defaultUserData,
       birthday: defaultUserData.birthday || undefined,
-    },
+      sex: defaultUserData.sex?.id ?? null,
+    } as unknown as Partial<UserPayload>, // TODO is this unfinished? region is not assigned correctly as number to type UserPayload
   })
 
   const [showAddParticipantForm, setShowAddParticipantForm] = useState(false)
@@ -179,7 +180,8 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                         setCreatingANewUser(false)
                         console.log(result)
                         setSelectedUser(result)
-                        reset(selectedUser)
+                        // TODO selectedUser has to be transformed to UserPayload better
+                        reset({ ...selectedUser } as Partial<UserPayload>)
                         setShowAddParticipantForm(true)
                       }}
                     >
@@ -193,7 +195,8 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                           // check if i know his birthdate
                           setCreatingANewUser(false)
                           setSelectedUser(result)
-                          reset(selectedUser)
+                          // TODO selectedUser has to be transformed to UserPayload better
+                          reset({ ...selectedUser } as Partial<UserPayload>)
                           setShowAddParticipantForm(true)
                         }}
                       >
@@ -208,9 +211,10 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                   onClick={() => {
                     setCreatingANewUser(true)
                     reset({
-                      ...(defaultUserData as Partial<UserPayload>),
+                      ...defaultUserData,
                       birthday: defaultUserData.birthday || undefined,
-                    })
+                      sex: defaultUserData.sex?.id,
+                    } as unknown as Partial<UserPayload>) // TODO is this unfinished? region is not assigned correctly as number to type UserPayload
                     setShowAddParticipantForm(true)
                   }}
                 >

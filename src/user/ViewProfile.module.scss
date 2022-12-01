@@ -1,0 +1,15 @@
+.header {
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+table.horizontalTable {
+  th {
+    padding-right: 1rem;
+    text-align: right;
+  }
+  th,
+  td {
+    vertical-align: top;
+  }
+}

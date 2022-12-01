@@ -83,7 +83,13 @@ const Header = () => {
               </span>
             </MenuItem>
             <MenuItem>
-              <button onClick={handleLogout}>Logout</button>
+              <Link to={`/profil`}>Můj profil</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link to={`/profil/${user.id}/upravit`}>Upravit profil</Link>
+            </MenuItem>
+            <MenuItem>
+              <button onClick={handleLogout}>Odhlásit se</button>
             </MenuItem>
           </Menu>
         </nav>
