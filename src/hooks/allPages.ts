@@ -3,7 +3,7 @@ import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
 import { EndpointDefinitions, QueryDefinition } from '@reduxjs/toolkit/query'
 import { useEffect, useState } from 'react'
 import { PaginatedList } from '../app/services/bis'
-import { AdministrationUnit } from '../app/services/testApi'
+import { AdministrationUnit } from '../app/services/bisTypes'
 
 export function useAllPages<
   Q extends QueryDefinition<

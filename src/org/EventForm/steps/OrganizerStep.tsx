@@ -2,12 +2,12 @@ import { get, uniqBy } from 'lodash'
 import { useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
-import {
+import type {
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
   User,
-} from '../../../app/services/testApi'
+} from '../../../app/services/bisTypes'
 import FormInputError from '../../../components/FormInputError'
 import {
   FormSection,

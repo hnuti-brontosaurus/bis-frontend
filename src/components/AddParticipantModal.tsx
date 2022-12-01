@@ -6,7 +6,7 @@ import Modal from 'react-modal'
 import * as yup from 'yup'
 
 import { api, UserPayload } from '../app/services/bis'
-import { EventApplication, User } from '../app/services/testApi'
+import { EventApplication, User } from '../app/services/bisTypes'
 import styles from './AddParticipantModal.module.scss'
 import FormInputError from './FormInputError'
 import Loading from './Loading'

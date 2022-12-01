@@ -6,7 +6,7 @@ import {
   CorrectEventPropagationImage,
   CorrectLocation,
 } from '../app/services/bis'
-import { Event, Propagation, Question, User } from '../app/services/testApi'
+import { Event, Propagation, Question, User } from '../app/services/bisTypes'
 
 export type FullEvent = Assign<
   Overwrite<

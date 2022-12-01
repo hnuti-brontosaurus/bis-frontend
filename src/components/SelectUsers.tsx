@@ -9,7 +9,7 @@ import { forwardRef, InputHTMLAttributes, Ref, useMemo } from 'react'
 import Select from 'react-select'
 import { Assign } from 'utility-types'
 import { api, PaginatedList } from '../app/services/bis'
-import { User } from '../app/services/testApi'
+import { User } from '../app/services/bisTypes'
 import { useDebouncedState } from '../hooks/debouncedState'
 import { useQueries } from '../hooks/queries'
 
