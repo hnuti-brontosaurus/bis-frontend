@@ -6,12 +6,14 @@ import { RegistrationFormShape } from '../../EventRegistrationForm'
 import { CloseEventFormShape } from '../../org/CloseEvent/CloseEventForm'
 import { EventFormShape } from '../../org/EventForm'
 import { OpportunityFormShape } from '../../org/OpportunityForm'
+import { UserForm } from '../../user/EditProfile'
 
 export type FormState<K extends string = string> = {
   event: Record<K, EventFormShape>
   closeEvent: Record<K, CloseEventFormShape>
   opportunity: Record<K, OpportunityFormShape>
   registration: Record<K, RegistrationFormShape>
+  user: Record<K, UserForm>
 }
 
 export type PersistentFormType =
@@ -19,6 +21,7 @@ export type PersistentFormType =
   | 'closeEvent'
   | 'opportunity'
   | 'registration'
+  | 'user'
 
 export type PersistentFormValue<K extends PersistentFormType> = ValuesType<
   FormState[K]
@@ -42,6 +45,7 @@ const slice = createSlice({
     closeEvent: {},
     opportunity: {},
     registration: {},
+    user: {},
   } as FormState<string>,
   reducers: {
     saveForm: (state, { payload }: PayloadAction<SaveEventPayload>) => {

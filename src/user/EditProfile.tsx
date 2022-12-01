@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { merge, omit, startsWith } from 'lodash'
-import { useEffect, useState } from 'react'
+import { FormEventHandler, useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { Overwrite } from 'utility-types'
@@ -25,9 +25,14 @@ import {
   useShowMessage,
 } from '../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../hooks/currentUser'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from '../hooks/persistForm'
 import styles from './ViewProfile.module.scss'
 
-type UserForm = Pick<
+export type UserForm = Pick<
   Overwrite<
     User,
     {
@@ -52,12 +57,14 @@ type UserForm = Pick<
   | 'health_insurance_company'
   | 'health_issues'
   | 'email'
+  // TODO include other emails, too
   | 'phone'
   | 'address'
   | 'contact_address'
   | 'close_person'
 >
 
+// transform user data to initial form data
 const data2form = (user: User): UserForm => {
   return merge({}, user, {
     sex: user.sex ? user.sex.id : 0,
@@ -73,6 +80,7 @@ const data2form = (user: User): UserForm => {
   })
 }
 
+// transform form data to edit user payload
 const form2payload = (data: UserForm): Partial<UserPayload> => {
   const address =
     data.address.city ||
@@ -124,6 +132,7 @@ const form2payload = (data: UserForm): Partial<UserPayload> => {
   )
 }
 
+// form validation schemata
 const addressValidationSchema: yup.ObjectSchema<UserForm['address']> = yup
   .object()
   .shape(
@@ -154,14 +163,6 @@ const addressValidationSchema: yup.ObjectSchema<UserForm['address']> = yup
       ['city', 'zip_code'],
     ],
   )
-
-const defaultAddress: UserForm['address'] = {
-  street: '',
-  city: '',
-  zip_code: '',
-  region: 0,
-}
-
 const validationSchema: yup.ObjectSchema<UserForm> = yup.object({
   first_name: yup.string().required(),
   last_name: yup.string().required(),
@@ -223,11 +224,17 @@ const EditProfile = () => {
 
   useShowApiErrorMessage(error)
 
+  const persistedData = usePersistentFormData('user', user.id)
+
   const methods = useForm<UserForm>({
-    defaultValues: data2form(user),
+    defaultValues: merge(data2form(user), persistedData),
     resolver: yupResolver(validationSchema),
   })
   const { register, watch, control, trigger, formState } = methods
+
+  usePersistForm('user', user.id, watch)
+
+  const clearForm = useClearPersistentForm('user', user.id)
 
   // validate form fields dependent on other fields
   // i wish there was a better way
@@ -252,10 +259,17 @@ const EditProfile = () => {
       }).unwrap()
       showMessage({ type: 'success', message: 'Změny byly úspěšně uloženy' })
       navigate('..')
+      clearForm()
     } finally {
       setIsSaving(false)
     }
   })
+
+  const handleCancel: FormEventHandler<HTMLFormElement> = e => {
+    e.preventDefault()
+    navigate('..')
+    clearForm()
+  }
 
   if (!(sexes && regions && healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
@@ -269,7 +283,7 @@ const EditProfile = () => {
           ? 'Upravit můj profil'
           : `Upravit profil uživatele ${user.display_name}`}
       </header>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} onReset={handleCancel}>
         <FormProvider {...methods}>
           <FormSection>
             <FormSubsection header="Osobní údaje">
@@ -459,7 +473,6 @@ const EditProfile = () => {
           </Actions>
         </FormProvider>
       </form>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
     </div>
   )
 }
