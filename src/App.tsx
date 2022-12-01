@@ -20,6 +20,10 @@ import ViewEvent from './org/ViewEvent'
 import ViewOpportunity from './org/ViewOpportunity'
 import ResetPassword from './ResetPassword'
 import SendResetPasswordLink from './SendResetPasswordLink'
+import EditProfile from './user/EditProfile'
+import ProfileOutlet from './user/ProfileOutlet'
+import ViewMyProfile from './user/ViewMyProfile'
+import ViewProfile from './user/ViewProfile'
 import AuthenticatedOutlet from './utils/AuthenticatedOutlet'
 import MixedOutlet from './utils/MixedOutlet'
 import OrganizerOutlet from './utils/OrganizerOutlet'
@@ -43,6 +47,13 @@ function App() {
         <Route path="/reset_password" element={<ResetPassword />} />
       </Route>
       <Route path="/" element={<AuthenticatedOutlet />}>
+        <Route path="profil">
+          <Route index element={<ViewMyProfile />} />
+          <Route path=":userId" element={<ProfileOutlet />}>
+            <Route index element={<ViewProfile />} />
+            <Route path="upravit" element={<EditProfile />} />
+          </Route>
+        </Route>
         <Route path="admin/*" element={<AdminRedirect />} />
         <Route index element={<Home />} />
         <Route path="org" element={<OrganizerOutlet />}>
