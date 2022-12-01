@@ -1,33 +1,206 @@
-import { merge } from 'lodash'
-import { useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { merge, omit, startsWith } from 'lodash'
+import { useEffect, useState } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { Overwrite } from 'utility-types'
+import * as yup from 'yup'
 import { api, UserPayload } from '../app/services/bis'
-import { User } from '../app/services/testApi'
+import { User, UserAddress as Address } from '../app/services/testApi'
+import BirthdayInput, { birthdayValidation } from '../components/BirthdayInput'
 import { Button } from '../components/Button'
 import FormInputError from '../components/FormInputError'
 import {
   Actions,
   FormSection,
   FormSubsection,
+  FormSubsubsection,
+  FullSizeElement,
   InlineSection,
   Label,
 } from '../components/FormLayout'
 import Loading from '../components/Loading'
-import { useShowMessage } from '../features/systemMessage/useSystemMessage'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from '../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../hooks/currentUser'
 import styles from './ViewProfile.module.scss'
 
-type UserForm = Overwrite<User, { sex: number }>
+type UserForm = Pick<
+  Overwrite<
+    User,
+    {
+      sex: number
+      address: Overwrite<Address, { region: number }>
+      contact_address: Overwrite<Address, { region: number }>
+      health_insurance_company: number
+      close_person: {
+        first_name: string
+        last_name: string
+        email?: string
+        phone?: string
+      }
+    }
+  >,
+  | 'first_name'
+  | 'last_name'
+  | 'birth_name'
+  | 'nickname'
+  | 'birthday'
+  | 'sex'
+  | 'health_insurance_company'
+  | 'health_issues'
+  | 'email'
+  | 'phone'
+  | 'address'
+  | 'contact_address'
+  | 'close_person'
+>
 
 const data2form = (user: User): UserForm => {
-  return merge({}, user, { sex: user.sex ? user.sex.id : 0 })
+  return merge({}, user, {
+    sex: user.sex ? user.sex.id : 0,
+    address: { region: user.address?.region?.id ?? 0 },
+    contact_address: { region: user.contact_address?.region?.id ?? 0 },
+    close_person: user.close_person ?? {
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone: '',
+    },
+    health_insurance_company: user.health_insurance_company?.id ?? 0,
+  })
 }
 
 const form2payload = (data: UserForm): Partial<UserPayload> => {
-  return merge({}, data, { sex: Number(data.sex) || null })
+  const address =
+    data.address.city ||
+    data.address.street ||
+    data.address.zip_code ||
+    Number(data.address.region)
+      ? {
+          ...data.address,
+          region: Number(data.address.region) || null,
+        }
+      : undefined
+
+  const contact_address =
+    data.contact_address.city ||
+    data.contact_address.street ||
+    data.contact_address.zip_code ||
+    Number(data.contact_address.region)
+      ? {
+          ...data.contact_address,
+          region: Number(data.contact_address.region) || null,
+        }
+      : null
+
+  const close_person =
+    data.close_person?.email ||
+    data.close_person?.first_name ||
+    data.close_person?.last_name ||
+    data.close_person?.phone
+      ? data.close_person
+      : null
+
+  return merge(
+    {},
+    omit(
+      data,
+      'sex',
+      'address',
+      'contact_address',
+      'health_insurance_company',
+      'close_person',
+    ),
+    {
+      sex: Number(data.sex) || null,
+      address,
+      contact_address,
+      health_insurance_company: Number(data.health_insurance_company) || null,
+      close_person,
+    },
+  )
 }
+
+const addressValidationSchema: yup.ObjectSchema<UserForm['address']> = yup
+  .object()
+  .shape(
+    {
+      street: yup.string().when(['city', 'zip_code', 'region'], {
+        is: (city: string, zip: string, region: number) =>
+          city || zip || Number(region),
+        then: schema => schema.required(),
+        otherwise: schema => schema.defined(),
+      }),
+      city: yup.string().when(['street', 'zip_code', 'region'], {
+        is: (street: string, zip: string, region: number) =>
+          street || zip || Number(region),
+        then: schema => schema.required(),
+        otherwise: schema => schema.defined(),
+      }),
+      zip_code: yup.string().when(['street', 'city', 'region'], {
+        is: (street: string, city: string, region: number) =>
+          street || city || Number(region),
+        then: schema => schema.required(),
+        otherwise: schema => schema.defined(),
+      }),
+      region: yup.number().defined(),
+    },
+    [
+      ['street', 'city'],
+      ['street', 'zip_code'],
+      ['city', 'zip_code'],
+    ],
+  )
+
+const defaultAddress: UserForm['address'] = {
+  street: '',
+  city: '',
+  zip_code: '',
+  region: 0,
+}
+
+const validationSchema: yup.ObjectSchema<UserForm> = yup.object({
+  first_name: yup.string().required(),
+  last_name: yup.string().required(),
+  birth_name: yup.string(),
+  nickname: yup.string(),
+  birthday: birthdayValidation.required(),
+  sex: yup.number().required(),
+  health_insurance_company: yup.number().required(),
+  health_issues: yup.string(),
+  email: yup.string().email().required(),
+  phone: yup.string(),
+  address: addressValidationSchema,
+  contact_address: addressValidationSchema,
+  close_person: yup
+    .object()
+    .shape(
+      {
+        first_name: yup.string().when(['last_name', 'email', 'phone'], {
+          is: (lastName?: string, email?: string, phone?: string) =>
+            lastName || email || phone,
+          then: schema => schema.required(),
+          otherwise: schema => schema.defined(),
+        }),
+        last_name: yup
+          .string()
+          .defined()
+          .when(['first_name', 'email', 'phone'], {
+            is: (firstName?: string, email?: string, phone?: string) =>
+              firstName || email || phone,
+            then: schema => schema.required(''),
+            otherwise: schema => schema.defined(),
+          }),
+        email: yup.string().email(),
+        phone: yup.string(),
+      },
+      [['first_name', 'last_name']],
+    )
+    .defined(),
+})
 
 const EditProfile = () => {
   const { user } = useOutletContext<{ user: User }>()
@@ -40,11 +213,35 @@ const EditProfile = () => {
 
   // fetch data for form
   const { data: sexes } = api.endpoints.readSexes.useQuery({})
+  const { data: regions } = api.endpoints.readRegions.useQuery({
+    pageSize: 100,
+  })
+  const { data: healthInsuranceCompanies } =
+    api.endpoints.readHealthInsuranceCompanies.useQuery({ pageSize: 1000 })
 
-  const [updateUser] = api.endpoints.updateUser.useMutation()
+  const [updateUser, { error }] = api.endpoints.updateUser.useMutation()
 
-  const methods = useForm<UserForm>({ defaultValues: data2form(user) })
-  const { register } = methods
+  useShowApiErrorMessage(error)
+
+  const methods = useForm<UserForm>({
+    defaultValues: data2form(user),
+    resolver: yupResolver(validationSchema),
+  })
+  const { register, watch, control, trigger, formState } = methods
+
+  // validate form fields dependent on other fields
+  // i wish there was a better way
+  // maybe there is, but i haven't found it
+  useEffect(() => {
+    const subscription = watch((data, { name }) => {
+      if (formState.isSubmitted) {
+        if (startsWith(name, 'address')) trigger('address')
+        if (startsWith(name, 'contact_address')) trigger('contact_address')
+        if (startsWith(name, 'close_person')) trigger('close_person')
+      }
+    })
+    return subscription.unsubscribe
+  }, [formState.isSubmitted, trigger, watch])
 
   const handleSubmit = methods.handleSubmit(async data => {
     try {
@@ -55,14 +252,13 @@ const EditProfile = () => {
       }).unwrap()
       showMessage({ type: 'success', message: 'Změny byly úspěšně uloženy' })
       navigate('..')
-    } catch (error) {
-      showMessage({ type: 'error', message: 'Něco se nepovedlo' })
     } finally {
       setIsSaving(false)
     }
   })
 
-  if (!sexes) return <Loading>Připravujeme formulář</Loading>
+  if (!(sexes && regions && healthInsuranceCompanies))
+    return <Loading>Připravujeme formulář</Loading>
 
   if (isSaving) return <Loading>Ukládáme změny</Loading>
 
@@ -78,15 +274,21 @@ const EditProfile = () => {
           <FormSection>
             <FormSubsection header="Osobní údaje">
               <InlineSection>
-                <Label>Jméno</Label>
+                <Label required>Jméno</Label>
                 <FormInputError>
                   <input type="text" {...register('first_name')} />
                 </FormInputError>
               </InlineSection>
               <InlineSection>
-                <Label>Příjmení</Label>
+                <Label required>Příjmení</Label>
                 <FormInputError>
                   <input type="text" {...register('last_name')} />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label>Rodné příjmení</Label>
+                <FormInputError>
+                  <input type="text" {...register('birth_name')} />
                 </FormInputError>
               </InlineSection>
               <InlineSection>
@@ -96,9 +298,13 @@ const EditProfile = () => {
                 </FormInputError>
               </InlineSection>
               <InlineSection>
-                <Label>Datum narození</Label>
+                <Label required>Datum narození</Label>
                 <FormInputError>
-                  <input type="text" {...register('birthday')} />
+                  <Controller
+                    control={control}
+                    name="birthday"
+                    render={({ field }) => <BirthdayInput {...field} />}
+                  />
                 </FormInputError>
               </InlineSection>
               <InlineSection>
@@ -114,11 +320,136 @@ const EditProfile = () => {
                   </select>
                 </FormInputError>
               </InlineSection>
+              <InlineSection>
+                <Label>Zdravotní pojišťovna</Label>
+                <FormInputError>
+                  <select {...register('health_insurance_company')}>
+                    <option value={0}>&ndash;&ndash;&ndash;</option>
+                    {healthInsuranceCompanies.results.map(hic => (
+                      <option key={hic.slug} value={hic.id}>
+                        {hic.name}
+                      </option>
+                    ))}
+                  </select>
+                </FormInputError>
+              </InlineSection>
+              <FullSizeElement>
+                <Label>Alergie a zdravotní omezení</Label>
+                <textarea {...register('health_issues')} />
+              </FullSizeElement>
             </FormSubsection>
             <FormSubsection header="Kontaktní údaje">
-              telefon, emaily, adresa, kontaktní adresa
+              <InlineSection>
+                <Label required>Email</Label>
+                <FormInputError>
+                  <input type="email" {...register('email')} />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label>Telefon</Label>
+                <FormInputError>
+                  <input type="tel" {...register('phone')} />
+                </FormInputError>
+              </InlineSection>
+              <FormSubsubsection header="Adresa" required>
+                <InlineSection>
+                  <Label>Ulice a číslo domu</Label>
+                  <FormInputError>
+                    <input type="text" {...register('address.street')} />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Obec</Label>
+                  <FormInputError>
+                    <input type="text" {...register('address.city')} />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Směrovací číslo</Label>
+                  <FormInputError>
+                    <input type="text" {...register('address.zip_code')} />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Kraj</Label>
+                  <FormInputError>
+                    <select {...register('address.region')}>
+                      <option value={0}>&ndash;&ndash;&ndash;</option>
+                      {regions.results.map(region => (
+                        <option key={region.id} value={region.id}>
+                          {region.name}
+                        </option>
+                      ))}
+                    </select>
+                  </FormInputError>
+                </InlineSection>
+              </FormSubsubsection>
+              <FormSubsubsection header="Kontaktní adresa">
+                <InlineSection>
+                  <Label>Ulice a číslo domu</Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      {...register('contact_address.street')}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Obec</Label>
+                  <FormInputError>
+                    <input type="text" {...register('contact_address.city')} />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Směrovací číslo</Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      {...register('contact_address.zip_code')}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Kraj</Label>
+                  <FormInputError>
+                    <select {...register('contact_address.region')}>
+                      <option value={0}>&ndash;&ndash;&ndash;</option>
+                      {regions.results.map(region => (
+                        <option key={region.id} value={region.id}>
+                          {region.name}
+                        </option>
+                      ))}
+                    </select>
+                  </FormInputError>
+                </InlineSection>
+              </FormSubsubsection>
             </FormSubsection>
-            <FormSubsection header="Blízká osoba">asdf</FormSubsection>
+            <FormSubsection header="Blízká osoba">
+              <InlineSection>
+                <Label>Jméno</Label>
+                <FormInputError>
+                  <input type="text" {...register('close_person.first_name')} />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label>Příjmení</Label>
+                <FormInputError>
+                  <input type="text" {...register('close_person.last_name')} />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label>Email</Label>
+                <FormInputError>
+                  <input type="email" {...register('close_person.email')} />
+                </FormInputError>
+              </InlineSection>
+              <InlineSection>
+                <Label>Telefon</Label>
+                <FormInputError>
+                  <input type="tel" {...register('close_person.phone')} />
+                </FormInputError>
+              </InlineSection>
+            </FormSubsection>
           </FormSection>
           <Actions>
             <Button type="reset">Zrušit</Button>

@@ -89,7 +89,7 @@ const Header = () => {
               <Link to={`/profil/${user.id}/upravit`}>Upravit profil</Link>
             </MenuItem>
             <MenuItem>
-              <button onClick={handleLogout}>Logout</button>
+              <button onClick={handleLogout}>Odhlásit se</button>
             </MenuItem>
           </Menu>
         </nav>

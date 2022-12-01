@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Assign, Overwrite } from 'utility-types'
 import { ClearBounds } from '../../components/Map'
 import { RootState } from '../store'
-import {
+import type {
   AdministrationUnit,
   Answer,
   DietCategory,
@@ -16,6 +16,7 @@ import {
   EventProgramCategory,
   EventPropagationImage,
   FinanceReceipt,
+  HealthInsuranceCompany,
   Location,
   Opportunity,
   OpportunityCategory,
@@ -23,9 +24,11 @@ import {
   QualificationCategory,
   Question,
   Questionnaire,
+  Region,
   Registration,
   SexCategory,
   User,
+  UserAddress as Address,
 } from './testApi'
 
 export type PaginatedList<T> = {
@@ -192,6 +195,29 @@ export const api = createApi({
     readSexes: build.query<PaginatedList<SexCategory>, ListArguments>({
       query: queryArg => ({
         url: `categories/sex_categories/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readRegions: build.query<PaginatedList<Region>, ListArguments>({
+      query: queryArg => ({
+        url: `categories/regions/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readHealthInsuranceCompanies: build.query<
+      PaginatedList<HealthInsuranceCompany>,
+      ListArguments
+    >({
+      query: queryArg => ({
+        url: `categories/health_insurance_companies/`,
         params: {
           page: queryArg.page,
           page_size: queryArg.pageSize,
@@ -867,10 +893,20 @@ export type EventPayload = Omit<
   propagation?: PropagationPayload | null
 }
 
+type AddressPayload = Overwrite<
+  Address,
+  {
+    region: number | null
+  }
+>
+
 export type UserPayload = Overwrite<
   Omit<User, 'id'>,
   {
     sex: number | null
+    address: AddressPayload
+    contact_address: AddressPayload | null
+    health_insurance_company: number | null
   }
 >
 

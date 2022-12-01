@@ -86,7 +86,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
       ...defaultUserData,
       birthday: defaultUserData.birthday || undefined,
       sex: defaultUserData.sex?.id ?? null,
-    } as Partial<UserPayload>,
+    } as unknown as Partial<UserPayload>, // TODO is this unfinished? region is not assigned correctly as number to type UserPayload
   })
 
   const [showAddParticipantForm, setShowAddParticipantForm] = useState(false)
@@ -180,7 +180,8 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                         setCreatingANewUser(false)
                         console.log(result)
                         setSelectedUser(result)
-                        reset({ ...selectedUser, sex: selectedUser?.sex?.id })
+                        // TODO selectedUser has to be transformed to UserPayload better
+                        reset({ ...selectedUser } as Partial<UserPayload>)
                         setShowAddParticipantForm(true)
                       }}
                     >
@@ -194,7 +195,8 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                           // check if i know his birthdate
                           setCreatingANewUser(false)
                           setSelectedUser(result)
-                          reset({ ...selectedUser, sex: selectedUser?.sex?.id })
+                          // TODO selectedUser has to be transformed to UserPayload better
+                          reset({ ...selectedUser } as Partial<UserPayload>)
                           setShowAddParticipantForm(true)
                         }}
                       >
@@ -212,7 +214,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                       ...defaultUserData,
                       birthday: defaultUserData.birthday || undefined,
                       sex: defaultUserData.sex?.id,
-                    } as Partial<UserPayload>)
+                    } as unknown as Partial<UserPayload>) // TODO is this unfinished? region is not assigned correctly as number to type UserPayload
                     setShowAddParticipantForm(true)
                   }}
                 >
