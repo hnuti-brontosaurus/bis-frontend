@@ -101,34 +101,33 @@ const IntendedForStep = ({
                       mít jich nejlépe polovinu, (min. třetinu) z celkového
                       počtu účastníků.
                     </p>
-                    <p>
-                      Zadáním akce pro prvoúčastníky získáte:
-                      <ul>
-                        <li>
-                          Širší propagaci skrze letáky, osobní kontakty apod.
-                          Zveřejnění na letáku VIP propagace.
-                        </li>
-                        <li>
-                          Propagaci na středních školách od lektorů
-                          středoškolských programů
-                        </li>
-                        <li>
-                          Zveřejnění na Facebooku a Instagramu HB, reklamu na
-                          Facebooku
-                        </li>
-                        <li>Reklamu v Google vyhledávání</li>
-                        <li>Služby grafika HB (dle dohodnutého rozsahu)</li>
-                        <li>Přidání do webových katalogů akcí</li>
-                        <li>Slevu na inzerci v Roverském kmenu (pro tábory)</li>
-                        <li>Zpětnou vazbu k webu a Facebooku akce</li>
-                        <li>Metodickou pomoc a pomoc s agendou akce</li>
-                        <li>Propagace na novém webu HB v sekci Jedu poprvé</li>
-                      </ul>
-                    </p>
+                    <p>Zadáním akce pro prvoúčastníky získáte:</p>
+                    <ul>
+                      <li>
+                        Širší propagaci skrze letáky, osobní kontakty apod.
+                        Zveřejnění na letáku VIP propagace.
+                      </li>
+                      <li>
+                        Propagaci na středních školách od lektorů
+                        středoškolských programů
+                      </li>
+                      <li>
+                        Zveřejnění na Facebooku a Instagramu HB, reklamu na
+                        Facebooku
+                      </li>
+                      <li>Reklamu v Google vyhledávání</li>
+                      <li>Služby grafika HB (dle dohodnutého rozsahu)</li>
+                      <li>Přidání do webových katalogů akcí</li>
+                      <li>Slevu na inzerci v Roverském kmenu (pro tábory)</li>
+                      <li>Zpětnou vazbu k webu a Facebooku akce</li>
+                      <li>Metodickou pomoc a pomoc s agendou akce</li>
+                      <li>Propagace na novém webu HB v sekci Jedu poprvé</li>
+                    </ul>
                   </InfoBox>
                 </FullSizeElement>
+
                 <FullSizeElement>
-                  <FormSubheader>
+                  <FormSubheader required>
                     Cíle akce a přínos pro prvoúčastníky
                   </FormSubheader>
                   <InfoBox>
@@ -140,30 +139,36 @@ const IntendedForStep = ({
                     <textarea
                       {...register(
                         'propagation.vip_propagation.goals_of_event',
+                        { required },
                       )}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
 
                 <FullSizeElement>
-                  <FormSubheader>
+                  <FormSubheader required>
                     Programové pojetí akce pro prvoúčastníky
                   </FormSubheader>
                   <InfoBox>
                     V základu uveďte, jak bude vaše akce programově a
                     dramaturgicky koncipována (motivační příběh, zaměření
-                    programu – hry, diskuse, řemesla,...). Uveďte, jak náplň a
-                    program akce reflektují potřeby vaší cílové skupiny
+                    programu &ndash; hry, diskuse, řemesla,...). Uveďte, jak
+                    náplň a program akce reflektují potřeby vaší cílové skupiny
                     prvoúčastníků.
                   </InfoBox>
                   <FormInputError>
                     <textarea
-                      {...register('propagation.vip_propagation.program')}
+                      {...register('propagation.vip_propagation.program', {
+                        required,
+                      })}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
+
                 <FullSizeElement>
-                  <FormSubheader>Krátký zvací text do propagace</FormSubheader>
+                  <FormSubheader required>
+                    Krátký zvací text do propagace
+                  </FormSubheader>
                   <InfoBox>
                     Ve 2-4 větách nalákejte na vaši akci a zdůrazněte osobní
                     přínos pro účastníky (max. 200 znaků).
@@ -172,12 +177,11 @@ const IntendedForStep = ({
                     <textarea
                       {...register(
                         'propagation.vip_propagation.short_invitation_text',
-                        { maxLength: 200 },
+                        { maxLength: 200, required },
                       )}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
-
                 {
                   /*
                         only "camp" can see this
