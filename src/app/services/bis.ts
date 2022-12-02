@@ -927,6 +927,7 @@ export type RawOSMLocation = {
   lat: string
   lon: string
   boundingbox: [string, string, string, string]
+  display_name: string
 }
 
 export type OSMLocation = Overwrite<
