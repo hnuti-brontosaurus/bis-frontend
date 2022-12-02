@@ -10,12 +10,12 @@ import * as yup from 'yup'
 import { api, UserPayload } from '../app/services/bis'
 import { EventApplication, User } from '../app/services/bisTypes'
 import colors from '../_colors.module.scss'
-import styles from './AddParticipantModal.module.scss'
 import { Button } from './Button'
 import ErrorBox from './ErrorBox'
 import FormInputError from './FormInputError'
 import { InlineSection, Label } from './FormLayout'
 import Loading from './Loading'
+import styles from './NewApplicationModal.module.scss'
 import stylesTable from './Table.module.scss'
 
 interface INewApplicationModalProps {
