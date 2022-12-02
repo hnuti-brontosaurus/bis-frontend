@@ -1,0 +1,6 @@
+@use '../colors';
+
+.infoBoxError {
+  padding: 20px;
+  background-color: colors.$error-light;
+}

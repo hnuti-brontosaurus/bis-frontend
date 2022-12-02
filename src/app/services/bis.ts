@@ -21,6 +21,7 @@ import type {
   Location,
   Opportunity,
   OpportunityCategory,
+  PatchedEventApplication,
   Propagation,
   QualificationCategory,
   Question,
@@ -29,6 +30,7 @@ import type {
   Registration,
   SexCategory,
   User,
+  UserSearch,
 } from './bisTypes'
 
 export type PaginatedList<T> = {
@@ -64,6 +66,7 @@ export const api = createApi({
   tagTypes: [
     'Application',
     'User',
+    'UserSearch',
     'Event',
     'EventApplication',
     'EventImage',
@@ -246,6 +249,29 @@ export const api = createApi({
           ? results.results.map(user => ({
               type: 'User',
               id: user.id,
+            }))
+          : [],
+    }),
+    readUser: build.query<User, { id: string }>({
+      query: queryArg => ({ url: `/frontend/users/${queryArg.id}/` }),
+    }),
+    readAllUsers: build.query<
+      PaginatedList<UserSearch>,
+      { page?: number; pageSize?: number; search?: string }
+    >({
+      query: queryArg => ({
+        url: `frontend/search_users/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        results?.results
+          ? results.results.map(user => ({
+              type: 'UserSearch',
+              id: user._search_id,
             }))
           : [],
     }),
@@ -782,6 +808,22 @@ export const api = createApi({
         method: 'GET',
       }),
     }),
+    updateEventApplication: build.mutation<
+      EventApplication,
+      {
+        eventId: number
+        /** A unique integer value identifying this Přihláška na akci. */
+        id: number
+        patchedEventApplication: PatchedEventApplication
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/registration/applications/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedEventApplication,
+      }),
+      invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
+    }),
     readEventParticipants: build.query<
       PaginatedList<User>,
       {
@@ -966,6 +1008,7 @@ export type WebEvent = Overwrite<
 
 export type AnswerPayload = Overwrite<Answer, { question: number }>
 
+// TODO: dodac adres i blizką osobę
 export type EventApplicationPayload = Pick<
   EventApplication,
   | 'first_name'
@@ -974,5 +1017,7 @@ export type EventApplicationPayload = Pick<
   | 'email'
   | 'birthday'
   | 'note'
+  | 'nickname'
   | 'close_person'
+  | 'health_issues'
 > & { answers: AnswerPayload[] }
