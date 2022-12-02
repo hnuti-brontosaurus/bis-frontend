@@ -1,6 +1,6 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Assign, Overwrite } from 'utility-types'
+import type { Assign, Overwrite } from 'utility-types'
 import { ClearBounds } from '../../components/Map'
 import { RootState } from '../store'
 import type {
@@ -968,5 +968,11 @@ export type AnswerPayload = Overwrite<Answer, { question: number }>
 
 export type EventApplicationPayload = Pick<
   EventApplication,
-  'first_name' | 'last_name' | 'phone' | 'email' | 'birthday'
+  | 'first_name'
+  | 'last_name'
+  | 'phone'
+  | 'email'
+  | 'birthday'
+  | 'note'
+  | 'close_person'
 > & { answers: AnswerPayload[] }

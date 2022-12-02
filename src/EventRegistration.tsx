@@ -1,12 +1,22 @@
+import { useState } from 'react'
 import { FaRegCalendarAlt } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
-import { api } from './app/services/bis'
+import { api, EventApplicationPayload } from './app/services/bis'
 import Error from './components/Error'
 import Loading from './components/Loading'
 import styles from './EventRegistration.module.scss'
-import EventRegistrationForm from './EventRegistrationForm'
+import EventRegistrationForm, {
+  FinishedStep,
+  RegistrationFormShapeWithStep,
+} from './EventRegistrationForm'
+import { useShowApiErrorMessage } from './features/systemMessage/useSystemMessage'
 import { useCurrentUser } from './hooks/currentUser'
+import {
+  useClearPersistentForm,
+  useDirectPersistForm,
+  usePersistentFormData,
+} from './hooks/persistForm'
 import { useTitle } from './hooks/title'
 import { formatDateRange } from './utils/helpers'
 
@@ -24,12 +34,29 @@ const EventRegistration = () => {
 
   useTitle(`Přihláška na akci ${event?.name ?? ''}`)
 
-  const [createEventApplication, { isLoading }] =
+  const [createEventApplication, { error: savingError }] =
     api.endpoints.createEventApplication.useMutation()
+
+  const formData = usePersistentFormData(
+    'registration',
+    String(eventId),
+  ) as RegistrationFormShapeWithStep
+  const persist = useDirectPersistForm('registration', String(eventId))
+  const clearPersistentData = useClearPersistentForm(
+    'registration',
+    String(eventId),
+  )
+
+  useShowApiErrorMessage(
+    savingError,
+    'Nepodařilo se nám uložit přihlášku. Zkuste to znovu.',
+  )
+
+  const [isSaving, setIsSaving] = useState(false)
 
   if (isEventError) return <Error error={eventError}></Error>
 
-  if (isLoading) return <Loading>Ukládáme přihlášku</Loading>
+  if (isSaving) return <Loading>Ukládáme přihlášku</Loading>
 
   if (isAuthenticated && !user) return <Loading>Ověřujeme uživatele</Loading>
 
@@ -43,6 +70,38 @@ const EventRegistration = () => {
   if (!event.registration.is_registration_required)
     return <>Na tuto akci se nemusíte přihlašovat. Stačí přijít.</>
 
+  const handleRestart = () => {
+    clearPersistentData()
+  }
+
+  const handleFinish = () => {
+    clearPersistentData()
+    // when finished, go to main brontosaurus site
+    globalThis.location.href = 'https://brontosaurus.cz'
+  }
+
+  const handleSubmit = async (data: EventApplicationPayload) => {
+    try {
+      setIsSaving(true)
+      await createEventApplication({
+        application: data,
+        eventId,
+      }).unwrap()
+      clearPersistentData()
+      persist({ step: 'finished' })
+    } catch (error) {
+      persist({ step: 'progress' })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleCancel = () => {
+    // redirect to event detail on brontosaurus.cz
+    // TODO set a more generic address (not always dobrovolnicke-akce)
+    globalThis.location.href = `https://brontosaurus.cz/dobrovolnicke-akce/detail/${eventId}/`
+  }
+
   return (
     <div>
       <h1 className={styles.header}>Přihláška na akci {event?.name}</h1>
@@ -51,40 +110,27 @@ const EventRegistration = () => {
           <FaRegCalendarAlt /> {formatDateRange(event.start, event.end)}
         </div>
         <div>
-          <GrLocation />{' '}
-          {event.online_link ? (
-            <a
-              href={event.online_link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              online
-            </a>
-          ) : (
-            event.location?.name
-          )}
+          <GrLocation /> {event.location?.name}
         </div>
       </div>
-      <EventRegistrationForm
-        id={String(eventId)}
-        user={user}
-        questionnaire={event.registration.questionnaire ?? undefined}
-        onSubmit={async data => {
-          await createEventApplication({
-            application: data,
-            eventId,
-          }).unwrap()
-        }}
-        onFinish={() => {
-          // when finished, go to main brontosaurus site
-          globalThis.location.href = 'https://brontosaurus.cz'
-        }}
-        onCancel={() => {
-          // redirect to event detail on brontosaurus.cz
-          // TODO set a more generic address (not always dobrovolnicke-akce)
-          globalThis.location.href = `https://brontosaurus.cz/dobrovolnicke-akce/detail/${eventId}/`
-        }}
-      />
+      {formData?.step === 'finished' ? (
+        <FinishedStep
+          message={
+            event.registration.questionnaire?.after_submit_text ||
+            'Děkujeme za přihlášku!'
+          }
+          onRestart={handleRestart}
+          onFinish={handleFinish}
+        />
+      ) : (
+        <EventRegistrationForm
+          id={String(eventId)}
+          user={user}
+          questionnaire={event.registration.questionnaire ?? undefined}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
+      )}
     </div>
   )
 }
