@@ -1,17 +1,17 @@
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
 import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
-import { Event, User } from '../app/services/testApi'
+import { Event, User } from '../app/services/bisTypes'
 
-export function getIdBySlug<S extends string>(
-  objects: { id: number; slug: S }[],
-  slug: S,
+export function getIdBySlug<T, O extends { id: number; slug: T }>(
+  objects: O[],
+  slug: O['slug'],
 ): number {
   return objects.find(obj => obj.slug === slug)?.id ?? -1
 }
-export function getIdsBySlugs<S extends string>(
-  objects: { id: number; slug: S }[],
-  slugs: S[],
+export function getIdsBySlugs<T, O extends { id: number; slug: T }>(
+  objects: O[],
+  slugs: O['slug'][],
 ): number[] {
   return slugs.map(slug => getIdBySlug(objects, slug))
 }

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../../app/services/bis'
-import { Event, Finance } from '../../app/services/testApi'
+import { Event, Finance } from '../../app/services/bisTypes'
 import Loading from '../../components/Loading'
 import { useTitle } from '../../hooks/title'
 import CloseEventForm, { CloseEventFormShape } from './CloseEventForm'

@@ -9,7 +9,7 @@ import {
   Finance,
   FinanceReceipt,
   Record,
-} from '../../app/services/testApi'
+} from '../../app/services/bisTypes'
 import {
   SimpleStep as Step,
   SimpleSteps as Steps,
@@ -101,10 +101,7 @@ const CloseEventForm = ({
     participantsFormMethods.watch,
   )
 
-  const isVolunteering = [
-    'public__volunteering__only_volunteering',
-    'public__volunteering__with_experience',
-  ].includes(event.category.slug)
+  const isVolunteering = event.category.slug === 'public__volunteering'
 
   // attendance list is required when the event is camp or weekend event
   // const areParticipantsRequired = ['camp', 'weekend_event'].includes(

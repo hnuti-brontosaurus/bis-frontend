@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import * as yup from 'yup'
 import { api } from '../app/services/bis'
-import { EventApplication } from '../app/services/testApi'
+import { EventApplication } from '../app/services/bisTypes'
 import FormInputError from './FormInputError'
 interface INewApplicationModalProps {
   open: boolean

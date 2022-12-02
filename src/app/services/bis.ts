@@ -4,6 +4,7 @@ import { Assign, Overwrite } from 'utility-types'
 import { ClearBounds } from '../../components/Map'
 import { RootState } from '../store'
 import type {
+  Address,
   AdministrationUnit,
   Answer,
   DietCategory,
@@ -28,8 +29,7 @@ import type {
   Registration,
   SexCategory,
   User,
-  UserAddress as Address,
-} from './testApi'
+} from './bisTypes'
 
 export type PaginatedList<T> = {
   count: number

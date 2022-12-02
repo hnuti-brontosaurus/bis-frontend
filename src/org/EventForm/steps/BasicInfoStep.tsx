@@ -1,7 +1,7 @@
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
 import { api } from '../../../app/services/bis'
-import { AdministrationUnit } from '../../../app/services/testApi'
+import { AdministrationUnit } from '../../../app/services/bisTypes'
 import FormInputError from '../../../components/FormInputError'
 import {
   FormSection,

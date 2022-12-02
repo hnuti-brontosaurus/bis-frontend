@@ -1,6 +1,6 @@
 import { FaPencilAlt } from 'react-icons/fa'
 import { useOutletContext } from 'react-router-dom'
-import { User } from '../app/services/testApi'
+import { User } from '../app/services/bisTypes'
 import { ButtonLink } from '../components/Button'
 import { Actions } from '../components/FormLayout'
 import { useCurrentUser } from '../hooks/currentUser'
