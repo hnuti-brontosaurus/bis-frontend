@@ -1,6 +1,6 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 import { api } from '../../app/services/bis'
-import { User } from '../../app/services/testApi'
+import { User } from '../../app/services/bisTypes'
 import { RootState } from '../../app/store'
 
 type AuthState = {

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { api } from '../../../../app/services/bis'
-import { User } from '../../../../app/services/testApi'
+import { User } from '../../../../app/services/bisTypes'
 import Loading from '../../../../components/Loading'
 import styles from '../ParticipantsStep.module.scss'
 

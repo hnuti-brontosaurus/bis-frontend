@@ -5,7 +5,7 @@ import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
 import { api, CorrectLocation, EventPayload } from '../app/services/bis'
-import { EventPropagationImage, Question, User } from '../app/services/testApi'
+import { EventPropagationImage, Question, User } from '../app/services/bisTypes'
 import Loading from '../components/Loading'
 import { NewLocation } from '../components/SelectLocation'
 import { SimpleStep as Step, SimpleSteps as Steps } from '../components/Steps'
@@ -15,12 +15,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from '../hooks/persistForm'
-import {
-  getIdBySlug,
-  getIdsBySlugs,
-  hasFormError,
-  pickErrors,
-} from '../utils/helpers'
+import { getIdBySlug, hasFormError, pickErrors } from '../utils/helpers'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
 import IntendedForStep from './EventForm/steps/IntendedForStep'
@@ -375,17 +370,15 @@ const EventForm: FC<{
   }
 
   const isWeekendEvent =
-    getIdBySlug(groups?.results ?? [], 'weekend_event') ===
+    getIdBySlug(groups.results, 'weekend_event') ===
     methods.category.watch('group')
   const isCamp =
-    getIdBySlug(groups?.results ?? [], 'camp') ===
-    methods.category.watch('group')
-  const isVolunteering = getIdsBySlugs(categories?.results ?? [], [
-    'public__volunteering__only_volunteering',
-    'public__volunteering__with_experience',
-  ]).includes(+methods.basicInfo.watch('category'))
+    getIdBySlug(groups.results, 'camp') === methods.category.watch('group')
+  const isVolunteering =
+    getIdBySlug(categories.results, 'public__volunteering') ===
+    +methods.basicInfo.watch('category')
   const mainOrganizerDependencies = {
-    intended_for: intendedFor?.results.find(
+    intended_for: intendedFor.results.find(
       c => c.id === +methods.intendedFor.watch('intended_for'),
     ),
     group: groups.results.find(g => g.id === +methods.category.watch('group')),

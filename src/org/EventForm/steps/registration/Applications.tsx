@@ -1,7 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { FC, useState } from 'react'
 import { api } from '../../../../app/services/bis'
-import { EventApplication } from '../../../../app/services/testApi'
+import { EventApplication } from '../../../../app/services/bisTypes'
 import AddParticipantModal from '../../../../components/AddParticipantModal'
 import Loading from '../../../../components/Loading'
 import NewApplicationModal from '../../../../components/NewApplicationModal'

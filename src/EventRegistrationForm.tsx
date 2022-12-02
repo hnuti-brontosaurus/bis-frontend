@@ -11,7 +11,7 @@ import {
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import * as yup from 'yup'
 import { EventApplicationPayload, WebQuestionnaire } from './app/services/bis'
-import { EventApplication, Question, User } from './app/services/testApi'
+import { EventApplication, Question, User } from './app/services/bisTypes'
 import { Button } from './components/Button'
 import FormInputError from './components/FormInputError'
 import {

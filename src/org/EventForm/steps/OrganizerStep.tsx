@@ -1,19 +1,21 @@
 import { get, uniqBy } from 'lodash'
-import { useCallback, useEffect } from 'react'
+import { Fragment, useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
-import {
+import type {
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
+  QualificationCategory,
   User,
-} from '../../../app/services/testApi'
+} from '../../../app/services/bisTypes'
 import FormInputError from '../../../components/FormInputError'
 import {
   FormSection,
   FormSubsection,
   FormSubsubsection,
   FullSizeElement,
+  InfoBox,
   InlineSection,
   Label,
 } from '../../../components/FormLayout'
@@ -29,6 +31,7 @@ import { MethodsShapes } from '../../EventForm'
 import {
   canBeMainOrganizer,
   canBeMainOrganizer2,
+  getRequiredQualifications,
 } from './validateMainOrganizer'
 
 const OrganizerStep = ({
@@ -68,7 +71,7 @@ const OrganizerStep = ({
               new Date() <= new Date(q.valid_till),
           )
           .map(q => q.category.name)
-          .join(', ') || 'bez kvalifikace'
+          .join(', ') || '—'
       })`,
     [],
   )
@@ -114,6 +117,12 @@ const OrganizerStep = ({
     ? watch('main_organizer')
     : watch('propagation.contact_person')
 
+  const requiredQualifications = getRequiredQualifications(
+    mainOrganizerDependencies,
+  ).map(slug =>
+    allQualifications.results.find(q => q.slug === slug),
+  ) as QualificationCategory[]
+
   return (
     <FormProvider {...methods}>
       <form>
@@ -124,12 +133,34 @@ const OrganizerStep = ({
             help="Hlavní organizátor musí mít náležité kvalifikace a za celou akci zodpovídá. Je nutné zadávat hlavního organizátora do BIS před akcí, aby měl automaticky sjednané pojištění odpovědnosti za škodu a úrazové pojištění."
           >
             <FullSizeElement>
+              <InfoBox>
+                Hlavní organizátor/ka pro akci{' '}
+                <i>
+                  {mainOrganizerDependencies.group?.name ?? '—'} &middot;{' '}
+                  {mainOrganizerDependencies.category?.name ?? '—'} &middot;{' '}
+                  {mainOrganizerDependencies.intended_for?.name ?? '—'}
+                </i>{' '}
+                {requiredQualifications.length === 0 ? (
+                  <>nemusí mít žádnou kvalifikaci</>
+                ) : (
+                  <>
+                    musí mít kvalifikaci{' '}
+                    {requiredQualifications.map(({ name, slug }) => (
+                      <Fragment key={slug}>
+                        <i>{name}</i> nebo{' '}
+                      </Fragment>
+                    ))}
+                    kvalifikaci nadřazenou
+                  </>
+                )}{' '}
+                a musí mít minimálně 18 let.
+              </InfoBox>
               <FormInputError>
                 <Controller
                   name="main_organizer"
                   control={control}
                   rules={{
-                    required: 'Toto pole je povinné!',
+                    required,
                     validate: async user => {
                       try {
                         return canBeMainOrganizer(
