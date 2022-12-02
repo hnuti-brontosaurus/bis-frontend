@@ -247,7 +247,6 @@ export const event2payload = (
       main_image,
       images: otherImages,
       questions: [...event.questions].sort(sortOrder),
-      location: event.location ? { id: event.location } : undefined,
     }
   )
 }
