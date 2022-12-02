@@ -22,6 +22,7 @@ export type {
   Location,
   Opportunity,
   OpportunityCategory,
+  PatchedEventApplication,
   Propagation,
   Qualification,
   QualificationCategory,
@@ -33,6 +34,7 @@ export type {
   SexCategory,
   User,
   UserAddress as Address,
+  UserSearch,
 } from './testApi'
 
 export type EventCategory = Overwrite<

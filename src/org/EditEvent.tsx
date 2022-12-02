@@ -84,6 +84,7 @@ const EditEvent = () => {
         location: locationId,
       }),
     }).unwrap()
+
     // ***images***
     // get order from position
 

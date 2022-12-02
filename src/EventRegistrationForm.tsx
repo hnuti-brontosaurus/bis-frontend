@@ -37,7 +37,7 @@ import { required } from './utils/validationMessages'
 
 export type RegistrationFormShape = SetRequired<
   SetNonNullable<
-    EventApplicationPayload,
+    Omit<EventApplicationPayload, 'nickname' | 'health_issues'>,
     'first_name' | 'last_name' | 'phone' | 'email' | 'birthday'
   >,
   'birthday'
