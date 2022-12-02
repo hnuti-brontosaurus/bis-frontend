@@ -6,15 +6,9 @@ import type {
   User,
 } from '../../../app/services/bisTypes'
 
-export const canBeMainOrganizer = (
+export const getRequiredQualifications = (
   event: Partial<Pick<Event, 'intended_for' | 'group' | 'category'>>,
-  user: User,
-  allQualifications: QualificationCategory[],
-): boolean => {
-  if (!user.birthday) throw new Error('Není znám věk hlavního organizátora')
-  const age = getAge(user.birthday)
-  if (age < 18) throw new Error('Hlavní organizátor musí mít aspoň 18 let')
-
+): string[] => {
   const qualificationRequiredForCategories: EventCategory['slug'][] = [
     'internal__general_meeting',
     'internal__section_meeting',
@@ -34,10 +28,10 @@ export const canBeMainOrganizer = (
       category as EventCategory['slug'],
     )
   )
-    return true
+    return []
 
   if (intendedFor === 'for_kids' && category === 'internal__section_meeting')
-    return true
+    return []
 
   let required_one_of: string[] = []
 
@@ -62,6 +56,20 @@ export const canBeMainOrganizer = (
   }
 
   if (category === 'public__educational__ohb') required_one_of = ['instructor']
+
+  return required_one_of
+}
+
+export const canBeMainOrganizer = (
+  event: Partial<Pick<Event, 'intended_for' | 'group' | 'category'>>,
+  user: User,
+  allQualifications: QualificationCategory[],
+): boolean => {
+  if (!user.birthday) throw new Error('Není znám věk hlavního organizátora')
+  const age = getAge(user.birthday)
+  if (age < 18) throw new Error('Hlavní organizátor musí mít aspoň 18 let')
+
+  const required_one_of = getRequiredQualifications(event)
 
   if (required_one_of.length > 0) {
     if (!hasRequiredQualification(user, required_one_of, allQualifications)) {

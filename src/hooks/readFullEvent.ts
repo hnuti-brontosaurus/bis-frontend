@@ -12,9 +12,9 @@ export type FullEvent = Assign<
   Overwrite<
     Event,
     {
-      main_organizer: User
+      main_organizer: User // in older events, main_organizer may be missing
       other_organizers: User[]
-      propagation: Overwrite<Propagation, { contact_person: User }>
+      propagation: Overwrite<Propagation, { contact_person: User }> // in older events, contact_person may be missing
       location: CorrectLocation | undefined
     }
   >,
