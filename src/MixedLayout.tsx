@@ -15,15 +15,13 @@ const MixedLayout = ({ children }: { children: ReactNode }) => {
           <MixedHeader />
         </Header>
       )}
-      <Content>
-        <SystemMessages />
-        {children}
-      </Content>
+      <Content>{children}</Content>
       {showHeader && (
         <Footer>
           <LinkFooter />
         </Footer>
       )}
+      <SystemMessages />
     </Layout>
   )
 }
