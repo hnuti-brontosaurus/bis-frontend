@@ -48,7 +48,7 @@ export type SubmitShape = Assign<
   EventPayload,
   {
     questions: Optional<Question, 'id' | 'order'>[]
-    location: NewLocation | Pick<CorrectLocation, 'id'> | null
+    location: NewLocation | Pick<CorrectLocation, 'id'>
     main_image: Optional<EventPropagationImage, 'id' | 'order'>
     images: Optional<EventPropagationImage, 'id' | 'order'>[]
   }
@@ -63,6 +63,7 @@ export type InitialEventData = Overwrite<
       NonNullable<SubmitShape['propagation']>,
       { contact_person: User }
     > | null
+    location?: CorrectLocation
   }
 >
 
@@ -77,6 +78,7 @@ export type EventFormShape = Assign<
     registrationMethod: 'standard' | 'other' | 'none' | 'full'
     // contactPersonIsMainOrganizer is internal, doesn't get sent to API
     contactPersonIsMainOrganizer: boolean
+    location: SubmitShape['location']
   }
 >
 
@@ -183,7 +185,7 @@ const initialData2form = (
     returnData.registrationMethod = registrationMethod
   }
 
-  returnData.online = data?.online_link ? true : false
+  returnData.online = data?.location?.id === 1 ? true : false
 
   return returnData
 }
@@ -222,7 +224,7 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
       data.propagation.vip_propagation ?? null
   }
   if (data.online) {
-    finalData.location = null
+    finalData.location = { id: 1 }
   } else {
     finalData.online_link = ''
   }

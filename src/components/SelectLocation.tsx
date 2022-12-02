@@ -377,7 +377,7 @@ export const useCreateOrSelectLocation = () => {
   const [createLocation] = api.endpoints.createLocation.useMutation()
 
   const createOrSelectLocation = async (
-    location: NewLocation | Pick<CorrectLocation, 'id'> | null,
+    location: NewLocation | Pick<CorrectLocation, 'id'>,
   ) => {
     if (!location) {
       return null

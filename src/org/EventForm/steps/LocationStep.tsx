@@ -29,10 +29,7 @@ const LocationStep = ({
               <InlineSection>
                 Odkaz na online setkání{' '}
                 <FormInputError>
-                  <input
-                    type="url"
-                    {...register('online_link', { required })}
-                  />
+                  <input type="url" {...register('online_link')} />
                 </FormInputError>
               </InlineSection>
             ) : (
