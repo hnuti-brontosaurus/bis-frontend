@@ -70,11 +70,11 @@ const EventTable: FC<{
               </td>
               <td>{formatDateRange(event.start, event.end)}</td>
               <td>
-                {event.online_link
-                  ? 'online'
-                  : locationRequests.find(
-                      request => request.data?.id === event?.location,
-                    )?.data?.name}
+                {
+                  locationRequests.find(
+                    request => request.data?.id === event?.location,
+                  )?.data?.name
+                }
               </td>
               <td className={styles.cellWithButton}>
                 <Menu

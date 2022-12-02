@@ -2323,9 +2323,7 @@ export type WebEventsListApiArg = {
     | 'public__other__eco_tent'
     | 'public__other__exhibition'
     | 'public__other__for_public'
-    | 'public__sports'
-    | 'public__volunteering__only_volunteering'
-    | 'public__volunteering__with_experience'
+    | 'public__volunteering'
   )[]
   duration?: number
   durationGte?: number
@@ -2694,12 +2692,13 @@ export type Event = {
   id: number
   name: string
   is_canceled?: boolean
+  is_complete?: boolean
   is_closed?: boolean
   start: string
   start_time?: string | null
   end: string
   number_of_sub_events?: number
-  location?: number | null
+  location: number
   online_link?: string
   group: EventGroupCategory
   category: EventCategory
@@ -2796,6 +2795,7 @@ export type Qualification = {
 }
 export type User = {
   id: string
+  _search_id: string
   first_name: string
   last_name: string
   nickname?: string
@@ -2933,12 +2933,13 @@ export type PatchedEvent = {
   id?: number
   name?: string
   is_canceled?: boolean
+  is_complete?: boolean
   is_closed?: boolean
   start?: string
   start_time?: string | null
   end?: string
   number_of_sub_events?: number
-  location?: number | null
+  location?: number
   online_link?: string
   group?: number
   category?: number
@@ -3043,6 +3044,7 @@ export type PaginatedUserSearchList = {
 }
 export type PatchedUser = {
   id?: string
+  _search_id?: string
   first_name?: string
   last_name?: string
   nickname?: string

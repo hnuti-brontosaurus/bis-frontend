@@ -1,4 +1,3 @@
-import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { sanitize } from 'dompurify'
 import {
   FaPencilAlt,
@@ -9,7 +8,6 @@ import {
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
-import { api } from '../app/services/bis'
 import { Button, ButtonLink } from '../components/Button'
 import { Actions } from '../components/FormLayout'
 import Loading from '../components/Loading'
@@ -28,13 +26,6 @@ const ViewEvent = () => {
   } = useReadFullEvent(eventId)
 
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
-  const { data: location } = api.endpoints.readLocation.useQuery(
-    event?.location
-      ? {
-          id: event.location,
-        }
-      : skipToken,
-  )
 
   if (isError) return <>Nepodařilo se nám najít akci</>
 
@@ -69,18 +60,7 @@ const ViewEvent = () => {
           <FaRegCalendarAlt /> {formatDateRange(event.start, event.end)}
         </div>
         <div>
-          <GrLocation />{' '}
-          {event.online_link ? (
-            <a
-              href={event.online_link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              online
-            </a>
-          ) : (
-            location?.name
-          )}
+          <GrLocation /> {event.location?.name}
         </div>
       </div>
       <div className={styles.infoBoxDetail}>
@@ -106,19 +86,7 @@ const ViewEvent = () => {
             </tr>
             <tr>
               <th>Místo</th>
-              <td>
-                {event.online_link ? (
-                  <a
-                    href={event.online_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    online
-                  </a>
-                ) : (
-                  location?.name
-                )}
-              </td>
+              <td>{event.location?.name}</td>
             </tr>
             <tr>
               <th>Věk</th>
@@ -142,15 +110,15 @@ const ViewEvent = () => {
               <td>
                 <div>
                   {event.propagation?.contact_name ||
-                    event.propagation.contact_person.display_name}
+                    event.propagation?.contact_person?.display_name}
                 </div>
                 <div>
                   {event.propagation?.contact_phone ||
-                    event.propagation.contact_person.phone}
+                    event.propagation?.contact_person?.phone}
                 </div>
                 <div>
                   {event.propagation?.contact_email ||
-                    event.propagation.contact_person.email}
+                    event.propagation?.contact_person?.email}
                 </div>
               </td>
             </tr>
