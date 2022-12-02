@@ -3,7 +3,7 @@ import { FC, FormEventHandler } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import * as yup from 'yup'
-import { api } from '../app/services/bis'
+import { AnswerPayload, api } from '../app/services/bis'
 import { EventApplication } from '../app/services/bisTypes'
 import { required } from '../utils/validationMessages'
 import FormInputError from './FormInputError'
@@ -40,18 +40,18 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
       nickname: yup.string().trim(),
       email: yup.string().email().required('email or phone is required'),
       // otherwise: schema => schema.string(),
-      phone: yup
-        .string()
-        .required()
-        .matches(phoneRegExp, 'Phone number is not valid'),
+      phone: yup.string().required(),
+      // .matches(phoneRegExp, 'Phone number is not valid'),
       birthday: yup
         .date()
         .nullable()
         .transform((curr, orig) => (orig === '' ? null : curr)),
       close_person: yup.object().shape({
-        first_name: yup.string().required(),
-        last_name: yup.string().required(),
-        email: yup.string().email().required('email or phone is required'),
+        first_name: yup.string(),
+        last_name: yup.string(),
+        email: yup.string().email(),
+        //TODO: fix this phone typoe checking
+        phone: yup.string(), //.matches(phoneRegExp, 'Phone number is not valid'),
       }),
       answers: yup.array().of(
         yup.object({
@@ -68,22 +68,6 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
 
   const methods = useForm<EventApplication>({
     resolver: yupResolver(validationSchema),
-    // defaultValues: {
-    //   first_name: 'Talita',
-    //   last_name: 'Dzik',
-    //   email: 'examplke@exaple.com',
-    //   address: {
-    //     street: 'Slowicza',
-    //     zip_code: '05807',
-    //     city: 'Podkowa Lesna',
-    //     //TODO: region: 1, //{ id: 1, name: 'praha' },
-    //   },
-    //   close_person: {
-    //     first_name: 'close',
-    //     last_name: 'jdjdjdjdjd',
-    //     email: 'dzik@example.com',
-    //   },
-    // },
   })
   const {
     register,
@@ -95,19 +79,43 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.stopPropagation()
     handleSubmit(async data => {
-      // await createEventApplication({
-      //   application: { ...data, answers: [] },
-      //   eventId,
-      // }
-      const filteredAnswers = data.answers
-        .filter(answer => answer.answer !== '')
-        .map(answer => ({ ...answer, question: answer.question.id }))
+      let filteredAnswers: AnswerPayload[] = []
+      if (data.answers) {
+        filteredAnswers = data.answers
+          .filter(answer => answer.answer !== '')
+          .map(answer => ({
+            answer: answer.answer,
+            question: answer.question.id,
+          }))
+      }
+
+      // TODO: change the type of event data woith answers
+      let closePersonData = null
+
+      if (
+        data.close_person?.first_name ||
+        data.close_person?.last_name ||
+        data.close_person?.email ||
+        data.close_person?.phone
+      ) {
+        closePersonData = {
+          first_name: data.close_person.first_name || '',
+          last_name: data.close_person.last_name || '',
+          email: data.close_person.email || '',
+          phone: data.close_person.phone || '',
+        }
+      }
 
       const eventDataWithAnswers = {
-        application: { ...data, answers: filteredAnswers },
+        application: {
+          ...data,
+          answers: filteredAnswers,
+          address: null,
+          close_person: closePersonData,
+          birthday: '1910-10-10',
+        },
         eventId,
       }
-      console.log('ANSWERS DATA', eventDataWithAnswers)
 
       await createEventApplication(eventDataWithAnswers)
       onClose()
@@ -238,7 +246,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   <Label htmlFor="close_person_phone">Telefon</Label>
                   <FormInputError>
                     <input
-                      type="date"
+                      type="phone"
                       id="close_person_phone"
                       {...register('close_person.phone')}
                     />
@@ -246,7 +254,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   <Label htmlFor="close_person_email">E-mail</Label>
                   <FormInputError>
                     <input
-                      type="date"
+                      type="email"
                       id="close_person_email"
                       {...register('close_person.email')}
                     />
@@ -256,8 +264,6 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   <>
                     <h3>Otazky:</h3>
                     {questions.results.map((question: any, i) => {
-                      console.log(question.is_required)
-
                       return (
                         <>
                           {' '}
@@ -277,7 +283,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                                   setValueAs: v => ({
                                     is_required: question?.is_required,
                                     answer: v,
-                                    question: question.id,
+                                    question: { id: question.id },
                                   }),
                                 })}
                               />

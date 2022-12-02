@@ -22,11 +22,15 @@ h2 {
   }
 
   tbody {
+    .highlightedRow {
+      background-color: colors.$gray-200;
+    }
     td {
       cursor: pointer;
       text-align: center;
       &:nth-child(1),
-      &:nth-child(2) {
+      &:nth-child(2),
+      &:nth-child(3) {
         border-right: 1px solid #d9d9d9;
       }
       &:nth-child(1) {
@@ -37,9 +41,10 @@ h2 {
       }
       &:last-child {
         width: 50px;
+        border-right: 0px solid #d9d9d9;
       }
       &:hover {
-        background-color: #f8f8fa;
+        background-color: colors.$gray-200;
       }
     }
   }
@@ -53,6 +58,15 @@ h2 {
       text-align: center;
     }
   }
+}
+
+.disabledIconContainer {
+  svg {
+    path {
+      fill: colors.$gray-200;
+    }
+  }
+  cursor: not-allowed !important;
 }
 
 .binIconContainer {
@@ -73,6 +87,16 @@ h2 {
   path {
     fill: colors.$edit;
   }
+}
+
+.applicationWithParticipant {
+  font-weight: 600;
+  color: colors.$gray-300;
+}
+
+.applicationAddedTag {
+  color: colors.$bronto;
+  font-weight: 600;
 }
 
 .participantsContainer {
@@ -150,4 +174,18 @@ h2 {
   &:hover {
     background-color: white !important;
   }
+}
+
+.showUserApplicationNameBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  .addUserButtons {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.addedUserBlock {
+  margin-top: 40px;
 }

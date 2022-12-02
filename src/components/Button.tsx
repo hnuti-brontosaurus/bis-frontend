@@ -6,6 +6,7 @@ import styles from './Button.module.scss'
 interface ButtonProps {
   success?: boolean
   danger?: boolean
+  plain?: boolean
 }
 
 /**
@@ -41,6 +42,7 @@ export const Button = ({
   className,
   success,
   danger,
+  plain,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & ButtonProps) => {
   return (
@@ -50,6 +52,7 @@ export const Button = ({
         styles.button,
         success && styles.success,
         danger && styles.danger,
+        plain && styles.plain,
       )}
       {...props}
     >

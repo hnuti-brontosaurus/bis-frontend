@@ -1,17 +1,43 @@
-import { FC } from 'react'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { FC, useState } from 'react'
 import { api } from '../../../../app/services/bis'
 import { User } from '../../../../app/services/testApi'
 import { ReactComponent as Bin } from '../../../../assets/trash-solid.svg'
 import { ReactComponent as EditUser } from '../../../../assets/user-pen-solid.svg'
 import Loading from '../../../../components/Loading'
+import ShowApplicationModal from '../../../../components/ShowApplicationModal'
 import stylesTable from '../../../../components/Table.module.scss'
 import styles from '../ParticipantsStep.module.scss'
 
 const Participants: FC<{
   eventId: number
-}> = ({ eventId }) => {
+  eventName: string
+  chooseHighlightedParticipant: (id: string | undefined) => void
+  highlightedParticipant?: string
+  savedParticipants?: { [s: string]: string }
+}> = ({
+  eventId,
+  eventName,
+  highlightedParticipant,
+  chooseHighlightedParticipant,
+  savedParticipants,
+}) => {
   const { data: participants, isLoading: isReadParticipantsLoading } =
     api.endpoints.readEventParticipants.useQuery({ eventId })
+
+  const [showShowApplicationModal, setShowShowApplicationModal] =
+    useState<boolean>(false)
+
+  const [currentParticipantId, setCurrentParticipantId] = useState<string>()
+  const { data: categories } = api.endpoints.getEventCategories.useQuery()
+  const { data: programs } = api.endpoints.getPrograms.useQuery()
+  const { data: administrationUnits } =
+    api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
+
+  const { data: currentParticipant, isLoading: isCurrentParticipantLoading } =
+    api.endpoints.readUser.useQuery(
+      currentParticipantId ? { id: currentParticipantId } : skipToken,
+    )
 
   return (
     <div className={styles.ListContainer}>
@@ -29,8 +55,25 @@ const Participants: FC<{
               </thead>
               <tbody>
                 {participants.results.map((participant: User) => (
-                  <tr>
-                    <td>
+                  <tr
+                    className={
+                      highlightedParticipant === participant.id
+                        ? styles.highlightedRow
+                        : ''
+                    }
+                    onMouseEnter={() => {
+                      chooseHighlightedParticipant(participant.id)
+                    }}
+                    onMouseLeave={() => {
+                      chooseHighlightedParticipant(undefined)
+                    }}
+                  >
+                    <td
+                      onClick={() => {
+                        setShowShowApplicationModal(true)
+                        setCurrentParticipantId(participant.id)
+                      }}
+                    >
                       {participant.first_name}, {participant.last_name}
                       {participant.nickname && ', '}
                       {participant.nickname}
@@ -59,6 +102,24 @@ const Participants: FC<{
         </div>
       ) : (
         <Loading>Stahujeme ucastniky</Loading>
+      )}
+      {currentParticipant && (
+        <ShowApplicationModal
+          open={showShowApplicationModal}
+          onClose={() => {
+            setShowShowApplicationModal(false)
+          }}
+          userId={currentParticipantId}
+          currentParticipant={currentParticipant}
+          eventName={eventName}
+          eventId={eventId}
+          categories={categories ? categories.results : []}
+          programs={programs ? programs.results : []}
+          administrationUnits={
+            administrationUnits ? administrationUnits.results : []
+          }
+          savedParticipants={savedParticipants}
+        ></ShowApplicationModal>
       )}
     </div>
   )
