@@ -7,6 +7,7 @@ import { AnswerPayload, api } from '../app/services/bis'
 import { EventApplication } from '../app/services/bisTypes'
 import { required } from '../utils/validationMessages'
 import BirthdayInput, { birthdayValidation } from './BirthdayInput'
+import { Button } from './Button'
 import FormInputError from './FormInputError'
 import { FullSizeElement, InlineSection, Label } from './FormLayout'
 import styles from './NewApplicationModal.module.scss'
@@ -292,8 +293,9 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     })}
                   </>
                 )}
-
-                <input type="submit" value="Add aplication" />
+                <Button success>
+                  <input type="submit" value="přidaj přihlášku" />
+                </Button>
               </>
             </form>
           </FormProvider>

@@ -1,9 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/dist/query'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 import { FC, FormEventHandler, useEffect, useState } from 'react'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { FaAt, FaBirthdayCake, FaPhoneAlt } from 'react-icons/fa'
 import Modal from 'react-modal'
 import Tooltip from 'react-tooltip-lite'
@@ -11,9 +11,9 @@ import * as yup from 'yup'
 import { api, UserPayload } from '../app/services/bis'
 import { EventApplication, User } from '../app/services/bisTypes'
 import colors from '../_colors.module.scss'
-import BirthdayInput, { birthdayValidation } from './BirthdayInput'
+import BirthdayInputCheck from './BirthdayInputCheck'
 import { Button } from './Button'
-import ErrorBox, { ObjectWithStrings } from './ErrorBox'
+import ErrorBox from './ErrorBox'
 import FormInputError from './FormInputError'
 import { InlineSection, Label } from './FormLayout'
 import Loading from './Loading'
@@ -62,10 +62,6 @@ const validationSchema = yup.object().shape(
   [['email', 'phone']],
 )
 
-const validationSchemaBirthdate = yup.object().shape({
-  birthday: birthdayValidation.required('povinne'),
-})
-
 // TODO: This modal is still WIP (no need to review atm)
 const AddParticipantModal: FC<INewApplicationModalProps> = ({
   open,
@@ -81,13 +77,6 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     // ...(defaultUserData as Partial<UserPayload>),
     //   birthday: defaultUserData.birthday || undefined,
     // },
-  })
-
-  const methodsBirthdate = useForm<{ birthday: string }>({
-    resolver: yupResolver(validationSchemaBirthdate),
-    defaultValues: {
-      birthday: currentApplication.birthday ? currentApplication.birthday : '',
-    },
   })
 
   const [showAddParticipantForm, setShowAddParticipantForm] = useState(false)
@@ -124,12 +113,6 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     formState: { errors },
     reset,
   } = methods
-
-  const {
-    control: controlBirthdate,
-    handleSubmit: handleSubmitBirthdate,
-    formState: { errors: errorsBirthdate },
-  } = methodsBirthdate
 
   const { data: userOptions1, isFetching: isOptionsLoading1 } =
     api.endpoints.readUsers.useQuery({
@@ -615,68 +598,20 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     e.stopPropagation()
                                   }}
                                 >
-                                  <form
-                                    onSubmit={handleSubmitBirthdate(data =>
-                                      onSubmitBD(data, {
-                                        ...result,
-                                        searchId: result._search_id,
-                                      }),
-                                    )}
-                                  >
-                                    <InlineSection>
-                                      <Label required>Datum narození</Label>
-                                      <FormInputError>
-                                        <Controller
-                                          control={controlBirthdate}
-                                          name="birthday"
-                                          render={({ field }) => (
-                                            <BirthdayInput {...field} />
-                                          )}
-                                        />
-                                      </FormInputError>
-                                    </InlineSection>
-                                    {erroredSearchId === result._search_id && (
-                                      <ErrorBox
-                                        // TODO: move this handling to errorbox
-                                        error={
-                                          (inlineUserError &&
-                                            (
-                                              inlineUserError as FetchBaseQueryError
-                                            ).data) as ObjectWithStrings
-                                        }
-                                      />
-                                    )}
-
-                                    {!(
-                                      retrievedUser && retrievedUserIsUsed
-                                    ) && (
-                                      <Button
-                                        className={styles.birthsdayButton}
-                                        plain
-                                        type="submit"
-                                        onClick={() => setCheckAndAdd(true)}
-                                      >
-                                        zkontroluj a přidej{' '}
-                                      </Button>
-                                    )}
-                                    {retrievedUser && retrievedUserIsUsed ? (
-                                      <Button
-                                        className={styles.birthsdayButton}
-                                        plain
-                                        type="submit"
-                                      >
-                                        přidej k účastníkům
-                                      </Button>
-                                    ) : (
-                                      <Button
-                                        className={styles.birthsdayButton}
-                                        plain
-                                        type="submit"
-                                      >
-                                        zkontroluj
-                                      </Button>
-                                    )}
-                                  </form>
+                                  <BirthdayInputCheck
+                                    defaultBirthday={
+                                      currentApplication.birthday
+                                    }
+                                    onSubmitBD={onSubmitBD}
+                                    result={result}
+                                    erroredSearchId={erroredSearchId}
+                                    inlineUserError={inlineUserError}
+                                    retrievedUser={retrievedUser}
+                                    retrievedUserIsUsed={retrievedUserIsUsed}
+                                    setCheckAndAdd={v => {
+                                      setCheckAndAdd(v)
+                                    }}
+                                  />
                                 </div>
                               </td>
                             </tr>
