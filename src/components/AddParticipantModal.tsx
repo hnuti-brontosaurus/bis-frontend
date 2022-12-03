@@ -1,8 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/dist/query'
+import classNames from 'classnames'
 import dayjs from 'dayjs'
 import { FC, FormEventHandler, useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { FaAt, FaBirthdayCake, FaPhoneAlt } from 'react-icons/fa'
 import Modal from 'react-modal'
 import Tooltip from 'react-tooltip-lite'
@@ -10,8 +11,9 @@ import * as yup from 'yup'
 import { api, UserPayload } from '../app/services/bis'
 import { EventApplication, User } from '../app/services/bisTypes'
 import colors from '../_colors.module.scss'
+import BirthdayInput, { birthdayValidation } from './BirthdayInput'
 import { Button } from './Button'
-import ErrorBox from './ErrorBox'
+import ErrorBox, { ObjectWithStrings } from './ErrorBox'
 import FormInputError from './FormInputError'
 import { InlineSection, Label } from './FormLayout'
 import Loading from './Loading'
@@ -60,6 +62,10 @@ const validationSchema = yup.object().shape(
   [['email', 'phone']],
 )
 
+const validationSchemaBirthdate = yup.object().shape({
+  birthday: birthdayValidation.required('povinne'),
+})
+
 // TODO: This modal is still WIP (no need to review atm)
 const AddParticipantModal: FC<INewApplicationModalProps> = ({
   open,
@@ -77,13 +83,25 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     // },
   })
 
+  const methodsBirthdate = useForm<{ birthday: string }>({
+    resolver: yupResolver(validationSchemaBirthdate),
+    defaultValues: {
+      birthday: currentApplication.birthday ? currentApplication.birthday : '',
+    },
+  })
+
   const [showAddParticipantForm, setShowAddParticipantForm] = useState(false)
+
+  const [checkAndAdd, setCheckAndAdd] = useState(false)
+
+  const [erroredSearchId, setErroredSearchId] = useState<string>()
 
   const [selectedUser, setSelectedUser] = useState<User>()
 
   const [creatingANewUser, setCreatingANewUser] = useState(false)
-
+  const [check, setCheck] = useState(true)
   const [errorsCreatingUser, setErrorsCreatingUser] = useState<any>(undefined)
+  const [retrievedUserIsUsed, setRetrievedUserIsUsed] = useState(false)
 
   const [selectedUserId, setSelectedUserId] = useState<string>('')
   const [selectedUserInputBirthday, setSelectedUserInputBirthday] = useState<{
@@ -106,6 +124,12 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     formState: { errors },
     reset,
   } = methods
+
+  const {
+    control: controlBirthdate,
+    handleSubmit: handleSubmitBirthdate,
+    formState: { errors: errorsBirthdate },
+  } = methodsBirthdate
 
   const { data: userOptions1, isFetching: isOptionsLoading1 } =
     api.endpoints.readUsers.useQuery({
@@ -173,12 +197,16 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
   const [createUser, { isLoading: isCreatingUser }] =
     api.endpoints.createUser.useMutation()
 
-  const { data: retrievedUser, isFetching: isGettingUserByBirthsdate } =
-    api.endpoints.readUserByBirthdate.useQuery(
-      selectedUserInputBirthday && addingUnknownParticipant
-        ? selectedUserInputBirthday
-        : skipToken,
-    )
+  const {
+    data: retrievedUser,
+    isFetching: isGettingUserByBirthsdate,
+    error: inlineUserError,
+  } = api.endpoints.readUserByBirthdate.useQuery(
+    selectedUserInputBirthday &&
+      selectedUserInputBirthday.birthday.length === 10
+      ? selectedUserInputBirthday
+      : skipToken,
+  )
   const [patchEvent, { isLoading: isPatchingEvent }] =
     api.endpoints.updateEvent.useMutation()
 
@@ -251,8 +279,49 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     })
     setAddingUnknownParticipant(false)
     setErrorsCreatingUser(undefined)
+    setCheckAndAdd(false)
+    setErroredSearchId(undefined)
+    setCheck(true)
+    setRetrievedUserIsUsed(false)
   }
   if (!open) return null
+
+  const onSubmitBD = async (
+    data: { birthday: string },
+    result: { searchId: string; first_name: string; last_name: string },
+  ) => {
+    checkUserBirthdate()
+    setRetrievedUserIsUsed(true)
+    if (check || checkAndAdd) {
+      setSelectedUserId(result.searchId)
+      setShowAddParticipantForm(false)
+      setSelectedUserInputBirthday({ ...result, birthday: data.birthday })
+      if (!retrievedUser) {
+        setErroredSearchId(result.searchId)
+      } else {
+        setCheck(false)
+      }
+    }
+    if (!check || checkAndAdd) {
+      if (retrievedUser) {
+        addParticipant(retrievedUser.id)
+        await createEventApplication({
+          eventId,
+          application: {
+            ...currentApplication,
+            answers: [],
+            first_name: 'InternalApplication',
+            last_name: retrievedUser.id,
+            nickname: currentApplication.id.toString(),
+            health_issues: Date.now().toString(),
+          },
+        })
+        clearModalData()
+        onClose()
+      }
+    }
+    setAddingUnknownParticipant(false)
+  }
 
   return (
     <Modal
@@ -453,14 +522,6 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                         health_issues: Date.now().toString(),
                                       },
                                     })
-                                    // await createEventApplication({
-                                    //   eventId,
-                                    //   application: {
-                                    //     ...currentApplication,
-                                    //     first_name: 'InternalApplicationDelete',
-                                    //     last_name: r,
-                                    //   },
-                                    // })
                                     onClose()
                                     clearModalData()
                                   }}
@@ -532,7 +593,18 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                         allUsers.length !== 0 &&
                         allUsers.map(result => (
                           <>
-                            <tr className={styles.otherUsers}>
+                            <tr
+                              className={classNames(
+                                styles.otherUsers,
+                                erroredSearchId === result._search_id &&
+                                  styles.errorBirthdate,
+                                retrievedUser &&
+                                  retrievedUserIsUsed &&
+                                  retrievedUser._search_id ===
+                                    result._search_id &&
+                                  styles.successBirthdate,
+                              )}
+                            >
                               <td>{result.display_name}</td>
                               <td></td>
                               <td></td>
@@ -544,63 +616,56 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                   }}
                                 >
                                   <form
-                                    onSubmit={async e => {
-                                      e.stopPropagation()
-                                      e.preventDefault()
-                                      if (addingUnknownParticipant) {
-                                        setAddingUnknownParticipant(false)
-                                        if (retrievedUser) {
-                                          addParticipant(retrievedUser.id)
-                                          await createEventApplication({
-                                            eventId,
-                                            application: {
-                                              ...currentApplication,
-                                              answers: [],
-                                              first_name: 'InternalApplication',
-                                              last_name: retrievedUser.id,
-                                              nickname:
-                                                currentApplication.id.toString(),
-                                              health_issues:
-                                                Date.now().toString(),
-                                            },
-                                          })
-                                          onClose()
-                                        }
-                                      } else {
-                                        setAddingUnknownParticipant(true)
-                                        setSelectedUserId(result._search_id)
-                                        setShowAddParticipantForm(false)
-                                        const inputDate =
-                                          // @ts-ignore
-                                          e.target[result._search_id].value
-
-                                        setSelectedUserInputBirthday({
-                                          first_name: result.first_name,
-                                          last_name: result.last_name,
-                                          birthday: dayjs(inputDate).format(
-                                            'YYYY-MM-DD',
-                                          ) as string,
-                                        })
-                                      }
-                                    }}
+                                    onSubmit={handleSubmitBirthdate(data =>
+                                      onSubmitBD(data, {
+                                        ...result,
+                                        searchId: result._search_id,
+                                      }),
+                                    )}
                                   >
-                                    <input
-                                      defaultValue={
-                                        currentApplication.birthday || ''
-                                      }
-                                      name={`${result._search_id}`}
-                                      id={`${result._search_id}`}
-                                      className={styles.birthsdayInput}
-                                      type="text"
-                                      placeholder="datum narozeni"
-                                    ></input>
-                                    {addingUnknownParticipant ? (
+                                    <InlineSection>
+                                      <Label required>Datum narození</Label>
+                                      <FormInputError>
+                                        <Controller
+                                          control={controlBirthdate}
+                                          name="birthday"
+                                          render={({ field }) => (
+                                            <BirthdayInput {...field} />
+                                          )}
+                                        />
+                                      </FormInputError>
+                                    </InlineSection>
+                                    {erroredSearchId === result._search_id && (
+                                      <ErrorBox
+                                        // TODO: move this handling to errorbox
+                                        error={
+                                          (inlineUserError &&
+                                            (
+                                              inlineUserError as FetchBaseQueryError
+                                            ).data) as ObjectWithStrings
+                                        }
+                                      />
+                                    )}
+
+                                    {!(
+                                      retrievedUser && retrievedUserIsUsed
+                                    ) && (
+                                      <Button
+                                        className={styles.birthsdayButton}
+                                        plain
+                                        type="submit"
+                                        onClick={() => setCheckAndAdd(true)}
+                                      >
+                                        zkontroluj a přidej{' '}
+                                      </Button>
+                                    )}
+                                    {retrievedUser && retrievedUserIsUsed ? (
                                       <Button
                                         className={styles.birthsdayButton}
                                         plain
                                         type="submit"
                                       >
-                                        add user
+                                        přidej k účastníkům
                                       </Button>
                                     ) : (
                                       <Button
@@ -608,7 +673,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                         plain
                                         type="submit"
                                       >
-                                        check birthdate
+                                        zkontroluj
                                       </Button>
                                     )}
                                   </form>
@@ -616,7 +681,8 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               </td>
                             </tr>
                             {result._search_id === selectedUserId &&
-                              retrievedUser && (
+                              retrievedUser &&
+                              retrievedUserIsUsed && (
                                 <tr>
                                   <td colSpan={6}>
                                     <>
