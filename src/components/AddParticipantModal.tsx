@@ -139,7 +139,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     ...(userOptions3 ? userOptions3.results : []),
   ]
 
-  const [createEventApplication, { isLoading: isSavingOpportunity }] =
+  const [createEventApplication, { isLoading: isSavingEventApplication }] =
     api.endpoints.createEventApplication.useMutation()
 
   const userOptions = Array.from(
@@ -491,32 +491,39 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                 </Button>
                               </td>
                               <td>
-                                <Button
-                                  plain
-                                  onClick={async e => {
-                                    e.preventDefault()
+                                {isSavingEventApplication &&
+                                retrievedUser &&
+                                result._search_id ===
+                                  retrievedUser._search_id ? (
+                                  <Loading>....</Loading>
+                                ) : (
+                                  <Button
+                                    plain
+                                    onClick={async e => {
+                                      e.preventDefault()
 
-                                    setCreatingANewUser(false)
+                                      setCreatingANewUser(false)
 
-                                    await addParticipant(result.id)
-                                    await createEventApplication({
-                                      eventId,
-                                      application: {
-                                        ...currentApplication,
-                                        answers: [],
-                                        first_name: 'InternalApplication',
-                                        last_name: result.id,
-                                        nickname:
-                                          currentApplication.id.toString(),
-                                        health_issues: Date.now().toString(),
-                                      },
-                                    })
-                                    onClose()
-                                    clearModalData()
-                                  }}
-                                >
-                                  Pridaj
-                                </Button>
+                                      await addParticipant(result.id)
+                                      await createEventApplication({
+                                        eventId,
+                                        application: {
+                                          ...currentApplication,
+                                          answers: [],
+                                          first_name: 'InternalApplication',
+                                          last_name: result.id,
+                                          nickname:
+                                            currentApplication.id.toString(),
+                                          health_issues: Date.now().toString(),
+                                        },
+                                      })
+                                      onClose()
+                                      clearModalData()
+                                    }}
+                                  >
+                                    Pridaj
+                                  </Button>
+                                )}
                               </td>
                             </tr>
                             {result._search_id === selectedUserId && (
@@ -617,6 +624,9 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     setCheckAndAdd={v => {
                                       setCheckAndAdd(v)
                                     }}
+                                    isSavingEventApplication={
+                                      isSavingEventApplication
+                                    }
                                   />
                                 </div>
                               </td>

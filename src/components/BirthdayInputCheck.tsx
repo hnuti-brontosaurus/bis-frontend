@@ -9,6 +9,7 @@ import { Button } from './Button'
 import ErrorBox, { ObjectWithStrings } from './ErrorBox'
 import FormInputError from './FormInputError'
 import { InlineSection, Label } from './FormLayout'
+import Loading from './Loading'
 import styles from './NewApplicationModal.module.scss'
 
 const validationSchemaBirthdate = yup.object().shape({
@@ -24,6 +25,7 @@ interface IBirthdayInputCheck {
   retrievedUser: User | null | undefined
   retrievedUserIsUsed: boolean
   setCheckAndAdd: (arg: boolean) => void
+  isSavingEventApplication: boolean
 }
 
 const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
@@ -35,6 +37,7 @@ const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
   retrievedUser,
   retrievedUserIsUsed,
   setCheckAndAdd,
+  isSavingEventApplication,
 }) => {
   const methodsBirthdate = useForm<{ birthday: string }>({
     resolver: yupResolver(validationSchemaBirthdate),
@@ -96,9 +99,9 @@ const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
       {retrievedUser &&
       retrievedUser._search_id === result._search_id &&
       retrievedUserIsUsed ? (
-        <Button className={styles.birthsdayButton} plain type="submit">
+        !isSavingEventApplication ? <Button className={styles.birthsdayButton} plain type="submit">
           přidej k účastníkům
-        </Button>
+        </Button> : <Loading>...</Loading>
       ) : (
         <Button className={styles.birthsdayButton} plain type="submit">
           zkontroluj
