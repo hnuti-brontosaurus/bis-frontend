@@ -1,15 +1,15 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { FC } from 'react'
-import { api } from '../app/services/bis'
+import { api } from '../../../../app/services/bis'
 import {
   AdministrationUnit,
   EventApplication,
   EventCategory,
   EventProgramCategory,
   User,
-} from '../app/services/testApi'
-import styles from '../org/EventForm/steps/ParticipantsStep.module.scss'
-import StyledModal from './StyledModal'
+} from '../../../../app/services/testApi'
+import StyledModal from '../../../../components/StyledModal'
+import styles from '../ParticipantsStep.module.scss'
 
 interface IShowApplicationModalProps {
   open: boolean
