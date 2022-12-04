@@ -3,4 +3,8 @@
 .infoBoxError {
   padding: 20px;
   background-color: colors.$error-light;
+  width: calc(100% - 40px);
+  div {
+    white-space: normal;
+  }
 }

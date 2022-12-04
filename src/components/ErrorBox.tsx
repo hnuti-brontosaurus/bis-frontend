@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import styles from './errorBox.module.scss'
 
-type ObjectWithStrings = { [s: string]: string | ObjectWithStrings }
+export type ObjectWithStrings = { [s: string]: string | ObjectWithStrings }
 
 const arrayStringsFromObject = (obj: ObjectWithStrings) => {
   const arrayOfMessages: string[] = []
@@ -21,10 +21,12 @@ const arrayStringsFromObject = (obj: ObjectWithStrings) => {
 }
 
 interface IErrorBox {
-  error: ObjectWithStrings
+  error: ObjectWithStrings | undefined | null
 }
 
 const ErrorBox: FC<IErrorBox> = ({ error }) => {
+  if (!error) return null
+
   return (
     <div className={styles.infoBoxError}>
       {arrayStringsFromObject(error).map(error => (

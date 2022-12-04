@@ -1,11 +1,13 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { FC, FormEventHandler } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import * as yup from 'yup'
 import { AnswerPayload, api } from '../app/services/bis'
 import { EventApplication } from '../app/services/bisTypes'
 import { required } from '../utils/validationMessages'
+import BirthdayInput, { birthdayValidation } from './BirthdayInput'
+import { Button } from './Button'
 import FormInputError from './FormInputError'
 import { FullSizeElement, InlineSection, Label } from './FormLayout'
 import styles from './NewApplicationModal.module.scss'
@@ -21,6 +23,8 @@ const zipcodeRegExp = /\d{3} ?\d{2}/
 
 // TODO: This modal is still WIP (no need to review atm)
 
+const requiredFieldMessage = 'Toto pole je povinné!'
+
 const NewApplicationModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
@@ -33,47 +37,40 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
     eventId,
   })
 
-  const validationSchema = yup.object().shape(
-    {
-      // first_name: yup.string().required('Required').trim(),
-      last_name: yup.string().required('Required'),
-      nickname: yup.string().trim(),
-      email: yup.string().email().required('email or phone is required'),
-      // otherwise: schema => schema.string(),
-      phone: yup.string().required(),
-      // .matches(phoneRegExp, 'Phone number is not valid'),
-      birthday: yup
-        .date()
-        .nullable()
-        .transform((curr, orig) => (orig === '' ? null : curr)),
-      close_person: yup.object().shape({
-        first_name: yup.string(),
-        last_name: yup.string(),
-        email: yup.string().email(),
-        //TODO: fix this phone typoe checking
-        phone: yup.string(), //.matches(phoneRegExp, 'Phone number is not valid'),
-      }),
-      answers: yup.array().of(
-        yup.object({
-          is_required: yup.boolean(),
-          answer: yup.string().when('is_required', {
-            is: true,
-            then: schema => schema.required('Musisz odpvedet na tu otazku'),
-          }),
+  const validationSchema = yup.object().shape({
+    first_name: yup.string().required(requiredFieldMessage).trim(),
+    last_name: yup.string().required(requiredFieldMessage).trim(),
+    nickname: yup.string().trim(),
+    email: yup.string().email().required(requiredFieldMessage),
+    phone: yup.string().required(requiredFieldMessage),
+    birthday: birthdayValidation.required(requiredFieldMessage),
+    close_person: yup.object().shape({
+      first_name: yup.string(),
+      last_name: yup.string(),
+      email: yup.string().email(),
+      phone: yup.string(),
+    }),
+    answers: yup.array().of(
+      yup.object({
+        is_required: yup.boolean(),
+        answer: yup.string().when('is_required', {
+          is: true,
+          then: schema => schema.required(requiredFieldMessage),
         }),
-      ),
-    },
-    [['email', 'phone']],
-  )
+      }),
+    ),
+  })
 
   const methods = useForm<EventApplication>({
     resolver: yupResolver(validationSchema),
+    defaultValues: { birthday: '' },
   })
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = methods
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
@@ -112,7 +109,6 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
           answers: filteredAnswers,
           address: null,
           close_person: closePersonData,
-          birthday: '1910-10-10',
         },
         eventId,
       }
@@ -199,12 +195,15 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                 </InlineSection>
 
                 <InlineSection>
-                  <Label htmlFor="birthday">Datum narozeni</Label>
+                  <Label required>Datum narození</Label>
                   <FormInputError>
-                    <input
-                      type="date"
-                      id="birthday"
-                      {...register('birthday')}
+                    <Controller
+                      control={control}
+                      name="birthday"
+                      render={({ field }) => {
+                        // @ts-ignore
+                        return <BirthdayInput {...field} />
+                      }}
                     />
                   </FormInputError>
                 </InlineSection>
@@ -294,8 +293,9 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     })}
                   </>
                 )}
-
-                <input type="submit" value="Add aplication" />
+                <Button success>
+                  <input type="submit" value="přidaj přihlášku" />
+                </Button>
               </>
             </form>
           </FormProvider>
