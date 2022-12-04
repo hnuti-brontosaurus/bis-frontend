@@ -98,3 +98,11 @@ table {
     flex-direction: row;
   }
 }
+
+.errorBirthdate {
+  background-color: colors.$error-light !important;
+}
+
+.successBirthdate {
+  background-color: colors.$bronto-super-light !important;
+}

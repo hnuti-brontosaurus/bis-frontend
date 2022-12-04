@@ -24,9 +24,12 @@ function FormInputError<T extends FieldValues>({
 
   const methods = formMethods ?? defaultMethods
 
-  const error = get(methods.formState.errors, name ?? children.props.name) as
-    | FieldError
-    | undefined
+  const error =
+    methods && methods.formState
+      ? (get(methods.formState.errors, name ?? children.props.name) as
+          | FieldError
+          | undefined)
+      : undefined
 
   return (
     <div
