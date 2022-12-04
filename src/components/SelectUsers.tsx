@@ -1,17 +1,28 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
   EndpointDefinitions,
+  FetchBaseQueryError,
   QueryDefinition,
   skipToken,
 } from '@reduxjs/toolkit/dist/query'
 import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
 import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
 import { forwardRef, InputHTMLAttributes, Ref, useMemo } from 'react'
+import { confirmAlert } from 'react-confirm-alert'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import { Assign } from 'utility-types'
+import * as yup from 'yup'
 import { api, PaginatedList } from '../app/services/bis'
-import { User } from '../app/services/bisTypes'
+import { User, UserSearch } from '../app/services/bisTypes'
 import { useDebouncedState } from '../hooks/debouncedState'
 import { useQueries } from '../hooks/queries'
+import { useReadUnknownAndFullUsers } from '../hooks/readUnknownAndFullUsers'
+import BirthdayInput, { birthdayValidation } from './BirthdayInput'
+import { Button } from './Button'
+import FormInputError from './FormInputError'
+import { Actions } from './FormLayout'
+import formStyles from './FormLayout.module.scss'
 
 type SelectUsersProps = Omit<
   Assign<
@@ -130,6 +141,19 @@ type SelectUserProps = Omit<
       onChange: (value: User | null) => void
       getDisabled?: (value: User) => boolean
       getLabel?: (value: User) => string
+    }
+  >,
+  'defaultValue'
+>
+
+type SelectObjectProps<T> = Omit<
+  Assign<
+    InputHTMLAttributes<HTMLInputElement>,
+    {
+      value?: T
+      onChange: (value: T | null) => void
+      getDisabled?: (value: T) => string
+      getLabel?: (value: T) => string
     }
   >,
   'defaultValue'
@@ -319,3 +343,148 @@ export const SelectByQuery = <
 // export const SelectByQuery = forwardRef<any, any>({ value, onChange })
 
 export default SelectUsers
+
+/**
+ * This component searches in all users, and if current user doesn't have access, they have to provide birthdate
+ */
+export const SelectUnknownUser = forwardRef<
+  any,
+  SelectObjectProps<UserSearch | User> & {
+    onBirthdayError?: (message: string) => void
+  }
+>(
+  (
+    { value, onChange, getDisabled, getLabel, onBirthdayError, ...rest },
+    ref,
+  ) => {
+    const [searchQuery, debouncedSearchQuery, setSearchQuery] =
+      useDebouncedState(1000, '')
+    const { data: userOptions, isLoading: isOptionsLoading } =
+      useReadUnknownAndFullUsers(
+        debouncedSearchQuery.length >= 2
+          ? {
+              search: debouncedSearchQuery,
+            }
+          : skipToken,
+      )
+
+    const [readUserByBirthday] =
+      api.endpoints.readUserByBirthdate.useLazyQuery()
+
+    return (
+      <Select<UserSearch | User>
+        {...rest}
+        isLoading={isOptionsLoading}
+        ref={ref}
+        isClearable
+        options={userOptions ? userOptions : []}
+        inputValue={searchQuery}
+        onInputChange={input => setSearchQuery(input)}
+        value={value}
+        onChange={async user => {
+          try {
+            if (!user) return onChange(user)
+            if ('id' in user) return onChange(user)
+            const birthday = (await new Promise((resolve, reject) => {
+              confirmAlert({
+                customUI: ({ title, message, onClose }) => {
+                  return (
+                    <div>
+                      <header>{title}</header>
+                      <div>{message}</div>
+                      <div className={formStyles.clearFullSize}></div>
+                      <BirthdayForm
+                        onSubmit={birthday => {
+                          resolve(birthday)
+                          onClose()
+                        }}
+                        onCancel={() => {
+                          resolve('')
+                          onClose()
+                        }}
+                      />
+                    </div>
+                  )
+                },
+                title: 'Zadej datum narození',
+                message: user.display_name,
+              })
+            })) as string
+            if (birthday) {
+              const fullUser = await readUserByBirthday({
+                ...user,
+                birthday,
+              }).unwrap()
+              if (fullUser._search_id === user._search_id) {
+                if (getDisabled && getDisabled(fullUser)) {
+                  throw new Error(getDisabled(fullUser))
+                }
+                return onChange(fullUser)
+              }
+              throw new Error('Nesprávné datum narození')
+            }
+          } catch (error) {
+            if (error && 'status' in error) {
+              if ((error as FetchBaseQueryError).status === 404)
+                onBirthdayError?.('Nesprávné datum narození')
+            } else if (error instanceof Error && 'message' in error)
+              onBirthdayError?.(error.message)
+            else onBirthdayError?.('Jiná chyba')
+          }
+        }}
+        isOptionDisabled={user => Boolean(getDisabled?.(user))}
+        getOptionLabel={
+          getLabel ?? (user => user.display_name + ('id' in user ? '' : ' ?'))
+        }
+      />
+    )
+  },
+)
+
+const birthdayValidationSchema: yup.ObjectSchema<{
+  birthday: string
+}> = yup.object({ birthday: birthdayValidation.required() })
+
+export const BirthdayForm = ({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (birthday: string) => void
+  onCancel: () => void
+}) => {
+  const methods = useForm<{ birthday: string }>({
+    resolver: yupResolver(birthdayValidationSchema),
+  })
+
+  const { handleSubmit, control } = methods
+
+  const handleFormSubmit = handleSubmit(data => {
+    onSubmit(data.birthday)
+  })
+
+  return (
+    <FormProvider {...methods}>
+      <form
+        onSubmit={handleFormSubmit}
+        onReset={e => {
+          e.preventDefault()
+          onCancel()
+        }}
+      >
+        <FormInputError>
+          <Controller
+            control={control}
+            name="birthday"
+            render={({ field }) => <BirthdayInput {...field} />}
+          />
+        </FormInputError>
+        <Actions>
+          <Button type="reset">Zruš</Button>
+          <Button success type="submit">
+            Pokračuj
+          </Button>
+        </Actions>
+      </form>
+    </FormProvider>
+  )
+}

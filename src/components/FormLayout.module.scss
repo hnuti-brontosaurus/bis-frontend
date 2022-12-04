@@ -97,6 +97,15 @@
   }
 }
 
+.clearFullSize {
+  textarea,
+  input,
+  select {
+    display: initial;
+    width: initial;
+  }
+}
+
 .inline {
   display: flex;
   flex-wrap: wrap;
