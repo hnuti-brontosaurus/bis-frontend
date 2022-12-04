@@ -146,6 +146,8 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     new Map(userOptionsDuplicates.map(item => [item['id'], item])).values(),
   )
 
+  const userOptionsSearchIds = new Set(userOptions.map(u => u._search_id))
+
   const isOptionsLoading =
     isOptionsLoading1 || isOptionsLoading2 || isOptionsLoading3
 
@@ -154,7 +156,11 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
       search: `${defaultUserData.first_name} ${defaultUserData.last_name}`,
     })
 
-  const allUsers = allUsersData?.results ? allUsersData.results : []
+  const allUsersDuplicates = allUsersData?.results ? allUsersData.results : []
+
+  const allUsers = allUsersDuplicates.filter(
+    u => !userOptionsSearchIds.has(u._search_id),
+  )
 
   useEffect(() => {
     reset({
@@ -616,7 +622,8 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               </td>
                             </tr>
                             {result._search_id === selectedUserId &&
-                              retrievedUser && retrievedUser._search_id === result._search_id &&
+                              retrievedUser &&
+                              retrievedUser._search_id === result._search_id &&
                               retrievedUserIsUsed && (
                                 <tr>
                                   <td colSpan={6}>
