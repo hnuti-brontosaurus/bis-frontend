@@ -9,6 +9,7 @@ import {
 import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
 import { Button, ButtonLink } from '../components/Button'
+import Error from '../components/Error'
 import { Actions } from '../components/FormLayout'
 import Loading from '../components/Loading'
 import { useReadFullEvent } from '../hooks/readFullEvent'
@@ -23,11 +24,13 @@ const ViewEvent = () => {
     data: event,
     isLoading: isEventLoading,
     isError,
+    error: readEventError,
   } = useReadFullEvent(eventId)
 
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
 
-  if (isError) return <>Nepodařilo se nám najít akci</>
+  if (isError)
+    return <Error error={readEventError}>Nepodařilo se nám najít akci</Error>
 
   if (isEventLoading || !event) return <Loading>Stahujeme akci</Loading>
 

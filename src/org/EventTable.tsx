@@ -9,7 +9,11 @@ import { Event } from '../app/services/bisTypes'
 import styles from '../components/Table.module.scss'
 import { useQueries } from '../hooks/queries'
 import { useRemoveEvent } from '../hooks/removeEvent'
-import { formatDateRange, getEventStatus } from '../utils/helpers'
+import {
+  formatDateRange,
+  getEventStatus,
+  isEventClosed,
+} from '../utils/helpers'
 
 const EventTable: FC<{
   data: Event[]
@@ -85,25 +89,33 @@ const EventTable: FC<{
                   }
                   className={styles.buttonInsideCell}
                 >
-                  <MenuItem>
-                    <Link to={`/org/akce/${event.id}/upravit`}>upravit</Link>
-                  </MenuItem>
+                  {!isEventClosed(event) && (
+                    <MenuItem>
+                      <Link to={`/org/akce/${event.id}/upravit`}>upravit</Link>
+                    </MenuItem>
+                  )}
                   <MenuItem>
                     <Link to={`/org/akce/vytvorit?klonovat=${event.id}`}>
                       klonovat
                     </Link>
                   </MenuItem>
-                  <MenuItem>
-                    <Link to={`/org/akce/${event.id}/uzavrit`}>po akci</Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <button
-                      disabled={isEventRemoving}
-                      onClick={() => removeEvent(event)}
-                    >
-                      smazat
-                    </button>
-                  </MenuItem>
+                  {!isEventClosed(event) && (
+                    <>
+                      <MenuItem>
+                        <Link to={`/org/akce/${event.id}/uzavrit`}>
+                          po akci
+                        </Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <button
+                          disabled={isEventRemoving}
+                          onClick={() => removeEvent(event)}
+                        >
+                          smazat
+                        </button>
+                      </MenuItem>
+                    </>
+                  )}
                 </Menu>
               </td>
             </tr>

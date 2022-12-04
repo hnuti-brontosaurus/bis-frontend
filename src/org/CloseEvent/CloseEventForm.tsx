@@ -1,13 +1,15 @@
+import { cloneDeep, mergeWith } from 'lodash'
 import merge from 'lodash/merge'
-import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import { FieldErrorsImpl, useForm } from 'react-hook-form'
+import type { DeepPick } from 'ts-deep-pick'
 import { Optional } from 'utility-types'
 import {
   Event,
   EventPhoto,
   Finance,
   FinanceReceipt,
+  PatchedEvent,
   Record,
 } from '../../app/services/bisTypes'
 import {
@@ -21,23 +23,27 @@ import {
   usePersistForm,
 } from '../../hooks/persistForm'
 import { pickErrors } from '../../utils/helpers'
-import ParticipantsStep from '../EventForm/steps/ParticipantsStep'
 import EvidenceStep from './EvidenceStep'
-import ParticipantsStepWIP from './ParticipantsStep'
+import ParticipantsStep from './ParticipantsStep'
+
+export type CloseEventPayload = DeepPick<
+  PatchedEvent,
+  'is_complete' | 'record' | 'finance.bank_account_number'
+> & {
+  photos: Optional<EventPhoto, 'id'>[]
+  receipts: Optional<FinanceReceipt, 'id'>[]
+}
 
 // Forms setup
 export type EvidenceStepFormShape = {
-  record: Omit<
+  record: Pick<
     Record,
-    | 'participants'
-    | 'number_of_participants'
-    | 'number_of_participants_under_26'
-  > & {
-    photos: Optional<EventPhoto, 'id'>[]
-  }
-  finance: Pick<Finance, 'bank_account_number'> & {
-    receipts: Optional<FinanceReceipt, 'id'>[]
-  }
+    'total_hours_worked' | 'comment_on_work_done' | 'attendance_list'
+  >
+  finance: Pick<Finance, 'bank_account_number'>
+} & {
+  photos: Optional<EventPhoto, 'id'>[]
+  receipts: Optional<FinanceReceipt, 'id'>[]
 }
 
 export type ParticipantsStepFormShape = {
@@ -47,14 +53,21 @@ export type ParticipantsStepFormShape = {
     | 'number_of_participants'
     | 'number_of_participants_under_26'
   >
+  includeList: boolean
 }
 
+export type CloseEventFormShape = EvidenceStepFormShape &
+  ParticipantsStepFormShape
+
 const pickEvidenceData = (data: Partial<CloseEventFormShape>) =>
-  omit(
-    pick(data, 'record', 'finance.bank_account_number', 'finance.receipts'),
-    'record.participants',
-    'record.number_of_participants',
-    'record.number_of_participants_under_26',
+  pick(
+    data,
+    'record.total_hours_worked',
+    'record.comment_on_work_done',
+    'record.attendance_list',
+    'finance.bank_account_number',
+    'photos',
+    'receipts',
   )
 
 const pickParticipantsData = (data: Partial<CloseEventFormShape>) =>
@@ -63,10 +76,26 @@ const pickParticipantsData = (data: Partial<CloseEventFormShape>) =>
     'record.participants',
     'record.number_of_participants',
     'record.number_of_participants_under_26',
+    'includeList',
   )
 
-export type CloseEventFormShape = EvidenceStepFormShape &
-  ParticipantsStepFormShape
+const formData2payload = ({
+  includeList,
+  is_complete,
+  ...data
+}: CloseEventFormShape & { is_complete: boolean }): CloseEventPayload => {
+  const payload = cloneDeep(data)
+
+  if (includeList) {
+    payload.record.number_of_participants = null
+    payload.record.number_of_participants_under_26 = null
+  }
+
+  if (payload.finance && !payload.finance.bank_account_number)
+    payload.finance.bank_account_number = ''
+
+  return merge(is_complete ? { is_complete: true } : {}, payload)
+}
 
 const CloseEventForm = ({
   event,
@@ -77,10 +106,18 @@ const CloseEventForm = ({
 }: {
   event: Event
   initialData: Partial<CloseEventFormShape>
-  onSubmit: (data: CloseEventFormShape & Pick<Event, 'is_closed'>) => void
+  onSubmit: (data: CloseEventPayload) => void
   onCancel: () => void
   id: string
 }) => {
+  if (
+    event.group.slug === 'other' &&
+    event.record?.participants?.length &&
+    !event.record?.number_of_participants &&
+    !event.record?.number_of_participants_under_26
+  ) {
+    initialData.includeList = true
+  }
   // load persisted data
   const savedData = usePersistentFormData('closeEvent', id)
   const initialAndSavedData = merge({}, initialData, savedData)
@@ -104,13 +141,13 @@ const CloseEventForm = ({
   const isVolunteering = event.category.slug === 'public__volunteering'
 
   // attendance list is required when the event is camp or weekend event
-  // const areParticipantsRequired = ['camp', 'weekend_event'].includes(
-  //   event.group.slug,
-  // )
+  const areParticipantsRequired = ['camp', 'weekend_event'].includes(
+    event.group.slug,
+  )
   // but we actually have a field that keeps this info
-  const areParticipantsRequired = event.is_attendance_list_required ?? false
+  // const areParticipantsRequired = event.is_attendance_list_required ?? false
 
-  const handleSubmit = async ({ is_closed }: { is_closed: boolean }) => {
+  const handleSubmit = async ({ is_complete }: { is_complete: boolean }) => {
     // let's validate both forms and get data from them
     // then let's send the data to API
     // then let's clear the redux persistent state
@@ -143,21 +180,17 @@ const CloseEventForm = ({
     ])
 
     if (isValid) {
-      const data = merge(
+      const data = mergeWith(
         {},
-        omit(evidence, 'record.photos', 'finance.receipts'),
+        evidence,
         participants,
-        { is_closed },
+        { is_complete },
         {
-          record: {
-            photos: evidence.record.photos.filter(photo => photo.photo),
-          },
-          finance: {
-            receipts: evidence.finance.receipts.filter(
-              receipt => receipt.receipt,
-            ),
-          },
+          photos: evidence.photos.filter(photo => photo.photo),
+          receipts: evidence.receipts.filter(receipt => receipt.receipt),
         },
+        // overwrite arrays, don't merge them
+        (a, b) => (Array.isArray(b) ? b : undefined),
       )
 
       if (
@@ -170,13 +203,13 @@ const CloseEventForm = ({
       if (data.record.attendance_list === initialData.record?.attendance_list)
         delete data.record.attendance_list
 
-      await onSubmit(data)
+      await onSubmit(formData2payload(data))
       clearPersist()
     } else {
       // TODO make nicer
       showMessage({
-        message: 'Opravte, prosím, chyby ve validaci',
         type: 'error',
+        message: 'Opravte, prosím, chyby ve validaci',
         detail: JSON.stringify(
           pickErrors(merge({}, evidenceErrors, participantsErrors)),
         ),
@@ -198,8 +231,8 @@ const CloseEventForm = ({
       onSubmit={handleSubmit}
       onCancel={handleCancel}
       actions={[
-        { name: 'uložit', props: { is_closed: false } },
-        { name: 'uložit a uzavřít', props: { is_closed: true } },
+        { name: 'uložit', props: { is_complete: false } },
+        { name: 'uložit a uzavřít', props: { is_complete: true } },
       ]}
     >
       <Step
@@ -208,11 +241,11 @@ const CloseEventForm = ({
           Object.keys(participantsFormMethods.formState.errors).length > 0
         }
       >
-        <ParticipantsStepWIP
+        <ParticipantsStep
           areParticipantsRequired={areParticipantsRequired}
           methods={participantsFormMethods}
+          event={event}
         />
-        <ParticipantsStep eventId={event.id} eventName={event.name} />
       </Step>
       <Step
         name="práce"

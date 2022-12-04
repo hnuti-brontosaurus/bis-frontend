@@ -11,7 +11,6 @@ export type {
   Answer,
   DietCategory,
   EventApplication,
-  EventGroupCategory,
   EventIntendedForCategory,
   EventPhoto,
   EventProgramCategory,
@@ -22,6 +21,7 @@ export type {
   Location,
   Opportunity,
   OpportunityCategory,
+  PatchedEvent,
   PatchedEventApplication,
   Propagation,
   Qualification,
@@ -42,4 +42,12 @@ export type EventCategory = Overwrite<
   { slug: Required<original.WebEventsListApiArg>['category'][0] }
 >
 
-export type Event = Overwrite<original.Event, { category: EventCategory }>
+export type EventGroupCategory = Overwrite<
+  original.EventGroupCategory,
+  { slug: Required<original.WebEventsListApiArg>['group'][0] }
+>
+
+export type Event = Overwrite<
+  original.Event,
+  { category: EventCategory; group: EventGroupCategory }
+>

@@ -84,8 +84,8 @@ export const toDataURL = async (url: string): Promise<string> => {
 export const getEventStatus = (
   event: Event,
 ): 'draft' | 'inProgress' | 'finished' | 'closed' => {
-  if (shouldBeFinishedUntil(event) < Date.now()) return 'closed'
-  if (event.record) return 'finished'
+  if (isEventClosed(event)) return 'closed'
+  if (event.is_complete) return 'finished'
   return 'inProgress'
 }
 
@@ -101,6 +101,12 @@ const shouldBeFinishedUntil = (event: Event): number => {
 
   return finishUntil.getTime()
 }
+
+/**
+ * Find out whether event is so old that it can't be edited anymore
+ */
+export const isEventClosed = (event: Event): boolean =>
+  shouldBeFinishedUntil(event) < Date.now()
 
 export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
   Boolean(
