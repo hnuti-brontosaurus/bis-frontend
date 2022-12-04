@@ -279,14 +279,14 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
       setSelectedUserId(result.searchId)
       setShowAddParticipantForm(false)
       setSelectedUserInputBirthday({ ...result, birthday: data.birthday })
-      if (!retrievedUser) {
+      if (!retrievedUser || retrievedUser._search_id !== result.searchId) {
         setErroredSearchId(result.searchId)
       } else {
         setCheck(false)
       }
     }
     if (!check || checkAndAdd) {
-      if (retrievedUser) {
+      if (retrievedUser && retrievedUser._search_id === result.searchId) {
         addParticipant(retrievedUser.id)
         await createEventApplication({
           eventId,
@@ -616,7 +616,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               </td>
                             </tr>
                             {result._search_id === selectedUserId &&
-                              retrievedUser &&
+                              retrievedUser && retrievedUser._search_id === result._search_id &&
                               retrievedUserIsUsed && (
                                 <tr>
                                   <td colSpan={6}>

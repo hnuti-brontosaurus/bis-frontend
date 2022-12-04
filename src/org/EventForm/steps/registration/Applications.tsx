@@ -274,8 +274,10 @@ const Applications: FC<{
             setShowAddParticipantModal={setShowAddParticipantModal}
             deleteEventApplication={deleteEventApplication}
             categories={categories ? categories.results : []}
-            programs={programs ? programs.results: []}
-            administrationUnits={administrationUnits                ? administrationUnits.results: []}
+            programs={programs ? programs.results : []}
+            administrationUnits={
+              administrationUnits ? administrationUnits.results : []
+            }
           ></ShowApplicationModal>
         )}
       </div>

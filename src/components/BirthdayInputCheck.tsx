@@ -79,7 +79,11 @@ const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
         />
       )}
 
-      {!(retrievedUser && retrievedUserIsUsed) && (
+      {!(
+        retrievedUser &&
+        retrievedUser._search_id === result._search_id &&
+        retrievedUserIsUsed
+      ) && (
         <Button
           className={styles.birthsdayButton}
           plain
@@ -89,7 +93,9 @@ const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
           zkontroluj a přidej{' '}
         </Button>
       )}
-      {retrievedUser && retrievedUserIsUsed ? (
+      {retrievedUser &&
+      retrievedUser._search_id === result._search_id &&
+      retrievedUserIsUsed ? (
         <Button className={styles.birthsdayButton} plain type="submit">
           přidej k účastníkům
         </Button>
