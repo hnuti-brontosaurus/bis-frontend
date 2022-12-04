@@ -1,3 +1,5 @@
+@use '../colors';
+
 .modal {
   background-color: white;
   width: 1000px;
@@ -14,6 +16,27 @@
     .modalTitleBox {
       border-bottom: 1px solid rgb(233, 231, 231);
       padding: 20px 40px;
+      .showUserApplicationNameBox {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .closeIcon {
+          cursor: pointer;
+          path {
+            &:last-child {
+              fill: colors.$gray-300;
+            }
+          }
+          &:hover {
+            path {
+              &:last-child {
+                fill: colors.$black;
+              }
+            }
+          }
+        }
+      }
     }
 
     .modalFormBox {
@@ -43,13 +66,3 @@
 }
 
 //TODO: move those styles to some other componentn
-
-.showUserApplicationNameBox {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  .addUserButtons {
-    display: flex;
-    flex-direction: row;
-  }
-}

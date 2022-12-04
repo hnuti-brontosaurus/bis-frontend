@@ -1,7 +1,8 @@
 import { FC } from 'react'
+import { MdClose } from 'react-icons/md'
+
 import Modal from 'react-modal'
-import styles from '../org/EventForm/steps/ParticipantsStep.module.scss'
-import stylesModal from './NewApplicationModal.module.scss'
+import styles from './StyledModal.module.scss'
 
 interface IShowApplicationModalProps {
   open: boolean
@@ -23,15 +24,21 @@ const StyledModal: FC<IShowApplicationModalProps> = ({
       isOpen={open}
       onRequestClose={onClose}
       contentLabel={title}
-      className={stylesModal.modal}
+      className={styles.modal}
+      overlayClassName={styles.overlay}
     >
-      <div className={stylesModal.content}>
-        <div className={stylesModal.modalTitleBox}>
+      <div className={styles.content}>
+        <div className={styles.modalTitleBox}>
           <div className={styles.showUserApplicationNameBox}>
-            <h2>{title}</h2>
+            <h2>{title}</h2>{' '}
+            <MdClose
+              className={styles.closeIcon}
+              size="1.5em"
+              onClick={onClose}
+            />
           </div>
         </div>
-        <div className={stylesModal.modalFormBox}>{children}</div>
+        <div className={styles.modalFormBox}>{children}</div>
       </div>
     </Modal>
   )

@@ -5,7 +5,7 @@ import { User } from '../../../../app/services/testApi'
 import { ReactComponent as Bin } from '../../../../assets/trash-solid.svg'
 import { ReactComponent as EditUser } from '../../../../assets/user-pen-solid.svg'
 import Loading from '../../../../components/Loading'
-import ShowApplicationModal from '../../../../components/ShowApplicationModal'
+import ShowApplicationModal from './ShowApplicationModal'
 import stylesTable from '../../../../components/Table.module.scss'
 import styles from '../ParticipantsStep.module.scss'
 

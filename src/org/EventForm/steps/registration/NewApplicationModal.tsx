@@ -1,15 +1,21 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { FC, FormEventHandler } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import Modal from 'react-modal'
 import * as yup from 'yup'
-import { AnswerPayload, api } from '../app/services/bis'
-import { EventApplication } from '../app/services/bisTypes'
-import { required } from '../utils/validationMessages'
-import BirthdayInput, { birthdayValidation } from './BirthdayInput'
-import { Button } from './Button'
-import FormInputError from './FormInputError'
-import { FullSizeElement, InlineSection, Label } from './FormLayout'
+import { AnswerPayload, api } from '../../../../app/services/bis'
+import { EventApplication } from '../../../../app/services/bisTypes'
+import BirthdayInput, {
+  birthdayValidation,
+} from '../../../../components/BirthdayInput'
+import { Button } from '../../../../components/Button'
+import FormInputError from '../../../../components/FormInputError'
+import {
+  FullSizeElement,
+  InlineSection,
+  Label,
+} from '../../../../components/FormLayout'
+import StyledModal from '../../../../components/StyledModal'
+import { required } from '../../../../utils/validationMessages'
 import styles from './NewApplicationModal.module.scss'
 
 interface INewApplicationModalProps {
@@ -120,15 +126,13 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
   if (!open) return null
 
   return (
-    <Modal
-      isOpen={open}
-      onRequestClose={() => {
+    <StyledModal
+      open={open}
+      onClose={() => {
         onClose()
         reset()
       }}
-      contentLabel="Example Modal"
-      className={styles.modal}
-      overlayClassName={styles.overlay}
+      title="Nova prihlaska"
     >
       <div
         onClick={e => {
@@ -136,9 +140,6 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
         }}
         className={styles.content}
       >
-        <div className={styles.modalTitleBox}>
-          <h2>Nova prihlaska</h2>
-        </div>
         <div className={styles.modalFormBox}>
           <FormProvider {...methods}>
             <form onSubmit={handleFormSubmit}>
@@ -301,7 +302,7 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
           </FormProvider>
         </div>
       </div>
-    </Modal>
+    </StyledModal>
   )
 }
 
