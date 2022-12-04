@@ -1,4 +1,5 @@
-import { skipToken } from '@reduxjs/toolkit/query'
+import { SerializedError } from '@reduxjs/toolkit'
+import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query'
 import { mergeWith } from 'lodash'
 import { Assign, Overwrite } from 'utility-types'
 import {
@@ -31,6 +32,7 @@ export const useReadFullEvent = (
   isLoading: boolean
   isError: boolean
   isSuccess: boolean
+  error: FetchBaseQueryError | SerializedError | undefined
 } => {
   const eventQuery = api.endpoints.readEvent.useQuery(
     eventId > 0 ? { id: eventId } : skipToken,
@@ -74,6 +76,7 @@ export const useReadFullEvent = (
   const isLoading = allQueries.some(query => query.isLoading)
   const isSuccess = allQueries.every(query => query.isSuccess)
   const isError = allQueries.some(query => query.isError)
+  const error = allQueries.find(query => query.error)?.error
 
   return {
     data:
@@ -104,5 +107,6 @@ export const useReadFullEvent = (
     isLoading,
     isSuccess,
     isError,
+    error,
   }
 }

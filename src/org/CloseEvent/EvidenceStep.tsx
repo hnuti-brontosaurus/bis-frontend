@@ -31,7 +31,7 @@ const EvidenceStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection>
+        <FormSection startIndex={2}>
           <FormSubsection header="Evidence práce">
             <FormSubsubsection
               required={isVolunteering}
@@ -63,7 +63,7 @@ const EvidenceStep = ({
           </FormSubsection>
           <FormSubsection header="Evidence akce">
             <FormSubsubsection header="Fotky z akce">
-              <ImagesUpload name="record.photos" image="photo" />
+              <ImagesUpload name="photos" image="photo" />
             </FormSubsubsection>
             <FormSubsubsection
               header="Sken prezenční listiny"
@@ -77,7 +77,7 @@ const EvidenceStep = ({
               header="Sken dokladů"
               help="Povinné pro vybrané akce. Pokud jste mezi vybranými akcemi, bude vás ústředí HB informovat."
             >
-              <ImagesUpload name="finance.receipts" image="receipt" />
+              <ImagesUpload name="receipts" image="receipt" />
             </FormSubsubsection>
             <FormSubsubsection
               header="Číslo účtu k proplacení dokladů"

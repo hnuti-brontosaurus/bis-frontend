@@ -1,16 +1,21 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { api } from '../../app/services/bis'
-import { Event, Finance } from '../../app/services/bisTypes'
+import { api, EventPayload } from '../../app/services/bis'
+import Error from '../../components/Error'
 import Loading from '../../components/Loading'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from '../../features/systemMessage/useSystemMessage'
 import { useTitle } from '../../hooks/title'
-import CloseEventForm, { CloseEventFormShape } from './CloseEventForm'
+import CloseEventForm, { CloseEventPayload } from './CloseEventForm'
 
 const CloseEvent = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const navigate = useNavigate()
 
-  const { data: event } = api.endpoints.readEvent.useQuery({ id: eventId })
+  const { data: event, error: readEventError } =
+    api.endpoints.readEvent.useQuery({ id: eventId })
   const { data: photos } = api.endpoints.readEventPhotos.useQuery({
     eventId,
   })
@@ -18,9 +23,12 @@ const CloseEvent = () => {
     eventId,
   })
 
+  const showMessage = useShowMessage()
+
   useTitle(event ? `Evidence akce ${event.name}` : 'Evidence akce')
 
-  const [updateEvent] = api.endpoints.updateEvent.useMutation()
+  const [updateEvent, { error: updateEventError }] =
+    api.endpoints.updateEvent.useMutation()
   const [createPhoto] = api.endpoints.createEventPhoto.useMutation()
   const [updatePhoto] = api.endpoints.updateEventPhoto.useMutation()
   const [deletePhoto] = api.endpoints.deleteEventPhoto.useMutation()
@@ -28,39 +36,31 @@ const CloseEvent = () => {
   const [updateReceipt] = api.endpoints.updateFinanceReceipt.useMutation()
   const [deleteReceipt] = api.endpoints.deleteFinanceReceipt.useMutation()
 
+  useShowApiErrorMessage(updateEventError)
+
+  if (readEventError) return <Error error={readEventError}></Error>
+
   if (!(event && photos && receipts)) return <Loading>Stahujeme data</Loading>
 
   const defaultValues = {
-    record: {
-      ...event.record,
-      photos: photos.results.map(({ photo, ...rest }) => ({
-        photo: photo.original,
-        ...rest,
-      })),
-    },
-    finance: {
-      ...event.finance,
-      receipts: receipts.results,
-    },
+    record: event.record ?? undefined,
+    photos: photos.results.map(({ photo, ...rest }) => ({
+      photo: photo.original,
+      ...rest,
+    })),
+    finance: event.finance ?? undefined,
+    receipts: receipts.results,
   }
 
   const handleSubmit = async ({
-    is_closed,
-    record: { photos, ...record },
-    finance: { receipts, ...finance },
-  }: CloseEventFormShape & Pick<Event, 'is_closed'>) => {
-    // update record
-    const dataToSave: Pick<Event, 'record' | 'is_closed' | 'finance'> = {
-      record,
-      finance: finance as Finance,
-      is_closed,
-    }
-
-    if (!dataToSave.is_closed) delete dataToSave.is_closed
-    if (!dataToSave.finance?.bank_account_number)
-      delete dataToSave.finance?.bank_account_number
-
-    await updateEvent({ id: eventId, event: dataToSave }).unwrap()
+    photos,
+    receipts,
+    ...evidence
+  }: CloseEventPayload) => {
+    await updateEvent({
+      id: eventId,
+      event: evidence as Partial<EventPayload>,
+    }).unwrap()
 
     /**
      * Event Photos
@@ -76,7 +76,7 @@ const CloseEvent = () => {
       // find only changed photos...
       .filter(p =>
         Boolean(
-          defaultValues.record.photos.find(
+          defaultValues.photos.find(
             ({ photo, id }) => id === p.id && photo !== p.photo,
           ),
         ),
@@ -90,7 +90,7 @@ const CloseEvent = () => {
         }).unwrap(),
       )
     // delete each removed photo
-    const deletedPhotoPromises = defaultValues.record.photos
+    const deletedPhotoPromises = defaultValues.photos
       // find all removed photos...
       .filter(p => photos.findIndex(({ id }) => p.id === id) === -1)
       // ...and delete them via api
@@ -123,7 +123,7 @@ const CloseEvent = () => {
       // find only changed receipts...
       .filter(p =>
         Boolean(
-          defaultValues.finance.receipts.find(
+          defaultValues.receipts.find(
             ({ receipt, id }) => id === p.id && receipt !== p.receipt,
           ),
         ),
@@ -137,7 +137,7 @@ const CloseEvent = () => {
         }).unwrap(),
       )
     // delete each removed receipt
-    const deletedReceiptPromises = defaultValues.finance.receipts
+    const deletedReceiptPromises = defaultValues.receipts
       // find all removed receipts...
       .filter(p => receipts.findIndex(({ id }) => p.id === id) === -1)
       // ...and delete them via api
@@ -153,6 +153,13 @@ const CloseEvent = () => {
       ...updatedReceiptPromises,
       ...deletedReceiptPromises,
     ])
+
+    showMessage({
+      type: 'success',
+      message:
+        'Evidence akce byla úspěšně uložena' +
+        (evidence.is_complete ? ' a uzavřena' : ''),
+    })
 
     navigate(`/org/akce/${eventId}`)
   }
