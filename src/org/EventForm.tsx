@@ -15,7 +15,12 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from '../hooks/persistForm'
-import { getIdBySlug, hasFormError, pickErrors } from '../utils/helpers'
+import {
+  getIdBySlug,
+  hasFormError,
+  pickErrors,
+  withOverwriteArray,
+} from '../utils/helpers'
 import BasicInfoStep from './EventForm/steps/BasicInfoStep'
 import EventCategoryStep from './EventForm/steps/EventCategoryStep'
 import IntendedForStep from './EventForm/steps/IntendedForStep'
@@ -244,9 +249,7 @@ const EventForm: FC<{
 
   const initialAndSavedData: Partial<EventFormShape> = useMemo(
     () =>
-      mergeWith(initialData2form(initialData), savedData, (a, b) =>
-        Array.isArray(b) ? b : undefined,
-      ),
+      mergeWith(initialData2form(initialData), savedData, withOverwriteArray),
     [initialData, savedData],
   )
 

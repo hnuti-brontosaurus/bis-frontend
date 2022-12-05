@@ -8,6 +8,7 @@ import {
   CorrectLocation,
 } from '../app/services/bis'
 import { Event, Propagation, Question, User } from '../app/services/bisTypes'
+import { withOverwriteArray } from '../utils/helpers'
 
 export type FullEvent = Assign<
   Overwrite<
@@ -96,7 +97,7 @@ export const useReadFullEvent = (
               {},
               eventQuery.data.propagation,
               { contact_person: contactPersonQuery.data },
-              (a, b) => (Array.isArray(b) ? b : undefined),
+              withOverwriteArray,
             ),
             images: imagesQuery.data.results,
             questions: questionsQuery.data.results,

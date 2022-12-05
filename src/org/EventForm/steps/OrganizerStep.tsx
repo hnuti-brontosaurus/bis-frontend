@@ -8,6 +8,7 @@ import type {
   EventIntendedForCategory,
   QualificationCategory,
   User,
+  UserSearch,
 } from '../../../app/services/bisTypes'
 import FormInputError from '../../../components/FormInputError'
 import {
@@ -21,16 +22,16 @@ import {
 } from '../../../components/FormLayout'
 import Loading from '../../../components/Loading'
 import {
-  SelectFullUser,
-  SelectFullUsers,
+  SelectUnknownUser,
+  SelectUnknownUsers,
 } from '../../../components/SelectUsers'
+import { useShowMessage } from '../../../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../../../hooks/currentUser'
 import { joinAnd } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
 import {
   canBeMainOrganizer,
-  canBeMainOrganizer2,
   getRequiredQualifications,
 } from './validateMainOrganizer'
 
@@ -52,26 +53,44 @@ const OrganizerStep = ({
 
   const { data: currentUser } = useCurrentUser()
 
+  const showMessage = useShowMessage()
+
   const getDisabledMainOrganizer = useCallback(
-    (user: User) =>
-      !canBeMainOrganizer2(
-        mainOrganizerDependencies,
-        user,
-        allQualifications!.results,
-      ),
+    (user: User | UserSearch) => {
+      if ('id' in user) {
+        try {
+          if (
+            canBeMainOrganizer(
+              mainOrganizerDependencies,
+              user,
+              allQualifications!.results,
+            )
+          )
+            return ''
+          else return 'Unexpected Error'
+        } catch (error) {
+          if (error instanceof Error) return error.message
+          else throw error
+        }
+      } else {
+        return ''
+      }
+    },
     [allQualifications, mainOrganizerDependencies],
   )
   const getMainOrganizerLabel = useCallback(
-    (user: User) =>
+    (user: User | UserSearch) =>
       `${user.display_name} (${
-        user.qualifications
-          .filter(
-            q =>
-              new Date(q.valid_since) <= new Date() &&
-              new Date() <= new Date(q.valid_till),
-          )
-          .map(q => q.category.name)
-          .join(', ') || '—'
+        'id' in user
+          ? user.qualifications
+              .filter(
+                q =>
+                  new Date(q.valid_since) <= new Date() &&
+                  new Date() <= new Date(q.valid_till),
+              )
+              .map(q => q.category.name)
+              .join(', ') || '—'
+          : '?'
       })`,
     [],
   )
@@ -175,8 +194,15 @@ const OrganizerStep = ({
                     },
                   }}
                   render={({ field }) => (
-                    <SelectFullUser
+                    <SelectUnknownUser
                       {...field}
+                      onBirthdayError={message =>
+                        showMessage({
+                          type: 'error',
+                          message: 'Nepodařilo se přidat uživatele',
+                          detail: message,
+                        })
+                      }
                       getDisabled={getDisabledMainOrganizer}
                       getLabel={getMainOrganizerLabel}
                     />
@@ -195,7 +221,18 @@ const OrganizerStep = ({
                 <Controller
                   name="other_organizers"
                   control={control}
-                  render={({ field }) => <SelectFullUsers {...field} />}
+                  render={({ field }) => (
+                    <SelectUnknownUsers
+                      {...field}
+                      onBirthdayError={message =>
+                        showMessage({
+                          type: 'error',
+                          message: 'Nepodařilo se přidat uživatele',
+                          detail: message,
+                        })
+                      }
+                    />
+                  )}
                   rules={{
                     validate: organizers => {
                       const isMainOrganizer =
@@ -243,7 +280,18 @@ const OrganizerStep = ({
                     name="propagation.contact_person"
                     control={control}
                     rules={{ required }}
-                    render={({ field }) => <SelectFullUser {...field} />}
+                    render={({ field }) => (
+                      <SelectUnknownUser
+                        {...field}
+                        onBirthdayError={message =>
+                          showMessage({
+                            type: 'error',
+                            message: 'Nepodařilo se přidat uživatele',
+                            detail: message,
+                          })
+                        }
+                      />
+                    )}
                   />
                 </FormInputError>
               </FullSizeElement>

@@ -22,7 +22,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from '../../hooks/persistForm'
-import { pickErrors } from '../../utils/helpers'
+import { pickErrors, withOverwriteArray } from '../../utils/helpers'
 import EvidenceStep from './EvidenceStep'
 import ParticipantsStep from './ParticipantsStep'
 
@@ -189,8 +189,7 @@ const CloseEventForm = ({
           photos: evidence.photos.filter(photo => photo.photo),
           receipts: evidence.receipts.filter(receipt => receipt.receipt),
         },
-        // overwrite arrays, don't merge them
-        (a, b) => (Array.isArray(b) ? b : undefined),
+        withOverwriteArray,
       )
 
       if (

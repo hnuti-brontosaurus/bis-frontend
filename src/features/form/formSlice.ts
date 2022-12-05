@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import merge from 'lodash/merge'
+import mergeWith from 'lodash/mergeWith'
 import { DeepPartial, ValuesType } from 'utility-types'
 import { RootState } from '../../app/store'
 import { RegistrationFormShapeWithStep } from '../../EventRegistrationForm'
@@ -7,6 +7,7 @@ import { CloseEventFormShape } from '../../org/CloseEvent/CloseEventForm'
 import { EventFormShape } from '../../org/EventForm'
 import { OpportunityFormShape } from '../../org/OpportunityForm'
 import { UserForm } from '../../user/EditProfile'
+import { withOverwriteArray } from '../../utils/helpers'
 
 export type FormState<K extends string = string> = {
   event: Record<K, EventFormShape>
@@ -49,10 +50,11 @@ const slice = createSlice({
   } as FormState<string>,
   reducers: {
     saveForm: (state, { payload }: PayloadAction<SaveEventPayload>) => {
-      state[payload.type][payload.id] = merge(
+      state[payload.type][payload.id] = mergeWith(
         {},
         state[payload.type][payload.id],
         payload.data,
+        withOverwriteArray,
       )
     },
     removeForm: (state, { payload }: PayloadAction<RemoveEventPayload>) => {
