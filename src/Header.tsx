@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
+import { Menu, MenuButton, MenuDivider, MenuItem } from '@szhsin/react-menu'
 import { FaBars, FaRegUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from './app/services/bis'
@@ -9,7 +9,7 @@ import { useCurrentUser } from './hooks/currentUser'
 import { isOrganizer } from './utils/helpers'
 
 const Header = () => {
-  const { data: user } = useCurrentUser()
+  const { data: user, isAuthenticated } = useCurrentUser()
   const [logout] = api.endpoints.logout.useMutation()
 
   const navigate = useNavigate()
@@ -27,29 +27,39 @@ const Header = () => {
 
   return (
     <div className={styles.container}>
-      <nav>
-        <Menu
-          menuButton={
-            <MenuButton>
-              <FaBars fontSize={20} />
-            </MenuButton>
-          }
-        >
-          <MenuItem>
-            <span>Tady</span>
-          </MenuItem>
-          <MenuItem>
-            <span>Bude</span>
-          </MenuItem>
-          <MenuItem>
-            <span>Navigace</span>
-          </MenuItem>
-        </Menu>
-      </nav>
+      {isAuthenticated ? (
+        <nav>
+          <Menu
+            menuButton={
+              <MenuButton>
+                <FaBars fontSize={20} />
+              </MenuButton>
+            }
+          >
+            <MenuItem>
+              <Link to="/org/akce/vsechny">Organizované akce</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link to="/org/akce/vytvorit">Vytvořit akci</Link>
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem>
+              <Link to="/org/prilezitosti">Příležitosti</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link to="/org/prilezitosti/vytvorit">Vytvořit příležitost</Link>
+            </MenuItem>
+          </Menu>
+        </nav>
+      ) : null}
       <nav className={styles.logoWrapper}>
         <Link to="/" title="Domů">
-          <img src={logo} alt="" className={styles.logo} />
-          <img src={logoMini} alt="" className={styles.logoMini} />
+          <img className={styles.logo} src={logo} alt="Brontosaurus logo" />
+          <img
+            className={styles.logoMini}
+            src={logoMini}
+            alt="Brontosaurus logo"
+          />
         </Link>
       </nav>
       <div className={styles.spacer}></div>
