@@ -230,18 +230,14 @@ export const api = createApi({
     }),
     readUsers: build.query<
       PaginatedList<User>,
-      { id?: string[]; search?: string }
+      ListArguments & { id?: string[]; _search_id?: string[] }
     >({
-      query: ({ id, search }) => ({
+      query: ({ id, _search_id, ...params }) => ({
         url: `frontend/users/`,
         params: {
-          //birthday: queryArg.birthday,
-          //first_name: queryArg.firstName,
-          ...(id ? { id: id.join(',') } : {}),
-          ...(typeof search === 'string' ? { search } : {}),
-          //last_name: queryArg.lastName,
-          //ordering: queryArg.ordering,
-          //page: queryArg.page,
+          id: id?.join?.(','),
+          _search_id: _search_id?.join?.(','),
+          ...params,
         },
       }),
       providesTags: results =>
@@ -255,10 +251,7 @@ export const api = createApi({
     readUser: build.query<User, { id: string }>({
       query: queryArg => ({ url: `/frontend/users/${queryArg.id}/` }),
     }),
-    readAllUsers: build.query<
-      PaginatedList<UserSearch>,
-      { page?: number; pageSize?: number; search?: string }
-    >({
+    readAllUsers: build.query<PaginatedList<UserSearch>, ListArguments>({
       query: queryArg => ({
         url: `frontend/search_users/`,
         params: {
