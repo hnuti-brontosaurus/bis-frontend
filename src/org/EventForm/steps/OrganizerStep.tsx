@@ -22,8 +22,8 @@ import {
 } from '../../../components/FormLayout'
 import Loading from '../../../components/Loading'
 import {
-  SelectFullUsers,
   SelectUnknownUser,
+  SelectUnknownUsers,
 } from '../../../components/SelectUsers'
 import { useShowMessage } from '../../../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../../../hooks/currentUser'
@@ -175,32 +175,6 @@ const OrganizerStep = ({
                 a musí mít minimálně 18 let.
               </InfoBox>
               <FormInputError>
-                {/* <Controller
-                  name="main_organizer"
-                  control={control}
-                  rules={{
-                    required,
-                    validate: async user => {
-                      try {
-                        return canBeMainOrganizer(
-                          mainOrganizerDependencies,
-                          user,
-                          allQualifications.results,
-                        )
-                      } catch (e) {
-                        if (e instanceof Error) return e.message
-                        else return 'Exception...'
-                      }
-                    },
-                  }}
-                  render={({ field }) => (
-                    <SelectFullUser
-                      {...field}
-                      getDisabled={getDisabledMainOrganizer}
-                      getLabel={getMainOrganizerLabel}
-                    />
-                  )}
-                /> */}
                 <Controller
                   name="main_organizer"
                   control={control}
@@ -247,7 +221,18 @@ const OrganizerStep = ({
                 <Controller
                   name="other_organizers"
                   control={control}
-                  render={({ field }) => <SelectFullUsers {...field} />}
+                  render={({ field }) => (
+                    <SelectUnknownUsers
+                      {...field}
+                      onBirthdayError={message =>
+                        showMessage({
+                          type: 'error',
+                          message: 'Nepodařilo se přidat uživatele',
+                          detail: message,
+                        })
+                      }
+                    />
+                  )}
                   rules={{
                     validate: organizers => {
                       const isMainOrganizer =

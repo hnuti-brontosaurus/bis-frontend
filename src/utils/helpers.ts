@@ -205,3 +205,14 @@ export const formatDateTime = (date: string, time?: string): string => {
     return dateTimeFormat.format(new Date(date))
   }
 }
+
+/**
+ * This is a helper function for lodash mergeWith
+ * lodash.merge doesn't overwrite arrays, but merges them.
+ * When we want to overwrite arrays, we may use mergeWith as follows:
+ * lodash.mergeWith(obj1, obj2, obj3, withOverwriteArray)
+ *
+ * https://stackoverflow.com/a/66247134
+ */
+export const withOverwriteArray = (a: any, b: any) =>
+  Array.isArray(b) ? b : undefined

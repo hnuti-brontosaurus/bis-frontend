@@ -33,6 +33,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from './hooks/persistForm'
+import { withOverwriteArray } from './utils/helpers'
 import { required } from './utils/validationMessages'
 
 export type RegistrationFormShape = SetRequired<
@@ -99,9 +100,7 @@ const form2payload = (data: RegistrationFormShape): EventApplicationPayload => {
       address: null,
       close_person: data.isChild ? data.close_person : null,
     },
-    // mergeWith and this argument make sure arrays get overwritten, not merged
-    // https://stackoverflow.com/a/66247134
-    (a, b) => (Array.isArray(b) ? b : undefined),
+    withOverwriteArray,
   )
 
   return submitData
@@ -180,7 +179,7 @@ const EventRegistrationForm = ({
     {},
     initialData2form(user, questionnaire),
     persistedData,
-    (a, b) => (Array.isArray(b) ? b : undefined),
+    withOverwriteArray,
   )
   const methods = useForm<Omit<RegistrationFormShape, 'step'>>({
     resolver: yupResolver(validationSchema),

@@ -34,8 +34,19 @@ type SelectUsersProps = Omit<
   >,
   'defaultValue'
 >
+
+type SelectObjectsProps<T> = Omit<
+  Assign<
+    InputHTMLAttributes<HTMLInputElement>,
+    {
+      value?: T[]
+      onChange: (value: readonly T[]) => void
+    }
+  >,
+  'defaultValue'
+>
 /**
- * This component expects - and provides - not only user id, but full user as value
+ * This component expects - and provides - not only user ids, but array of full users as value
  */
 export const SelectFullUsers = forwardRef<any, SelectUsersProps>(
   ({ value, onChange, ...rest }, ref) => {
@@ -371,10 +382,12 @@ export const SelectUnknownUser = forwardRef<
     const [readUserByBirthday] =
       api.endpoints.readUserByBirthdate.useLazyQuery()
 
+    const readFullUser = useReadFullUser()
+
     return (
       <Select<UserSearch | User>
         {...rest}
-        isLoading={isOptionsLoading}
+        isLoading={searchQuery !== debouncedSearchQuery || isOptionsLoading}
         ref={ref}
         isClearable
         options={userOptions ? userOptions : []}
@@ -382,53 +395,16 @@ export const SelectUnknownUser = forwardRef<
         onInputChange={input => setSearchQuery(input)}
         value={value}
         onChange={async user => {
+          if (!user) return onChange(user)
+          if ('id' in user) return onChange(user)
           try {
-            if (!user) return onChange(user)
-            if ('id' in user) return onChange(user)
-            const birthday = (await new Promise((resolve, reject) => {
-              confirmAlert({
-                customUI: ({ title, message, onClose }) => {
-                  return (
-                    <div>
-                      <header>{title}</header>
-                      <div>{message}</div>
-                      <div className={formStyles.clearFullSize}></div>
-                      <BirthdayForm
-                        onSubmit={birthday => {
-                          resolve(birthday)
-                          onClose()
-                        }}
-                        onCancel={() => {
-                          resolve('')
-                          onClose()
-                        }}
-                      />
-                    </div>
-                  )
-                },
-                title: 'Zadej datum narození',
-                message: user.display_name,
-              })
-            })) as string
-            if (birthday) {
-              const fullUser = await readUserByBirthday({
-                ...user,
-                birthday,
-              }).unwrap()
-              if (fullUser._search_id === user._search_id) {
-                if (getDisabled && getDisabled(fullUser)) {
-                  throw new Error(getDisabled(fullUser))
-                }
-                return onChange(fullUser)
-              }
-              throw new Error('Nesprávné datum narození')
+            const fullUser = await readFullUser(user)
+            if (getDisabled && getDisabled(fullUser)) {
+              throw new Error(getDisabled(fullUser))
             }
+            return onChange(fullUser)
           } catch (error) {
-            if (error && 'status' in error) {
-              if ((error as FetchBaseQueryError).status === 404)
-                onBirthdayError?.('Nesprávné datum narození')
-            } else if (error instanceof Error && 'message' in error)
-              onBirthdayError?.(error.message)
+            if (error instanceof Error) onBirthdayError?.(error.message)
             else onBirthdayError?.('Jiná chyba')
           }
         }}
@@ -487,4 +463,116 @@ export const BirthdayForm = ({
       </form>
     </FormProvider>
   )
+}
+
+/**
+ * This component expects - and provides - not only user ids, but array of full users as value
+ */
+export const SelectUnknownUsers = forwardRef<
+  any,
+  SelectObjectsProps<User | UserSearch> & {
+    onBirthdayError?: (message: string) => void
+  }
+>(({ value, onChange, onBirthdayError, ...rest }, ref) => {
+  const [searchQuery, debouncedSearchQuery, setSearchQuery] = useDebouncedState(
+    1000,
+    '',
+  )
+  const { data: userOptions, isLoading: isOptionsLoading } =
+    useReadUnknownAndFullUsers(
+      debouncedSearchQuery.length >= 2
+        ? {
+            search: debouncedSearchQuery,
+          }
+        : skipToken,
+    )
+
+  const readFullUser = useReadFullUser()
+
+  return (
+    <Select
+      {...rest}
+      isLoading={searchQuery !== debouncedSearchQuery || isOptionsLoading}
+      ref={ref}
+      isMulti
+      isClearable={false}
+      options={userOptions ?? []}
+      inputValue={searchQuery}
+      onInputChange={input => setSearchQuery(input)}
+      value={value}
+      onChange={async users => {
+        console.log(users)
+        // first, find the user without id (unknown)
+        const userIndex = users.findIndex(user => !('id' in user))
+        const user = users[userIndex]
+        if (!user) return onChange([...users])
+
+        try {
+          const fullUser = await readFullUser(user)
+          const updatedUsers = [...users] as User[]
+          updatedUsers[userIndex] = fullUser
+          return onChange(updatedUsers)
+        } catch (e) {
+          if (e instanceof Error) onBirthdayError?.(e.message)
+          else {
+            onBirthdayError?.('Jiná chyba')
+          }
+        }
+      }}
+      getOptionLabel={user => user.display_name + ('id' in user ? '' : ' ?')}
+      getOptionValue={user => String(user._search_id)}
+    />
+  )
+})
+
+const useReadFullUser = () => {
+  const [readUserByBirthday] = api.endpoints.readUserByBirthdate.useLazyQuery()
+  return async (user: UserSearch): Promise<User> => {
+    try {
+      const birthday = (await new Promise((resolve, reject) => {
+        confirmAlert({
+          customUI: ({ title, message, onClose }) => {
+            return (
+              <div>
+                <header>{title}</header>
+                <div>{message}</div>
+                <div className={formStyles.clearFullSize}></div>
+                <BirthdayForm
+                  onSubmit={birthday => {
+                    resolve(birthday)
+                    onClose()
+                  }}
+                  onCancel={() => {
+                    resolve('')
+                    onClose()
+                  }}
+                />
+              </div>
+            )
+          },
+          title: 'Zadej datum narození',
+          message: user.display_name,
+        })
+      })) as string
+      if (birthday) {
+        const fullUser = await readUserByBirthday({
+          ...user,
+          birthday,
+        }).unwrap()
+        if (fullUser._search_id === user._search_id) {
+          return fullUser
+        }
+        throw new Error('Nesprávné datum narození')
+      }
+    } catch (error) {
+      if (
+        error &&
+        'status' in error &&
+        (error as FetchBaseQueryError).status === 404
+      )
+        throw new Error('Nesprávné datum narození')
+      throw error
+    }
+    throw new Error('How did we get here?')
+  }
 }
