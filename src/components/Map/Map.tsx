@@ -1,7 +1,7 @@
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster'
-import blueCircle from 'assets/circle-dark-blue.svg'
-import greenCircle from 'assets/circle-green.svg'
-import redCircle from 'assets/circle-red.svg'
+import markerNew from 'assets/map-marker-new.svg'
+import markerSelected from 'assets/map-marker-selected.svg'
+import markerExistent from 'assets/map-marker.svg'
 import * as L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
@@ -15,22 +15,21 @@ import {
   useMapEvents,
 } from 'react-leaflet'
 import useOnScreen from '../../hooks/onScreen'
-import mapStyles from './Map.module.scss'
 
 const iconSize = [20, 20] as L.PointTuple
 
 const newIcon = L.icon({
-  iconUrl: blueCircle,
+  iconUrl: markerNew,
   iconSize,
 })
 
 const selectedIcon = L.icon({
-  iconUrl: greenCircle,
+  iconUrl: markerSelected,
   iconSize,
 })
 
 const existentIcon = L.icon({
-  iconUrl: redCircle,
+  iconUrl: markerExistent,
   iconSize,
 })
 
@@ -109,6 +108,7 @@ export type ClearBounds = {
 }
 
 export const Map = ({
+  className,
   markers,
   selection,
   value,
@@ -117,6 +117,7 @@ export const Map = ({
   onDeselect,
   onChangeBounds,
 }: {
+  className?: string
   markers: MarkerType[]
   selection?: MarkerType
   value?: L.LatLngTuple
@@ -137,12 +138,13 @@ export const Map = ({
 
   return (
     <>
+      <input type="text" placeholder="Najít místo na mapě (TODO later)" />
       <MapContainer
-        className={mapStyles.container}
+        className={className}
         center={[49.82381, 15.46875]}
         zoom={6}
       >
-        <TileLayer url="https://m1.mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
+        <TileLayer url="https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
         <MapEvents
           onClick={({ lat, lng }) => onChange([lat, lng])}
           onMoveEnd={onChangeBounds}
@@ -167,5 +169,3 @@ export const Map = ({
     </>
   )
 }
-
-export default Map

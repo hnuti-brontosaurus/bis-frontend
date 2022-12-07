@@ -1,7 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { ReactComponent as MapMarkerNew } from 'assets/map-marker-new.svg'
+import { ReactComponent as MapMarkerSelected } from 'assets/map-marker-selected.svg'
+import { ReactComponent as MapMarkerDefault } from 'assets/map-marker.svg'
 import classNames from 'classnames'
 import {
+  Button,
   ClearBounds,
   FormInputError,
   InlineSection,
@@ -41,7 +45,7 @@ const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
   description: yup.string(),
 })
 
-export type SelectedOrNewLocation = NewLocation | Pick<CorrectLocation, 'id'>
+export type SelectedOrNewLocation = NewLocation | CorrectLocation
 
 export const SelectLocation = forwardRef<
   any,
@@ -152,7 +156,11 @@ export const SelectLocation = forwardRef<
 
   const handleSelect = (id: number) => {
     setIsEditing(false)
-    onChange({ id })
+    onChange(
+      locations!.results.find(
+        location => location.id === id,
+      ) as CorrectLocation,
+    )
   }
 
   // do this when CreateLocation is finished
@@ -162,49 +170,67 @@ export const SelectLocation = forwardRef<
   }
 
   return (
-    <div>
-      Vyber lokalitu podle názvu
-      <br />
-      <SelectObject<CorrectLocation>
-        className={classNames(styles.aboveMap, styles.fullWidth)}
-        value={(value as CorrectLocation) ?? undefined}
-        onChange={onChange}
-        getLabel={location => location.name}
-        placeholder="Název"
-        search={api.endpoints.readLocations}
-        ref={ref}
-      />
-      <br />
-      nebo Vyber lokalitu na mapě
-      <hr />
-      <input type="text" placeholder="Najít adresu na mapě (TODO later)" />
-      <br />
-      {isLoading && (
-        <div>
-          <small>Načítáme lokality</small>
+    <div className={styles.wrapper}>
+      <div className={styles.mainContentContainer}>
+        Vyber lokalitu podle názvu
+        <br />
+        <SelectObject<CorrectLocation>
+          className={classNames(styles.aboveMap, styles.fullWidth)}
+          value={(value as CorrectLocation) ?? undefined}
+          onChange={onChange}
+          getLabel={location => location.name}
+          placeholder="Název"
+          search={api.endpoints.readLocations}
+          ref={ref}
+        />
+        <br />
+        nebo Vyber lokalitu na mapě
+        {isLoading && (
+          <div>
+            <small>Načítáme lokality</small>
+          </div>
+        )}
+      </div>
+      <div className={styles.mapWrapper}>
+        <aside className={styles.legend}>
+          <div className={styles.legendItem}>
+            <MapMarkerNew width={20} height={20} /> nová lokalita
+          </div>
+          <div className={styles.legendItem}>
+            <MapMarkerSelected width={20} height={20} /> existující lokalita
+          </div>
+          <div className={styles.legendItem}>
+            <MapMarkerDefault width={20} height={20} /> vybraná lokalita
+          </div>
+        </aside>
+        <div className={styles.mainContentContainer}>
+          <Map
+            className={styles.mapContainer}
+            markers={markers}
+            selection={selection}
+            value={isEditing ? newLocationCoordinates : undefined}
+            onChange={coordinates => {
+              if (isEditing) {
+                setNewLocationCoordinates(coordinates)
+              }
+            }}
+            onSelect={handleSelect}
+            onChangeBounds={bounds => setBounds(bounds)}
+            onDeselect={() => {}}
+          />
         </div>
-      )}
-      <Map
-        markers={markers}
-        selection={selection}
-        value={isEditing ? newLocationCoordinates : undefined}
-        onChange={coordinates => {
-          if (isEditing) {
-            setNewLocationCoordinates(coordinates)
-          }
-        }}
-        onSelect={handleSelect}
-        onChangeBounds={bounds => setBounds(bounds)}
-        onDeselect={() => {}}
-      />
+        <div className={styles.mapSpacer}></div>
+      </div>
       {!isEditing ? (
         <>
-          nebo{' '}
-          <button type="button" onClick={() => setIsEditing(true)}>
-            {newLocationMethods.formState.isDirty
-              ? 'Pokračuj ve vytváření nové lokality'
-              : 'Vytvoř novou lokalitu'}
-          </button>
+          <div>
+            nebo{' '}
+            <Button success type="button" onClick={() => setIsEditing(true)}>
+              {newLocationMethods.formState.isDirty
+                ? 'Pokračuj ve vytváření nové lokality'
+                : 'Vytvoř novou lokalitu'}
+            </Button>
+          </div>
         </>
       ) : (
         <div>Kliknutím do mapy můžeš vybrat GPS</div>
@@ -216,7 +242,9 @@ export const SelectLocation = forwardRef<
           onFinish={handleFinish}
         />
       ) : (
-        <ViewLocation location={actuallySelectedLocation} />
+        <div className={styles.mainContentContainer}>
+          <ViewLocation location={actuallySelectedLocation} />
+        </div>
       )}
     </div>
   )

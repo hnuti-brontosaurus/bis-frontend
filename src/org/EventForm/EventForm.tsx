@@ -76,7 +76,7 @@ export type EventFormShape = Assign<
     registrationMethod: 'standard' | 'other' | 'none' | 'full'
     // contactPersonIsMainOrganizer is internal, doesn't get sent to API
     contactPersonIsMainOrganizer: boolean
-    location: SubmitShape['location']
+    location: CorrectLocation | NewLocation
   }
 >
 
@@ -250,6 +250,8 @@ const EventForm: FC<{
       mergeWith(initialData2form(initialData), savedData, withOverwriteArray),
     [initialData, savedData],
   )
+
+  console.log(initialData, savedData, initialAndSavedData)
 
   const categoryForm = useForm({
     defaultValues: pick(initialAndSavedData, shapes.category),

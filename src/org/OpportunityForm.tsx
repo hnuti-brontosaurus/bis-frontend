@@ -51,9 +51,7 @@ const categoryDetails: Record<OpportunityCategorySlug, ReactNode> = {
 
 export type OpportunityFormShape = Overwrite<
   OpportunityPayload,
-  {
-    location: NewLocation | Pick<CorrectLocation, 'id'>
-  }
+  { location: NewLocation | CorrectLocation }
 >
 
 const OpportunityForm = ({
