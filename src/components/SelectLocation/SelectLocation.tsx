@@ -8,6 +8,7 @@ import {
   Label,
   Map,
   MarkerType,
+  SelectObject,
 } from 'components'
 import { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
@@ -17,7 +18,6 @@ import { Overwrite } from 'utility-types'
 import * as yup from 'yup'
 import { api, CorrectLocation } from '../../app/services/bis'
 import { required } from '../../utils/validationMessages'
-import { SelectByQuery } from '../SelectUsers'
 import styles from './SelectLocation.module.scss'
 
 export type NewLocation = Overwrite<
@@ -54,11 +54,7 @@ export const SelectLocation = forwardRef<
   const [bounds, setBounds] = useState<ClearBounds>()
 
   const { data: locations, isLoading } = api.endpoints.readLocations.useQuery(
-    bounds
-      ? {
-          pageSize: 5000,
-        }
-      : skipToken,
+    bounds ? { pageSize: 5000 } : skipToken,
   )
 
   const newLocationMethods = useForm<NewLocation>({
@@ -169,21 +165,14 @@ export const SelectLocation = forwardRef<
     <div>
       Vyber lokalitu podle názvu
       <br />
-      <SelectByQuery
+      <SelectObject<CorrectLocation>
         className={classNames(styles.aboveMap, styles.fullWidth)}
-        value={value && 'id' in value ? value.id : undefined}
-        onChange={id => {
-          if (typeof id === 'number') onChange({ id })
-          else onChange(null)
-        }}
+        value={(value as CorrectLocation) ?? undefined}
+        onChange={onChange}
+        getLabel={location => location.name}
         placeholder="Název"
-        queryRead={api.endpoints.readLocation}
-        querySearch={api.endpoints.readLocations}
-        transform={(location: CorrectLocation) => ({
-          label: location.name,
-          value: location.id,
-        })}
-        customRef={ref}
+        search={api.endpoints.readLocations}
+        ref={ref}
       />
       <br />
       nebo Vyber lokalitu na mapě

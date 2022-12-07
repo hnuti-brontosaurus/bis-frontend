@@ -35,6 +35,7 @@ export {
   useCreateOrSelectLocation,
 } from './SelectLocation/SelectLocation'
 export type { NewLocation } from './SelectLocation/SelectLocation'
+export { SelectObject } from './SelectObject'
 export { Step, Steps } from './Steps/Steps'
 export { StyledModal } from './StyledModal/StyledModal'
 export { TogglePasswordInput } from './TogglePasswordInput/TogglePasswordInput'
