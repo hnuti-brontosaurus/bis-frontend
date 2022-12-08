@@ -7,22 +7,24 @@ import {
 } from '@reduxjs/toolkit/dist/query'
 import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
 import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
+import {
+  Actions,
+  BirthdayInput,
+  birthdayValidation,
+  FormInputError,
+} from 'components'
 import { forwardRef, InputHTMLAttributes, Ref, useMemo } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import { Assign } from 'utility-types'
 import * as yup from 'yup'
+import { Button } from '.'
 import { api, PaginatedList } from '../app/services/bis'
 import { User, UserSearch } from '../app/services/bisTypes'
 import { useDebouncedState } from '../hooks/debouncedState'
 import { useQueries } from '../hooks/queries'
 import { useReadUnknownAndFullUsers } from '../hooks/readUnknownAndFullUsers'
-import BirthdayInput, { birthdayValidation } from './BirthdayInput'
-import { Button } from './Button'
-import FormInputError from './FormInputError'
-import { Actions } from './FormLayout'
-import formStyles from './FormLayout.module.scss'
 
 type SelectUsersProps = Omit<
   Assign<
@@ -536,7 +538,6 @@ const useReadFullUser = () => {
               <div>
                 <header>{title}</header>
                 <div>{message}</div>
-                <div className={formStyles.clearFullSize}></div>
                 <BirthdayForm
                   onSubmit={birthday => {
                     resolve(birthday)

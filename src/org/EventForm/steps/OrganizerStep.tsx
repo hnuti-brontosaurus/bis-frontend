@@ -1,3 +1,14 @@
+import {
+  FormInputError,
+  FormSection,
+  FormSubsection,
+  FormSubsubsection,
+  FullSizeElement,
+  InfoBox,
+  InlineSection,
+  Label,
+  Loading,
+} from 'components'
 import { get, uniqBy } from 'lodash'
 import { Fragment, useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
@@ -10,17 +21,6 @@ import type {
   User,
   UserSearch,
 } from '../../../app/services/bisTypes'
-import FormInputError from '../../../components/FormInputError'
-import {
-  FormSection,
-  FormSubsection,
-  FormSubsubsection,
-  FullSizeElement,
-  InfoBox,
-  InlineSection,
-  Label,
-} from '../../../components/FormLayout'
-import Loading from '../../../components/Loading'
 import {
   SelectUnknownUser,
   SelectUnknownUsers,
@@ -29,7 +29,7 @@ import { useShowMessage } from '../../../features/systemMessage/useSystemMessage
 import { useCurrentUser } from '../../../hooks/currentUser'
 import { joinAnd } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 import {
   canBeMainOrganizer,
   getRequiredQualifications,

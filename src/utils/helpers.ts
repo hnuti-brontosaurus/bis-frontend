@@ -216,3 +216,11 @@ export const formatDateTime = (date: string, time?: string): string => {
  */
 export const withOverwriteArray = (a: any, b: any) =>
   Array.isArray(b) ? b : undefined
+
+/**
+ * remove html tags from html document
+ */
+export const stripHtml = (html: string): string => {
+  let doc = new DOMParser().parseFromString(html, 'text/html')
+  return doc.body.textContent || ''
+}

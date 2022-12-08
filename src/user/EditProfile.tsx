@@ -1,4 +1,18 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import {
+  Actions,
+  BirthdayInput,
+  birthdayValidation,
+  Button,
+  FormInputError,
+  FormSection,
+  FormSubsection,
+  FormSubsubsection,
+  FullSizeElement,
+  InlineSection,
+  Label,
+  Loading,
+} from 'components'
 import { merge, omit, startsWith } from 'lodash'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -7,19 +21,6 @@ import { Overwrite } from 'utility-types'
 import * as yup from 'yup'
 import { api, UserPayload } from '../app/services/bis'
 import { Address, User } from '../app/services/bisTypes'
-import BirthdayInput, { birthdayValidation } from '../components/BirthdayInput'
-import { Button } from '../components/Button'
-import FormInputError from '../components/FormInputError'
-import {
-  Actions,
-  FormSection,
-  FormSubsection,
-  FormSubsubsection,
-  FullSizeElement,
-  InlineSection,
-  Label,
-} from '../components/FormLayout'
-import Loading from '../components/Loading'
 import {
   useShowApiErrorMessage,
   useShowMessage,

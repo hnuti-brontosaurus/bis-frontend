@@ -1,0 +1,9 @@
+@use 'styles/media';
+
+.container {
+  width: 350px;
+  @include media.for-phone-only {
+    width: 100%;
+  }
+  height: 250px;
+}
