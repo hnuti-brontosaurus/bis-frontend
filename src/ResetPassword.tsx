@@ -1,14 +1,13 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { default as classNames } from 'classnames'
-import { FormInputError, Loading } from 'components'
+import { Button, FormInputError, Loading } from 'components'
 import { lazy, ReactNode, Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Link, useSearchParams } from 'react-router-dom'
 import { api } from './app/services/bis'
 import TogglePasswordInput from './components/TogglePasswordInput'
 import { useShowMessage } from './features/systemMessage/useSystemMessage'
-import formStyles from './Form.module.scss'
 import styles from './Login.module.scss'
 
 const PasswordStrengthBar = lazy(() => import('react-password-strength-bar'))
@@ -151,14 +150,9 @@ const ResetPassword = () => {
                 })}
               />
             </FormInputError>
-            <input
-              className={classNames(
-                styles.formElement,
-                formStyles.mainActionButton,
-              )}
-              type="submit"
-              value="Nastavit heslo"
-            />
+            <Button success className={styles.formElement} type="submit">
+              Nastavit heslo
+            </Button>
           </form>
         </FormProvider>
       </div>

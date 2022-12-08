@@ -1,11 +1,10 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { default as classNames, default as classnames } from 'classnames'
-import { FormInputError, Loading } from 'components'
+import { Button, FormInputError, Loading } from 'components'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { api } from './app/services/bis'
-import formStyles from './Form.module.scss'
 import styles from './Login.module.scss'
 
 const requiredMessage = 'Toto pole je povinné!' // TODO DRY!
@@ -86,14 +85,9 @@ const SendResetPasswordLink = () => {
                 })}
               />
             </FormInputError>
-            <input
-              className={classNames(
-                styles.formElement,
-                formStyles.mainActionButton,
-              )}
-              type="submit"
-              value="Obnovit"
-            />
+            <Button success className={styles.formElement} type="submit">
+              Obnovit
+            </Button>
           </form>
         </FormProvider>
       </div>

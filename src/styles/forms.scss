@@ -1,26 +1,5 @@
 @use 'styles/colors';
 
-.mainActionButton {
-  color: white;
-  background-color: colors.$bronto;
-  border: 2px solid colors.$bronto;
-  font-size: 1rem;
-}
-
-.alternativeActionButton {
-  color: black;
-  background: none;
-  font-size: 0.875rem;
-  &:hover {
-    font-weight: bold;
-  }
-}
-
-.dangerActionButton {
-  background-color: colors.$error;
-  color: black;
-}
-
 input:not([type]),
 input[type='text'],
 input[type='password'],
@@ -45,8 +24,7 @@ select {
 
 button,
 input[type='submit'],
-input[type='reset'],
-.actionButton {
+input[type='reset'] {
   border-radius: 10px;
   padding: 5px 2rem;
   cursor: pointer;

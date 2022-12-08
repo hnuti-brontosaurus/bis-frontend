@@ -1,9 +1,9 @@
 import classNames from 'classnames'
+import { Button } from 'components'
 import has from 'lodash/has'
 import { Children, FC, FunctionComponentElement, ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import formStyles from '../Form.module.scss'
 import { useSearchParamsState } from '../hooks/searchParamsState'
 import styles from './Steps.module.scss'
 
@@ -127,21 +127,21 @@ export const SimpleSteps = <T extends Record<string, any>>({
         </nav>
         <nav className={styles.actions}>
           {onCancel && (
-            <button type="reset" onClick={() => onCancel()}>
+            <Button light type="reset" onClick={() => onCancel()}>
               Zrušit
-            </button>
+            </Button>
           )}
           {onSubmit &&
             actions &&
             actions.map(({ props, name }, i) => (
-              <button
+              <Button
                 key={i} // TODO we should not use index as key
+                success
                 type="submit"
-                className={formStyles.mainActionButton}
                 onClick={() => onSubmit(props)}
               >
                 {name}
-              </button>
+              </Button>
             ))}
         </nav>
       </div>

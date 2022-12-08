@@ -1,7 +1,11 @@
-import { ListHeader, Loading, UnscalablePaginatedList } from 'components'
+import {
+  ButtonLink,
+  ListHeader,
+  Loading,
+  UnscalablePaginatedList,
+} from 'components'
 import listStyles from 'components/ListHeader/ListHeader.module.scss'
 import { FaPlus } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import { useCurrentUser } from '../hooks/currentUser'
 import { useTitle } from '../hooks/title'
@@ -28,10 +32,10 @@ const OpportunityList = () => {
             theme="opportunities"
             tabs={[]}
             actions={[
-              <Link key="new" to="/org/prilezitosti/vytvorit">
+              <ButtonLink key="new" to="/org/prilezitosti/vytvorit">
                 <FaPlus />
                 Nová příležitost
-              </Link>,
+              </ButtonLink>,
             ]}
           />
         </Header>

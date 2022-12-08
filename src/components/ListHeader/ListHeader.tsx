@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import buttonStyles from 'components/Button/Button.module.scss'
 import { cloneElement, ReactElement } from 'react'
 import { NavLink, To } from 'react-router-dom'
 import styles from './ListHeader.module.scss'
@@ -22,10 +21,7 @@ export const ListHeader = ({
       <h1>{header}</h1>
       {actions.map(element =>
         cloneElement(element, {
-          className: classNames(
-            buttonStyles.actionButton,
-            styles.headerActionButton,
-          ),
+          className: styles.headerActionButton,
         }),
       )}
       <nav className={styles.tabs}>

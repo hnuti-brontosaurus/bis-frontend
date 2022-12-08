@@ -1,4 +1,5 @@
 import {
+  Button,
   FormInputError,
   FormSection,
   FormSubsection,
@@ -9,7 +10,6 @@ import {
 } from 'components'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import { FaTrashAlt } from 'react-icons/fa'
-import formStyles from '../../../Form.module.scss'
 import { requireBoolean } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
@@ -259,13 +259,13 @@ const RegistrationStep = ({
                           />{' '}
                           povinné?
                         </label>
-                        <button
+                        <Button
                           type="button"
-                          className={formStyles.dangerActionButton}
+                          danger
                           onClick={() => questionFields.remove(index)}
                         >
                           <FaTrashAlt />
-                        </button>
+                        </Button>
                       </InlineSection>
                     </li>
                   ))}
