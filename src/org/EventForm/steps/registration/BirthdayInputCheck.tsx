@@ -4,7 +4,9 @@ import { FC } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { User, UserSearch } from '../../../../app/services/testApi'
-import BirthdayInput, { birthdayValidation } from '../../../../components/BirthdayInput'
+import BirthdayInput, {
+  birthdayValidation,
+} from '../../../../components/BirthdayInput'
 import { Button } from '../../../../components/Button'
 import ErrorBox, { ObjectWithStrings } from '../../../../components/ErrorBox'
 import FormInputError from '../../../../components/FormInputError'
@@ -99,9 +101,13 @@ const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
       {retrievedUser &&
       retrievedUser._search_id === result._search_id &&
       retrievedUserIsUsed ? (
-        !isSavingEventApplication ? <Button className={styles.birthsdayButton} plain type="submit">
-          přidej k účastníkům
-        </Button> : <Loading>...</Loading>
+        !isSavingEventApplication ? (
+          <Button className={styles.birthsdayButton} plain type="submit">
+            přidej k účastníkům
+          </Button>
+        ) : (
+          <Loading>...</Loading>
+        )
       ) : (
         <Button className={styles.birthsdayButton} plain type="submit">
           zkontroluj
