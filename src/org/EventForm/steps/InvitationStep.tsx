@@ -11,7 +11,7 @@ import {
 } from 'components'
 import { Controller, FormProvider } from 'react-hook-form'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 
 const InvitationStep = ({
   methods,

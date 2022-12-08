@@ -1,33 +1,33 @@
+import { api, CorrectLocation, EventPayload } from 'app/services/bis'
+import { EventPropagationImage, Question, User } from 'app/services/bisTypes'
 import { Loading, NewLocation, Step, Steps } from 'components'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from 'hooks/persistForm'
 import { merge, mergeWith, omit } from 'lodash'
 import pick from 'lodash/pick'
 import { FC, useMemo } from 'react'
 import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
-import { api, CorrectLocation, EventPayload } from '../app/services/bis'
-import { EventPropagationImage, Question, User } from '../app/services/bisTypes'
-import { useShowMessage } from '../features/systemMessage/useSystemMessage'
-import {
-  useClearPersistentForm,
-  usePersistentFormData,
-  usePersistForm,
-} from '../hooks/persistForm'
 import {
   getIdBySlug,
   hasFormError,
   pickErrors,
   withOverwriteArray,
-} from '../utils/helpers'
-import BasicInfoStep from './EventForm/steps/BasicInfoStep'
-import EventCategoryStep from './EventForm/steps/EventCategoryStep'
-import IntendedForStep from './EventForm/steps/IntendedForStep'
-import InvitationStep from './EventForm/steps/InvitationStep'
-import LocationStep from './EventForm/steps/LocationStep'
-import OrganizerStep from './EventForm/steps/OrganizerStep'
-import ParticipantsStep from './EventForm/steps/ParticipantsStep'
-import PropagationStep from './EventForm/steps/PropagationStep'
-import RegistrationStep from './EventForm/steps/RegistrationStep'
+} from 'utils/helpers'
+import BasicInfoStep from './steps/BasicInfoStep'
+import EventCategoryStep from './steps/EventCategoryStep'
+import IntendedForStep from './steps/IntendedForStep'
+import InvitationStep from './steps/InvitationStep'
+import LocationStep from './steps/LocationStep'
+import OrganizerStep from './steps/OrganizerStep'
+import ParticipantsStep from './steps/ParticipantsStep'
+import PropagationStep from './steps/PropagationStep'
+import RegistrationStep from './steps/RegistrationStep'
 
 const steps = [
   'category',

@@ -1,10 +1,10 @@
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
+import styles from 'components/Table.module.scss'
 import { TbDotsVertical } from 'react-icons/tb'
 import { Link } from 'react-router-dom'
-import { CorrectOpportunity } from '../../app/services/bis'
-import styles from '../../components/Table.module.scss'
-import { useCurrentUser } from '../../hooks/currentUser'
-import { useRemoveOpportunity } from '../../hooks/removeOpportunity'
+import { CorrectOpportunity } from '../../../app/services/bis'
+import { useCurrentUser } from '../../../hooks/currentUser'
+import { useRemoveOpportunity } from '../../../hooks/removeOpportunity'
 
 const OpportunityTable = ({
   data: opportunities,

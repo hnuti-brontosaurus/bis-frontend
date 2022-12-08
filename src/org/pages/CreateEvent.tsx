@@ -3,17 +3,17 @@ import { omit, startsWith } from 'lodash'
 import merge from 'lodash/merge'
 import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { api } from '../app/services/bis'
+import { api } from '../../app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../features/systemMessage/useSystemMessage'
-import { useCurrentUser } from '../hooks/currentUser'
-import { useReadFullEvent } from '../hooks/readFullEvent'
-import { useTitle } from '../hooks/title'
-import { toDataURL } from '../utils/helpers'
+} from '../../features/systemMessage/useSystemMessage'
+import { useCurrentUser } from '../../hooks/currentUser'
+import { useReadFullEvent } from '../../hooks/readFullEvent'
+import { useTitle } from '../../hooks/title'
+import { toDataURL } from '../../utils/helpers'
+import EventForm, { SubmitShape } from '../EventForm'
 import { event2payload } from './EditEvent'
-import EventForm, { SubmitShape } from './EventForm'
 
 const CreateEvent = () => {
   useTitle('Nová akce')

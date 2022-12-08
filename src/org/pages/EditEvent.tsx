@@ -1,15 +1,15 @@
+import { api } from 'app/services/bis'
 import { Loading, useCreateOrSelectLocation } from 'components'
-import merge from 'lodash/merge'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Optional } from 'utility-types'
-import { api } from '../app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../features/systemMessage/useSystemMessage'
-import { FullEvent, useReadFullEvent } from '../hooks/readFullEvent'
-import { useTitle } from '../hooks/title'
-import EventForm, { InitialEventData } from './EventForm'
+} from 'features/systemMessage/useSystemMessage'
+import { FullEvent, useReadFullEvent } from 'hooks/readFullEvent'
+import { useTitle } from 'hooks/title'
+import merge from 'lodash/merge'
+import EventForm, { InitialEventData } from 'org/EventForm'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Optional } from 'utility-types'
 
 const EditEvent = () => {
   const params = useParams()

@@ -1,11 +1,11 @@
 import { Error, Loading } from 'components'
 import { useNavigate, useParams } from 'react-router-dom'
-import { api, EventPayload } from '../../app/services/bis'
+import { api, EventPayload } from '../../../app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../../features/systemMessage/useSystemMessage'
-import { useTitle } from '../../hooks/title'
+} from '../../../features/systemMessage/useSystemMessage'
+import { useTitle } from '../../../hooks/title'
 import CloseEventForm, { CloseEventPayload } from './CloseEventForm'
 
 const CloseEvent = () => {

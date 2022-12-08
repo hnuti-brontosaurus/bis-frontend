@@ -12,7 +12,7 @@ import Select from 'react-select'
 import { api } from '../../../app/services/bis'
 import { AdministrationUnit } from '../../../app/services/bisTypes'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 
 const BasicInfoStep = ({
   methods,

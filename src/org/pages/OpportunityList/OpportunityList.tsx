@@ -7,10 +7,10 @@ import {
 import listStyles from 'components/ListHeader/ListHeader.module.scss'
 import { ClearPageMargin, Content, Header, Layout } from 'layout/Layout'
 import { FaPlus } from 'react-icons/fa'
-import { api } from '../app/services/bis'
-import { useCurrentUser } from '../hooks/currentUser'
-import { useTitle } from '../hooks/title'
-import OpportunityTable from './OpportunityList/OpportunityTable'
+import { api } from '../../../app/services/bis'
+import { useCurrentUser } from '../../../hooks/currentUser'
+import { useTitle } from '../../../hooks/title'
+import OpportunityTable from './OpportunityTable'
 
 const OpportunityList = () => {
   useTitle('Příležitosti')

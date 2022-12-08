@@ -10,7 +10,7 @@ import {
 import { Controller, FormProvider } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 
 const PropagationStep = ({
   methods,

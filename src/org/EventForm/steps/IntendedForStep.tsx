@@ -14,7 +14,7 @@ import { Controller, FormProvider } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import { getIdBySlug, requireBoolean } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 
 const IntendedForStep = ({
   methods,

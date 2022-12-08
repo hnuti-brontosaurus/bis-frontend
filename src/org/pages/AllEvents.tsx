@@ -1,9 +1,9 @@
+import { PaginatedList } from 'app/services/bis'
+import { Event } from 'app/services/bisTypes'
 import { UnscalablePaginatedList } from 'components'
+import { useTitle } from 'hooks/title'
 import { useOutletContext } from 'react-router-dom'
-import { PaginatedList } from '../app/services/bis'
-import { Event } from '../app/services/bisTypes'
-import { useTitle } from '../hooks/title'
-import EventTable from './EventTable'
+import EventTable from '../EventTable'
 
 const AllEvents = () => {
   useTitle('Moje akce')

@@ -1,12 +1,12 @@
 import { skipToken } from '@reduxjs/toolkit/query'
+import { api } from 'app/services/bis'
 import classNames from 'classnames'
 import { Actions, Button, ButtonLink, Loading } from 'components'
 import { sanitize } from 'dompurify'
+import { useCurrentUser } from 'hooks/currentUser'
+import { useRemoveOpportunity } from 'hooks/removeOpportunity'
 import { useNavigate, useParams } from 'react-router-dom'
-import { api } from '../app/services/bis'
-import { useCurrentUser } from '../hooks/currentUser'
-import { useRemoveOpportunity } from '../hooks/removeOpportunity'
-import { formatDateRange } from '../utils/helpers'
+import { formatDateRange } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
 const ViewOpportunity = () => {

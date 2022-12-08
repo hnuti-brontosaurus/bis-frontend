@@ -1,5 +1,5 @@
 import { useCurrentUser } from 'hooks/currentUser'
-import OrgHome from 'org/Home'
+import OrgHome from 'org/pages/Home'
 import { isOrganizer } from 'utils/helpers'
 
 const Home = () => {

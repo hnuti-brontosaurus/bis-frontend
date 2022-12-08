@@ -1,10 +1,10 @@
 import { UnscalablePaginatedList } from 'components'
 import { useOutletContext } from 'react-router-dom'
-import { PaginatedList } from '../app/services/bis'
-import { Event } from '../app/services/bisTypes'
-import { useTitle } from '../hooks/title'
-import { getEventStatus } from '../utils/helpers'
-import EventTable from './EventTable'
+import { PaginatedList } from '../../app/services/bis'
+import { Event } from '../../app/services/bisTypes'
+import { useTitle } from '../../hooks/title'
+import { getEventStatus } from '../../utils/helpers'
+import EventTable from '../EventTable'
 
 const ActiveEvents = () => {
   useTitle('Moje aktuální akce')

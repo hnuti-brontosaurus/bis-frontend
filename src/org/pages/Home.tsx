@@ -1,7 +1,7 @@
+import illustration from 'assets/happy-earth-TODO-replace-with-original.webp'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 import { Link, To } from 'react-router-dom'
-import illustration from '../assets/happy-earth-TODO-replace-with-original.webp'
 import styles from './Home.module.scss'
 
 const buttons: {

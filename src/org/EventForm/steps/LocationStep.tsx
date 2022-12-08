@@ -7,7 +7,7 @@ import {
 } from 'components'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
 import { required } from '../../../utils/validationMessages'
-import { StepShapes } from '../../EventForm'
+import { StepShapes } from '../EventForm'
 
 const LocationStep = ({
   methods,

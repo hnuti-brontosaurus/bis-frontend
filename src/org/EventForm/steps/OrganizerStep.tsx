@@ -29,7 +29,7 @@ import { useShowMessage } from '../../../features/systemMessage/useSystemMessage
 import { useCurrentUser } from '../../../hooks/currentUser'
 import { joinAnd } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 import {
   canBeMainOrganizer,
   getRequiredQualifications,

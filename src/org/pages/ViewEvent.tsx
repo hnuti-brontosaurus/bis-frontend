@@ -1,5 +1,7 @@
 import { Actions, Button, ButtonLink, Error, Loading } from 'components'
 import { sanitize } from 'dompurify'
+import { useReadFullEvent } from 'hooks/readFullEvent'
+import { useRemoveEvent } from 'hooks/removeEvent'
 import {
   FaPencilAlt,
   FaRegCalendarAlt,
@@ -9,9 +11,7 @@ import {
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
-import { useReadFullEvent } from '../hooks/readFullEvent'
-import { useRemoveEvent } from '../hooks/removeEvent'
-import { formatDateRange, formatDateTime } from '../utils/helpers'
+import { formatDateRange, formatDateTime } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
 const ViewEvent = () => {

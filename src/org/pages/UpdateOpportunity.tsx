@@ -2,14 +2,14 @@ import { Loading, useCreateOrSelectLocation } from 'components'
 import merge from 'lodash/merge'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
-import { api } from '../app/services/bis'
+import { api } from '../../app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../features/systemMessage/useSystemMessage'
-import { useCurrentUser } from '../hooks/currentUser'
-import { useTitle } from '../hooks/title'
-import OpportunityForm, { OpportunityFormShape } from './OpportunityForm'
+} from '../../features/systemMessage/useSystemMessage'
+import { useCurrentUser } from '../../hooks/currentUser'
+import { useTitle } from '../../hooks/title'
+import OpportunityForm, { OpportunityFormShape } from '../OpportunityForm'
 
 const UpdateOpportunity = () => {
   useTitle('Upravit příležitost')

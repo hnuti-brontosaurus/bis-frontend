@@ -12,14 +12,14 @@ import {
   FinanceReceipt,
   PatchedEvent,
   Record,
-} from '../../app/services/bisTypes'
-import { useShowMessage } from '../../features/systemMessage/useSystemMessage'
+} from '../../../app/services/bisTypes'
+import { useShowMessage } from '../../../features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
   usePersistentFormData,
   usePersistForm,
-} from '../../hooks/persistForm'
-import { pickErrors, withOverwriteArray } from '../../utils/helpers'
+} from '../../../hooks/persistForm'
+import { pickErrors, withOverwriteArray } from '../../../utils/helpers'
 import EvidenceStep from './EvidenceStep'
 import ParticipantsStep from './ParticipantsStep'
 
