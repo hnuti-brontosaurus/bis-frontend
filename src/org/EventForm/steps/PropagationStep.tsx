@@ -1,16 +1,16 @@
-import { Controller, FormProvider } from 'react-hook-form'
-import { api } from '../../../app/services/bis'
-import FormInputError from '../../../components/FormInputError'
 import {
+  FormInputError,
   FormSection,
   FormSubsection,
   FullSizeElement,
   InlineSection,
   Label,
-} from '../../../components/FormLayout'
-import Loading from '../../../components/Loading'
+  Loading,
+} from 'components'
+import { Controller, FormProvider } from 'react-hook-form'
+import { api } from '../../../app/services/bis'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 
 const PropagationStep = ({
   methods,

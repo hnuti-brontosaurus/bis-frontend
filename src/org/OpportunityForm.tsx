@@ -1,3 +1,20 @@
+import {
+  FormInputError,
+  FormSection,
+  FormSubheader,
+  FormSubsection,
+  FullSizeElement,
+  htmlRequired,
+  IconSelect,
+  IconSelectGroup,
+  ImageUpload,
+  InfoBox,
+  InlineSection,
+  Label,
+  NewLocation,
+  RichTextEditor,
+  SelectLocation,
+} from 'components'
 import merge from 'lodash/merge'
 import { FormEventHandler, ReactNode, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -6,20 +23,6 @@ import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
 import { ReactComponent as HandsIcon } from '../assets/hands.svg'
 import { ReactComponent as HousesIcon } from '../assets/houses.svg'
 import { ReactComponent as OrganizerIcon } from '../assets/organizer.svg'
-import FormInputError from '../components/FormInputError'
-import {
-  FormSection,
-  FormSubheader,
-  FormSubsection,
-  FullSizeElement,
-  InfoBox,
-  InlineSection,
-  Label,
-} from '../components/FormLayout'
-import { IconSelect, IconSelectGroup } from '../components/IconSelect'
-import { ImageUpload } from '../components/ImageUpload'
-import RichTextEditor, { htmlRequired } from '../components/RichTextEditor'
-import SelectLocation, { NewLocation } from '../components/SelectLocation'
 import { useCurrentUser } from '../hooks/currentUser'
 import {
   useClearPersistentForm,

@@ -1,16 +1,15 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { api } from 'app/services/bis'
+import { EventApplication } from 'app/services/bisTypes'
 import classnames from 'classnames'
+import { Loading } from 'components'
+import stylesTable from 'components/Table.module.scss'
 import { FC, useState } from 'react'
-import { api } from '../../../../app/services/bis'
-import { EventApplication } from '../../../../app/services/bisTypes'
-import { ReactComponent as Bin } from '../../../../assets/trash-solid.svg'
-import { ReactComponent as AddUser } from '../../../../assets/user-plus-solid.svg'
+import { FaTrash as Bin, FaUserPlus as AddUser } from 'react-icons/fa'
+import styles from '../ParticipantsStep.module.scss'
 import AddParticipantModal from './AddParticipantModal'
-import Loading from '../../../../components/Loading'
 import NewApplicationModal from './NewApplicationModal'
 import ShowApplicationModal from './ShowApplicationModal'
-import stylesTable from '../../../../components/Table.module.scss'
-import styles from '../ParticipantsStep.module.scss'
 
 const Applications: FC<{
   eventId: number
@@ -224,6 +223,7 @@ const Applications: FC<{
               <div className={styles.emptyListBox}>
                 <img
                   src="https://i.ibb.co/m0GQt2K/kroliczek.png"
+                  alt=""
                   width="200"
                 ></img>
                 <div>Jesce se nikdo neprihlasil</div>

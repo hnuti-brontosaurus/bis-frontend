@@ -1,18 +1,18 @@
-import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
-import { FaTrashAlt } from 'react-icons/fa'
-import FormInputError from '../../../components/FormInputError'
 import {
+  Button,
+  FormInputError,
   FormSection,
   FormSubsection,
   FormSubsubsection,
   FullSizeElement,
   InlineSection,
   Label,
-} from '../../../components/FormLayout'
-import formStyles from '../../../Form.module.scss'
+} from 'components'
+import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
+import { FaTrashAlt } from 'react-icons/fa'
 import { requireBoolean } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../../EventForm'
+import { MethodsShapes } from '../EventForm'
 
 const RegistrationStep = ({
   methods,
@@ -259,13 +259,13 @@ const RegistrationStep = ({
                           />{' '}
                           povinné?
                         </label>
-                        <button
+                        <Button
                           type="button"
-                          className={formStyles.dangerActionButton}
+                          danger
                           onClick={() => questionFields.remove(index)}
                         >
                           <FaTrashAlt />
-                        </button>
+                        </Button>
                       </InlineSection>
                     </li>
                   ))}

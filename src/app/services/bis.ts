@@ -1,7 +1,7 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { ClearBounds } from 'components'
 import type { Assign, Overwrite } from 'utility-types'
-import { ClearBounds } from '../../components/Map'
 import { RootState } from '../store'
 import type {
   Address,

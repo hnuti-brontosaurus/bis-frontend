@@ -1,13 +1,13 @@
-import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
-import FormInputError from '../../../components/FormInputError'
 import {
+  FormInputError,
   FormSection,
   FormSubsection,
   InlineSection,
-} from '../../../components/FormLayout'
-import SelectLocation from '../../../components/SelectLocation'
+  SelectLocation,
+} from 'components'
+import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
 import { required } from '../../../utils/validationMessages'
-import { StepShapes } from '../../EventForm'
+import { StepShapes } from '../EventForm'
 
 const LocationStep = ({
   methods,
