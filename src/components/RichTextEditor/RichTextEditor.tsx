@@ -3,9 +3,10 @@ import { ControllerRenderProps } from 'react-hook-form'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.core.css'
 import 'react-quill/dist/quill.snow.css'
+import { stripHtml } from 'utils/helpers'
 import styles from './RichTextEditor.module.scss'
 
-const RichTextEditor = forwardRef<
+export const RichTextEditor = forwardRef<
   any,
   ControllerRenderProps<any, string> & { placeholder: string }
 >((props, ref) => (
@@ -21,14 +22,8 @@ const RichTextEditor = forwardRef<
   />
 ))
 
-export default RichTextEditor
-
-const strip = (html: string): string => {
-  let doc = new DOMParser().parseFromString(html, 'text/html')
-  return doc.body.textContent || ''
-}
-
+// TODO rewrite to yay schema
 export const htmlRequired =
   (required: string | boolean) =>
   (value: string = '') =>
-    !required || strip(value).trim().length > 0 || required
+    !required || stripHtml(value).trim().length > 0 || required

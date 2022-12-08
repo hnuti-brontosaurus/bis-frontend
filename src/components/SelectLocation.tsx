@@ -1,6 +1,14 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import classNames from 'classnames'
+import {
+  ClearBounds,
+  FormInputError,
+  InlineSection,
+  Label,
+  Map,
+  MarkerType,
+} from 'components'
 import { LatLngTuple } from 'leaflet'
 import merge from 'lodash/merge'
 import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
@@ -9,9 +17,6 @@ import { Overwrite } from 'utility-types'
 import * as yup from 'yup'
 import { api, CorrectLocation } from '../app/services/bis'
 import { required } from '../utils/validationMessages'
-import FormInputError from './FormInputError'
-import { InlineSection, Label } from './FormLayout'
-import Map, { ClearBounds, MarkerType } from './Map'
 import styles from './SelectLocation.module.scss'
 import { SelectByQuery } from './SelectUsers'
 

@@ -1,4 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import {
+  Button,
+  FormInputError,
+  FullSizeElement,
+  InlineSection,
+  Label,
+} from 'components'
 import { FC, FormEventHandler } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import * as yup from 'yup'
@@ -7,13 +14,6 @@ import { EventApplication } from '../../../../app/services/bisTypes'
 import BirthdayInput, {
   birthdayValidation,
 } from '../../../../components/BirthdayInput'
-import { Button } from '../../../../components/Button'
-import FormInputError from '../../../../components/FormInputError'
-import {
-  FullSizeElement,
-  InlineSection,
-  Label,
-} from '../../../../components/FormLayout'
 import StyledModal from '../../../../components/StyledModal'
 import { required } from '../../../../utils/validationMessages'
 import styles from './NewApplicationModal.module.scss'

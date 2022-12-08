@@ -1,7 +1,6 @@
+import { Error, Loading } from 'components'
 import { Outlet, useParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
-import Error from '../components/Error'
-import Loading from '../components/Loading'
 
 const ProfileOutlet = () => {
   const params = useParams()

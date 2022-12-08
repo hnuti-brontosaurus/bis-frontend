@@ -1,16 +1,16 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import classnames from 'classnames'
+import { Loading } from 'components'
 import { FC, useState } from 'react'
 import { api } from '../../../../app/services/bis'
 import { EventApplication } from '../../../../app/services/bisTypes'
 import { ReactComponent as Bin } from '../../../../assets/trash-solid.svg'
 import { ReactComponent as AddUser } from '../../../../assets/user-plus-solid.svg'
-import AddParticipantModal from './AddParticipantModal'
-import Loading from '../../../../components/Loading'
-import NewApplicationModal from './NewApplicationModal'
-import ShowApplicationModal from './ShowApplicationModal'
 import stylesTable from '../../../../components/Table.module.scss'
 import styles from '../ParticipantsStep.module.scss'
+import AddParticipantModal from './AddParticipantModal'
+import NewApplicationModal from './NewApplicationModal'
+import ShowApplicationModal from './ShowApplicationModal'
 
 const Applications: FC<{
   eventId: number

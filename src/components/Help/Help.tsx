@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react'
 import Tooltip from 'react-tooltip-lite'
 import styles from './Help.module.scss'
 
-const Help = ({ children }: { children: ReactNode }) => {
+export const Help = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const helpRef = useRef<HTMLDivElement>(null)
@@ -58,5 +58,3 @@ const Help = ({ children }: { children: ReactNode }) => {
     </Tooltip>
   )
 }
-
-export default Help

@@ -1,6 +1,6 @@
 import classNames from 'classnames'
+import { Help } from 'components'
 import { ForwardedRef, forwardRef, InputHTMLAttributes, ReactNode } from 'react'
-import Help from './Help'
 import styles from './IconSelect.module.scss'
 
 interface IconSelectProps extends InputHTMLAttributes<HTMLInputElement> {

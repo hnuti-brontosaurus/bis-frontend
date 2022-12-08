@@ -9,7 +9,7 @@ import {
 } from 'react-hook-form'
 import styles from './FormInputError.module.scss'
 
-function FormInputError<T extends FieldValues>({
+export const FormInputError = <T extends FieldValues>({
   children,
   name,
   formMethods,
@@ -19,7 +19,7 @@ function FormInputError<T extends FieldValues>({
   name?: string
   formMethods?: UseFormReturn<T>
   isBlock?: boolean
-}) {
+}) => {
   const defaultMethods = useFormContext()
 
   const methods = formMethods ?? defaultMethods
@@ -42,5 +42,3 @@ function FormInputError<T extends FieldValues>({
     </div>
   )
 }
-
-export default FormInputError

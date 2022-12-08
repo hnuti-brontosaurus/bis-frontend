@@ -1,4 +1,7 @@
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster'
+import blueCircle from 'assets/circle-dark-blue.svg'
+import greenCircle from 'assets/circle-green.svg'
+import redCircle from 'assets/circle-red.svg'
 import * as L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
@@ -11,10 +14,7 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet'
-import useOnScreen from '../hooks/onScreen'
-import blueCircle from './circle_dark_blue.svg'
-import greenCircle from './circle_green.svg'
-import redCircle from './circle_red.svg'
+import useOnScreen from '../../hooks/onScreen'
 import mapStyles from './Map.module.scss'
 
 const iconSize = [20, 20] as L.PointTuple
@@ -108,7 +108,7 @@ export type ClearBounds = {
   west: number
 }
 
-const Map = ({
+export const Map = ({
   markers,
   selection,
   value,

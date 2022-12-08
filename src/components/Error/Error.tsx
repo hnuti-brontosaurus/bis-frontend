@@ -3,7 +3,7 @@ import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { ReactNode } from 'react'
 import styles from './Error.module.scss'
 
-const Error = ({
+export const Error = ({
   error,
   children,
   message,
@@ -39,5 +39,3 @@ const Error = ({
     </div>
   )
 }
-
-export default Error

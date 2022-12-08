@@ -19,6 +19,12 @@
   font-size: 1rem;
 }
 
+.light {
+  &:hover {
+    background-color: colors.$gray-200;
+  }
+}
+
 .plain {
   color: black;
   background-color: transparent;

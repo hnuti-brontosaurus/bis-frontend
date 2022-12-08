@@ -1,11 +1,10 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { default as classNames, default as classnames } from 'classnames'
+import { FormInputError, Loading } from 'components'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { api } from './app/services/bis'
-import FormInputError from './components/FormInputError'
-import Loading from './components/Loading'
 import formStyles from './Form.module.scss'
 import styles from './Login.module.scss'
 

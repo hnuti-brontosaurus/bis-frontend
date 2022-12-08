@@ -2,8 +2,8 @@ import get from 'lodash/get'
 import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { FaPencilAlt, FaPlus, FaTimes } from 'react-icons/fa'
-import { file2base64 } from '../utils/helpers'
-import * as messages from '../utils/validationMessages'
+import { file2base64 } from '../../utils/helpers'
+import * as messages from '../../utils/validationMessages'
 import styles from './ImageUpload.module.scss'
 
 export const UncontrolledImageUpload = forwardRef<

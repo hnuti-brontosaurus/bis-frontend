@@ -1,7 +1,7 @@
 import classNames from 'classnames'
+import { Pagination } from 'components'
+import { useSearchParamsState } from 'hooks/searchParamsState'
 import { FC } from 'react'
-import { useSearchParamsState } from '../hooks/searchParamsState'
-import Pagination from './Pagination'
 
 /**
  * It's unscalable, because we have to provide all the data at the beginning

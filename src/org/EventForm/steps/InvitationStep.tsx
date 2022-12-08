@@ -1,15 +1,15 @@
-import { Controller, FormProvider } from 'react-hook-form'
-import FormInputError from '../../../components/FormInputError'
 import {
+  FormInputError,
   FormSection,
   FormSubheader,
   FormSubsubsection,
   FullSizeElement,
-} from '../../../components/FormLayout'
-import { ImagesUpload, ImageUpload } from '../../../components/ImageUpload'
-import RichTextEditor, {
   htmlRequired,
-} from '../../../components/RichTextEditor'
+  ImagesUpload,
+  ImageUpload,
+  RichTextEditor,
+} from 'components'
+import { Controller, FormProvider } from 'react-hook-form'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../../EventForm'
 

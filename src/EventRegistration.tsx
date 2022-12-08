@@ -1,10 +1,9 @@
+import { Error, Loading } from 'components'
 import { useState } from 'react'
 import { FaRegCalendarAlt } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
 import { api, EventApplicationPayload } from './app/services/bis'
-import Error from './components/Error'
-import Loading from './components/Loading'
 import styles from './EventRegistration.module.scss'
 import EventRegistrationForm, {
   FinishedStep,

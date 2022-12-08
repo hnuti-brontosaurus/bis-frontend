@@ -1,10 +1,10 @@
+import { useAppDispatch } from 'app/hooks'
+import { actions } from 'features/ui/uiSlice'
 import { ReactNode, useEffect } from 'react'
 import { RiLoader4Fill } from 'react-icons/ri'
-import { useAppDispatch } from '../app/hooks'
-import { actions } from '../features/ui/uiSlice'
 import styles from './Loading.module.scss'
 
-const Loading = ({
+export const Loading = ({
   children,
   hideHeader,
 }: {
@@ -31,5 +31,3 @@ const Loading = ({
     </div>
   )
 }
-
-export default Loading

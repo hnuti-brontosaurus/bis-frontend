@@ -1,13 +1,13 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { Loading } from 'components'
 import { FC, useState } from 'react'
 import { api } from '../../../../app/services/bis'
 import { User } from '../../../../app/services/testApi'
 import { ReactComponent as Bin } from '../../../../assets/trash-solid.svg'
 import { ReactComponent as EditUser } from '../../../../assets/user-pen-solid.svg'
-import Loading from '../../../../components/Loading'
-import ShowApplicationModal from './ShowApplicationModal'
 import stylesTable from '../../../../components/Table.module.scss'
 import styles from '../ParticipantsStep.module.scss'
+import ShowApplicationModal from './ShowApplicationModal'
 
 const Participants: FC<{
   eventId: number

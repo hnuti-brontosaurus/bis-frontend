@@ -1,7 +1,7 @@
+import { Loading } from 'components'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAppSelector } from '../app/hooks'
 import AuthenticatedLayout from '../AuthenticatedLayout'
-import Loading from '../components/Loading'
 import { selectLoggingOut } from '../features/auth/authSlice'
 import { useCurrentUser } from '../hooks/currentUser'
 

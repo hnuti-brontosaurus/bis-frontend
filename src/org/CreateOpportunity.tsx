@@ -1,7 +1,7 @@
+import { Loading } from 'components'
 import merge from 'lodash/merge'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../app/services/bis'
-import Loading from '../components/Loading'
 import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import {
   useShowApiErrorMessage,

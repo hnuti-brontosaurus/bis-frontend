@@ -1,14 +1,14 @@
-import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
-import { FaTrashAlt } from 'react-icons/fa'
-import FormInputError from '../../../components/FormInputError'
 import {
+  FormInputError,
   FormSection,
   FormSubsection,
   FormSubsubsection,
   FullSizeElement,
   InlineSection,
   Label,
-} from '../../../components/FormLayout'
+} from 'components'
+import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
+import { FaTrashAlt } from 'react-icons/fa'
 import formStyles from '../../../Form.module.scss'
 import { requireBoolean } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'

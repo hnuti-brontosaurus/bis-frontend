@@ -1,10 +1,9 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { ListHeader, Loading } from 'components'
+import listStyles from 'components/ListHeader/ListHeader.module.scss'
 import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { api } from '../app/services/bis'
-import ListHeader from '../components/ListHeader'
-import listStyles from '../components/ListHeader.module.scss'
-import Loading from '../components/Loading'
 import { useCurrentUser } from '../hooks/currentUser'
 import { ClearPageMargin, Content, Header, Layout } from '../Layout'
 

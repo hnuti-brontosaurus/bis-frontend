@@ -1,4 +1,14 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import {
+  Actions,
+  Button,
+  FormInputError,
+  FormSection,
+  FormSubsection,
+  FormSubsubsection,
+  InlineSection,
+  Label,
+} from 'components'
 import { isNil, merge, mergeWith, omit, omitBy, pick } from 'lodash'
 import { FormEventHandler, MouseEventHandler, useEffect } from 'react'
 import {
@@ -16,16 +26,6 @@ import {
 } from './app/services/bis'
 import { User } from './app/services/bisTypes'
 import BirthdayInput, { birthdayValidation } from './components/BirthdayInput'
-import { Button } from './components/Button'
-import FormInputError from './components/FormInputError'
-import {
-  Actions,
-  FormSection,
-  FormSubsection,
-  FormSubsubsection,
-  InlineSection,
-  Label,
-} from './components/FormLayout'
 import styles from './EventRegistration.module.scss'
 import { useShowMessage } from './features/systemMessage/useSystemMessage'
 import {

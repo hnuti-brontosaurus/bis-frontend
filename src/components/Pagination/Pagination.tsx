@@ -1,10 +1,10 @@
+import { FormInputError } from 'components'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import FormInputError from './FormInputError'
 import styles from './Pagination.module.scss'
 
-const Pagination: FC<{
+export const Pagination: FC<{
   page: number
   pages: number
   onPageChange: (next: number) => void
@@ -78,5 +78,3 @@ const Pagination: FC<{
     </div>
   )
 }
-
-export default Pagination

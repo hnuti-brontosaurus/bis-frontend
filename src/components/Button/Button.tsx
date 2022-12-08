@@ -7,6 +7,7 @@ interface ButtonProps {
   success?: boolean
   danger?: boolean
   plain?: boolean
+  light?: boolean
 }
 
 /**
@@ -17,6 +18,8 @@ export const ButtonLink = ({
   className,
   success,
   danger,
+  plain,
+  light,
   ...props
 }: LinkProps & ButtonProps) => {
   return (
@@ -26,6 +29,8 @@ export const ButtonLink = ({
         styles.button,
         success && styles.success,
         danger && styles.danger,
+        plain && styles.plain,
+        light && styles.light,
       )}
       {...props}
     >
@@ -43,6 +48,7 @@ export const Button = ({
   success,
   danger,
   plain,
+  light,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & ButtonProps) => {
   return (
@@ -53,6 +59,7 @@ export const Button = ({
         success && styles.success,
         danger && styles.danger,
         plain && styles.plain,
+        light && styles.light,
       )}
       {...props}
     >

@@ -1,12 +1,16 @@
+import {
+  FormInputError,
+  FormSection,
+  FormSubsection,
+  IconSelect,
+  IconSelectGroup,
+} from 'components'
 import { ReactNode } from 'react'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
 import { api } from '../../../app/services/bis'
 import { ReactComponent as OneTreeIcon } from '../../../assets/one-tree.svg'
 import { ReactComponent as TentIcon } from '../../../assets/tent.svg'
 import { ReactComponent as ThreeTreesIcon } from '../../../assets/three-trees.svg'
-import FormInputError from '../../../components/FormInputError'
-import { FormSection, FormSubsection } from '../../../components/FormLayout'
-import { IconSelect, IconSelectGroup } from '../../../components/IconSelect'
 import { StepShapes } from '../../EventForm'
 
 type EventGroupSlug = 'weekend_event' | 'other' | 'camp'

@@ -1,12 +1,11 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { default as classNames } from 'classnames'
+import { FormInputError, Loading } from 'components'
 import { lazy, ReactNode, Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { api } from './app/services/bis'
-import FormInputError from './components/FormInputError'
-import Loading from './components/Loading'
 import TogglePasswordInput from './components/TogglePasswordInput'
 import { useShowMessage } from './features/systemMessage/useSystemMessage'
 import formStyles from './Form.module.scss'
@@ -53,7 +52,6 @@ const getErrorMessage = (
 const ResetPassword = () => {
   // use search parameters
   const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
   const email = searchParams.get('email') ?? ''
   const code = searchParams.get('code') ?? ''
   const [resetPassword, { isLoading, error }] =

@@ -1,15 +1,16 @@
-import { FormProvider, UseFormReturn } from 'react-hook-form'
-import { api } from '../../app/services/bis'
-import FormInputError from '../../components/FormInputError'
 import {
+  FormInputError,
   FormSection,
   FormSubsection,
   FormSubsubsection,
+  Help,
+  ImagesUpload,
+  ImageUpload,
   InfoBox,
-} from '../../components/FormLayout'
-import Help from '../../components/Help'
-import { ImagesUpload, ImageUpload } from '../../components/ImageUpload'
-import Loading from '../../components/Loading'
+  Loading,
+} from 'components'
+import { FormProvider, UseFormReturn } from 'react-hook-form'
+import { api } from '../../app/services/bis'
 import { EvidenceStepFormShape } from './CloseEventForm'
 
 const totalHoursHelp =

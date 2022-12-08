@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import styles from './errorBox.module.scss'
+import styles from './ErrorBox.module.scss'
 
 export type ObjectWithStrings = { [s: string]: string | ObjectWithStrings }
 
@@ -24,7 +24,7 @@ interface IErrorBox {
   error: ObjectWithStrings | undefined | null
 }
 
-const ErrorBox: FC<IErrorBox> = ({ error }) => {
+export const ErrorBox: FC<IErrorBox> = ({ error }) => {
   if (!error) return null
 
   return (
@@ -35,5 +35,3 @@ const ErrorBox: FC<IErrorBox> = ({ error }) => {
     </div>
   )
 }
-
-export default ErrorBox

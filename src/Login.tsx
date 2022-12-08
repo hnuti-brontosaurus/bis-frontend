@@ -1,13 +1,10 @@
 import type { SerializedError } from '@reduxjs/toolkit'
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
-import { default as classNames, default as classnames } from 'classnames'
+import classNames from 'classnames'
+import { Button, ButtonLink, FormInputError, Loading } from 'components'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
 import { api } from './app/services/bis'
-import FormInputError from './components/FormInputError'
-import Loading from './components/Loading'
 import TogglePasswordInput from './components/TogglePasswordInput'
-import formStyles from './Form.module.scss'
 import styles from './Login.module.scss'
 import { required } from './utils/validationMessages'
 
@@ -73,26 +70,18 @@ const Login = () => {
                 {...register('password', { required })}
               />
             </FormInputError>
-            <input
-              className={classnames(
-                styles.formElement,
-                formStyles.mainActionButton,
-              )}
-              type="submit"
-              value="Přihlásit se"
-            />
+            <Button success className={styles.formElement} type="submit">
+              Přihlásit se
+            </Button>
 
-            <Link
+            <ButtonLink
+              light
               style={{ marginTop: '1.5rem' }}
-              className={classnames(
-                styles.formElement,
-                formStyles.actionButton,
-                formStyles.alternativeActionButton,
-              )}
+              className={styles.formElement}
               to="/send-reset-password-link"
             >
               přihlašuji se poprvé/zapomněl(a) jsem heslo
-            </Link>
+            </ButtonLink>
           </form>
         </FormProvider>
       </div>

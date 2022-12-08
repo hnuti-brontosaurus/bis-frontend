@@ -1,7 +1,7 @@
+import { UnscalablePaginatedList } from 'components'
 import { useOutletContext } from 'react-router-dom'
 import { PaginatedList } from '../app/services/bis'
 import { Event } from '../app/services/bisTypes'
-import { UnscalablePaginatedList } from '../components/PaginatedList'
 import { useTitle } from '../hooks/title'
 import EventTable from './EventTable'
 

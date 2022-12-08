@@ -1,5 +1,5 @@
+import { Loading } from 'components'
 import { Outlet } from 'react-router-dom'
-import Loading from '../components/Loading'
 import { useCurrentUser } from '../hooks/currentUser'
 import { isOrganizer } from './helpers'
 

@@ -1,7 +1,6 @@
+import { Error, Loading } from 'components'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api, EventPayload } from '../../app/services/bis'
-import Error from '../../components/Error'
-import Loading from '../../components/Loading'
 import {
   useShowApiErrorMessage,
   useShowMessage,

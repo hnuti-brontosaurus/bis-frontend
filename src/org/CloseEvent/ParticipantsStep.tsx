@@ -1,14 +1,14 @@
-import { FormProvider, UseFormReturn } from 'react-hook-form'
-import { Event } from '../../app/services/bisTypes'
-import { Button } from '../../components/Button'
-import FormInputError from '../../components/FormInputError'
 import {
   Actions,
+  Button,
+  FormInputError,
   FormSection,
   FormSubsection,
   InlineSection,
   Label,
-} from '../../components/FormLayout'
+} from 'components'
+import { FormProvider, UseFormReturn } from 'react-hook-form'
+import { Event } from '../../app/services/bisTypes'
 import { required } from '../../utils/validationMessages'
 import ParticipantsList from '../EventForm/steps/ParticipantsStep'
 import { ParticipantsStepFormShape } from './CloseEventForm'

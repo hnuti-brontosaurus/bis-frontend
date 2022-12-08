@@ -1,3 +1,4 @@
+import { Actions, Button, ButtonLink, Error, Loading } from 'components'
 import { sanitize } from 'dompurify'
 import {
   FaPencilAlt,
@@ -8,10 +9,6 @@ import {
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
-import { Button, ButtonLink } from '../components/Button'
-import Error from '../components/Error'
-import { Actions } from '../components/FormLayout'
-import Loading from '../components/Loading'
 import { useReadFullEvent } from '../hooks/readFullEvent'
 import { useRemoveEvent } from '../hooks/removeEvent'
 import { formatDateRange, formatDateTime } from '../utils/helpers'

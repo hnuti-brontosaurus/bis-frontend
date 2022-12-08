@@ -1,10 +1,10 @@
 import classNames from 'classnames'
+import buttonStyles from 'components/Button/Button.module.scss'
 import { cloneElement, ReactElement } from 'react'
 import { NavLink, To } from 'react-router-dom'
-import formStyles from '../Form.module.scss'
 import styles from './ListHeader.module.scss'
 
-const ListHeader = ({
+export const ListHeader = ({
   header,
   tabs,
   actions,
@@ -23,7 +23,7 @@ const ListHeader = ({
       {actions.map(element =>
         cloneElement(element, {
           className: classNames(
-            formStyles.actionButton,
+            buttonStyles.actionButton,
             styles.headerActionButton,
           ),
         }),
@@ -44,4 +44,3 @@ const ListHeader = ({
     </header>
   )
 }
-export default ListHeader
