@@ -1,11 +1,11 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { ListHeader, Loading } from 'components'
 import listStyles from 'components/ListHeader/ListHeader.module.scss'
+import { ClearPageMargin, Content, Header, Layout } from 'layout/Layout'
 import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import { useCurrentUser } from '../hooks/currentUser'
-import { ClearPageMargin, Content, Header, Layout } from '../Layout'
 
 const EventsLayout = () => {
   const { data: currentUser } = useCurrentUser()

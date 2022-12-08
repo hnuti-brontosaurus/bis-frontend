@@ -10,8 +10,8 @@ import {
 import { lazy, ReactNode, Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Link, useSearchParams } from 'react-router-dom'
-import { api } from './app/services/bis'
-import { useShowMessage } from './features/systemMessage/useSystemMessage'
+import { api } from '../app/services/bis'
+import { useShowMessage } from '../features/systemMessage/useSystemMessage'
 import styles from './Login.module.scss'
 
 const PasswordStrengthBar = lazy(() => import('react-password-strength-bar'))

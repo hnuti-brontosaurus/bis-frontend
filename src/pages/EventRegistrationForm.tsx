@@ -1,5 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
+  AnswerPayload,
+  EventApplicationPayload,
+  WebQuestionnaire,
+} from 'app/services/bis'
+import { User } from 'app/services/bisTypes'
+import {
   Actions,
   BirthdayInput,
   birthdayValidation,
@@ -11,6 +17,12 @@ import {
   InlineSection,
   Label,
 } from 'components'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from 'hooks/persistForm'
 import { isNil, merge, mergeWith, omit, omitBy, pick } from 'lodash'
 import { FormEventHandler, MouseEventHandler, useEffect } from 'react'
 import {
@@ -20,22 +32,10 @@ import {
   useForm,
 } from 'react-hook-form'
 import type { SetNonNullable, SetRequired } from 'type-fest'
+import { withOverwriteArray } from 'utils/helpers'
+import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
-import {
-  AnswerPayload,
-  EventApplicationPayload,
-  WebQuestionnaire,
-} from './app/services/bis'
-import { User } from './app/services/bisTypes'
 import styles from './EventRegistration.module.scss'
-import { useShowMessage } from './features/systemMessage/useSystemMessage'
-import {
-  useClearPersistentForm,
-  usePersistentFormData,
-  usePersistForm,
-} from './hooks/persistForm'
-import { withOverwriteArray } from './utils/helpers'
-import { required } from './utils/validationMessages'
 
 export type RegistrationFormShape = SetRequired<
   SetNonNullable<

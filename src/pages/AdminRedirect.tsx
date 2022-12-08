@@ -1,4 +1,4 @@
-import NotFound from './NotFound'
+import NotFound from 'pages/NotFound'
 
 /*
 This component leaves the react app and goes to the same url

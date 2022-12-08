@@ -7,13 +7,14 @@ export const Error = ({
   error,
   children,
   message,
+  status,
 }: {
   children?: ReactNode
   error?: FetchBaseQueryError | SerializedError
   message?: string
+  status?: number
 }) => {
   let name = 'Něco se pokazilo...'
-  let status: number | undefined
 
   if (message) {
     name = message

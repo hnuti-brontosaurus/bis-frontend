@@ -1,23 +1,23 @@
+import { api, EventApplicationPayload } from 'app/services/bis'
 import { Error, Loading } from 'components'
+import { useShowApiErrorMessage } from 'features/systemMessage/useSystemMessage'
+import { useCurrentUser } from 'hooks/currentUser'
+import {
+  useClearPersistentForm,
+  useDirectPersistForm,
+  usePersistentFormData,
+} from 'hooks/persistForm'
+import { useTitle } from 'hooks/title'
 import { useState } from 'react'
 import { FaRegCalendarAlt } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
-import { api, EventApplicationPayload } from './app/services/bis'
+import { formatDateRange } from 'utils/helpers'
 import styles from './EventRegistration.module.scss'
 import EventRegistrationForm, {
   FinishedStep,
   RegistrationFormShapeWithStep,
 } from './EventRegistrationForm'
-import { useShowApiErrorMessage } from './features/systemMessage/useSystemMessage'
-import { useCurrentUser } from './hooks/currentUser'
-import {
-  useClearPersistentForm,
-  useDirectPersistForm,
-  usePersistentFormData,
-} from './hooks/persistForm'
-import { useTitle } from './hooks/title'
-import { formatDateRange } from './utils/helpers'
 
 const EventRegistration = () => {
   const params = useParams()

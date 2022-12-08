@@ -1,6 +1,6 @@
-import { useCurrentUser } from './hooks/currentUser'
-import OrgHome from './org/Home'
-import { isOrganizer } from './utils/helpers'
+import { useCurrentUser } from 'hooks/currentUser'
+import OrgHome from 'org/Home'
+import { isOrganizer } from 'utils/helpers'
 
 const Home = () => {
   const { data: user } = useCurrentUser()

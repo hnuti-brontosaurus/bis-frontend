@@ -1,8 +1,8 @@
 import { Loading } from 'components'
 import { Navigate, Outlet, useSearchParams } from 'react-router-dom'
+import { isOrganizer } from 'utils/helpers'
 import { useCurrentUser } from '../hooks/currentUser'
-import UnauthenticatedLayout from '../UnauthenticatedLayout'
-import { isOrganizer } from './helpers'
+import UnauthenticatedLayout from './UnauthenticatedLayout'
 
 const UnauthenticatedOutlet = () => {
   const { data: user, isAuthenticated } = useCurrentUser()

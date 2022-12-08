@@ -1,12 +1,12 @@
 import { Menu, MenuButton, MenuDivider, MenuItem } from '@szhsin/react-menu'
+import { api } from 'app/services/bis'
+import logoMini from 'assets/logo-mini.png'
+import logo from 'assets/logo.png'
+import { useCurrentUser } from 'hooks/currentUser'
 import { FaBars, FaRegUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
-import { api } from './app/services/bis'
-import logoMini from './assets/logo-mini.png'
-import logo from './assets/logo.png'
+import { isOrganizer } from 'utils/helpers'
 import styles from './Header.module.scss'
-import { useCurrentUser } from './hooks/currentUser'
-import { isOrganizer } from './utils/helpers'
 
 const Header = () => {
   const { data: user, isAuthenticated } = useCurrentUser()

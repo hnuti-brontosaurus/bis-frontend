@@ -1,6 +1,6 @@
+import { useAppSelector } from 'app/hooks'
+import { selectShowHeader } from 'features/ui/uiSlice'
 import { ReactNode } from 'react'
-import { useAppSelector } from './app/hooks'
-import { selectShowHeader } from './features/ui/uiSlice'
 import Header from './Header'
 import { Content, Footer, Header as LayoutHeader, Layout } from './Layout'
 import LinkFooter from './LinkFooter'

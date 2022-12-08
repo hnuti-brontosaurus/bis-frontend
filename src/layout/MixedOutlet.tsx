@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import MixedLayout from '../MixedLayout'
+import MixedLayout from './MixedLayout'
 
 const MixedOutlet = () => {
   return (

@@ -1,5 +1,6 @@
 import type { SerializedError } from '@reduxjs/toolkit'
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
+import { api } from 'app/services/bis'
 import classNames from 'classnames'
 import {
   Button,
@@ -9,9 +10,8 @@ import {
   TogglePasswordInput,
 } from 'components'
 import { FormProvider, useForm } from 'react-hook-form'
-import { api } from './app/services/bis'
+import { required } from 'utils/validationMessages'
 import styles from './Login.module.scss'
-import { required } from './utils/validationMessages'
 
 const getErrorMessage = (
   error: FetchBaseQueryError | SerializedError,
