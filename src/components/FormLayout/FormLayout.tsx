@@ -1,7 +1,6 @@
 import classNames from 'classnames'
-import { Help } from 'components'
+import { Help, Web } from 'components'
 import { HTMLAttributes, HTMLProps, ReactNode } from 'react'
-import Web from '../Web'
 import styles from './FormLayout.module.scss'
 
 interface HeaderProps {

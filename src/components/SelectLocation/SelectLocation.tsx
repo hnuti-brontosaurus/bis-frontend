@@ -15,10 +15,10 @@ import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import * as yup from 'yup'
-import { api, CorrectLocation } from '../app/services/bis'
-import { required } from '../utils/validationMessages'
+import { api, CorrectLocation } from '../../app/services/bis'
+import { required } from '../../utils/validationMessages'
+import { SelectByQuery } from '../SelectUsers'
 import styles from './SelectLocation.module.scss'
-import { SelectByQuery } from './SelectUsers'
 
 export type NewLocation = Overwrite<
   Pick<CorrectLocation, 'gps_location' | 'name' | 'address' | 'description'>,
@@ -43,7 +43,7 @@ const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
 
 export type SelectedOrNewLocation = NewLocation | Pick<CorrectLocation, 'id'>
 
-const SelectLocation = forwardRef<
+export const SelectLocation = forwardRef<
   any,
   {
     value: SelectedOrNewLocation | null
@@ -232,8 +232,6 @@ const SelectLocation = forwardRef<
     </div>
   )
 })
-
-export default SelectLocation
 
 const CreateLocation = ({
   formId = 'create-location',

@@ -9,6 +9,7 @@ import {
   InlineSection,
   Label,
   Loading,
+  StyledModal,
 } from 'components'
 import dayjs from 'dayjs'
 import { FC, FormEventHandler, useEffect, useState } from 'react'
@@ -18,7 +19,6 @@ import Tooltip from 'react-tooltip-lite'
 import colors from 'styles/colors.module.scss'
 import * as yup from 'yup'
 import { EventApplication, User } from '../../../../app/services/bisTypes'
-import StyledModal from '../../../../components/StyledModal'
 import stylesTable from '../../../../components/Table.module.scss'
 import BirthdayInputCheck from './BirthdayInputCheck'
 import styles from './NewApplicationModal.module.scss'

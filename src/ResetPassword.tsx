@@ -1,12 +1,16 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { default as classNames } from 'classnames'
-import { Button, FormInputError, Loading } from 'components'
+import {
+  Button,
+  FormInputError,
+  Loading,
+  TogglePasswordInput,
+} from 'components'
 import { lazy, ReactNode, Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Link, useSearchParams } from 'react-router-dom'
 import { api } from './app/services/bis'
-import TogglePasswordInput from './components/TogglePasswordInput'
 import { useShowMessage } from './features/systemMessage/useSystemMessage'
 import styles from './Login.module.scss'
 

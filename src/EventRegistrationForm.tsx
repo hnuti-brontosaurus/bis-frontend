@@ -1,6 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Actions,
+  BirthdayInput,
+  birthdayValidation,
   Button,
   FormInputError,
   FormSection,
@@ -25,7 +27,6 @@ import {
   WebQuestionnaire,
 } from './app/services/bis'
 import { User } from './app/services/bisTypes'
-import BirthdayInput, { birthdayValidation } from './components/BirthdayInput'
 import styles from './EventRegistration.module.scss'
 import { useShowMessage } from './features/systemMessage/useSystemMessage'
 import {

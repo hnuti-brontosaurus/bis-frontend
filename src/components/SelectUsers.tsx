@@ -7,7 +7,12 @@ import {
 } from '@reduxjs/toolkit/dist/query'
 import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
 import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
-import { Actions, FormInputError } from 'components'
+import {
+  Actions,
+  BirthdayInput,
+  birthdayValidation,
+  FormInputError,
+} from 'components'
 import { forwardRef, InputHTMLAttributes, Ref, useMemo } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -20,7 +25,6 @@ import { User, UserSearch } from '../app/services/bisTypes'
 import { useDebouncedState } from '../hooks/debouncedState'
 import { useQueries } from '../hooks/queries'
 import { useReadUnknownAndFullUsers } from '../hooks/readUnknownAndFullUsers'
-import BirthdayInput, { birthdayValidation } from './BirthdayInput'
 
 type SelectUsersProps = Omit<
   Assign<

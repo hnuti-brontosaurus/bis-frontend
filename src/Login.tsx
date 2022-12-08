@@ -1,10 +1,15 @@
 import type { SerializedError } from '@reduxjs/toolkit'
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import classNames from 'classnames'
-import { Button, ButtonLink, FormInputError, Loading } from 'components'
+import {
+  Button,
+  ButtonLink,
+  FormInputError,
+  Loading,
+  TogglePasswordInput,
+} from 'components'
 import { FormProvider, useForm } from 'react-hook-form'
 import { api } from './app/services/bis'
-import TogglePasswordInput from './components/TogglePasswordInput'
 import styles from './Login.module.scss'
 import { required } from './utils/validationMessages'
 

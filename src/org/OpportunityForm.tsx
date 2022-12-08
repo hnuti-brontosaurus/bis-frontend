@@ -11,7 +11,9 @@ import {
   InfoBox,
   InlineSection,
   Label,
+  NewLocation,
   RichTextEditor,
+  SelectLocation,
 } from 'components'
 import merge from 'lodash/merge'
 import { FormEventHandler, ReactNode, useEffect } from 'react'
@@ -21,7 +23,6 @@ import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
 import { ReactComponent as HandsIcon } from '../assets/hands.svg'
 import { ReactComponent as HousesIcon } from '../assets/houses.svg'
 import { ReactComponent as OrganizerIcon } from '../assets/organizer.svg'
-import SelectLocation, { NewLocation } from '../components/SelectLocation'
 import { useCurrentUser } from '../hooks/currentUser'
 import {
   useClearPersistentForm,

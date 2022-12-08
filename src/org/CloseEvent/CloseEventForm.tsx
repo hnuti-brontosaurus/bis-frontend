@@ -1,3 +1,4 @@
+import { Step, Steps } from 'components'
 import { cloneDeep, mergeWith } from 'lodash'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
@@ -12,10 +13,6 @@ import {
   PatchedEvent,
   Record,
 } from '../../app/services/bisTypes'
-import {
-  SimpleStep as Step,
-  SimpleSteps as Steps,
-} from '../../components/Steps'
 import { useShowMessage } from '../../features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,

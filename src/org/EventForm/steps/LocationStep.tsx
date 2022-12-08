@@ -3,9 +3,9 @@ import {
   FormSection,
   FormSubsection,
   InlineSection,
+  SelectLocation,
 } from 'components'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
-import SelectLocation from '../../../components/SelectLocation'
 import { required } from '../../../utils/validationMessages'
 import { StepShapes } from '../../EventForm'
 

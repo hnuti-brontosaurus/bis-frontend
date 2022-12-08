@@ -1,20 +1,19 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
+  BirthdayInput,
+  birthdayValidation,
   Button,
   FormInputError,
   FullSizeElement,
   InlineSection,
   Label,
+  StyledModal,
 } from 'components'
 import { FC, FormEventHandler } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { AnswerPayload, api } from '../../../../app/services/bis'
 import { EventApplication } from '../../../../app/services/bisTypes'
-import BirthdayInput, {
-  birthdayValidation,
-} from '../../../../components/BirthdayInput'
-import StyledModal from '../../../../components/StyledModal'
 import { required } from '../../../../utils/validationMessages'
 import styles from './NewApplicationModal.module.scss'
 

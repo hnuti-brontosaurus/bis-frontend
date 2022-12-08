@@ -11,7 +11,7 @@ interface IShowApplicationModalProps {
   children: any
 }
 
-const StyledModal: FC<IShowApplicationModalProps> = ({
+export const StyledModal: FC<IShowApplicationModalProps> = ({
   open,
   onClose,
   title,
@@ -43,5 +43,3 @@ const StyledModal: FC<IShowApplicationModalProps> = ({
     </Modal>
   )
 }
-
-export default StyledModal

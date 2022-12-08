@@ -1,6 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Actions,
+  BirthdayInput,
+  birthdayValidation,
   Button,
   FormInputError,
   FormSection,
@@ -19,7 +21,6 @@ import { Overwrite } from 'utility-types'
 import * as yup from 'yup'
 import { api, UserPayload } from '../app/services/bis'
 import { Address, User } from '../app/services/bisTypes'
-import BirthdayInput, { birthdayValidation } from '../components/BirthdayInput'
 import {
   useShowApiErrorMessage,
   useShowMessage,

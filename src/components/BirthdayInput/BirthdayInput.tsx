@@ -33,7 +33,7 @@ const joinBirthday = ({ year, month, day }: Birthdate): string | null => {
   return [year, month, day].join('-')
 }
 
-const BirthdayInput = forwardRef<
+export const BirthdayInput = forwardRef<
   any,
   {
     onChange: (value: string | null) => void
@@ -86,5 +86,3 @@ const BirthdayInput = forwardRef<
     </div>
   )
 })
-
-export default BirthdayInput

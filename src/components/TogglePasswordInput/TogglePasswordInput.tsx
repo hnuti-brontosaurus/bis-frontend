@@ -3,7 +3,7 @@ import { forwardRef, InputHTMLAttributes, useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
 import styles from './TogglePasswordInput.module.scss'
 
-const TogglePasswordInput = forwardRef<
+export const TogglePasswordInput = forwardRef<
   HTMLInputElement,
   Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>
 >(({ className, ...props }, ref) => {
@@ -28,5 +28,3 @@ const TogglePasswordInput = forwardRef<
     </div>
   )
 })
-
-export default TogglePasswordInput

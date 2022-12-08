@@ -1,6 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
 import {
+  BirthdayInput,
+  birthdayValidation,
   Button,
   ErrorBox,
   FormInputError,
@@ -13,9 +15,6 @@ import { FC } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { User, UserSearch } from '../../../../app/services/testApi'
-import BirthdayInput, {
-  birthdayValidation,
-} from '../../../../components/BirthdayInput'
 import styles from './NewApplicationModal.module.scss'
 
 const validationSchemaBirthdate = yup.object().shape({

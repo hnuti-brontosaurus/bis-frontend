@@ -1,10 +1,9 @@
-import { Loading } from 'components'
+import { Loading, useCreateOrSelectLocation } from 'components'
 import { omit, startsWith } from 'lodash'
 import merge from 'lodash/merge'
 import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
-import { useCreateOrSelectLocation } from '../components/SelectLocation'
 import {
   useShowApiErrorMessage,
   useShowMessage,

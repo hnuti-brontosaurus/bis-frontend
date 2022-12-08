@@ -1,4 +1,4 @@
-import { Loading } from 'components'
+import { Loading, NewLocation, Step, Steps } from 'components'
 import { merge, mergeWith, omit } from 'lodash'
 import pick from 'lodash/pick'
 import { FC, useMemo } from 'react'
@@ -7,8 +7,6 @@ import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
 import { api, CorrectLocation, EventPayload } from '../app/services/bis'
 import { EventPropagationImage, Question, User } from '../app/services/bisTypes'
-import { NewLocation } from '../components/SelectLocation'
-import { SimpleStep as Step, SimpleSteps as Steps } from '../components/Steps'
 import { useShowMessage } from '../features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,

@@ -3,8 +3,6 @@
  */
 import styles from './Web.module.scss'
 
-const Web = () => {
+export const Web = () => {
   return <div className={styles.tag}>web</div>
 }
-
-export default Web
