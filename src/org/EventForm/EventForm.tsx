@@ -251,8 +251,6 @@ const EventForm: FC<{
     [initialData, savedData],
   )
 
-  console.log(initialData, savedData, initialAndSavedData)
-
   const categoryForm = useForm({
     defaultValues: pick(initialAndSavedData, shapes.category),
   })

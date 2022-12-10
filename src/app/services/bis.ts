@@ -297,15 +297,9 @@ export const api = createApi({
       {
         /** Více hodnot lze oddělit čárkami. */
         id?: number[]
-        /** A page number within the paginated result set. */
-        page?: number
-        /** Number of results to return per page. */
-        pageSize?: number
-        /** A search term. */
-        search?: string
         // This doesn't exist, but we want it!
         bounds?: ClearBounds
-      }
+      } & ListArguments
     >({
       query: queryArg => ({
         url: `frontend/locations/`,
@@ -357,13 +351,7 @@ export const api = createApi({
     }),
     readOpportunities: build.query<
       PaginatedList<CorrectOpportunity>,
-      {
-        userId: string
-        id?: number[]
-        page?: number
-        pageSize?: number
-        search?: string
-      }
+      { userId: string; id?: number[] } & ListArguments
     >({
       query: queryArg => ({
         url: `frontend/users/${queryArg.userId}/opportunities/`,
@@ -427,13 +415,7 @@ export const api = createApi({
     }),
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
-      {
-        userId: string
-        id?: number[]
-        page?: number
-        pageSize?: number
-        search?: string
-      }
+      { userId: string; id?: number[] } & ListArguments
     >({
       query: queryArg => ({
         url: `frontend/users/${queryArg.userId}/events_where_was_organizer/`,
@@ -465,11 +447,7 @@ export const api = createApi({
     }),
     readOpportunityCategories: build.query<
       PaginatedList<OpportunityCategory>,
-      {
-        page?: number
-        pageSize?: number
-        search?: string
-      }
+      ListArguments
     >({
       query: queryArg => ({
         url: `categories/opportunity_categories/`,
@@ -547,12 +525,7 @@ export const api = createApi({
     }),
     readEventImages: build.query<
       PaginatedList<CorrectEventPropagationImage>,
-      {
-        eventId: number
-        page?: number
-        pageSize?: number
-        search?: string
-      }
+      { eventId: number } & ListArguments
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/propagation/images/`,
@@ -614,12 +587,7 @@ export const api = createApi({
     }),
     readEventQuestions: build.query<
       PaginatedList<Question>,
-      {
-        eventId: number
-        page?: number
-        pageSize?: number
-        search?: string
-      }
+      { eventId: number } & ListArguments
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/`,
@@ -743,13 +711,7 @@ export const api = createApi({
     ),
     readEventApplications: build.query<
       PaginatedList<EventApplication>,
-      {
-        eventId: number
-        id?: number[] | undefined
-        page?: number | undefined
-        pageSize?: number | undefined
-        search?: string | undefined
-      }
+      { eventId: number; id?: number[] | undefined } & ListArguments
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/registration/applications/`,
@@ -819,12 +781,7 @@ export const api = createApi({
     }),
     readEventParticipants: build.query<
       PaginatedList<User>,
-      {
-        eventId: number
-        page?: number
-        pageSize?: number
-        search?: string
-      }
+      { eventId: number } & ListArguments
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/record/participants/`,
@@ -910,8 +867,48 @@ export const api = createApi({
         { type: 'EventPhoto', id: `${eventId}_EVENT_PHOTO_LIST` },
       ],
     }),
+    // this endpoints searches GPS by search string
+    // using https://nominatim.openstreetmap.org
+    // before using it, please refer to it's usage policy
+    // https://operations.osmfoundation.org/policies/nominatim/
+    // e.g. it's forbidden to do autocomplete queries with it (i.e. search as you type)
+    // and the whole application needs to send less than 1 request per second, as absolute maximum
+    searchLocationOSM: build.query<OSMLocation[], string>({
+      query: arg => ({
+        url: `https://nominatim.openstreetmap.org/search.php?q=${encodeURIComponent(
+          arg,
+        )}&accept-language=cs&format=jsonv2`,
+      }),
+      transformResponse: (a: RawOSMLocation[]) =>
+        a.map(
+          ({ lat, lon, boundingbox: [lat1, lat2, lon1, lon2], ...rest }) => ({
+            lat: Number(lat),
+            lon: Number(lon),
+            boundingbox: [
+              [Number(lat1), Number(lon1)],
+              [Number(lat2), Number(lon2)],
+            ], // as [[number, number], [number, number]],
+            ...rest,
+          }),
+        ),
+    }),
   }),
 })
+
+export type RawOSMLocation = {
+  lat: string
+  lon: string
+  boundingbox: [string, string, string, string]
+}
+
+export type OSMLocation = Overwrite<
+  RawOSMLocation,
+  {
+    lat: number
+    lon: number
+    boundingbox: [[number, number], [number, number]]
+  }
+>
 
 export type PropagationPayload = Omit<Propagation, 'diets'> & {
   diets: number[]

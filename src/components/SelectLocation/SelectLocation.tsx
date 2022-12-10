@@ -197,10 +197,10 @@ export const SelectLocation = forwardRef<
             <MapMarkerNew width={20} height={20} /> nová lokalita
           </div>
           <div className={styles.legendItem}>
-            <MapMarkerSelected width={20} height={20} /> existující lokalita
+            <MapMarkerDefault width={20} height={20} /> existující lokalita
           </div>
           <div className={styles.legendItem}>
-            <MapMarkerDefault width={20} height={20} /> vybraná lokalita
+            <MapMarkerSelected width={20} height={20} /> vybraná lokalita
           </div>
         </aside>
         <div className={styles.mainContentContainer}>
