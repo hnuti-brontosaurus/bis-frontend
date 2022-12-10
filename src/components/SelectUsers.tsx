@@ -1,41 +1,22 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  EndpointDefinitions,
-  FetchBaseQueryError,
-  QueryDefinition,
-  skipToken,
-} from '@reduxjs/toolkit/dist/query'
-import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
-import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
+import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/dist/query'
 import {
   Actions,
   BirthdayInput,
   birthdayValidation,
   FormInputError,
 } from 'components'
-import { forwardRef, InputHTMLAttributes, Ref, useMemo } from 'react'
+import { forwardRef, InputHTMLAttributes } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import { Assign } from 'utility-types'
 import * as yup from 'yup'
 import { Button } from '.'
-import { api, PaginatedList } from '../app/services/bis'
+import { api } from '../app/services/bis'
 import { User, UserSearch } from '../app/services/bisTypes'
 import { useDebouncedState } from '../hooks/debouncedState'
-import { useQueries } from '../hooks/queries'
 import { useReadUnknownAndFullUsers } from '../hooks/readUnknownAndFullUsers'
-
-type SelectUsersProps = Omit<
-  Assign<
-    InputHTMLAttributes<HTMLInputElement>,
-    {
-      value?: User[]
-      onChange: (value: readonly User[]) => void
-    }
-  >,
-  'defaultValue'
->
 
 type SelectObjectsProps<T> = Omit<
   Assign<
@@ -50,7 +31,7 @@ type SelectObjectsProps<T> = Omit<
 /**
  * This component expects - and provides - not only user ids, but array of full users as value
  */
-export const SelectFullUsers = forwardRef<any, SelectUsersProps>(
+export const SelectFullUsers = forwardRef<any, SelectObjectsProps<User>>(
   ({ value, onChange, ...rest }, ref) => {
     const [searchQuery, debouncedSearchQuery, setSearchQuery] =
       useDebouncedState(1000, '')
@@ -82,84 +63,7 @@ export const SelectFullUsers = forwardRef<any, SelectUsersProps>(
   },
 )
 
-type SelectMultiProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'value' | 'onChange'
-> & {
-  value?: string[]
-  onChange: (newValues: string[]) => void
-}
-
-const SelectUsers = forwardRef<any, SelectMultiProps>(
-  ({ value = [], onChange, ...rest }, ref) => {
-    const [searchQuery, debouncedSearchQuery, setSearchQuery] =
-      useDebouncedState(1000, '')
-    const { data: userOptions, isFetching: isOptionsLoading } =
-      api.endpoints.readUsers.useQuery(
-        debouncedSearchQuery.length >= 2
-          ? {
-              search: debouncedSearchQuery,
-            }
-          : skipToken,
-      )
-
-    const selectedUsersQueries = useQueries(
-      api.endpoints.getUser,
-      useMemo(
-        () =>
-          value.map(id => ({
-            id,
-          })),
-        [value],
-      ),
-    )
-
-    const transform = (user: User) => ({
-      label: user.display_name,
-      value: user.id,
-    })
-
-    const selectedUsers = selectedUsersQueries.map(query => query.data)
-
-    if (selectedUsers.some(user => !user)) return <div>Loading</div>
-
-    return (
-      <>
-        <Select
-          {...rest}
-          ref={ref}
-          isLoading={isOptionsLoading}
-          isMulti
-          options={
-            userOptions
-              ? userOptions?.results?.map(user => transform(user))
-              : []
-          }
-          inputValue={searchQuery}
-          onInputChange={input => setSearchQuery(input)}
-          value={(selectedUsers as User[]).map(user => transform(user))}
-          defaultValue={undefined}
-          onChange={val => onChange(val.map(v => v.value))}
-        />
-      </>
-    )
-  },
-)
-
-type SelectUserProps = Omit<
-  Assign<
-    InputHTMLAttributes<HTMLInputElement>,
-    {
-      value?: User
-      onChange: (value: User | null) => void
-      getDisabled?: (value: User) => boolean
-      getLabel?: (value: User) => string
-    }
-  >,
-  'defaultValue'
->
-
-type SelectObjectProps<T> = Omit<
+export type SelectObjectProps<T> = Omit<
   Assign<
     InputHTMLAttributes<HTMLInputElement>,
     {
@@ -175,7 +79,7 @@ type SelectObjectProps<T> = Omit<
 /**
  * This component expects - and provides - not only user id, but full user as value
  */
-export const SelectFullUser = forwardRef<any, SelectUserProps>(
+export const SelectFullUser = forwardRef<any, SelectObjectProps<User>>(
   ({ value, onChange, getDisabled, getLabel, ...rest }, ref) => {
     const [searchQuery, debouncedSearchQuery, setSearchQuery] =
       useDebouncedState(1000, '')
@@ -199,163 +103,12 @@ export const SelectFullUser = forwardRef<any, SelectUserProps>(
         onInputChange={input => setSearchQuery(input)}
         value={value}
         onChange={onChange}
-        isOptionDisabled={getDisabled}
+        isOptionDisabled={user => Boolean(getDisabled?.(user))}
         getOptionLabel={getLabel ?? (user => user.display_name)}
       />
     )
   },
 )
-
-type SelectProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'value' | 'onChange'
-> & {
-  value?: string | null | undefined
-  onChange: (
-    value: string | { value: string; label: string } | null | undefined,
-  ) => void
-  transform?: (user: User) => {
-    label: string
-    value: string
-    disabled?: boolean
-  }
-  fullData?: boolean
-}
-
-export const SelectUser = forwardRef<any, SelectProps>(
-  ({ value, onChange, fullData, transform: transformProp, ...rest }, ref) => {
-    const [searchQuery, debouncedSearchQuery, setSearchQuery] =
-      useDebouncedState(1000, '')
-    const { data: userOptions, isLoading: isOptionsLoading } =
-      api.endpoints.readUsers.useQuery(
-        debouncedSearchQuery.length >= 2
-          ? {
-              search: debouncedSearchQuery,
-            }
-          : skipToken,
-      )
-
-    const { data: selectedUser, isLoading: isSelectedUserLoading } =
-      api.endpoints.getUser.useQuery(value ? { id: value } : skipToken)
-
-    const transform =
-      transformProp ??
-      ((user: User): { label: string; value: string; disabled?: boolean } => ({
-        label: user.display_name,
-        value: user.id,
-      }))
-
-    return (
-      <>
-        <Select
-          {...rest}
-          isLoading={isOptionsLoading}
-          ref={ref}
-          isClearable
-          options={
-            userOptions
-              ? userOptions?.results?.map(user => transform(user))
-              : []
-          }
-          inputValue={searchQuery}
-          onInputChange={input => setSearchQuery(input)}
-          value={
-            value && selectedUser && !isSelectedUserLoading
-              ? transform(selectedUser)
-              : { label: '', value: '' }
-          }
-          defaultValue={
-            { label: '', value: '' } as {
-              label: string
-              value: string
-              disabled?: boolean
-            }
-          }
-          onChange={val =>
-            onChange(
-              val
-                ? fullData
-                  ? { value: val.value, label: val.label }
-                  : val.value
-                : null,
-            )
-          }
-          isOptionDisabled={({ disabled }) => Boolean(disabled)}
-        />
-      </>
-    )
-  },
-)
-
-export const SelectByQuery = <
-  ReturnType,
-  QOne extends QueryDefinition<{ id: number }, any, any, ReturnType, any>,
-  QMany extends QueryDefinition<
-    { search: string },
-    any,
-    any,
-    PaginatedList<ReturnType>,
-    any
-  >,
-  D extends EndpointDefinitions,
->({
-  value,
-  onChange,
-  queryRead,
-  querySearch,
-  transform,
-  customRef: ref,
-  ...rest
-}: Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> & {
-  value?: number | null | undefined
-  onChange: (value: number | null | undefined) => void
-  queryRead: ApiEndpointQuery<QOne, D> & QueryHooks<QOne>
-  querySearch: ApiEndpointQuery<QMany, D> & QueryHooks<QMany>
-  transform: (item: ReturnType) => { value: number; label: string }
-  customRef?: Ref<any>
-}) => {
-  const [searchQuery, debouncedSearchQuery, setSearchQuery] = useDebouncedState(
-    1000,
-    '',
-  )
-  const { data: options, isLoading: isOptionsLoading } = querySearch.useQuery(
-    (debouncedSearchQuery.length >= 2
-      ? {
-          search: debouncedSearchQuery,
-        }
-      : skipToken) as unknown as any,
-  )
-
-  const { data: selectedItem, isLoading: isSelectedItemLoading } =
-    queryRead.useQuery((value ? { id: value } : skipToken) as unknown as any)
-
-  return (
-    <>
-      <Select
-        {...rest}
-        isLoading={isOptionsLoading}
-        ref={ref}
-        isClearable
-        options={
-          options ? options?.results?.map(option => transform(option)) : []
-        }
-        inputValue={searchQuery}
-        onInputChange={input => setSearchQuery(input)}
-        value={
-          value && selectedItem && !isSelectedItemLoading
-            ? transform(selectedItem)
-            : { label: '', value: '' }
-        }
-        defaultValue={{ label: '', value: '' }}
-        onChange={val => onChange(val ? Number(val.value) : null)}
-      />
-    </>
-  )
-}
-
-// export const SelectByQuery = forwardRef<any, any>({ value, onChange })
-
-export default SelectUsers
 
 /**
  * This component searches in all users, and if current user doesn't have access, they have to provide birthdate
@@ -380,9 +133,6 @@ export const SelectUnknownUser = forwardRef<
             }
           : skipToken,
       )
-
-    const [readUserByBirthday] =
-      api.endpoints.readUserByBirthdate.useLazyQuery()
 
     const readFullUser = useReadFullUser()
 
@@ -503,7 +253,6 @@ export const SelectUnknownUsers = forwardRef<
       onInputChange={input => setSearchQuery(input)}
       value={value}
       onChange={async users => {
-        console.log(users)
         // first, find the user without id (unknown)
         const userIndex = users.findIndex(user => !('id' in user))
         const user = users[userIndex]

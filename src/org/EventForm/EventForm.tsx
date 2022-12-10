@@ -76,7 +76,7 @@ export type EventFormShape = Assign<
     registrationMethod: 'standard' | 'other' | 'none' | 'full'
     // contactPersonIsMainOrganizer is internal, doesn't get sent to API
     contactPersonIsMainOrganizer: boolean
-    location: SubmitShape['location']
+    location: CorrectLocation | NewLocation
   }
 >
 
