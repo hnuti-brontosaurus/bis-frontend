@@ -15,6 +15,7 @@ import {
   SelectObject,
 } from 'components'
 import { LatLngTuple } from 'leaflet'
+import { cloneDeep } from 'lodash'
 import merge from 'lodash/merge'
 import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
@@ -285,7 +286,7 @@ const CreateLocation = ({
     }
   }
 
-  const handleConfirm = methods.handleSubmit(data => onFinish(data))
+  const handleConfirm = methods.handleSubmit(data => onFinish(cloneDeep(data)))
 
   const handleCancel = () => {
     methods.reset({})
