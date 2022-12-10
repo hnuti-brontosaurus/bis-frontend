@@ -1,4 +1,5 @@
 import { Loading, useCreateOrSelectLocation } from 'components'
+import { useReadFullOpportunity } from 'hooks/readFullOpportunity'
 import merge from 'lodash/merge'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
@@ -27,7 +28,7 @@ const UpdateOpportunity = () => {
     error,
     isLoading: isOpportunityLoading,
     isError,
-  } = api.endpoints.readOpportunity.useQuery({ id: opportunityId, userId })
+  } = useReadFullOpportunity({ id: opportunityId, userId })
 
   const [updateOpportunity, updateOpportunityStatus] =
     api.endpoints.updateOpportunity.useMutation()

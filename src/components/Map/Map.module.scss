@@ -7,3 +7,12 @@
   }
   height: 250px;
 }
+
+.searchForm {
+  fieldset {
+    display: flex;
+    input[type='text'] {
+      flex: auto;
+    }
+  }
+}

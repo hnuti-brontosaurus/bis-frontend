@@ -51,9 +51,7 @@ const categoryDetails: Record<OpportunityCategorySlug, ReactNode> = {
 
 export type OpportunityFormShape = Overwrite<
   OpportunityPayload,
-  {
-    location: NewLocation | Pick<CorrectLocation, 'id'>
-  }
+  { location: NewLocation | CorrectLocation }
 >
 
 const OpportunityForm = ({
@@ -123,38 +121,12 @@ const OpportunityForm = ({
 
   return (
     <FormProvider {...methods}>
-      {/* Čeho se tvá příležitost k zapojení týká? *
-Organizování akcí
-Příležitosti organizovat či pomáhat s pořádáním našich akcí.
-SpolupráceBude tam hodně konkrétní činnosti a aktivity
-        Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.
-Pomoc lokalitě
-Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.
-
-
-Kontaktní osoba *
-Kontaktní email *
-Kontaktní telefon - nepovinné
-Fotka příležitosti *
-*/}
-      <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
-        <FormSection>
+      <FormSection>
+        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
           <FormSubsection
             required
-            header={
-              isUpdate
-                ? 'Jaký je typ příležitosti?'
-                : 'Jaký je typ nové příležitosti?'
-            }
+            header={'Čeho se tvá příležitost k zapojení týká?'}
           >
-            {/*
-Čeho se tvá příležitost k zapojení týká? *
-Organizování akcí
-Příležitosti organizovat či pomáhat s pořádáním našich akcí.
-Spolupráce
-Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.
-Pomoc lokalitě
-Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
             <FormInputError name="category">
               <IconSelectGroup color="blue">
                 {categoriesList &&
@@ -241,17 +213,23 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
               </FormInputError>
             </InlineSection>
           </FormSubsection>
-          <FormSubsection header="Místo konání" required>
-            Lokalita
-            <FormInputError>
-              <Controller
-                name="location"
-                control={control}
-                rules={{ required }}
-                render={({ field }) => <SelectLocation {...field} />}
-              />
-            </FormInputError>
-          </FormSubsection>
+        </form>
+        {/** Locality has its own form inside,
+         * therefore we need to keep it out of other forms
+         * the issue could probably be solved differently, but this is what we did
+         */}
+        <FormSubsection header="Místo konání" required>
+          Lokalita
+          <FormInputError>
+            <Controller
+              name="location"
+              control={control}
+              rules={{ required }}
+              render={({ field }) => <SelectLocation {...field} />}
+            />
+          </FormInputError>
+        </FormSubsection>
+        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
           <FullSizeElement>
             <FormSubsection header="Popis">
               <FullSizeElement>
@@ -426,8 +404,8 @@ Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.*/}
               value={isUpdate ? 'Uložit změny' : 'Přidat příležitost'}
             />
           </div>
-        </FormSection>
-      </form>
+        </form>
+      </FormSection>
     </FormProvider>
   )
 }
