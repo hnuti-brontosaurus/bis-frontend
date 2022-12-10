@@ -1,5 +1,27 @@
 # App for Brontosaurus information system
 
+## Documentation
+
+Read and improve the documentation in the [`docs` folder](docs)
+
+## Developer quickstart
+
+1. Prerequisity: have Node.js and yarn installed
+1. Clone this repository
+1. Go to working directory: `cd bis-frontend`
+1. Install dependencies: `yarn`
+1. Run development version: `REACT_APP_API_BASE_URL="https://bis.proxy.mrkvon.org/https://dev.bis.lomic.cz/api/" REACT_APP_CORS_PROXY="https://bis.proxy.mrkvon.org/" yarn start`
+
+## Production quickstart
+
+1. Prerequisity: have Node.js and yarn installed
+1. Clone this repository
+1. Go to working directory: `cd bis-frontend`
+1. Install dependencies: `yarn`
+1. Build production version (make sure to setup or omit variables as you need):
+1. Run development version: `REACT_APP_API_BASE_URL="https://bis.proxy.mrkvon.org/https://dev.bis.lomic.cz/api/" REACT_APP_CORS_PROXY="https://bis.proxy.mrkvon.org/" yarn build`
+1. A `build/` folder should have been created in the root of your project. Copy the files from `build/` to your production server, and [serve as single page application for example with nginx](https://gist.github.com/huangzhuolin/24f73163e3670b1cd327f2b357fd456a).
+
 ## Configuration
 
 Configuration is done with environment variables. These variables should never contain secrets. After build, they'll be hardcoded in build files and therefore easily discoverable. They serve exclusively to set up configuration constants
@@ -17,7 +39,7 @@ REACT_APP_VAR1="something" REACT_APP_VAR2="something_else" yarn build
 ```
 
 - `REACT_APP_API_BASE_URL` API base url, including trailing slash (default `/api/`)
-- `REACT_APP_SENTRY_DSN` a dsn for Sentry setup
+- `REACT_APP_SENTRY_DSN` a dsn for Sentry setup (disabled when none)
 - `REACT_APP_CORS_PROXY` A proxy which adds CORS headers to images, including trailing slash (default none)
 
 ## Running locally with a remote proxy
