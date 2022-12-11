@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash'
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
 import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
@@ -215,7 +216,7 @@ export const formatDateTime = (date: string, time?: string): string => {
  * https://stackoverflow.com/a/66247134
  */
 export const withOverwriteArray = (a: any, b: any) =>
-  Array.isArray(b) ? b : undefined
+  Array.isArray(b) ? cloneDeep(b) : undefined
 
 /**
  * remove html tags from html document

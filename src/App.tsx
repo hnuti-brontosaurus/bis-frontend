@@ -22,6 +22,9 @@ import NotFound from 'pages/NotFound'
 import ResetPassword from 'pages/ResetPassword'
 import SendResetPasswordLink from 'pages/SendResetPasswordLink'
 import { Route } from 'react-router-dom'
+import { UserParticipatedEvents } from 'user/pages/UserParticipatedEvents'
+import { UserRegisteredEvents } from 'user/pages/UserRegisteredEvents'
+import { UserEventsLayout } from 'user/UserEventsLayout'
 import { Routes } from './config/sentry'
 import EventsLayout from './org/EventsLayout'
 import EditProfile from './user/EditProfile'
@@ -32,12 +35,14 @@ import ViewProfile from './user/ViewProfile'
 function App() {
   return (
     <Routes>
+      {/* Routes for both authenticated and unauthenticated users (e.g. registration for events) */}
       <Route element={<MixedOutlet />}>
         <Route
           path="/akce/:eventId/prihlasit"
           element={<EventRegistration />}
         />
       </Route>
+      {/* Routes for unauthenticated users */}
       <Route element={<UnauthenticatedOutlet />}>
         <Route path="/login" element={<Login />} />
         <Route
@@ -46,6 +51,7 @@ function App() {
         />
         <Route path="/reset_password" element={<ResetPassword />} />
       </Route>
+      {/* Routes for authenticated users */}
       <Route path="/" element={<AuthenticatedOutlet />}>
         <Route path="profil">
           <Route index element={<ViewMyProfile />} />
@@ -54,8 +60,14 @@ function App() {
             <Route path="upravit" element={<EditProfile />} />
           </Route>
         </Route>
+        <Route path="akce" element={<UserEventsLayout />}>
+          <Route path="zucastnene" element={<UserParticipatedEvents />} />
+          <Route path="prihlasene" element={<UserRegisteredEvents />} />
+        </Route>
+        {/* <Route path="akce/:eventId" element={<ViewEvent />} /> */}
         <Route path="admin/*" element={<AdminRedirect />} />
         <Route index element={<Home />} />
+        {/* Routes for organizers */}
         <Route path="org" element={<OrganizerOutlet />}>
           <Route index element={<OrgHome />} />
           <Route path="akce/vytvorit" element={<CreateEvent />} />
