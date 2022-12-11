@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom'
 import { formatDateRange, formatDateTime } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
-const ViewEvent = () => {
+const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const {
@@ -40,20 +40,22 @@ const ViewEvent = () => {
   return (
     <div className={styles.wrapper}>
       <header className={styles.name}>{event.name}</header>
-      <Actions>
-        <ButtonLink success to={`/org/akce/${eventId}/upravit`}>
-          <FaPencilAlt /> upravit
-        </ButtonLink>
-        <ButtonLink success to={`/org/akce/${eventId}/uzavrit`}>
-          <FaRegCheckCircle /> po akci
-        </ButtonLink>
-        <ButtonLink success to={`/org/akce/vytvorit?klonovat=${eventId}`}>
-          <FaRegCopy /> klonovat
-        </ButtonLink>
-        <Button danger onClick={() => removeEvent(event)}>
-          <FaTrashAlt /> smazat
-        </Button>
-      </Actions>
+      {!readonly && (
+        <Actions>
+          <ButtonLink success to={`/org/akce/${eventId}/upravit`}>
+            <FaPencilAlt /> upravit
+          </ButtonLink>
+          <ButtonLink success to={`/org/akce/${eventId}/uzavrit`}>
+            <FaRegCheckCircle /> po akci
+          </ButtonLink>
+          <ButtonLink success to={`/org/akce/vytvorit?klonovat=${eventId}`}>
+            <FaRegCopy /> klonovat
+          </ButtonLink>
+          <Button danger onClick={() => removeEvent(event)}>
+            <FaTrashAlt /> smazat
+          </Button>
+        </Actions>
+      )}
 
       <div className={styles.infoBox}>
         <div>

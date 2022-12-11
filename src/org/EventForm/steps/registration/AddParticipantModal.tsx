@@ -335,7 +335,7 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
           >
             <div className={styles.usersList}>
               {!(isOptionsLoading || isAllUsersLoading) ? (
-                <table className={stylesTable.table}>
+                <table className={classNames(stylesTable.table, styles.table)}>
                   <tbody>
                     {userOptions.length !== 0 && (
                       <tr>
