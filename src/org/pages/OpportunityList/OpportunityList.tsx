@@ -10,9 +10,9 @@ import { FaPlus } from 'react-icons/fa'
 import { api } from '../../../app/services/bis'
 import { useCurrentUser } from '../../../hooks/currentUser'
 import { useTitle } from '../../../hooks/title'
-import OpportunityTable from './OpportunityTable'
+import { OpportunityTable } from './OpportunityTable'
 
-const OpportunityList = () => {
+export const OpportunityList = () => {
   useTitle('Příležitosti')
   const { data: currentUser } = useCurrentUser()
   // it's safe to assume that the user is already loaded
@@ -54,5 +54,3 @@ const OpportunityList = () => {
     </ClearPageMargin>
   )
 }
-
-export default OpportunityList

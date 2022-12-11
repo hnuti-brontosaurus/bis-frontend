@@ -14,7 +14,7 @@ import { requireBoolean } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../EventForm'
 
-const RegistrationStep = ({
+export const RegistrationStep = ({
   methods,
 }: {
   methods: MethodsShapes['registration']
@@ -318,5 +318,3 @@ Fce: proklik na přihlášky vytvořenou externě`}
     </FormProvider>
   )
 }
-
-export default RegistrationStep

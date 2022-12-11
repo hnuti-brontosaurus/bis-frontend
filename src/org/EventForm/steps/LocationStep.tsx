@@ -11,7 +11,7 @@ import { StepShapes } from '../EventForm'
 
 const formId = 'event-form-location-step'
 
-const LocationStep = ({
+export const LocationStep = ({
   methods,
 }: {
   methods: UseFormReturn<StepShapes['location']>
@@ -49,5 +49,3 @@ const LocationStep = ({
     </FormProvider>
   )
 }
-
-export default LocationStep

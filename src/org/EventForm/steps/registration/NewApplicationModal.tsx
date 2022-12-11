@@ -30,7 +30,7 @@ const zipcodeRegExp = /\d{3} ?\d{2}/
 
 const requiredFieldMessage = 'Toto pole je povinné!'
 
-const NewApplicationModal: FC<INewApplicationModalProps> = ({
+export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
   eventId,
@@ -304,5 +304,3 @@ const NewApplicationModal: FC<INewApplicationModalProps> = ({
     </StyledModal>
   )
 }
-
-export default NewApplicationModal

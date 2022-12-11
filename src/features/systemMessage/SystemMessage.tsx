@@ -9,7 +9,7 @@ import {
   SystemMessage as SystemMessageType,
 } from './systemMessageSlice'
 
-const SystemMessage = ({
+export const SystemMessage = ({
   id,
   type,
   message,
@@ -54,5 +54,3 @@ const SystemMessage = ({
     </div>
   )
 }
-
-export default SystemMessage

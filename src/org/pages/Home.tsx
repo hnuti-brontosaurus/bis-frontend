@@ -36,7 +36,7 @@ const buttons: {
   },
 ]
 
-const Home = () => (
+export const Home = () => (
   <div className={styles.container}>
     <nav className={styles.mainMenu}>
       {buttons.map(({ title, detail, link, theme }) => (
@@ -54,5 +54,3 @@ const Home = () => (
     <img className={styles.illustration} src={illustration} alt="" />
   </div>
 )
-
-export default Home

@@ -59,7 +59,7 @@ const groupConfig: Record<
 // Create Event Form Step for Event Category
 // In api, Category is called Group
 
-const EventCategoryStep = ({
+export const EventCategoryStep = ({
   methods,
 }: {
   methods: UseFormReturn<StepShapes['category']>
@@ -113,5 +113,3 @@ const EventCategoryStep = ({
     </FormProvider>
   )
 }
-
-export default EventCategoryStep

@@ -4,9 +4,9 @@ import { UnscalablePaginatedList } from 'components'
 import { useTitle } from 'hooks/title'
 import { useOutletContext } from 'react-router-dom'
 import { getEventStatus } from 'utils/helpers'
-import EventTable from '../EventTable'
+import { EventTable } from '../EventTable'
 
-const UnfinishedEvents = () => {
+export const UnfinishedEvents = () => {
   useTitle('Moje nevyplněné akce')
   const events = useOutletContext<PaginatedList<Event>>()
 
@@ -20,5 +20,3 @@ const UnfinishedEvents = () => {
 
   return <UnscalablePaginatedList table={EventTable} data={inputEvents} />
 }
-
-export default UnfinishedEvents

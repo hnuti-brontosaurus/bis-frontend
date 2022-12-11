@@ -39,7 +39,7 @@ const slice = createSlice({
   },
 })
 
-export default slice.reducer
+export const { reducer } = slice
 
 export const selectAuthenticated = (state: RootState) =>
   Boolean(state.auth.token)

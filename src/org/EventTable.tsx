@@ -15,7 +15,7 @@ import {
   isEventClosed,
 } from '../utils/helpers'
 
-const EventTable: FC<{
+export const EventTable: FC<{
   data: Event[]
 }> = ({ data: events }) => {
   const locationRequests = useQueries(
@@ -125,5 +125,3 @@ const EventTable: FC<{
     </table>
   )
 }
-
-export default EventTable

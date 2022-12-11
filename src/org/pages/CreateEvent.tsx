@@ -12,10 +12,10 @@ import { useCurrentUser } from '../../hooks/currentUser'
 import { useReadFullEvent } from '../../hooks/readFullEvent'
 import { useTitle } from '../../hooks/title'
 import { toDataURL } from '../../utils/helpers'
-import EventForm, { SubmitShape } from '../EventForm'
-import { event2payload } from './EditEvent'
+import { EventForm, SubmitShape } from '../EventForm'
+import { event2payload } from './UpdateEvent'
 
-const CreateEvent = () => {
+export const CreateEvent = () => {
   useTitle('Nová akce')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -141,5 +141,3 @@ const CreateEvent = () => {
     />
   )
 }
-
-export default CreateEvent

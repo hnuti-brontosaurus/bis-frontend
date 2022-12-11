@@ -10,10 +10,10 @@ import {
 import { FormProvider, UseFormReturn } from 'react-hook-form'
 import { Event } from '../../../app/services/bisTypes'
 import { required } from '../../../utils/validationMessages'
-import ParticipantsList from '../../EventForm/steps/ParticipantsStep'
+import { ParticipantsStep as ParticipantsList } from '../../EventForm/steps/ParticipantsStep'
 import { ParticipantsStepFormShape } from './CloseEventForm'
 
-const ParticipantsStep = ({
+export const ParticipantsStep = ({
   event,
   areParticipantsRequired,
   methods,
@@ -108,5 +108,3 @@ const ParticipantsStep = ({
     </FormProvider>
   )
 }
-
-export default ParticipantsStep

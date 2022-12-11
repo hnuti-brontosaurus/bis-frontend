@@ -6,9 +6,9 @@ import { api } from '../../../../app/services/bis'
 import { User } from '../../../../app/services/testApi'
 import stylesTable from '../../../../components/Table.module.scss'
 import styles from '../ParticipantsStep.module.scss'
-import ShowApplicationModal from './ShowApplicationModal'
+import { ShowApplicationModal } from './ShowApplicationModal'
 
-const Participants: FC<{
+export const Participants: FC<{
   eventId: number
   eventName: string
   chooseHighlightedParticipant: (id: string | undefined) => void
@@ -123,5 +123,3 @@ const Participants: FC<{
     </div>
   )
 }
-
-export default Participants

@@ -16,7 +16,7 @@ import { getIdBySlug, requireBoolean } from '../../../utils/helpers'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../EventForm'
 
-const IntendedForStep = ({
+export const IntendedForStep = ({
   methods,
   isCamp,
 }: {
@@ -240,5 +240,3 @@ const IntendedForStep = ({
     </FormProvider>
   )
 }
-
-export default IntendedForStep

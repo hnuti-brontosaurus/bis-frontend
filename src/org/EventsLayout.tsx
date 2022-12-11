@@ -7,7 +7,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { api } from '../app/services/bis'
 import { useCurrentUser } from '../hooks/currentUser'
 
-const EventsLayout = () => {
+export const EventsLayout = () => {
   const { data: currentUser } = useCurrentUser()
 
   const location = useLocation()
@@ -70,5 +70,3 @@ const EventsLayout = () => {
     </ClearPageMargin>
   )
 }
-
-export default EventsLayout

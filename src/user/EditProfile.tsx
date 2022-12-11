@@ -204,7 +204,7 @@ const validationSchema: yup.ObjectSchema<UserForm> = yup.object({
     .defined(),
 })
 
-const EditProfile = () => {
+export const EditProfile = () => {
   const { user } = useOutletContext<{ user: User }>()
   const { data: currentUser } = useCurrentUser()
   const navigate = useNavigate()
@@ -477,5 +477,3 @@ const EditProfile = () => {
     </div>
   )
 }
-
-export default EditProfile

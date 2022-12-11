@@ -14,7 +14,7 @@ import { AdministrationUnit } from '../../../app/services/bisTypes'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../EventForm'
 
-const BasicInfoStep = ({
+export const BasicInfoStep = ({
   methods,
 }: {
   methods: MethodsShapes['basicInfo']
@@ -171,5 +171,3 @@ const BasicInfoStep = ({
     </FormProvider>
   )
 }
-
-export default BasicInfoStep

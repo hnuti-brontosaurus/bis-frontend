@@ -6,7 +6,7 @@ import { useCurrentUser } from '../hooks/currentUser'
 import { formatDateTime } from '../utils/helpers'
 import styles from './ViewProfile.module.scss'
 
-const ViewProfile = () => {
+export const ViewProfile = () => {
   const { user } = useOutletContext<{ user: User }>()
   const { data: currentUser } = useCurrentUser()
   return (
@@ -60,5 +60,3 @@ const ViewProfile = () => {
     </div>
   )
 }
-
-export default ViewProfile

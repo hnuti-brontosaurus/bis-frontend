@@ -1,11 +1,11 @@
 import { useAppSelector } from 'app/hooks'
 import { selectShowHeader } from 'features/ui/uiSlice'
 import { ReactNode } from 'react'
-import Header from './Header'
+import { Header } from './Header'
 import { Content, Footer, Header as LayoutHeader, Layout } from './Layout'
-import LinkFooter from './LinkFooter'
+import { LinkFooter } from './LinkFooter'
 
-const PageLayout = ({ children }: { children: ReactNode }) => {
+export const PageLayout = ({ children }: { children: ReactNode }) => {
   const showHeader = useAppSelector(selectShowHeader)
   return (
     <Layout page>
@@ -23,5 +23,3 @@ const PageLayout = ({ children }: { children: ReactNode }) => {
     </Layout>
   )
 }
-
-export default PageLayout

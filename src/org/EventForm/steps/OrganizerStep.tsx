@@ -35,7 +35,7 @@ import {
   getRequiredQualifications,
 } from './validateMainOrganizer'
 
-const OrganizerStep = ({
+export const OrganizerStep = ({
   methods,
   mainOrganizerDependencies,
 }: {
@@ -351,5 +351,3 @@ const OrganizerStep = ({
     </FormProvider>
   )
 }
-
-export default OrganizerStep

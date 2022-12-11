@@ -12,7 +12,7 @@ import { api } from '../../../app/services/bis'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../EventForm'
 
-const PropagationStep = ({
+export const PropagationStep = ({
   methods,
   isVolunteering,
   isWeekendEvent,
@@ -204,5 +204,3 @@ const PropagationStep = ({
     </FormProvider>
   )
 }
-
-export default PropagationStep

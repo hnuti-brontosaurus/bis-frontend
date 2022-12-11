@@ -3,9 +3,9 @@ import { Event } from 'app/services/bisTypes'
 import { UnscalablePaginatedList } from 'components'
 import { useTitle } from 'hooks/title'
 import { useOutletContext } from 'react-router-dom'
-import EventTable from '../EventTable'
+import { EventTable } from '../EventTable'
 
-const AllEvents = () => {
+export const AllEvents = () => {
   useTitle('Moje akce')
   const events = useOutletContext<PaginatedList<Event>>()
 
@@ -13,5 +13,3 @@ const AllEvents = () => {
     <UnscalablePaginatedList table={EventTable} data={events.results ?? []} />
   )
 }
-
-export default AllEvents

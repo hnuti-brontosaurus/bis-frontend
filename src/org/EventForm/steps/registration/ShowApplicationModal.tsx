@@ -35,7 +35,7 @@ interface IShowApplicationModalProps {
 }
 
 // TODO: This modal is still WIP (no need to review atm)
-const ShowParticipantModal: FC<IShowApplicationModalProps> = ({
+export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
   open,
   onClose,
   currentApplication: currentApplicationProp,
@@ -249,5 +249,3 @@ const ShowParticipantModal: FC<IShowApplicationModalProps> = ({
     </StyledModal>
   )
 }
-
-export default ShowParticipantModal

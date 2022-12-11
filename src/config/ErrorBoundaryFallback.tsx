@@ -3,7 +3,7 @@
 import * as Sentry from '@sentry/react'
 import { Button, Error } from 'components'
 
-const ErrorBoundaryFallback: Sentry.FallbackRender = ({
+export const ErrorBoundaryFallback: Sentry.FallbackRender = ({
   error,
   componentStack,
   resetError,
@@ -24,5 +24,3 @@ const ErrorBoundaryFallback: Sentry.FallbackRender = ({
     </Button>
   </Error>
 )
-
-export default ErrorBoundaryFallback

@@ -13,7 +13,7 @@ import { Controller, FormProvider } from 'react-hook-form'
 import { required } from '../../../utils/validationMessages'
 import { MethodsShapes } from '../EventForm'
 
-const InvitationStep = ({
+export const InvitationStep = ({
   methods,
   isVolunteering,
 }: {
@@ -140,5 +140,3 @@ const InvitationStep = ({
     </FormProvider>
   )
 }
-
-export default InvitationStep

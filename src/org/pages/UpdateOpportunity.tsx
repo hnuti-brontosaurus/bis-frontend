@@ -10,9 +10,9 @@ import {
 } from '../../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../../hooks/currentUser'
 import { useTitle } from '../../hooks/title'
-import OpportunityForm, { OpportunityFormShape } from '../OpportunityForm'
+import { OpportunityForm, OpportunityFormShape } from '../OpportunityForm'
 
-const UpdateOpportunity = () => {
+export const UpdateOpportunity = () => {
   useTitle('Upravit příležitost')
   const params = useParams()
   const opportunityId = Number(params.opportunityId)
@@ -99,5 +99,3 @@ const UpdateOpportunity = () => {
     </div>
   )
 }
-
-export default UpdateOpportunity

@@ -54,7 +54,7 @@ export type OpportunityFormShape = Overwrite<
   { location: NewLocation | CorrectLocation }
 >
 
-const OpportunityForm = ({
+export const OpportunityForm = ({
   initialData,
   onSubmit,
   onCancel,
@@ -409,5 +409,3 @@ const OpportunityForm = ({
     </FormProvider>
   )
 }
-
-export default OpportunityForm

@@ -52,7 +52,7 @@ const getErrorMessage = (
   return 'Nepodařilo se změnit heslo'
 }
 
-const ResetPassword = () => {
+export const ResetPassword = () => {
   // use search parameters
   const [searchParams] = useSearchParams()
   const email = searchParams.get('email') ?? ''
@@ -163,5 +163,3 @@ const ResetPassword = () => {
     </div>
   )
 }
-
-export default ResetPassword

@@ -28,7 +28,7 @@ const getErrorMessage = (
   return 'Nepodařilo se přihlásit'
 }
 
-const Login = () => {
+export const Login = () => {
   const [login, { isLoading: isLoginLoading, error }] =
     api.endpoints.login.useMutation()
 
@@ -93,5 +93,3 @@ const Login = () => {
     </div>
   )
 }
-
-export default Login

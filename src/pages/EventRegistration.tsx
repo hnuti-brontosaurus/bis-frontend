@@ -14,12 +14,13 @@ import { GrLocation } from 'react-icons/gr'
 import { useParams } from 'react-router-dom'
 import { formatDateRange } from 'utils/helpers'
 import styles from './EventRegistration.module.scss'
-import EventRegistrationForm, {
+import {
+  EventRegistrationForm,
   FinishedStep,
   RegistrationFormShapeWithStep,
 } from './EventRegistrationForm'
 
-const EventRegistration = () => {
+export const EventRegistration = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const { data: user, isAuthenticated } = useCurrentUser()
@@ -133,5 +134,3 @@ const EventRegistration = () => {
     </div>
   )
 }
-
-export default EventRegistration

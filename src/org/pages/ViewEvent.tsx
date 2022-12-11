@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom'
 import { formatDateRange, formatDateTime } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
-const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
+export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const {
@@ -173,5 +173,3 @@ const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
     </div>
   )
 }
-
-export default ViewEvent

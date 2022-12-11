@@ -20,8 +20,8 @@ import {
   usePersistForm,
 } from '../../../hooks/persistForm'
 import { pickErrors, withOverwriteArray } from '../../../utils/helpers'
-import EvidenceStep from './EvidenceStep'
-import ParticipantsStep from './ParticipantsStep'
+import { EvidenceStep } from './EvidenceStep'
+import { ParticipantsStep } from './ParticipantsStep'
 
 export type CloseEventPayload = DeepPick<
   PatchedEvent,
@@ -94,7 +94,7 @@ const formData2payload = ({
   return merge(is_complete ? { is_complete: true } : {}, payload)
 }
 
-const CloseEventForm = ({
+export const CloseEventForm = ({
   event,
   initialData,
   onSubmit,
@@ -255,5 +255,3 @@ const CloseEventForm = ({
     </Steps>
   )
 }
-
-export default CloseEventForm

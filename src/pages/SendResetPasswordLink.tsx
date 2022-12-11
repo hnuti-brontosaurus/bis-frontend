@@ -24,7 +24,7 @@ const getErrorMessage = (
   return 'Problém s odesláním odkazu. Prosím zkuste to znovu.'
 }
 
-const SendResetPasswordLink = () => {
+export const SendResetPasswordLink = () => {
   const [sendResetPasswordLink, { error, isLoading, isSuccess }] =
     api.endpoints.sendResetPasswordLink.useMutation()
 
@@ -94,5 +94,3 @@ const SendResetPasswordLink = () => {
     </div>
   )
 }
-
-export default SendResetPasswordLink

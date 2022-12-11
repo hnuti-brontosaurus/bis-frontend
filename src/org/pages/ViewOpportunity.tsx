@@ -9,7 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { formatDateRange } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
-const ViewOpportunity = () => {
+export const ViewOpportunity = () => {
   const params = useParams()
   const opportunityId = Number(params.opportunityId)
   const { data: user } = useCurrentUser()
@@ -122,5 +122,3 @@ const ViewOpportunity = () => {
     </div>
   )
 }
-
-export default ViewOpportunity

@@ -1,10 +1,10 @@
 import { FC, useState } from 'react'
 import { api } from '../../../app/services/bis'
 import styles from './ParticipantsStep.module.scss'
-import Applications from './registration/Applications'
-import Participants from './registration/Participants'
+import { Applications } from './registration/Applications'
+import { Participants } from './registration/Participants'
 
-const ParticipantsStep: FC<{
+export const ParticipantsStep: FC<{
   eventId: number
   onlyApplications?: boolean
   eventName: string
@@ -60,5 +60,3 @@ const ParticipantsStep: FC<{
     </div>
   )
 }
-
-export default ParticipantsStep

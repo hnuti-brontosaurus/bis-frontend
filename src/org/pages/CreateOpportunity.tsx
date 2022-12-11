@@ -8,9 +8,9 @@ import {
 } from '../../features/systemMessage/useSystemMessage'
 import { useCurrentUser } from '../../hooks/currentUser'
 import { useTitle } from '../../hooks/title'
-import OpportunityForm, { OpportunityFormShape } from '../OpportunityForm'
+import { OpportunityForm, OpportunityFormShape } from '../OpportunityForm'
 
-const CreateOpportunity = () => {
+export const CreateOpportunity = () => {
   useTitle('Nová příležitost')
   const { data: currentUser } = useCurrentUser()
 
@@ -61,5 +61,3 @@ const CreateOpportunity = () => {
     </div>
   )
 }
-
-export default CreateOpportunity

@@ -157,7 +157,7 @@ const validationSchema: yup.ObjectSchema<RegistrationFormShape> = yup.object({
     .required(),
 })
 
-const EventRegistrationForm = ({
+export const EventRegistrationForm = ({
   id,
   questionnaire,
   user,
@@ -362,8 +362,6 @@ const EventRegistrationForm = ({
     </>
   )
 }
-
-export default EventRegistrationForm
 
 export const FinishedStep = ({
   message,

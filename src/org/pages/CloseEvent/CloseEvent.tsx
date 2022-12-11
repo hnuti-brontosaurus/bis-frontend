@@ -6,9 +6,9 @@ import {
   useShowMessage,
 } from '../../../features/systemMessage/useSystemMessage'
 import { useTitle } from '../../../hooks/title'
-import CloseEventForm, { CloseEventPayload } from './CloseEventForm'
+import { CloseEventForm, CloseEventPayload } from './CloseEventForm'
 
-const CloseEvent = () => {
+export const CloseEvent = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const navigate = useNavigate()
@@ -177,5 +177,3 @@ const CloseEvent = () => {
     />
   )
 }
-
-export default CloseEvent

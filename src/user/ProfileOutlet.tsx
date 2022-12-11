@@ -2,7 +2,7 @@ import { Error, Loading } from 'components'
 import { Outlet, useParams } from 'react-router-dom'
 import { api } from '../app/services/bis'
 
-const ProfileOutlet = () => {
+export const ProfileOutlet = () => {
   const params = useParams()
   const userId = params.userId as string
 
@@ -18,5 +18,3 @@ const ProfileOutlet = () => {
 
   return <Outlet context={{ user }} />
 }
-
-export default ProfileOutlet

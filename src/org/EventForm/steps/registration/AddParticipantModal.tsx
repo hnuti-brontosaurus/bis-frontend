@@ -20,7 +20,7 @@ import colors from 'styles/colors.module.scss'
 import * as yup from 'yup'
 import { EventApplication, User } from '../../../../app/services/bisTypes'
 import stylesTable from '../../../../components/Table.module.scss'
-import BirthdayInputCheck from './BirthdayInputCheck'
+import { BirthdayInputCheck } from './BirthdayInputCheck'
 import styles from './NewApplicationModal.module.scss'
 
 interface INewApplicationModalProps {
@@ -62,7 +62,7 @@ const validationSchema = yup.object().shape(
 )
 
 // TODO: This modal is still WIP (no need to review atm)
-const AddParticipantModal: FC<INewApplicationModalProps> = ({
+export const AddParticipantModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
   currentApplication,
@@ -1008,5 +1008,3 @@ const AddParticipantModal: FC<INewApplicationModalProps> = ({
     </StyledModal>
   )
 }
-
-export default AddParticipantModal

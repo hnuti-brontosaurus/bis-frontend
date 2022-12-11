@@ -8,6 +8,7 @@ import {
   useShowApiErrorMessage,
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
+import { useOnScreen } from 'hooks/onScreen'
 import * as L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
@@ -22,7 +23,6 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet'
-import useOnScreen from '../../hooks/onScreen'
 import styles from './Map.module.scss'
 
 const iconSize = [20, 20] as L.PointTuple

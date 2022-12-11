@@ -29,11 +29,7 @@ const slice = createSlice({
   },
 })
 
-const { actions, reducer } = slice
-
-export default reducer
-
-export { actions }
+export const { actions, reducer } = slice
 
 export const selectMessages = (state: RootState) =>
   Object.values(state.systemMessage.messages.byId).sort(

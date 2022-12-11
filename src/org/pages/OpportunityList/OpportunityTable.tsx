@@ -6,7 +6,7 @@ import { CorrectOpportunity } from '../../../app/services/bis'
 import { useCurrentUser } from '../../../hooks/currentUser'
 import { useRemoveOpportunity } from '../../../hooks/removeOpportunity'
 
-const OpportunityTable = ({
+export const OpportunityTable = ({
   data: opportunities,
 }: {
   data: CorrectOpportunity[]
@@ -70,5 +70,3 @@ const OpportunityTable = ({
     </table>
   )
 }
-
-export default OpportunityTable

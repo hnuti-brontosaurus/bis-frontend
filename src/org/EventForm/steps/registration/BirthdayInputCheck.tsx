@@ -33,7 +33,7 @@ interface IBirthdayInputCheck {
   isSavingEventApplication: boolean
 }
 
-const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
+export const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
   defaultBirthday,
   onSubmitBD,
   result,
@@ -119,5 +119,3 @@ const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
     </form>
   )
 }
-
-export default BirthdayInputCheck
