@@ -140,6 +140,7 @@ export const Applications: FC<{
                 <tbody>
                   {applications.map((application: EventApplication) => (
                     <tr
+                      key={application.id}
                       className={classnames(
                         highlightedApplication === application.id.toString()
                           ? styles.highlightedRow

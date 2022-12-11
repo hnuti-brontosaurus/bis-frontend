@@ -87,49 +87,48 @@ export const EvidenceStep = ({
               {/* TODO: find or ask which field is this */}
               <input type="text" {...register('finance.bank_account_number')} />
             </FormSubsubsection>
-            <FormSubsubsection header="Zpětná vazba">
-              <InfoBox>
-                Zpětná vazba od účastníků udělá vaši příští akci ještě lepší!
-                Spokojení účastníci jsou tou nejlepší odměnou pro každého
-                organizátora. Jejich zpětná vazba je velmi cenná a umožní vám
-                reflexi toho, co se povedlo a co můžete do příště ještě
-                vylepšit. Na tomto odkazu zpětnou vazbu pro účastníky lehce
-                připravíte.
-              </InfoBox>
-              <div>
-                <Help>
-                  Přihlašte se univerzálním heslem “vyplnto” nebo heslem vaší
-                  organizační jednotky.
-                </Help>{' '}
-                <a
-                  href="https://zpetna-vazba.brontosaurus.cz/login.php"
-                  target="__blank"
-                  rel="noopener noreferrer"
-                >
-                  Připravit zpětnou vazbu
-                </a>
-              </div>
-            </FormSubsubsection>
-            <FormSubsubsection header="Závěrečná zpráva">
-              <InfoBox>
-                Vyplněná závěrečná zpráva o akci nám pomáhá zlepšovat podporu
-                vám i dalším organizátorům. Vám zase slouží k uchování
-                doplňkových informací a usnadní plánování příští akce!
-              </InfoBox>
-              <div>
-                <Help>
-                  Přihlašte se univerzálním heslem “vyplnto” nebo heslem vaší
-                  organizační jednotky.
-                </Help>{' '}
-                <a
-                  href="https://zpetna-vazba.brontosaurus.cz/login.php"
-                  target="__blank"
-                  rel="noopener noreferrer"
-                >
-                  Vyplnit závěrečnou zprávu
-                </a>
-              </div>
-            </FormSubsubsection>
+          </FormSubsection>
+          <FormSubsection header="Zpětná vazba">
+            <InfoBox>
+              Zpětná vazba od účastníků udělá vaši příští akci ještě lepší!
+              Spokojení účastníci jsou tou nejlepší odměnou pro každého
+              organizátora. Jejich zpětná vazba je velmi cenná a umožní vám
+              reflexi toho, co se povedlo a co můžete do příště ještě vylepšit.
+              Na tomto odkazu zpětnou vazbu pro účastníky lehce připravíte.
+            </InfoBox>
+            <div>
+              <Help>
+                Přihlašte se univerzálním heslem “vyplnto” nebo heslem vaší
+                organizační jednotky.
+              </Help>{' '}
+              <a
+                href="https://zpetna-vazba.brontosaurus.cz/login.php"
+                target="__blank"
+                rel="noopener noreferrer"
+              >
+                Připravit zpětnou vazbu
+              </a>
+            </div>
+          </FormSubsection>
+          <FormSubsection header="Závěrečná zpráva">
+            <InfoBox>
+              Vyplněná závěrečná zpráva o akci nám pomáhá zlepšovat podporu vám
+              i dalším organizátorům. Vám zase slouží k uchování doplňkových
+              informací a usnadní plánování příští akce!
+            </InfoBox>
+            <div>
+              <Help>
+                Přihlašte se univerzálním heslem “vyplnto” nebo heslem vaší
+                organizační jednotky.
+              </Help>{' '}
+              <a
+                href="https://zpetna-vazba.brontosaurus.cz/login.php"
+                target="__blank"
+                rel="noopener noreferrer"
+              >
+                Vyplnit závěrečnou zprávu
+              </a>
+            </div>
           </FormSubsection>
           {/* Údaje , které je třeba zadat po akci:
 Počet účastníků celkem *

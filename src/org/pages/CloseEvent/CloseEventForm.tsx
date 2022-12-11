@@ -50,7 +50,7 @@ export type ParticipantsStepFormShape = {
     | 'number_of_participants'
     | 'number_of_participants_under_26'
   >
-  includeList: boolean
+  participantInputType: 'count' | 'simple-list' | 'full-list'
 }
 
 export type CloseEventFormShape = EvidenceStepFormShape &
@@ -70,28 +70,56 @@ const pickEvidenceData = (data: Partial<CloseEventFormShape>) =>
 const pickParticipantsData = (data: Partial<CloseEventFormShape>) =>
   pick(
     data,
-    'record.participants',
+    //'record.participants',
     'record.number_of_participants',
     'record.number_of_participants_under_26',
-    'includeList',
+    'participantInputType',
   )
 
 const formData2payload = ({
-  includeList,
+  participantInputType,
   is_complete,
   ...data
 }: CloseEventFormShape & { is_complete: boolean }): CloseEventPayload => {
   const payload = cloneDeep(data)
 
-  if (includeList) {
+  if (participantInputType === 'full-list') {
     payload.record.number_of_participants = null
     payload.record.number_of_participants_under_26 = null
+    // participants get saved separately
+    // so we don't want to overwrite them with potentially outdated list
+    delete payload.record.participants
+  } else {
+    payload.record.participants = []
   }
 
   if (payload.finance && !payload.finance.bank_account_number)
     payload.finance.bank_account_number = ''
 
   return merge(is_complete ? { is_complete: true } : {}, payload)
+}
+
+const initialData2form = (
+  data: Partial<CloseEventFormShape>,
+  event: Event,
+): Partial<CloseEventFormShape> => {
+  let participantInputType:
+    | ParticipantsStepFormShape['participantInputType']
+    | undefined = undefined
+
+  if (event.group.slug === 'other') {
+    if (event.record?.participants?.length) {
+      participantInputType = 'full-list'
+    }
+    // TODO there is an option missing - when there is a partial list filled
+    else if (typeof event.record?.number_of_participants === 'number') {
+      participantInputType = 'count'
+    }
+  }
+
+  if (participantInputType) {
+    return { participantInputType, ...data }
+  } else return data
 }
 
 export const CloseEventForm = ({
@@ -107,17 +135,13 @@ export const CloseEventForm = ({
   onCancel: () => void
   id: string
 }) => {
-  if (
-    event.group.slug === 'other' &&
-    event.record?.participants?.length &&
-    !event.record?.number_of_participants &&
-    !event.record?.number_of_participants_under_26
-  ) {
-    initialData.includeList = true
-  }
   // load persisted data
   const savedData = usePersistentFormData('closeEvent', id)
-  const initialAndSavedData = merge({}, initialData, savedData)
+  const initialAndSavedData = merge(
+    {},
+    initialData2form(initialData, event),
+    savedData,
+  )
 
   const evidenceFormMethods = useForm<EvidenceStepFormShape>({
     defaultValues: pickEvidenceData(initialAndSavedData),
@@ -244,7 +268,7 @@ export const CloseEventForm = ({
         />
       </Step>
       <Step
-        name="práce"
+        name="práce a další"
         hasError={Object.keys(evidenceFormMethods.formState.errors).length > 0}
       >
         <EvidenceStep
