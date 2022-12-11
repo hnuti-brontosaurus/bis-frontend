@@ -1,1 +1,1 @@
-export { default } from './PageLayout'
+export { PageLayout as MixedLayout } from './PageLayout'

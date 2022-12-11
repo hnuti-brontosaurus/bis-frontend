@@ -1,14 +1,14 @@
-import { useEffect } from 'react'
-import { UseFormWatch } from 'react-hook-form'
-import { DeepPartial } from 'utility-types'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from 'app/hooks'
 import {
   actions,
   PersistentFormType,
   PersistentFormValue,
   selectFormByTypeAndId,
-} from '../features/form/formSlice'
-import { useDebouncedDispatch } from '../hooks/debouncedDispatch'
+} from 'features/form/formSlice'
+import { useDebouncedDispatch } from 'hooks/debouncedDispatch'
+import { useEffect } from 'react'
+import { UseFormWatch } from 'react-hook-form'
+import { DeepPartial } from 'utility-types'
 
 /**
  * Each persisted form has its type and id,

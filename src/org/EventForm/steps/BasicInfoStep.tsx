@@ -1,3 +1,5 @@
+import { api } from 'app/services/bis'
+import { AdministrationUnit } from 'app/services/bisTypes'
 import {
   FormInputError,
   FormSection,
@@ -9,12 +11,10 @@ import {
 } from 'components'
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
-import { api } from '../../../app/services/bis'
-import { AdministrationUnit } from '../../../app/services/bisTypes'
-import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../EventForm'
+import { required } from 'utils/validationMessages'
+import { MethodsShapes } from '..'
 
-const BasicInfoStep = ({
+export const BasicInfoStep = ({
   methods,
 }: {
   methods: MethodsShapes['basicInfo']
@@ -171,5 +171,3 @@ const BasicInfoStep = ({
     </FormProvider>
   )
 }
-
-export default BasicInfoStep

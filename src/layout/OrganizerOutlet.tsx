@@ -1,9 +1,9 @@
 import { Loading } from 'components'
+import { useCurrentUser } from 'hooks/currentUser'
 import { Outlet } from 'react-router-dom'
 import { isOrganizer } from 'utils/helpers'
-import { useCurrentUser } from '../hooks/currentUser'
 
-const OrganizerOutlet = () => {
+export const OrganizerOutlet = () => {
   const { data: user, isLoading } = useCurrentUser()
 
   if (isLoading) return <Loading>Ověřujeme Tvé role</Loading>
@@ -11,5 +11,3 @@ const OrganizerOutlet = () => {
 
   return isOrganizer(user) ? <Outlet /> : <div>Nejsi Organizátor/ka</div>
 }
-
-export default OrganizerOutlet

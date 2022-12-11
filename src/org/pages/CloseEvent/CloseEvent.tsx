@@ -1,14 +1,14 @@
+import { api, EventPayload } from 'app/services/bis'
 import { Error, Loading } from 'components'
-import { useNavigate, useParams } from 'react-router-dom'
-import { api, EventPayload } from '../../../app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../../../features/systemMessage/useSystemMessage'
-import { useTitle } from '../../../hooks/title'
-import CloseEventForm, { CloseEventPayload } from './CloseEventForm'
+} from 'features/systemMessage/useSystemMessage'
+import { useTitle } from 'hooks/title'
+import { useNavigate, useParams } from 'react-router-dom'
+import { CloseEventForm, CloseEventPayload } from './CloseEventForm'
 
-const CloseEvent = () => {
+export const CloseEvent = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const navigate = useNavigate()
@@ -177,5 +177,3 @@ const CloseEvent = () => {
     />
   )
 }
-
-export default CloseEvent

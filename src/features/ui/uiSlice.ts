@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../../app/store'
+import { RootState } from 'app/store'
 
 type UIState = {
   showHeader: boolean
@@ -15,10 +15,6 @@ const slice = createSlice({
   },
 })
 
-const { actions, reducer } = slice
-
-export default reducer
-
-export { actions }
+export const { actions, reducer } = slice
 
 export const selectShowHeader = (state: RootState) => state.ui.showHeader

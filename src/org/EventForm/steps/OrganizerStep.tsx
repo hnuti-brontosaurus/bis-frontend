@@ -1,3 +1,12 @@
+import { api } from 'app/services/bis'
+import type {
+  EventCategory,
+  EventGroupCategory,
+  EventIntendedForCategory,
+  QualificationCategory,
+  User,
+  UserSearch,
+} from 'app/services/bisTypes'
 import {
   FormInputError,
   FormSection,
@@ -9,33 +18,21 @@ import {
   Label,
   Loading,
 } from 'components'
+import { SelectUnknownUser, SelectUnknownUsers } from 'components/SelectUsers'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
+import { useCurrentUser } from 'hooks/currentUser'
 import { get, uniqBy } from 'lodash'
 import { Fragment, useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
-import { api } from '../../../app/services/bis'
-import type {
-  EventCategory,
-  EventGroupCategory,
-  EventIntendedForCategory,
-  QualificationCategory,
-  User,
-  UserSearch,
-} from '../../../app/services/bisTypes'
-import {
-  SelectUnknownUser,
-  SelectUnknownUsers,
-} from '../../../components/SelectUsers'
-import { useShowMessage } from '../../../features/systemMessage/useSystemMessage'
-import { useCurrentUser } from '../../../hooks/currentUser'
-import { joinAnd } from '../../../utils/helpers'
-import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../EventForm'
+import { joinAnd } from 'utils/helpers'
+import { required } from 'utils/validationMessages'
+import { MethodsShapes } from '..'
 import {
   canBeMainOrganizer,
   getRequiredQualifications,
 } from './validateMainOrganizer'
 
-const OrganizerStep = ({
+export const OrganizerStep = ({
   methods,
   mainOrganizerDependencies,
 }: {
@@ -351,5 +348,3 @@ const OrganizerStep = ({
     </FormProvider>
   )
 }
-
-export default OrganizerStep

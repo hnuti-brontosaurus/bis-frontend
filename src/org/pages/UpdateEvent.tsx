@@ -7,11 +7,11 @@ import {
 import { FullEvent, useReadFullEvent } from 'hooks/readFullEvent'
 import { useTitle } from 'hooks/title'
 import merge from 'lodash/merge'
-import EventForm, { InitialEventData } from 'org/EventForm'
+import { EventForm, InitialEventData } from 'org/EventForm'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
 
-const EditEvent = () => {
+export const UpdateEvent = () => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const navigate = useNavigate()
@@ -213,8 +213,6 @@ const EditEvent = () => {
     />
   )
 }
-
-export default EditEvent
 
 /* This sorts lowest order first, and highest or missing order last */
 const sortOrder = <T extends { order?: number }>(a: T, b: T) => {

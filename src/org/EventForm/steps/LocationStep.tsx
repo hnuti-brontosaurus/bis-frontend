@@ -5,16 +5,16 @@ import {
   InlineSection,
   SelectLocation,
 } from 'components'
-import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
-import { required } from '../../../utils/validationMessages'
-import { StepShapes } from '../EventForm'
+import { Controller, FormProvider } from 'react-hook-form'
+import { required } from 'utils/validationMessages'
+import { MethodsShapes } from '..'
 
 const formId = 'event-form-location-step'
 
-const LocationStep = ({
+export const LocationStep = ({
   methods,
 }: {
-  methods: UseFormReturn<StepShapes['location']>
+  methods: MethodsShapes['location']
 }) => {
   const { watch, register, control } = methods
 
@@ -49,5 +49,3 @@ const LocationStep = ({
     </FormProvider>
   )
 }
-
-export default LocationStep

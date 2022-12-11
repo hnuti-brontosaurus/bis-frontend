@@ -1,7 +1,7 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query'
+import { api, CorrectLocation, CorrectOpportunity } from 'app/services/bis'
 import { Overwrite } from 'utility-types'
-import { api, CorrectLocation, CorrectOpportunity } from '../app/services/bis'
 
 export type FullOpportunity = Overwrite<
   CorrectOpportunity,

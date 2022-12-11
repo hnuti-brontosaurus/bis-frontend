@@ -1,6 +1,6 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { api } from 'app/services/bis'
 import { useEffect } from 'react'
-import { api } from '../app/services/bis'
 import { useAuth } from './auth'
 
 export const useCurrentUser = () => {

@@ -1,9 +1,9 @@
-import NotFound from 'pages/NotFound'
+import { NotFound } from 'pages/NotFound'
 
 /*
 This component leaves the react app and goes to the same url
 */
-const AdminRedirect = () => {
+export const AdminRedirect = () => {
   // prevent infinite redirect loop
   if (globalThis.document.referrer === globalThis.location.href)
     return <NotFound />
@@ -13,5 +13,3 @@ const AdminRedirect = () => {
 
   return null
 }
-
-export default AdminRedirect

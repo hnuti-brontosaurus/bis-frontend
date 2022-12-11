@@ -6,3 +6,4 @@ extends:
 rules:
   'prettier/prettier': warn
   'no-console': warn
+  'import/no-default-export': error

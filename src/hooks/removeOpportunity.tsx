@@ -1,10 +1,10 @@
-import { confirmAlert } from 'react-confirm-alert'
-import 'react-confirm-alert/src/react-confirm-alert.css'
-import { api } from '../app/services/bis'
+import { api } from 'app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../features/systemMessage/useSystemMessage'
+} from 'features/systemMessage/useSystemMessage'
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
 // open modal before before removing opportunity
 

@@ -1,3 +1,7 @@
+import { api, CorrectLocation, OpportunityPayload } from 'app/services/bis'
+import { ReactComponent as HandsIcon } from 'assets/hands.svg'
+import { ReactComponent as HousesIcon } from 'assets/houses.svg'
+import { ReactComponent as OrganizerIcon } from 'assets/organizer.svg'
 import {
   FormInputError,
   FormSection,
@@ -15,22 +19,18 @@ import {
   RichTextEditor,
   SelectLocation,
 } from 'components'
-import merge from 'lodash/merge'
-import { FormEventHandler, ReactNode, useEffect } from 'react'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { Overwrite } from 'utility-types'
-import { api, CorrectLocation, OpportunityPayload } from '../app/services/bis'
-import { ReactComponent as HandsIcon } from '../assets/hands.svg'
-import { ReactComponent as HousesIcon } from '../assets/houses.svg'
-import { ReactComponent as OrganizerIcon } from '../assets/organizer.svg'
-import { useCurrentUser } from '../hooks/currentUser'
+import { useCurrentUser } from 'hooks/currentUser'
 import {
   useClearPersistentForm,
   usePersistentFormData,
   usePersistForm,
-} from '../hooks/persistForm'
-import { getIdBySlug } from '../utils/helpers'
-import { required } from '../utils/validationMessages'
+} from 'hooks/persistForm'
+import merge from 'lodash/merge'
+import { FormEventHandler, ReactNode, useEffect } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { Overwrite } from 'utility-types'
+import { getIdBySlug } from 'utils/helpers'
+import { required } from 'utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
 
 const categoryIcons = {
@@ -54,7 +54,7 @@ export type OpportunityFormShape = Overwrite<
   { location: NewLocation | CorrectLocation }
 >
 
-const OpportunityForm = ({
+export const OpportunityForm = ({
   initialData,
   onSubmit,
   onCancel,
@@ -409,5 +409,3 @@ const OpportunityForm = ({
     </FormProvider>
   )
 }
-
-export default OpportunityForm

@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { Button } from 'components'
+import { useSearchParamsState } from 'hooks/searchParamsState'
 import { Children, FC, FunctionComponentElement, ReactNode } from 'react'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import { useSearchParamsState } from '../../hooks/searchParamsState'
 import styles from './Steps.module.scss'
 
 export const Steps = <T extends Record<string, any>>({

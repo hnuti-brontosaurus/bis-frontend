@@ -1,12 +1,10 @@
 import { Outlet } from 'react-router-dom'
-import MixedLayout from './MixedLayout'
+import { MixedLayout } from './MixedLayout'
 
-const MixedOutlet = () => {
+export const MixedOutlet = () => {
   return (
     <MixedLayout>
       <Outlet />
     </MixedLayout>
   )
 }
-
-export default MixedOutlet
