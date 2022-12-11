@@ -867,6 +867,34 @@ export const api = createApi({
         { type: 'EventPhoto', id: `${eventId}_EVENT_PHOTO_LIST` },
       ],
     }),
+    readParticipatedEvents: build.query<
+      PaginatedList<Event>,
+      { id?: number[]; userId: string } & ListArguments
+    >({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/participated_in_events/`,
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readRegisteredEvents: build.query<
+      PaginatedList<Event>,
+      { id?: number[]; userId: string } & ListArguments
+    >({
+      query: queryArg => ({
+        url: `frontend/users/${queryArg.userId}/registered_in_events/`,
+        params: {
+          id: queryArg.id,
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
     // this endpoints searches GPS by search string
     // using https://nominatim.openstreetmap.org
     // before using it, please refer to it's usage policy
