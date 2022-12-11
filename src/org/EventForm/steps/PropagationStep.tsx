@@ -31,7 +31,7 @@ export const PropagationStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={13}>
+        <FormSection startIndex={12}>
           <FormSubsection
             onWeb
             required
@@ -195,9 +195,11 @@ export const PropagationStep = ({
             header="Poznámka"
             help="Možnost přidat interní poznámku. Poznámku uvidí pouze lidé, kteří si mohou tuto akci zobrazit přímo v BISu"
           >
-            <FormInputError>
-              <input type="text" {...register('internal_note', {})} />
-            </FormInputError>
+            <FullSizeElement>
+              <FormInputError>
+                <textarea {...register('internal_note', {})} />
+              </FormInputError>
+            </FullSizeElement>
           </FormSubsection>
         </FormSection>
       </form>

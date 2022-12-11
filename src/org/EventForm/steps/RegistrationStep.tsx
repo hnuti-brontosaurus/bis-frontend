@@ -31,50 +31,6 @@ export const RegistrationStep = ({
         <FormSection startIndex={10}>
           <FormSubsection
             required
-            header="Na koho je akce zaměřená"
-            help="Akce zaměřená na členy jsou interní akce HB - valné hromady, týmovky, strategická plánování atd."
-          >
-            <FormInputError>
-              <Controller
-                name={'is_internal'}
-                control={control}
-                rules={{
-                  ...requireBoolean,
-                }}
-                render={({ field }) => (
-                  <InlineSection>
-                    {[
-                      { name: 'Na členy', value: true },
-                      { name: 'Na nečleny', value: false },
-                    ].map(({ name, value }) => (
-                      <div key={name}>
-                        <input
-                          ref={field.ref}
-                          type="radio"
-                          name={field.name}
-                          id={name}
-                          value={String(value)}
-                          checked={field.value === value}
-                          onChange={e =>
-                            field.onChange(
-                              e.target.value === 'true'
-                                ? true
-                                : e.target.value === 'false'
-                                ? false
-                                : undefined,
-                            )
-                          }
-                        />{' '}
-                        <label htmlFor={name}>{name}</label>
-                      </div>
-                    ))}
-                  </InlineSection>
-                )}
-              />
-            </FormInputError>
-          </FormSubsection>
-          <FormSubsection
-            required
             header="Zveřejnit na brontosauřím webu"
             help="Pokud zaškrtnete ano, akce se zobrazí na webu www.brontosaurus.cz. Volbu ne zaškrtněte pouze jedná-li se o interní akci HB nebo interní akci Brďa."
           >
