@@ -1,4 +1,4 @@
-import { useAppSelector } from '../../app/hooks'
+import { useAppSelector } from 'app/hooks'
 import { SystemMessage } from './SystemMessage'
 import styles from './SystemMessages.module.scss'
 import { selectMessages } from './systemMessageSlice'

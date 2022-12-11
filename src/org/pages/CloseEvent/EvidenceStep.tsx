@@ -1,3 +1,4 @@
+import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
@@ -10,7 +11,6 @@ import {
   Loading,
 } from 'components'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
-import { api } from '../../../app/services/bis'
 import { EvidenceStepFormShape } from './CloseEventForm'
 
 const totalHoursHelp =

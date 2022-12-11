@@ -1,5 +1,5 @@
+import { api } from 'app/services/bis'
 import { FC, useState } from 'react'
-import { api } from '../../../app/services/bis'
 import styles from './ParticipantsStep.module.scss'
 import { Applications } from './registration/Applications'
 import { Participants } from './registration/Participants'

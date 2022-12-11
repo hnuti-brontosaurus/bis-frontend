@@ -1,6 +1,6 @@
+import { api } from 'app/services/bis'
 import { Error, Loading } from 'components'
 import { Outlet, useParams } from 'react-router-dom'
-import { api } from '../app/services/bis'
 
 export const ProfileOutlet = () => {
   const params = useParams()

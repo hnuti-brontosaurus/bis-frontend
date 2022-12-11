@@ -1,13 +1,13 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from 'app/store'
 import mergeWith from 'lodash/mergeWith'
 import type { EventFormShape } from 'org/EventForm'
+import { OpportunityFormShape } from 'org/OpportunityForm'
+import { CloseEventFormShape } from 'org/pages/CloseEvent/CloseEventForm'
 import { RegistrationFormShapeWithStep } from 'pages/EventRegistrationForm'
+import { UserForm } from 'user/EditProfile'
 import { DeepPartial, ValuesType } from 'utility-types'
-import { RootState } from '../../app/store'
-import { OpportunityFormShape } from '../../org/OpportunityForm'
-import { CloseEventFormShape } from '../../org/pages/CloseEvent/CloseEventForm'
-import { UserForm } from '../../user/EditProfile'
-import { withOverwriteArray } from '../../utils/helpers'
+import { withOverwriteArray } from 'utils/helpers'
 
 export type FormState<K extends string = string> = {
   event: Record<K, EventFormShape>

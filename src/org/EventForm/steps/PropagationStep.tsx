@@ -1,3 +1,4 @@
+import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
@@ -8,9 +9,8 @@ import {
   Loading,
 } from 'components'
 import { Controller, FormProvider } from 'react-hook-form'
-import { api } from '../../../app/services/bis'
-import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../EventForm'
+import { required } from 'utils/validationMessages'
+import { MethodsShapes } from '..'
 
 export const PropagationStep = ({
   methods,

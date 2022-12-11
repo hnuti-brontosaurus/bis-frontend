@@ -1,14 +1,14 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query'
-import { mergeWith } from 'lodash'
-import { Assign, Overwrite } from 'utility-types'
 import {
   api,
   CorrectEventPropagationImage,
   CorrectLocation,
-} from '../app/services/bis'
-import { Event, Propagation, Question, User } from '../app/services/bisTypes'
-import { withOverwriteArray } from '../utils/helpers'
+} from 'app/services/bis'
+import { Event, Propagation, Question, User } from 'app/services/bisTypes'
+import { mergeWith } from 'lodash'
+import { Assign, Overwrite } from 'utility-types'
+import { withOverwriteArray } from 'utils/helpers'
 
 export type FullEvent = Assign<
   Overwrite<

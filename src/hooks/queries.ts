@@ -13,9 +13,9 @@ import type {
   EndpointDefinitions,
   QueryDefinition,
 } from '@reduxjs/toolkit/query'
+import { store } from 'app/store'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { store } from '../app/store'
 
 /**
  * Allows running a query on a collection of data

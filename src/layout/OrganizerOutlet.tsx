@@ -1,7 +1,7 @@
 import { Loading } from 'components'
+import { useCurrentUser } from 'hooks/currentUser'
 import { Outlet } from 'react-router-dom'
 import { isOrganizer } from 'utils/helpers'
-import { useCurrentUser } from '../hooks/currentUser'
 
 export const OrganizerOutlet = () => {
   const { data: user, isLoading } = useCurrentUser()

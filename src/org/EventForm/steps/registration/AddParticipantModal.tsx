@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api, UserPayload } from 'app/services/bis'
+import { EventApplication, User } from 'app/services/bisTypes'
 import classNames from 'classnames'
 import {
   Button,
@@ -11,6 +12,7 @@ import {
   Loading,
   StyledModal,
 } from 'components'
+import stylesTable from 'components/Table.module.scss'
 import dayjs from 'dayjs'
 import { FC, FormEventHandler, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -18,8 +20,6 @@ import { FaAt, FaBirthdayCake, FaPhoneAlt } from 'react-icons/fa'
 import Tooltip from 'react-tooltip-lite'
 import colors from 'styles/colors.module.scss'
 import * as yup from 'yup'
-import { EventApplication, User } from '../../../../app/services/bisTypes'
-import stylesTable from '../../../../components/Table.module.scss'
 import { BirthdayInputCheck } from './BirthdayInputCheck'
 import styles from './NewApplicationModal.module.scss'
 

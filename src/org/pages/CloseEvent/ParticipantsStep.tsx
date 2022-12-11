@@ -1,3 +1,4 @@
+import { Event } from 'app/services/bisTypes'
 import {
   Actions,
   Button,
@@ -7,10 +8,9 @@ import {
   InlineSection,
   Label,
 } from 'components'
+import { ParticipantsStep as ParticipantsList } from 'org/EventForm/steps/ParticipantsStep'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
-import { Event } from '../../../app/services/bisTypes'
-import { required } from '../../../utils/validationMessages'
-import { ParticipantsStep as ParticipantsList } from '../../EventForm/steps/ParticipantsStep'
+import { required } from 'utils/validationMessages'
 import { ParticipantsStepFormShape } from './CloseEventForm'
 
 export const ParticipantsStep = ({

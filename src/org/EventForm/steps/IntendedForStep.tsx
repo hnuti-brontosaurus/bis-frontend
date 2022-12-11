@@ -1,3 +1,4 @@
+import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
@@ -11,10 +12,9 @@ import {
 } from 'components'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
-import { api } from '../../../app/services/bis'
-import { getIdBySlug, requireBoolean } from '../../../utils/helpers'
-import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../EventForm'
+import { getIdBySlug, requireBoolean } from 'utils/helpers'
+import { required } from 'utils/validationMessages'
+import { MethodsShapes } from '..'
 
 export const IntendedForStep = ({
   methods,

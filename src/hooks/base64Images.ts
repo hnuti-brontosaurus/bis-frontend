@@ -5,10 +5,10 @@ import {
 } from '@reduxjs/toolkit/dist/query'
 import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
 import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
+import { PaginatedList } from 'app/services/bis'
 import { useEffect, useState } from 'react'
 import type { Overwrite } from 'utility-types'
-import { PaginatedList } from '../app/services/bis'
-import { toDataURL } from '../utils/helpers'
+import { toDataURL } from 'utils/helpers'
 
 export const useBase64Images = <
   I extends { image: { original: string } },

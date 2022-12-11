@@ -1,9 +1,9 @@
 import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
 import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
 import { EndpointDefinitions, QueryDefinition } from '@reduxjs/toolkit/query'
+import { PaginatedList } from 'app/services/bis'
+import { AdministrationUnit } from 'app/services/bisTypes'
 import { useEffect, useState } from 'react'
-import { PaginatedList } from '../app/services/bis'
-import { AdministrationUnit } from '../app/services/bisTypes'
 
 export function useAllPages<
   Q extends QueryDefinition<

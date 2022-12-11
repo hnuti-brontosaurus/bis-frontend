@@ -4,7 +4,7 @@ import type {
   Qualification,
   QualificationCategory,
   User,
-} from '../../../app/services/bisTypes'
+} from 'app/services/bisTypes'
 
 export const getRequiredQualifications = (
   event: Partial<Pick<Event, 'intended_for' | 'group' | 'category'>>,

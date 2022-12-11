@@ -1,5 +1,5 @@
+import { useCurrentUser } from 'hooks/currentUser'
 import { Navigate } from 'react-router-dom'
-import { useCurrentUser } from '../hooks/currentUser'
 
 export const ViewMyProfile = () => {
   const { data: currentUser } = useCurrentUser()

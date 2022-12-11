@@ -10,9 +10,9 @@ import {
 } from 'components'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import { FaTrashAlt } from 'react-icons/fa'
-import { requireBoolean } from '../../../utils/helpers'
-import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../EventForm'
+import { requireBoolean } from 'utils/helpers'
+import { required } from 'utils/validationMessages'
+import { MethodsShapes } from '..'
 
 export const RegistrationStep = ({
   methods,

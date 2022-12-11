@@ -1,3 +1,4 @@
+import { api } from 'app/services/bis'
 import {
   ButtonLink,
   ListHeader,
@@ -5,11 +6,10 @@ import {
   UnscalablePaginatedList,
 } from 'components'
 import listStyles from 'components/ListHeader/ListHeader.module.scss'
+import { useCurrentUser } from 'hooks/currentUser'
+import { useTitle } from 'hooks/title'
 import { ClearPageMargin, Content, Header, Layout } from 'layout/Layout'
 import { FaPlus } from 'react-icons/fa'
-import { api } from '../../../app/services/bis'
-import { useCurrentUser } from '../../../hooks/currentUser'
-import { useTitle } from '../../../hooks/title'
 import { OpportunityTable } from './OpportunityTable'
 
 export const OpportunityList = () => {

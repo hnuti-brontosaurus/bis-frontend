@@ -10,8 +10,8 @@ import {
   RichTextEditor,
 } from 'components'
 import { Controller, FormProvider } from 'react-hook-form'
-import { required } from '../../../utils/validationMessages'
-import { MethodsShapes } from '../EventForm'
+import { required } from 'utils/validationMessages'
+import { MethodsShapes } from '..'
 
 export const InvitationStep = ({
   methods,

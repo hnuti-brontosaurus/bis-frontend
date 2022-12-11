@@ -1,5 +1,5 @@
+import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
-import { required } from '../utils/validationMessages'
 
 yup.setLocale({
   mixed: {

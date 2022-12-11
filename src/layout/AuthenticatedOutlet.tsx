@@ -1,8 +1,8 @@
+import { useAppSelector } from 'app/hooks'
 import { Loading } from 'components'
+import { selectLoggingOut } from 'features/auth/authSlice'
+import { useCurrentUser } from 'hooks/currentUser'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { useAppSelector } from '../app/hooks'
-import { selectLoggingOut } from '../features/auth/authSlice'
-import { useCurrentUser } from '../hooks/currentUser'
 import { AuthenticatedLayout } from './AuthenticatedLayout'
 
 export const AuthenticatedOutlet = () => {

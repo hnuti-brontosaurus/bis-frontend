@@ -1,4 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import { AnswerPayload, api } from 'app/services/bis'
+import { EventApplication } from 'app/services/bisTypes'
 import {
   BirthdayInput,
   birthdayValidation,
@@ -11,10 +13,8 @@ import {
 } from 'components'
 import { FC, FormEventHandler } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
-import { AnswerPayload, api } from '../../../../app/services/bis'
-import { EventApplication } from '../../../../app/services/bisTypes'
-import { required } from '../../../../utils/validationMessages'
 import styles from './NewApplicationModal.module.scss'
 
 interface INewApplicationModalProps {

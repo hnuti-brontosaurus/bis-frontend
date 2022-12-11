@@ -1,14 +1,14 @@
+import { api } from 'app/services/bis'
 import { Loading, useCreateOrSelectLocation } from 'components'
-import merge from 'lodash/merge'
-import { useNavigate } from 'react-router-dom'
-import { api } from '../../app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../../features/systemMessage/useSystemMessage'
-import { useCurrentUser } from '../../hooks/currentUser'
-import { useTitle } from '../../hooks/title'
-import { OpportunityForm, OpportunityFormShape } from '../OpportunityForm'
+} from 'features/systemMessage/useSystemMessage'
+import { useCurrentUser } from 'hooks/currentUser'
+import { useTitle } from 'hooks/title'
+import merge from 'lodash/merge'
+import { OpportunityForm, OpportunityFormShape } from 'org/OpportunityForm'
+import { useNavigate } from 'react-router-dom'
 
 export const CreateOpportunity = () => {
   useTitle('Nová příležitost')

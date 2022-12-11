@@ -1,10 +1,10 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { api } from 'app/services/bis'
+import { User } from 'app/services/testApi'
 import { Loading } from 'components'
+import stylesTable from 'components/Table.module.scss'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
-import { api } from '../../../../app/services/bis'
-import { User } from '../../../../app/services/testApi'
-import stylesTable from '../../../../components/Table.module.scss'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
 

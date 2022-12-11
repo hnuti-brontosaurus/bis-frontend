@@ -1,4 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import { api, UserPayload } from 'app/services/bis'
+import { Address, User } from 'app/services/bisTypes'
 import {
   Actions,
   BirthdayInput,
@@ -13,24 +15,22 @@ import {
   Label,
   Loading,
 } from 'components'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from 'features/systemMessage/useSystemMessage'
+import { useCurrentUser } from 'hooks/currentUser'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from 'hooks/persistForm'
 import { merge, omit, startsWith } from 'lodash'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { Overwrite } from 'utility-types'
 import * as yup from 'yup'
-import { api, UserPayload } from '../app/services/bis'
-import { Address, User } from '../app/services/bisTypes'
-import {
-  useShowApiErrorMessage,
-  useShowMessage,
-} from '../features/systemMessage/useSystemMessage'
-import { useCurrentUser } from '../hooks/currentUser'
-import {
-  useClearPersistentForm,
-  usePersistentFormData,
-  usePersistForm,
-} from '../hooks/persistForm'
 import styles from './ViewProfile.module.scss'
 
 export type UserForm = Pick<

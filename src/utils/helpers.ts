@@ -1,8 +1,8 @@
+import { Event, User } from 'app/services/bisTypes'
 import { cloneDeep } from 'lodash'
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
 import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
-import { Event, User } from '../app/services/bisTypes'
 
 export function getIdBySlug<T, O extends { id: number; slug: T }>(
   objects: O[],
