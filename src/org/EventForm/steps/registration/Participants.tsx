@@ -55,6 +55,7 @@ export const Participants: FC<{
               <tbody>
                 {participants.results.map((participant: User) => (
                   <tr
+                    key={participant.id}
                     className={
                       highlightedParticipant === participant.id
                         ? styles.highlightedRow

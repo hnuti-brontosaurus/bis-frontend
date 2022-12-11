@@ -1,5 +1,5 @@
 import { api, EventPayload } from 'app/services/bis'
-import { Error, Loading } from 'components'
+import { Error, Loading, PageHeader } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -168,12 +168,15 @@ export const CloseEvent = () => {
   }
 
   return (
-    <CloseEventForm
-      id={String(eventId)}
-      event={event}
-      initialData={defaultValues}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
-    />
+    <>
+      <PageHeader>Evidence akce {event.name}</PageHeader>
+      <CloseEventForm
+        id={String(eventId)}
+        event={event}
+        initialData={defaultValues}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
+    </>
   )
 }

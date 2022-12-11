@@ -1,0 +1,23 @@
+@use 'components/Button/Button.module' as btn;
+@use 'components/FormLayout/FormLayout.module' as formLayout;
+@use 'styles/colors';
+
+.group {
+  @include formLayout.actions;
+}
+
+.input {
+  display: none;
+
+  // style label of checked input
+  &:checked + .label {
+    @include btn.success-button;
+  }
+  &:not(:checked) + .label {
+    @include btn.plain-button;
+  }
+}
+
+.label {
+  @include btn.basic-button;
+}

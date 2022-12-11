@@ -1,6 +1,6 @@
 @use 'styles/colors';
 
-.button {
+@mixin basic-button {
   border-radius: 12px;
   padding: 4px 32px;
   cursor: pointer;
@@ -12,11 +12,30 @@
   gap: 0.5rem;
 }
 
-.success {
+@mixin success-button {
   color: white;
   background-color: colors.$bronto;
   border: 2px solid colors.$bronto;
   font-size: 1rem;
+}
+
+@mixin plain-button {
+  color: black;
+  background-color: transparent;
+  border: 1px solid colors.$gray-400;
+  font-size: 1rem;
+
+  &:hover {
+    background-color: rgba(colors.$bronto, 0.18);
+  }
+}
+
+.button {
+  @include basic-button;
+}
+
+.success {
+  @include success-button;
 }
 
 .light {
@@ -26,14 +45,7 @@
 }
 
 .plain {
-  color: black;
-  background-color: transparent;
-  border: 1px solid colors.$gray-400;
-  font-size: 1rem;
-
-  &:hover {
-    background-color: rgba(colors.$bronto, 0.18);
-  }
+  @include plain-button;
 }
 
 :global .opportunitySection {

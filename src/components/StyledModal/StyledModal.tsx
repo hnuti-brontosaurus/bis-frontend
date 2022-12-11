@@ -26,6 +26,7 @@ export const StyledModal: FC<IShowApplicationModalProps> = ({
       contentLabel={title}
       className={styles.modal}
       overlayClassName={styles.overlay}
+      appElement={document.getElementById('root') as HTMLElement}
     >
       <div className={styles.content}>
         <div className={styles.modalTitleBox}>
