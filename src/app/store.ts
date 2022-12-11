@@ -19,12 +19,11 @@ import {
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-import authReducer from '../features/auth/authSlice'
-import formReducer from '../features/form/formSlice'
-import systemMessageReducer from '../features/systemMessage/systemMessageSlice'
-import uiReducer from '../features/ui/uiSlice'
+import { reducer as authReducer } from 'features/auth/authSlice'
+import { reducer as formReducer } from 'features/form/formSlice'
+import { reducer as systemMessageReducer } from 'features/systemMessage/systemMessageSlice'
+import { reducer as uiReducer } from 'features/ui/uiSlice'
 import { api } from './services/bis'
-// import { emptySplitApi } from './services/emptyApi'
 
 const persistConfig = {
   key: 'auth',

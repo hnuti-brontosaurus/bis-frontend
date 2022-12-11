@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../../app/store'
+import { RootState } from 'app/store'
 
 export type SystemMessage = {
   id: string
@@ -29,11 +29,7 @@ const slice = createSlice({
   },
 })
 
-const { actions, reducer } = slice
-
-export default reducer
-
-export { actions }
+export const { actions, reducer } = slice
 
 export const selectMessages = (state: RootState) =>
   Object.values(state.systemMessage.messages.byId).sort(

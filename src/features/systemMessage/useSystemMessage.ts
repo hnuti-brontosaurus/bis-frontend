@@ -1,7 +1,7 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
+import { useAppDispatch } from 'app/hooks'
 import { useCallback, useEffect } from 'react'
-import { useAppDispatch } from '../../app/hooks'
 import { actions, SystemMessage } from './systemMessageSlice'
 
 /**

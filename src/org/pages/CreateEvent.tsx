@@ -1,21 +1,21 @@
+import { api } from 'app/services/bis'
 import { Loading, useCreateOrSelectLocation } from 'components'
-import { omit, startsWith } from 'lodash'
-import merge from 'lodash/merge'
-import { useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { api } from '../../app/services/bis'
 import {
   useShowApiErrorMessage,
   useShowMessage,
-} from '../../features/systemMessage/useSystemMessage'
-import { useCurrentUser } from '../../hooks/currentUser'
-import { useReadFullEvent } from '../../hooks/readFullEvent'
-import { useTitle } from '../../hooks/title'
-import { toDataURL } from '../../utils/helpers'
-import EventForm, { SubmitShape } from '../EventForm'
-import { event2payload } from './EditEvent'
+} from 'features/systemMessage/useSystemMessage'
+import { useCurrentUser } from 'hooks/currentUser'
+import { useReadFullEvent } from 'hooks/readFullEvent'
+import { useTitle } from 'hooks/title'
+import { omit, startsWith } from 'lodash'
+import merge from 'lodash/merge'
+import { EventForm, SubmitShape } from 'org/EventForm'
+import { useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { toDataURL } from 'utils/helpers'
+import { event2payload } from './UpdateEvent'
 
-const CreateEvent = () => {
+export const CreateEvent = () => {
   useTitle('Nová akce')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -141,5 +141,3 @@ const CreateEvent = () => {
     />
   )
 }
-
-export default CreateEvent

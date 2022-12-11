@@ -1,12 +1,12 @@
+import { User } from 'app/services/bisTypes'
 import { Actions, ButtonLink } from 'components'
+import { useCurrentUser } from 'hooks/currentUser'
 import { FaPencilAlt } from 'react-icons/fa'
 import { useOutletContext } from 'react-router-dom'
-import { User } from '../app/services/bisTypes'
-import { useCurrentUser } from '../hooks/currentUser'
-import { formatDateTime } from '../utils/helpers'
+import { formatDateTime } from 'utils/helpers'
 import styles from './ViewProfile.module.scss'
 
-const ViewProfile = () => {
+export const ViewProfile = () => {
   const { user } = useOutletContext<{ user: User }>()
   const { data: currentUser } = useCurrentUser()
   return (
@@ -60,5 +60,3 @@ const ViewProfile = () => {
     </div>
   )
 }
-
-export default ViewProfile

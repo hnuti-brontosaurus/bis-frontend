@@ -1,11 +1,11 @@
+import { useAppSelector } from 'app/hooks'
 import { Loading } from 'components'
+import { selectLoggingOut } from 'features/auth/authSlice'
+import { useCurrentUser } from 'hooks/currentUser'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { useAppSelector } from '../app/hooks'
-import { selectLoggingOut } from '../features/auth/authSlice'
-import { useCurrentUser } from '../hooks/currentUser'
-import AuthenticatedLayout from './AuthenticatedLayout'
+import { AuthenticatedLayout } from './AuthenticatedLayout'
 
-const AuthenticatedOutlet = () => {
+export const AuthenticatedOutlet = () => {
   const { isAuthenticated, data: user } = useCurrentUser()
   const location = useLocation()
 
@@ -33,5 +33,3 @@ const AuthenticatedOutlet = () => {
     return <Navigate to={`/login${next}`} />
   }
 }
-
-export default AuthenticatedOutlet

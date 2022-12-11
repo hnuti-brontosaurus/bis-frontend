@@ -7,11 +7,11 @@ import stylesTable from 'components/Table.module.scss'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserPlus as AddUser } from 'react-icons/fa'
 import styles from '../ParticipantsStep.module.scss'
-import AddParticipantModal from './AddParticipantModal'
-import NewApplicationModal from './NewApplicationModal'
-import ShowApplicationModal from './ShowApplicationModal'
+import { AddParticipantModal } from './AddParticipantModal'
+import { NewApplicationModal } from './NewApplicationModal'
+import { ShowApplicationModal } from './ShowApplicationModal'
 
-const Applications: FC<{
+export const Applications: FC<{
   eventId: number
   eventName: string
   chooseHighlightedApplication: (id: string | undefined) => void
@@ -284,5 +284,3 @@ const Applications: FC<{
     </>
   )
 }
-
-export default Applications

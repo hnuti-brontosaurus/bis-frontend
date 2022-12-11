@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { isOrganizer } from 'utils/helpers'
 import styles from './Header.module.scss'
 
-const Header = () => {
+export const Header = () => {
   const { data: user, isAuthenticated } = useCurrentUser()
   const [logout] = api.endpoints.logout.useMutation()
 
@@ -113,5 +113,3 @@ const Header = () => {
     </div>
   )
 }
-
-export default Header

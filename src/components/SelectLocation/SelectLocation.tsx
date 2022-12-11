@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { api, CorrectLocation } from 'app/services/bis'
 import { ReactComponent as MapMarkerNew } from 'assets/map-marker-new.svg'
 import { ReactComponent as MapMarkerSelected } from 'assets/map-marker-selected.svg'
 import { ReactComponent as MapMarkerDefault } from 'assets/map-marker.svg'
@@ -20,9 +21,8 @@ import merge from 'lodash/merge'
 import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
+import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
-import { api, CorrectLocation } from '../../app/services/bis'
-import { required } from '../../utils/validationMessages'
 import styles from './SelectLocation.module.scss'
 
 export type NewLocation = Overwrite<

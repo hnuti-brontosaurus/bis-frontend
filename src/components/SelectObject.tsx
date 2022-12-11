@@ -5,11 +5,11 @@ import {
   QueryDefinition,
   skipToken,
 } from '@reduxjs/toolkit/query'
+import { PaginatedList } from 'app/services/bis'
+import { useDebouncedState } from 'hooks/debouncedState'
 import { forwardRef, InputHTMLAttributes } from 'react'
 import Select from 'react-select'
 import { Assign } from 'utility-types'
-import { PaginatedList } from '../app/services/bis'
-import { useDebouncedState } from '../hooks/debouncedState'
 
 // Redeclare forwardRef - to be able to forward refs to generic components
 // https://fettblog.eu/typescript-react-generic-forward-refs/#option-3%3A-augment-forwardref

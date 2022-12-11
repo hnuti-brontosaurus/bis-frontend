@@ -43,6 +43,6 @@ Sentry.init({
 })
 
 export { ErrorBoundary } from '@sentry/react'
-export { default as ErrorBoundaryFallback } from './ErrorBoundaryFallback'
+export { ErrorBoundaryFallback } from './ErrorBoundaryFallback'
 
 export const Routes = Sentry.withSentryReactRouterV6Routing(OriginalRoutes)

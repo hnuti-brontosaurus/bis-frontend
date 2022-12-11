@@ -1,3 +1,7 @@
+import { api } from 'app/services/bis'
+import { ReactComponent as OneTreeIcon } from 'assets/one-tree.svg'
+import { ReactComponent as TentIcon } from 'assets/tent.svg'
+import { ReactComponent as ThreeTreesIcon } from 'assets/three-trees.svg'
 import {
   FormInputError,
   FormSection,
@@ -6,12 +10,8 @@ import {
   IconSelectGroup,
 } from 'components'
 import { ReactNode } from 'react'
-import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
-import { api } from '../../../app/services/bis'
-import { ReactComponent as OneTreeIcon } from '../../../assets/one-tree.svg'
-import { ReactComponent as TentIcon } from '../../../assets/tent.svg'
-import { ReactComponent as ThreeTreesIcon } from '../../../assets/three-trees.svg'
-import { StepShapes } from '../EventForm'
+import { Controller, FormProvider } from 'react-hook-form'
+import { MethodsShapes } from '..'
 
 type EventGroupSlug = 'weekend_event' | 'other' | 'camp'
 
@@ -59,10 +59,10 @@ const groupConfig: Record<
 // Create Event Form Step for Event Category
 // In api, Category is called Group
 
-const EventCategoryStep = ({
+export const EventCategoryStep = ({
   methods,
 }: {
-  methods: UseFormReturn<StepShapes['category']>
+  methods: MethodsShapes['category']
 }) => {
   const { data: groups } = api.endpoints.getEventGroups.useQuery()
   return (
@@ -113,5 +113,3 @@ const EventCategoryStep = ({
     </FormProvider>
   )
 }
-
-export default EventCategoryStep

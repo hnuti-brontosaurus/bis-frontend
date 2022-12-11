@@ -1,7 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/query'
+import { api } from 'app/services/bis'
+import { User, UserSearch } from 'app/services/bisTypes'
 import { useMemo } from 'react'
-import { api } from '../app/services/bis'
-import { User, UserSearch } from '../app/services/bisTypes'
 
 export const useReadUnknownAndFullUsers = (
   params:

@@ -1,10 +1,3 @@
-import { Step, Steps } from 'components'
-import { cloneDeep, mergeWith } from 'lodash'
-import merge from 'lodash/merge'
-import pick from 'lodash/pick'
-import { FieldErrorsImpl, useForm } from 'react-hook-form'
-import type { DeepPick } from 'ts-deep-pick'
-import { Optional } from 'utility-types'
 import {
   Event,
   EventPhoto,
@@ -12,16 +5,23 @@ import {
   FinanceReceipt,
   PatchedEvent,
   Record,
-} from '../../../app/services/bisTypes'
-import { useShowMessage } from '../../../features/systemMessage/useSystemMessage'
+} from 'app/services/bisTypes'
+import { Step, Steps } from 'components'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
   usePersistentFormData,
   usePersistForm,
-} from '../../../hooks/persistForm'
-import { pickErrors, withOverwriteArray } from '../../../utils/helpers'
-import EvidenceStep from './EvidenceStep'
-import ParticipantsStep from './ParticipantsStep'
+} from 'hooks/persistForm'
+import { cloneDeep, mergeWith } from 'lodash'
+import merge from 'lodash/merge'
+import pick from 'lodash/pick'
+import { FieldErrorsImpl, useForm } from 'react-hook-form'
+import type { DeepPick } from 'ts-deep-pick'
+import { Optional } from 'utility-types'
+import { pickErrors, withOverwriteArray } from 'utils/helpers'
+import { EvidenceStep } from './EvidenceStep'
+import { ParticipantsStep } from './ParticipantsStep'
 
 export type CloseEventPayload = DeepPick<
   PatchedEvent,
@@ -94,7 +94,7 @@ const formData2payload = ({
   return merge(is_complete ? { is_complete: true } : {}, payload)
 }
 
-const CloseEventForm = ({
+export const CloseEventForm = ({
   event,
   initialData,
   onSubmit,
@@ -255,5 +255,3 @@ const CloseEventForm = ({
     </Steps>
   )
 }
-
-export default CloseEventForm

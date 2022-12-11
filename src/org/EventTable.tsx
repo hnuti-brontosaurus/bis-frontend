@@ -1,21 +1,17 @@
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
+import { api } from 'app/services/bis'
+import { Event } from 'app/services/bisTypes'
 import classNames from 'classnames'
+import styles from 'components/Table.module.scss'
+import { useQueries } from 'hooks/queries'
+import { useRemoveEvent } from 'hooks/removeEvent'
 import { FC, useMemo } from 'react'
 import { FaRegCheckCircle } from 'react-icons/fa'
 import { TbDotsVertical } from 'react-icons/tb'
 import { Link } from 'react-router-dom'
-import { api } from '../app/services/bis'
-import { Event } from '../app/services/bisTypes'
-import styles from '../components/Table.module.scss'
-import { useQueries } from '../hooks/queries'
-import { useRemoveEvent } from '../hooks/removeEvent'
-import {
-  formatDateRange,
-  getEventStatus,
-  isEventClosed,
-} from '../utils/helpers'
+import { formatDateRange, getEventStatus, isEventClosed } from 'utils/helpers'
 
-const EventTable: FC<{
+export const EventTable: FC<{
   data: Event[]
 }> = ({ data: events }) => {
   const locationRequests = useQueries(
@@ -125,5 +121,3 @@ const EventTable: FC<{
     </table>
   )
 }
-
-export default EventTable

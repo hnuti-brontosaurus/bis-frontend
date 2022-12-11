@@ -1,15 +1,15 @@
+import { useAppDispatch } from 'app/hooks'
 import classNames from 'classnames'
 import { useEffect } from 'react'
 import { FaTimes } from 'react-icons/fa'
 import { Optional } from 'utility-types'
-import { useAppDispatch } from '../../app/hooks'
 import styles from './SystemMessage.module.scss'
 import {
   actions,
   SystemMessage as SystemMessageType,
 } from './systemMessageSlice'
 
-const SystemMessage = ({
+export const SystemMessage = ({
   id,
   type,
   message,
@@ -54,5 +54,3 @@ const SystemMessage = ({
     </div>
   )
 }
-
-export default SystemMessage

@@ -1,9 +1,9 @@
-import { useAppSelector } from '../../app/hooks'
-import SystemMessage from './SystemMessage'
+import { useAppSelector } from 'app/hooks'
+import { SystemMessage } from './SystemMessage'
 import styles from './SystemMessages.module.scss'
 import { selectMessages } from './systemMessageSlice'
 
-const SystemMessages = () => {
+export const SystemMessages = () => {
   const messages = useAppSelector(selectMessages)
   return (
     <ul className={styles.container}>
@@ -15,5 +15,3 @@ const SystemMessages = () => {
     </ul>
   )
 }
-
-export default SystemMessages

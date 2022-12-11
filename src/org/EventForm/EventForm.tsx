@@ -19,15 +19,15 @@ import {
   pickErrors,
   withOverwriteArray,
 } from 'utils/helpers'
-import BasicInfoStep from './steps/BasicInfoStep'
-import EventCategoryStep from './steps/EventCategoryStep'
-import IntendedForStep from './steps/IntendedForStep'
-import InvitationStep from './steps/InvitationStep'
-import LocationStep from './steps/LocationStep'
-import OrganizerStep from './steps/OrganizerStep'
-import ParticipantsStep from './steps/ParticipantsStep'
-import PropagationStep from './steps/PropagationStep'
-import RegistrationStep from './steps/RegistrationStep'
+import { BasicInfoStep } from './steps/BasicInfoStep'
+import { EventCategoryStep } from './steps/EventCategoryStep'
+import { IntendedForStep } from './steps/IntendedForStep'
+import { InvitationStep } from './steps/InvitationStep'
+import { LocationStep } from './steps/LocationStep'
+import { OrganizerStep } from './steps/OrganizerStep'
+import { ParticipantsStep } from './steps/ParticipantsStep'
+import { PropagationStep } from './steps/PropagationStep'
+import { RegistrationStep } from './steps/RegistrationStep'
 
 const steps = [
   'category',
@@ -234,7 +234,7 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
   return finalData
 }
 
-const EventForm: FC<{
+export const EventForm: FC<{
   initialData?: Partial<InitialEventData>
   onSubmit: (data: SubmitShape) => Promise<void>
   onCancel: () => void
@@ -452,5 +452,3 @@ const EventForm: FC<{
     </Steps>
   )
 }
-
-export default EventForm

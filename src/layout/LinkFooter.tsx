@@ -1,6 +1,6 @@
 import styles from './LinkFooter.module.scss'
 
-const LinkFooter = () => {
+export const LinkFooter = () => {
   return (
     <div className={styles.container}>
       <p>motivační text k darování</p>
@@ -57,5 +57,3 @@ const LinkFooter = () => {
     </div>
   )
 }
-
-export default LinkFooter
