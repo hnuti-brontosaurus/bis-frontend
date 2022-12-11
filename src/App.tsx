@@ -64,7 +64,7 @@ function App() {
           <Route path="zucastnene" element={<UserParticipatedEvents />} />
           <Route path="prihlasene" element={<UserRegisteredEvents />} />
         </Route>
-        {/* <Route path="akce/:eventId" element={<ViewEvent />} /> */}
+        <Route path="akce/:eventId" element={<ViewEvent readonly />} />
         <Route path="admin/*" element={<AdminRedirect />} />
         <Route index element={<Home />} />
         {/* Routes for organizers */}
