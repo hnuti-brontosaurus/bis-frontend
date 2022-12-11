@@ -14,7 +14,7 @@ import {
 } from 'components'
 import stylesTable from 'components/Table.module.scss'
 import dayjs from 'dayjs'
-import { FC, FormEventHandler, useEffect, useState } from 'react'
+import { FC, FormEventHandler, Fragment, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaAt, FaBirthdayCake, FaPhoneAlt } from 'react-icons/fa'
 import Tooltip from 'react-tooltip-lite'
@@ -358,7 +358,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                     {!showAddParticipantForm &&
                       userOptions.length !== 0 &&
                       userOptions?.map(result => (
-                        <>
+                        <Fragment key={result.id}>
                           <tr className={styles.myUsers}>
                             <td className={styles.displayName}>
                               <div>{result.display_name}</div>
@@ -555,7 +555,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               </td>
                             </tr>
                           )}
-                        </>
+                        </Fragment>
                       ))}
                     {!showAddParticipantForm &&
                       allUsers.length !== 0 &&

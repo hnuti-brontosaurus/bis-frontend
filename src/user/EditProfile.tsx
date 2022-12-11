@@ -338,7 +338,10 @@ export const EditProfile = () => {
               <InlineSection>
                 <Label>Zdravotní pojišťovna</Label>
                 <FormInputError>
-                  <select {...register('health_insurance_company')}>
+                  <select
+                    style={{ width: '100%', maxWidth: '500px' }}
+                    {...register('health_insurance_company')}
+                  >
                     <option value={0}>&ndash;&ndash;&ndash;</option>
                     {healthInsuranceCompanies.results.map(hic => (
                       <option key={hic.slug} value={hic.id}>

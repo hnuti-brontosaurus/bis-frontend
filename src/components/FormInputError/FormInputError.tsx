@@ -14,11 +14,13 @@ export const FormInputError = <T extends FieldValues>({
   name,
   formMethods,
   isBlock,
+  className,
 }: {
   children: ReactElement
   name?: string
   formMethods?: UseFormReturn<T>
   isBlock?: boolean
+  className?: string
 }) => {
   const defaultMethods = useFormContext()
 
@@ -33,7 +35,10 @@ export const FormInputError = <T extends FieldValues>({
 
   return (
     <div
-      className={classNames(isBlock ? styles.blockContainer : styles.container)}
+      className={classNames(
+        isBlock ? styles.blockContainer : styles.container,
+        className,
+      )}
     >
       <div className={classNames(styles.inputWrapper, error && styles.isError)}>
         {children}
