@@ -9,7 +9,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 // open modal before before removing event
 
 export const useRemoveEvent = () => {
-  const [removeEvent, states] = api.endpoints.removeEvent.useMutation()
+  const [removeEvent, states] = api.endpoints.deleteEvent.useMutation()
 
   useShowApiErrorMessage(states.error, 'Nepodařilo se smazat akci')
   const showMessage = useShowMessage()

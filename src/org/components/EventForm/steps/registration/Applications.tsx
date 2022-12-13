@@ -30,10 +30,10 @@ export const Applications: FC<{
     useState<boolean>(false)
   const [currentApplicationId, setCurrentApplicationId] = useState<number>()
 
-  const { data: categories } = api.endpoints.getEventCategories.useQuery()
-  const { data: programs } = api.endpoints.getPrograms.useQuery()
+  const { data: categories } = api.endpoints.readEventCategories.useQuery()
+  const { data: programs } = api.endpoints.readPrograms.useQuery()
   const { data: administrationUnits } =
-    api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
+    api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
   const { data: participants, isLoading: isReadParticipantsLoading } =
     api.endpoints.readEventParticipants.useQuery({ eventId })

@@ -10,7 +10,7 @@ export const ProfileOutlet = () => {
     data: user,
     isError,
     error,
-  } = api.endpoints.getUser.useQuery({ id: userId })
+  } = api.endpoints.readUser.useQuery({ id: userId })
 
   if (isError) return <Error error={error}></Error>
 

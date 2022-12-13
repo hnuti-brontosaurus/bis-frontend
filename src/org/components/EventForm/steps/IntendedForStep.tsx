@@ -23,7 +23,7 @@ export const IntendedForStep = ({
   methods: MethodsShapes['intendedFor']
   isCamp: boolean
 }) => {
-  const { data: intendedFor } = api.endpoints.getIntendedFor.useQuery()
+  const { data: intendedFor } = api.endpoints.readIntendedFor.useQuery()
   const { watch, register, control, unregister, setValue } = methods
 
   // unregister stuff

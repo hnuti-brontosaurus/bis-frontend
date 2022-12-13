@@ -33,13 +33,13 @@ export const UpdateEvent = () => {
   const [updateEventImage, { isLoading: isUpdatingImage }] =
     api.endpoints.updateEventImage.useMutation()
   const [removeEventImage, { isLoading: isRemovingImage }] =
-    api.endpoints.removeEventImage.useMutation()
+    api.endpoints.deleteEventImage.useMutation()
   const [createEventQuestion, { isLoading: isCreatingQuestion }] =
     api.endpoints.createEventQuestion.useMutation()
   const [updateEventQuestion, { isLoading: isUpdatingQuestion }] =
     api.endpoints.updateEventQuestion.useMutation()
   const [removeEventQuestion, { isLoading: isRemovingQuestion }] =
-    api.endpoints.removeEventQuestion.useMutation()
+    api.endpoints.deleteEventQuestion.useMutation()
 
   useShowApiErrorMessage(updateEventError, 'Nepodařilo se uložit změny')
 

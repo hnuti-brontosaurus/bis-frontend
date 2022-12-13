@@ -94,9 +94,9 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
     birthday: string
   }>({ first_name: '', last_name: '', birthday: '' })
 
-  const { data: categories } = api.endpoints.getEventCategories.useQuery()
+  const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: administrationUnits } =
-    api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
+    api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
   const {
     register,

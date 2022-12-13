@@ -49,13 +49,13 @@ export const useReadFullEvent = (
         }
       : skipToken,
   )
-  const mainOrganizerQuery = api.endpoints.getUser.useQuery(
+  const mainOrganizerQuery = api.endpoints.readUser.useQuery(
     event?.main_organizer ? { id: event.main_organizer } : skipToken,
   )
   const otherOrganizersQuery = api.endpoints.readUsers.useQuery(
     event?.other_organizers ? { id: event.other_organizers } : skipToken,
   )
-  const contactPersonQuery = api.endpoints.getUser.useQuery(
+  const contactPersonQuery = api.endpoints.readUser.useQuery(
     event?.propagation?.contact_person
       ? { id: event.propagation.contact_person }
       : skipToken,
