@@ -7,7 +7,7 @@ import {
 import { FullEvent, useReadFullEvent } from 'hooks/readFullEvent'
 import { useTitle } from 'hooks/title'
 import merge from 'lodash/merge'
-import { EventForm, InitialEventData } from 'org/EventForm'
+import { EventForm, InitialEventData } from 'org/components'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
 

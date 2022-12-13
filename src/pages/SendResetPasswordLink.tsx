@@ -3,9 +3,9 @@ import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { api } from 'app/services/bis'
 import { default as classNames, default as classnames } from 'classnames'
 import { Button, FormInputError, Loading } from 'components'
+import styles from 'pages/Login/Login.module.scss'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import styles from './Login.module.scss'
 
 const requiredMessage = 'Toto pole je povinné!' // TODO DRY!
 

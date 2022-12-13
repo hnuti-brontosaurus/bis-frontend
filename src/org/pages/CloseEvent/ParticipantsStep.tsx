@@ -8,7 +8,7 @@ import {
   Label,
 } from 'components'
 import { ButtonSelectGroup } from 'components/ButtonSelect/ButtonSelect'
-import { ParticipantsStep as ParticipantsList } from 'org/EventForm/steps/ParticipantsStep'
+import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
 import { Entries } from 'type-fest'
 import { required } from 'utils/validationMessages'

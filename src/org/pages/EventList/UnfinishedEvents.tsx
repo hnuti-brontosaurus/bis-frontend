@@ -2,7 +2,7 @@ import { PaginatedList } from 'app/services/bis'
 import { Event } from 'app/services/bisTypes'
 import { UnscalablePaginatedList } from 'components'
 import { useTitle } from 'hooks/title'
-import { EventTable } from 'org/EventTable'
+import { EventTable } from 'org/components'
 import { useOutletContext } from 'react-router-dom'
 import { getEventStatus } from 'utils/helpers'
 

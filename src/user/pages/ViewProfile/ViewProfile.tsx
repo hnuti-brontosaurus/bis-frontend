@@ -1,5 +1,5 @@
 import { User } from 'app/services/bisTypes'
-import { Actions, ButtonLink } from 'components'
+import { Actions, ButtonLink, PageHeader } from 'components'
 import { useCurrentUser } from 'hooks/currentUser'
 import { FaPencilAlt } from 'react-icons/fa'
 import { useOutletContext } from 'react-router-dom'
@@ -11,11 +11,11 @@ export const ViewProfile = () => {
   const { data: currentUser } = useCurrentUser()
   return (
     <div>
-      <header className={styles.header}>
+      <PageHeader>
         {currentUser?.id === user.id
           ? 'Můj profil'
           : `Profil uživatele ${user.display_name}`}
-      </header>
+      </PageHeader>
       <Actions>
         <ButtonLink success to="upravit">
           <FaPencilAlt /> Upravit

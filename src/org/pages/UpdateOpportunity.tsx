@@ -8,7 +8,7 @@ import { useCurrentUser } from 'hooks/currentUser'
 import { useReadFullOpportunity } from 'hooks/readFullOpportunity'
 import { useTitle } from 'hooks/title'
 import merge from 'lodash/merge'
-import { OpportunityForm, OpportunityFormShape } from 'org/OpportunityForm'
+import { OpportunityForm, OpportunityFormShape } from 'org/components'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
 
