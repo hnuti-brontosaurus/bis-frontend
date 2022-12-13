@@ -9,10 +9,10 @@ import {
   TogglePasswordInput,
 } from 'components'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
+import styles from 'pages/Login/Login.module.scss'
 import { lazy, ReactNode, Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Link, useSearchParams } from 'react-router-dom'
-import styles from './Login.module.scss'
 
 const PasswordStrengthBar = lazy(() => import('react-password-strength-bar'))
 

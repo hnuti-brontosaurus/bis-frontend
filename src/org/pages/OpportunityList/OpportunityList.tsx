@@ -9,8 +9,8 @@ import listStyles from 'components/ListHeader/ListHeader.module.scss'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useTitle } from 'hooks/title'
 import { ClearPageMargin, Content, Header, Layout } from 'layout/Layout'
+import { OpportunityTable } from 'org/components/OpportunityTable'
 import { FaPlus } from 'react-icons/fa'
-import { OpportunityTable } from './OpportunityTable'
 
 export const OpportunityList = () => {
   useTitle('Příležitosti')
