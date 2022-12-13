@@ -5,9 +5,9 @@ import { Actions, Button, ButtonLink, Loading } from 'components'
 import { sanitize } from 'dompurify'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useRemoveOpportunity } from 'hooks/removeOpportunity'
+import styles from 'org/pages/ViewEvent/ViewEvent.module.scss'
 import { useNavigate, useParams } from 'react-router-dom'
 import { formatDateRange } from 'utils/helpers'
-import styles from './ViewEvent.module.scss'
 
 export const ViewOpportunity = () => {
   const params = useParams()

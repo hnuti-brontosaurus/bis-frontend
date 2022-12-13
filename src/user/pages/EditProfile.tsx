@@ -14,6 +14,7 @@ import {
   InlineSection,
   Label,
   Loading,
+  PageHeader,
 } from 'components'
 import {
   useShowApiErrorMessage,
@@ -31,7 +32,6 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { Overwrite } from 'utility-types'
 import * as yup from 'yup'
-import styles from './ViewProfile.module.scss'
 
 export type UserForm = Pick<
   Overwrite<
@@ -279,11 +279,11 @@ export const EditProfile = () => {
 
   return (
     <div>
-      <header className={styles.header}>
+      <PageHeader>
         {currentUser?.id === user.id
           ? 'Upravit můj profil'
           : `Upravit profil uživatele ${user.display_name}`}
-      </header>
+      </PageHeader>
       <form onSubmit={handleSubmit} onReset={handleCancel}>
         <FormProvider {...methods}>
           <FormSection>

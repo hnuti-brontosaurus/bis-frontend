@@ -7,7 +7,7 @@ import {
 import { useCurrentUser } from 'hooks/currentUser'
 import { useTitle } from 'hooks/title'
 import merge from 'lodash/merge'
-import { OpportunityForm, OpportunityFormShape } from 'org/OpportunityForm'
+import { OpportunityForm, OpportunityFormShape } from 'org/components'
 import { useNavigate } from 'react-router-dom'
 
 export const CreateOpportunity = () => {
