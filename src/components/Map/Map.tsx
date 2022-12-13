@@ -1,21 +1,15 @@
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster'
-import { api } from 'app/services/bis'
 import markerNew from 'assets/map-marker-new.svg'
 import markerSelected from 'assets/map-marker-selected.svg'
 import markerExistent from 'assets/map-marker.svg'
-import { Button } from 'components'
-import {
-  useShowApiErrorMessage,
-  useShowMessage,
-} from 'features/systemMessage/useSystemMessage'
+import { MapyCzSearch } from 'components'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useOnScreen } from 'hooks/onScreen'
 import * as L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { FaSearchLocation } from 'react-icons/fa'
 import {
   MapContainer,
   Marker,
@@ -100,12 +94,12 @@ const MapRefresh = ({
   return <div ref={elementRef}></div>
 }
 
-const MapFly = ({ value }: { value?: L.LatLngTuple }) => {
+const MapFly = ({ value, zoom }: { value?: L.LatLngTuple; zoom?: number }) => {
   const map = useMap()
 
   useEffect(() => {
-    if (value) map.flyTo(value, Math.max(10, map.getZoom()))
-  }, [value, map])
+    if (value) map.flyTo(value, zoom ?? Math.max(10, map.getZoom()))
+  }, [value, map, zoom])
   return null
 }
 
@@ -125,6 +119,18 @@ export type ClearBounds = {
   west: number
 }
 
+export interface MapProps {
+  className?: string
+  markers: MarkerType[]
+  selection?: MarkerType
+  value?: L.LatLngTuple
+  onChange: (location: L.LatLngTuple) => void
+  onSelect: (id: number) => void
+  onDeselect: () => void
+  onChangeBounds?: (bounds: ClearBounds) => void
+  onError?: (error: Error) => void
+}
+
 export const Map = ({
   className,
   markers,
@@ -135,56 +141,37 @@ export const Map = ({
   onDeselect,
   onChangeBounds,
   onError,
-}: {
-  className?: string
-  markers: MarkerType[]
-  selection?: MarkerType
-  value?: L.LatLngTuple
-  onChange: (location: L.LatLngTuple) => void
-  onSelect: (id: number) => void
-  onDeselect: () => void
-  onChangeBounds?: (bounds: ClearBounds) => void
-  onError?: (error: Error) => void
-}) => {
+}: MapProps) => {
   const [flyPosition, setFlyPosition] = useState<L.LatLngTuple>()
-  const [flyBounds, setFlyBounds] = useState<L.LatLngBoundsLiteral>()
+  const [flyZoom, setFlyZoom] = useState<number | undefined>()
+  const [flyBounds /*, setFlyBounds*/] = useState<L.LatLngBoundsLiteral>()
 
   useEffect(() => {
-    if (selection?.coordinates) setFlyPosition(selection.coordinates)
+    if (selection?.coordinates) {
+      setFlyZoom(undefined)
+      setFlyPosition(selection.coordinates)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selection?.id])
 
   useEffect(() => {
-    if (value) setFlyPosition(value)
+    if (value) {
+      setFlyZoom(undefined)
+      setFlyPosition(value)
+    }
   }, [value])
 
   const showMessage = useShowMessage()
 
-  const searchMethods = useForm<{
-    query: string
-  }>()
-  const { register, handleSubmit, formState, reset } = searchMethods
+  const handleSearch = (coords: [number, number]) => {
+    setFlyZoom(16)
+    setFlyPosition(coords)
+    // setFlyBounds(foundLocations[0].boundingbox as L.LatLngBoundsLiteral)
+  }
 
-  const [searchOSMLocation, { isLoading: isSearching, error }] =
-    api.endpoints.searchLocationOSM.useLazyQuery()
-
-  useShowApiErrorMessage(error)
-
-  const handleSearchFormSubmit = handleSubmit(async (data, e) => {
-    if (data.query.length > 2) {
-      try {
-        const foundLocations = await searchOSMLocation(data.query).unwrap()
-
-        if (foundLocations.length === 0) {
-          showMessage({ type: 'error', message: 'Místo nenalezeno' })
-        }
-
-        setFlyBounds(foundLocations[0].boundingbox as L.LatLngBoundsLiteral)
-        reset({ query: '' })
-      } catch (error) {
-        onError?.(error as Error)
-      }
-    }
-  })
+  const handleError = (error: Error) => {
+    showMessage({ type: 'error', message: error.message })
+  }
 
   return (
     <>
@@ -199,7 +186,7 @@ export const Map = ({
           onMoveEnd={onChangeBounds}
         />
         <MapRefresh onRefresh={bounds => onChangeBounds?.(bounds)} />
-        <MapFly value={flyPosition} />
+        <MapFly value={flyPosition} zoom={flyZoom} />
         <MapFlyBounds value={flyBounds} />
         <MarkerClusterGroup maxClusterRadius={20}>
           {value && <Marker position={value} icon={newIcon}></Marker>}
@@ -216,23 +203,14 @@ export const Map = ({
           })}
         </MarkerClusterGroup>
       </MapContainer>
-      <form
+      {/* This can be replaced with OSMSearch */}
+      {/* OSMSearch can additionally return boundingbox,
+      which can make the experience of zooming to found feature better */}
+      <MapyCzSearch
+        onSelect={handleSearch}
+        onError={handleError}
         className={styles.searchForm}
-        id="osm-place-query"
-        onSubmit={handleSearchFormSubmit}
-      >
-        <fieldset disabled={formState.isSubmitting || isSearching}>
-          <input
-            form="osm-place-query"
-            type="text"
-            placeholder="Najít na mapě (OpenStreetMap)"
-            {...register('query')}
-          />
-          <Button plain type="submit" form="osm-place-query">
-            <FaSearchLocation />
-          </Button>
-        </fieldset>
-      </form>
+      />
     </>
   )
 }
