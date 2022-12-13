@@ -205,6 +205,9 @@ export const SelectLocation = forwardRef<
           </div>
         </aside>
         <div className={styles.mainContentContainer}>
+          {/* In theory, this could be replaced by MapyCzMap 1-1
+          but that component is still unfinished and buggy
+          we don't recommend it */}
           <Map
             className={styles.mapContainer}
             markers={markers}
