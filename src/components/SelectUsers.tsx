@@ -8,6 +8,7 @@ import {
   birthdayValidation,
   FormInputError,
 } from 'components'
+import modalStyles from 'components/StyledModal/StyledModal.module.scss'
 import { useDebouncedState } from 'hooks/debouncedState'
 import { useReadUnknownAndFullUsers } from 'hooks/readUnknownAndFullUsers'
 import { forwardRef, InputHTMLAttributes } from 'react'
@@ -284,19 +285,23 @@ const useReadFullUser = () => {
         confirmAlert({
           customUI: ({ title, message, onClose }) => {
             return (
-              <div>
-                <header>{title}</header>
-                <div>{message}</div>
-                <BirthdayForm
-                  onSubmit={birthday => {
-                    resolve(birthday)
-                    onClose()
-                  }}
-                  onCancel={() => {
-                    resolve('')
-                    onClose()
-                  }}
-                />
+              <div className={modalStyles.modal}>
+                <div className={modalStyles.content}>
+                  <header className={modalStyles.modalTitleBox}>{title}</header>
+                  <div className={modalStyles.modalFormBox}>
+                    <div className={modalStyles.infoBox}>{message}</div>
+                    <BirthdayForm
+                      onSubmit={birthday => {
+                        resolve(birthday)
+                        onClose()
+                      }}
+                      onCancel={() => {
+                        resolve('')
+                        onClose()
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             )
           },
