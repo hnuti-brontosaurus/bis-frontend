@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { api, UserPayload } from 'app/services/bis'
-import { EventApplication, User } from 'app/services/bisTypes'
+import { api } from 'app/services/bis'
+import { EventApplication, User, UserPayload } from 'app/services/bisTypes'
 import classNames from 'classnames'
 import {
   Button,
@@ -94,9 +94,9 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
     birthday: string
   }>({ first_name: '', last_name: '', birthday: '' })
 
-  const { data: categories } = api.endpoints.getEventCategories.useQuery()
+  const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: administrationUnits } =
-    api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
+    api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
   const {
     register,

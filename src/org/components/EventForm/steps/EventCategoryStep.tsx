@@ -64,7 +64,7 @@ export const EventCategoryStep = ({
 }: {
   methods: MethodsShapes['category']
 }) => {
-  const { data: groups } = api.endpoints.getEventGroups.useQuery()
+  const { data: groups } = api.endpoints.readEventGroups.useQuery()
   return (
     <FormProvider {...methods}>
       <form>

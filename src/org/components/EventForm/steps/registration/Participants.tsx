@@ -28,10 +28,10 @@ export const Participants: FC<{
     useState<boolean>(false)
 
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
-  const { data: categories } = api.endpoints.getEventCategories.useQuery()
-  const { data: programs } = api.endpoints.getPrograms.useQuery()
+  const { data: categories } = api.endpoints.readEventCategories.useQuery()
+  const { data: programs } = api.endpoints.readPrograms.useQuery()
   const { data: administrationUnits } =
-    api.endpoints.getAdministrationUnits.useQuery({ pageSize: 2000 })
+    api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
   const { data: currentParticipant, isLoading: isCurrentParticipantLoading } =
     api.endpoints.readUser.useQuery(

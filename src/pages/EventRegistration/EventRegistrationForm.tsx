@@ -1,9 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
+import { WebQuestionnaire } from 'app/services/bis'
+import type {
   AnswerPayload,
   EventApplicationPayload,
-  WebQuestionnaire,
-} from 'app/services/bis'
+} from 'app/services/bisTypes'
 import { User } from 'app/services/bisTypes'
 import {
   Actions,

@@ -20,7 +20,7 @@ yarn generate-api
 
 This updates the automatically generated `testApi.ts` mentioned above.
 
-All the available endpoints get exported here, and also the TypeScript types related to API.
+All the available endpoints.read exported here, and also the TypeScript types related to API.
 
 But there are mistakes, and the enpoints have funny names.
 

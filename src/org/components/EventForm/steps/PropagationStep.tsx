@@ -24,7 +24,7 @@ export const PropagationStep = ({
   isCamp: boolean
 }) => {
   const { control, register, getValues } = methods
-  const { data: diets } = api.endpoints.getDiets.useQuery()
+  const { data: diets } = api.endpoints.readDiets.useQuery()
 
   if (!diets) return <Loading>Připravujeme formulář</Loading>
 

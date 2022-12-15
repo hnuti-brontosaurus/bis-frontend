@@ -104,7 +104,7 @@ export const CreateEvent = () => {
         (
           await Promise.allSettled(
             allImagesMixed.map(image =>
-              startsWith(image, 'data:') ? image : toDataURL(image),
+              !image || startsWith(image, 'data:') ? image : toDataURL(image),
             ),
           )
         ).filter(

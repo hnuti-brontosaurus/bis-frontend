@@ -5,7 +5,7 @@ import {
 } from '@reduxjs/toolkit/dist/query'
 import { ApiEndpointQuery } from '@reduxjs/toolkit/dist/query/core/module'
 import { QueryHooks } from '@reduxjs/toolkit/dist/query/react/buildHooks'
-import { PaginatedList } from 'app/services/bis'
+import type { PaginatedList } from 'app/services/bisTypes'
 import { useEffect, useState } from 'react'
 import type { Overwrite } from 'utility-types'
 import { toDataURL } from 'utils/helpers'

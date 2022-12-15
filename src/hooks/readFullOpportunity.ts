@@ -1,12 +1,10 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query'
-import { api, CorrectLocation, CorrectOpportunity } from 'app/services/bis'
+import { api } from 'app/services/bis'
+import type { Location, Opportunity } from 'app/services/bisTypes'
 import { Overwrite } from 'utility-types'
 
-export type FullOpportunity = Overwrite<
-  CorrectOpportunity,
-  { location: CorrectLocation }
->
+export type FullOpportunity = Overwrite<Opportunity, { location: Location }>
 
 export const useReadFullOpportunity = (
   props:
