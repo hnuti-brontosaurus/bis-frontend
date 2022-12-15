@@ -1,53 +1,64 @@
+/**
+ * Convention for organizing api endpoints:
+ *
+ * Let's try to name endpoints starting
+ * - `create` for `POST` requests
+ * - `read` for `GET` requests
+ *   - `readItem` to `GET` one item by id
+ *   - `readItems` to `GET` list of items
+ * - `update` for `PATCH` requests
+ * - `delete` for `DELETE` requests
+ *
+ * e.g. `createEvent`, `readEvent`, `readEvents`, `updateEvent`, `deleteEvent`
+ *
+ * If you need to use `PUT` requests, try to figure other convention :)
+ * Maybe `replace` or `put` or something... :)
+ *
+ * It's also very cool if you manage to group similar endpoints together
+ *
+ * TODO maybe we'll split this file into multiple
+ */
+
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from 'app/store'
 import { ClearBounds } from 'components'
 import type { Assign, Overwrite } from 'utility-types'
 import type {
-  Address,
   AdministrationUnit,
-  Answer,
   DietCategory,
   Event,
   EventApplication,
+  EventApplicationPayload,
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
+  EventPayload,
   EventPhoto,
+  EventPhotoPayload,
   EventProgramCategory,
   EventPropagationImage,
+  EventPropagationImagePayload,
   FinanceReceipt,
   HealthInsuranceCompany,
   Location,
+  LoginRequest,
   Opportunity,
   OpportunityCategory,
+  OpportunityPayload,
+  PaginatedList,
   PatchedEventApplication,
-  Propagation,
   QualificationCategory,
   Question,
   Questionnaire,
   Region,
   Registration,
   SexCategory,
+  TokenResponse,
   User,
+  UserPayload,
   UserSearch,
 } from './bisTypes'
-
-export type PaginatedList<T> = {
-  count: number
-  next: string | null
-  previous: string | null
-  results: T[]
-}
-
-export interface LoginRequest {
-  email: string
-  password: string
-}
-
-export interface LoginResponse {
-  token: string
-}
 
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
@@ -78,7 +89,10 @@ export const api = createApi({
     'Participant',
   ],
   endpoints: build => ({
-    login: build.mutation<LoginResponse, LoginRequest>({
+    /**
+     * Authentication
+     */
+    login: build.mutation<TokenResponse, LoginRequest>({
       query: credentials => ({
         url: 'auth/login/',
         method: 'POST',
@@ -96,7 +110,7 @@ export const api = createApi({
       }),
     }),
     resetPassword: build.mutation<
-      LoginResponse,
+      TokenResponse,
       { code: string; email: string; password: string }
     >({
       query: body => ({
@@ -108,11 +122,10 @@ export const api = createApi({
     whoami: build.query<{ id: string }, void>({
       query: () => 'auth/whoami/',
     }),
-    // frontendUsersRetrieve
-    getUser: build.query<User, { id: string }>({
-      query: ({ id }) => `frontend/users/${id}/`,
-      providesTags: (result, error, { id }) => [{ type: 'User', id }],
-    }),
+
+    /**
+     * Users
+     */
     createUser: build.mutation<User, UserPayload>({
       query: queryArg => ({
         url: `frontend/users/`,
@@ -120,6 +133,64 @@ export const api = createApi({
         body: queryArg,
       }),
       invalidatesTags: () => [{ type: 'User' as const, id: 'USER_LIST' }],
+    }),
+    // frontendUsersRetrieve
+    readUser: build.query<User, { id: string }>({
+      query: ({ id }) => `frontend/users/${id}/`,
+      providesTags: (result, error, { id }) => [{ type: 'User', id }],
+    }),
+    readUserByBirthdate: build.query<
+      User,
+      { first_name: string; last_name: string; birthday: string }
+    >({
+      query: queryArg => ({
+        url: `frontend/get_unknown_user/`,
+        method: 'POST',
+        body: queryArg,
+      }),
+    }),
+    readUsers: build.query<
+      PaginatedList<User>,
+      ListArguments & { id?: string[]; _search_id?: string[] }
+    >({
+      query: ({ id, _search_id, ...params }) => ({
+        url: `frontend/users/`,
+        params: {
+          id: id?.join?.(','),
+          _search_id: _search_id?.join?.(','),
+          ...params,
+        },
+      }),
+      providesTags: results =>
+        results?.results
+          ? results.results.map(user => ({
+              type: 'User',
+              id: user.id,
+            }))
+          : [],
+    }),
+    /**
+     * Read (search) all users
+     * This endpoint returns only very basic info about a user,
+     * but searches the whole user database,
+     * not just users visible to current user
+     */
+    readAllUsers: build.query<PaginatedList<UserSearch>, ListArguments>({
+      query: queryArg => ({
+        url: `frontend/search_users/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: results =>
+        results?.results
+          ? results.results.map(user => ({
+              type: 'UserSearch',
+              id: user._search_id,
+            }))
+          : [],
     }),
     updateUser: build.mutation<
       User,
@@ -135,32 +206,38 @@ export const api = createApi({
         { type: 'User', id },
       ],
     }),
-    getEventCategories: build.query<PaginatedList<EventCategory>, void>({
+
+    /**
+     * Read various categories
+     */
+    readEventCategories: build.query<PaginatedList<EventCategory>, void>({
       query: () => ({
         url: `categories/event_categories/`,
       }),
     }),
-    getEventGroups: build.query<PaginatedList<EventGroupCategory>, void>({
+    readEventGroups: build.query<PaginatedList<EventGroupCategory>, void>({
       query: () => ({
         url: `categories/event_group_categories/`,
       }),
     }),
-    getPrograms: build.query<PaginatedList<EventProgramCategory>, void>({
+    readPrograms: build.query<PaginatedList<EventProgramCategory>, void>({
       query: () => ({
         url: `categories/event_program_categories/`,
       }),
     }),
-    getIntendedFor: build.query<PaginatedList<EventIntendedForCategory>, void>({
-      query: () => ({
-        url: `categories/event_intended_for_categories/`,
-      }),
-    }),
-    getDiets: build.query<PaginatedList<DietCategory>, void>({
+    readIntendedFor: build.query<PaginatedList<EventIntendedForCategory>, void>(
+      {
+        query: () => ({
+          url: `categories/event_intended_for_categories/`,
+        }),
+      },
+    ),
+    readDiets: build.query<PaginatedList<DietCategory>, void>({
       query: () => ({
         url: `categories/diet_categories/`,
       }),
     }),
-    getAdministrationUnits: build.query<
+    readAdministrationUnits: build.query<
       PaginatedList<AdministrationUnit>,
       ListArguments & {
         /** Více hodnot lze oddělit čárkami. */
@@ -228,50 +305,24 @@ export const api = createApi({
         },
       }),
     }),
-    readUsers: build.query<
-      PaginatedList<User>,
-      ListArguments & { id?: string[]; _search_id?: string[] }
+    readOpportunityCategories: build.query<
+      PaginatedList<OpportunityCategory>,
+      ListArguments
     >({
-      query: ({ id, _search_id, ...params }) => ({
-        url: `frontend/users/`,
-        params: {
-          id: id?.join?.(','),
-          _search_id: _search_id?.join?.(','),
-          ...params,
-        },
-      }),
-      providesTags: results =>
-        results?.results
-          ? results.results.map(user => ({
-              type: 'User',
-              id: user.id,
-            }))
-          : [],
-    }),
-    readUser: build.query<User, { id: string }>({
-      query: queryArg => ({ url: `/frontend/users/${queryArg.id}/` }),
-    }),
-    readAllUsers: build.query<PaginatedList<UserSearch>, ListArguments>({
       query: queryArg => ({
-        url: `frontend/search_users/`,
+        url: `categories/opportunity_categories/`,
         params: {
           page: queryArg.page,
           page_size: queryArg.pageSize,
           search: queryArg.search,
         },
       }),
-      providesTags: results =>
-        results?.results
-          ? results.results.map(user => ({
-              type: 'UserSearch',
-              id: user._search_id,
-            }))
-          : [],
     }),
-    createLocation: build.mutation<
-      CorrectLocation,
-      Omit<CorrectLocation, 'id'>
-    >({
+
+    /**
+     * Locations
+     */
+    createLocation: build.mutation<Location, Omit<Location, 'id'>>({
       query: queryArg => ({
         url: `frontend/locations/`,
         method: 'POST',
@@ -281,19 +332,8 @@ export const api = createApi({
         { type: 'Location' as const, id: 'LOCATION_LIST' },
       ],
     }),
-
-    readUserByBirthdate: build.query<
-      User,
-      { first_name: string; last_name: string; birthday: string }
-    >({
-      query: queryArg => ({
-        url: `frontend/get_unknown_user/`,
-        method: 'POST',
-        body: queryArg,
-      }),
-    }),
     readLocations: build.query<
-      PaginatedList<CorrectLocation>,
+      PaginatedList<Location>,
       {
         /** Více hodnot lze oddělit čárkami. */
         id?: number[]
@@ -322,13 +362,13 @@ export const api = createApi({
           : []
         ).concat([{ type: 'Location' as const, id: 'LOCATION_LIST' }]),
     }),
-    readLocation: build.query<CorrectLocation, { id: number }>({
+    readLocation: build.query<Location, { id: number }>({
       query: queryArg => ({ url: `frontend/locations/${queryArg.id}/` }),
       providesTags: (results, _, { id }) => [{ type: 'Location' as const, id }],
     }),
     updateLocation: build.mutation<
-      CorrectLocation,
-      { id: number; location: Partial<CorrectLocation> }
+      Location,
+      { id: number; location: Partial<Location> }
     >({
       query: queryArg => ({
         url: `frontend/locations/${queryArg.id}/`,
@@ -340,17 +380,18 @@ export const api = createApi({
         { type: 'Location' as const, id },
       ],
     }),
-    readOpportunity: build.query<
-      CorrectOpportunity,
-      { userId: string; id: number }
-    >({
+
+    /**
+     * Opportunities
+     */
+    readOpportunity: build.query<Opportunity, { userId: string; id: number }>({
       query: queryArg => ({
         url: `frontend/users/${queryArg.userId}/opportunities/${queryArg.id}/`,
       }),
       providesTags: (result, error, { id }) => [{ type: 'Opportunity', id }],
     }),
     readOpportunities: build.query<
-      PaginatedList<CorrectOpportunity>,
+      PaginatedList<Opportunity>,
       { userId: string; id?: number[] } & ListArguments
     >({
       query: queryArg => ({
@@ -375,7 +416,7 @@ export const api = createApi({
         ).concat([{ type: 'Opportunity' as const, id: 'OPPORTUNITY_LIST' }]),
     }),
     createOpportunity: build.mutation<
-      CorrectOpportunity,
+      Opportunity,
       { userId: string; opportunity: OpportunityPayload }
     >({
       query: ({ userId, opportunity }) => ({
@@ -386,7 +427,7 @@ export const api = createApi({
       invalidatesTags: () => [{ type: 'Opportunity', id: 'OPPORTUNITY_LIST' }],
     }),
     updateOpportunity: build.mutation<
-      CorrectOpportunity,
+      Opportunity,
       {
         id: number
         userId: string
@@ -412,6 +453,27 @@ export const api = createApi({
         { type: 'Opportunity', id: 'OPPORTUNITY_LIST' },
         { type: 'Opportunity', id },
       ],
+    }),
+
+    /**
+     * Events
+     */
+    createEvent: build.mutation<Event, EventPayload>({
+      query: event => ({
+        url: `frontend/events/`,
+        method: 'POST',
+        body: event,
+      }),
+      invalidatesTags: () => [{ type: 'Event', id: 'ORGANIZED_EVENT_LIST' }],
+    }),
+    readEvent: build.query<Event, { id: number }>({
+      query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
+      providesTags: (result, error, { id }) => [{ type: 'Event', id }],
+    }),
+    // Read only events currently shown on web
+    // This endpoint provides data relevant to event display and registration
+    readWebEvent: build.query<WebEvent, { id: number }>({
+      query: queryArg => ({ url: `web/events/${queryArg.id}/` }),
     }),
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
@@ -445,45 +507,6 @@ export const api = createApi({
               },
             ],
     }),
-    readOpportunityCategories: build.query<
-      PaginatedList<OpportunityCategory>,
-      ListArguments
-    >({
-      query: queryArg => ({
-        url: `categories/opportunity_categories/`,
-        params: {
-          page: queryArg.page,
-          page_size: queryArg.pageSize,
-          search: queryArg.search,
-        },
-      }),
-      providesTags: results =>
-        (results?.results
-          ? results.results.map(
-              opportunity =>
-                ({
-                  type: 'Opportunity' as const,
-                  id: opportunity.id,
-                } as { type: 'Opportunity'; id: 'OPPORTUNITY_LIST' | number }),
-            )
-          : []
-        ).concat([{ type: 'Opportunity' as const, id: 'OPPORTUNITY_LIST' }]),
-    }),
-    createEvent: build.mutation<Event, EventPayload>({
-      query: event => ({
-        url: `frontend/events/`,
-        method: 'POST',
-        body: event,
-      }),
-      invalidatesTags: () => [{ type: 'Event', id: 'ORGANIZED_EVENT_LIST' }],
-    }),
-    readEvent: build.query<Event, { id: number }>({
-      query: queryArg => ({ url: `frontend/events/${queryArg.id}/` }),
-      providesTags: (result, error, { id }) => [{ type: 'Event', id }],
-    }),
-    readWebEvent: build.query<WebEvent, { id: number }>({
-      query: queryArg => ({ url: `web/events/${queryArg.id}/` }),
-    }),
     updateEvent: build.mutation<
       Event,
       { id: number; event: Partial<EventPayload> }
@@ -500,7 +523,7 @@ export const api = createApi({
         { type: 'Participant', id: 'PARTICIPANT_LIST' },
       ],
     }),
-    removeEvent: build.mutation<void, { id: number }>({
+    deleteEvent: build.mutation<void, { id: number }>({
       query: queryArg => ({
         url: `frontend/events/${queryArg.id}/`,
         method: 'DELETE',
@@ -512,7 +535,7 @@ export const api = createApi({
     }),
     createEventImage: build.mutation<
       EventPropagationImage,
-      { eventId: number; image: Omit<EventPropagationImage, 'id'> }
+      { eventId: number; image: EventPropagationImagePayload }
     >({
       query: ({ eventId, image }) => ({
         url: `frontend/events/${eventId}/propagation/images/`,
@@ -524,7 +547,7 @@ export const api = createApi({
       ],
     }),
     readEventImages: build.query<
-      PaginatedList<CorrectEventPropagationImage>,
+      PaginatedList<EventPropagationImage>,
       { eventId: number } & ListArguments
     >({
       query: queryArg => ({
@@ -552,7 +575,7 @@ export const api = createApi({
       {
         eventId: number
         id: number
-        image: Partial<Omit<EventPropagationImage, 'id'>>
+        image: Partial<EventPropagationImagePayload>
       }
     >({
       query: queryArg => ({
@@ -565,7 +588,7 @@ export const api = createApi({
         { type: 'EventImage', id: `${eventId}_IMAGE_LIST` },
       ],
     }),
-    removeEventImage: build.mutation<void, { eventId: number; id: number }>({
+    deleteEventImage: build.mutation<void, { eventId: number; id: number }>({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/propagation/images/${queryArg.id}/`,
         method: 'DELETE',
@@ -626,7 +649,7 @@ export const api = createApi({
         { type: 'EventQuestion', id: `${eventId}_QUESTION_LIST` },
       ],
     }),
-    removeEventQuestion: build.mutation<void, { eventId: number; id: number }>({
+    deleteEventQuestion: build.mutation<void, { eventId: number; id: number }>({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/registration/questionnaire/questions/${queryArg.id}/`,
         method: 'DELETE',
@@ -709,6 +732,26 @@ export const api = createApi({
         ],
       },
     ),
+    createEventApplication: build.mutation<
+      EventApplication,
+      { application: EventApplicationPayload; eventId: number }
+    >({
+      query: ({ application, eventId }) => ({
+        url: `frontend/events/${eventId}/registration/applications/`,
+        method: 'POST',
+        body: application,
+      }),
+      invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
+    }),
+    readEventApplication: build.query<
+      EventApplication,
+      { applicationId: number; eventId: number }
+    >({
+      query: ({ applicationId, eventId }) => ({
+        url: `frontend/events/${eventId}/registration/applications/${applicationId}/`,
+        method: 'GET',
+      }),
+    }),
     readEventApplications: build.query<
       PaginatedList<EventApplication>,
       { eventId: number; id?: number[] | undefined } & ListArguments
@@ -733,36 +776,6 @@ export const api = createApi({
           : []
         ).concat([{ type: 'Application' as const, id: 'APPLICATION_LIST' }]),
     }),
-    createEventApplication: build.mutation<
-      EventApplication,
-      { application: EventApplicationPayload; eventId: number }
-    >({
-      query: ({ application, eventId }) => ({
-        url: `frontend/events/${eventId}/registration/applications/`,
-        method: 'POST',
-        body: application,
-      }),
-      invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
-    }),
-    deleteEventApplication: build.mutation<
-      void,
-      { applicationId: number; eventId: number }
-    >({
-      query: ({ applicationId, eventId }) => ({
-        url: `frontend/events/${eventId}/registration/applications/${applicationId}/`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
-    }),
-    readEventApplication: build.query<
-      EventApplication,
-      { applicationId: number; eventId: number }
-    >({
-      query: ({ applicationId, eventId }) => ({
-        url: `frontend/events/${eventId}/registration/applications/${applicationId}/`,
-        method: 'GET',
-      }),
-    }),
     updateEventApplication: build.mutation<
       EventApplication,
       {
@@ -776,6 +789,16 @@ export const api = createApi({
         url: `frontend/events/${queryArg.eventId}/registration/applications/${queryArg.id}/`,
         method: 'PATCH',
         body: queryArg.patchedEventApplication,
+      }),
+      invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
+    }),
+    deleteEventApplication: build.mutation<
+      void,
+      { applicationId: number; eventId: number }
+    >({
+      query: ({ applicationId, eventId }) => ({
+        url: `frontend/events/${eventId}/registration/applications/${applicationId}/`,
+        method: 'DELETE',
       }),
       invalidatesTags: () => [{ type: 'Application', id: 'APPLICATION_LIST' }],
     }),
@@ -805,7 +828,7 @@ export const api = createApi({
     }),
     createEventPhoto: build.mutation<
       EventPhoto,
-      { eventId: number; eventPhoto: Omit<EventPhoto, 'id'> }
+      { eventId: number; eventPhoto: EventPhotoPayload }
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/record/photos/`,
@@ -817,7 +840,7 @@ export const api = createApi({
       ],
     }),
     readEventPhotos: build.query<
-      PaginatedList<Overwrite<EventPhoto, { photo: CorrectImage }>>,
+      PaginatedList<EventPhoto>,
       ListArguments & { eventId: number }
     >({
       query: queryArg => ({
@@ -845,7 +868,11 @@ export const api = createApi({
     }),
     updateEventPhoto: build.mutation<
       EventPhoto,
-      { eventId: number; id: number; patchedEventPhoto: Partial<EventPhoto> }
+      {
+        eventId: number
+        id: number
+        patchedEventPhoto: Partial<EventPhotoPayload>
+      }
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/record/photos/${queryArg.id}/`,
@@ -867,6 +894,9 @@ export const api = createApi({
         { type: 'EventPhoto', id: `${eventId}_EVENT_PHOTO_LIST` },
       ],
     }),
+    /**
+     * Event endpoints for user (the others are mostly for org)
+     */
     readParticipatedEvents: build.query<
       PaginatedList<Event>,
       { id?: number[]; userId: string } & ListArguments
@@ -895,6 +925,7 @@ export const api = createApi({
         },
       }),
     }),
+
     // this endpoints searches GPS by search string
     // using https://nominatim.openstreetmap.org
     // before using it, please refer to it's usage policy
@@ -939,57 +970,6 @@ export type OSMLocation = Overwrite<
   }
 >
 
-export type PropagationPayload = Omit<Propagation, 'diets'> & {
-  diets: number[]
-}
-
-export type EventPayload = Omit<
-  Event,
-  'intended_for' | 'group' | 'category' | 'program' | 'propagation'
-> & {
-  group: number
-  category: number
-  program: number
-  intended_for: number
-  propagation?: PropagationPayload | null
-}
-
-type AddressPayload = Overwrite<
-  Address,
-  {
-    region: number | null
-  }
->
-
-export type UserPayload = Overwrite<
-  Omit<User, 'id'>,
-  {
-    sex: number | null
-    address: AddressPayload
-    contact_address: AddressPayload | null
-    health_insurance_company: number | null
-  }
->
-
-type CorrectImage = {
-  small: string
-  medium: string
-  large: string
-  original: string
-}
-
-export type OpportunityPayload = Overwrite<
-  Opportunity,
-  {
-    category: number
-  }
->
-
-export type CorrectEventPropagationImage = Overwrite<
-  EventPropagationImage,
-  { image: CorrectImage }
->
-
 interface ListArguments {
   /** A page number within the paginated result set. */
   page?: number
@@ -998,18 +978,6 @@ interface ListArguments {
   /** A search term. */
   search?: string
 }
-
-export type CorrectOpportunity = Overwrite<Opportunity, { image: CorrectImage }>
-
-export type CorrectLocation = Overwrite<
-  Location,
-  {
-    gps_location?: {
-      type: 'Point'
-      coordinates: [number, number]
-    }
-  }
->
 
 export type WebQuestionnaire = Assign<Questionnaire, { questions: Question[] }>
 type WebRegistration = Overwrite<
@@ -1024,19 +992,3 @@ export type WebEvent = Overwrite<
     location?: Location
   }
 >
-
-export type AnswerPayload = Overwrite<Answer, { question: number }>
-
-// TODO: dodac adres i blizką osobę
-export type EventApplicationPayload = Pick<
-  EventApplication,
-  | 'first_name'
-  | 'last_name'
-  | 'phone'
-  | 'email'
-  | 'birthday'
-  | 'note'
-  | 'nickname'
-  | 'close_person'
-  | 'health_issues'
-> & { answers: AnswerPayload[] }

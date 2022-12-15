@@ -1,5 +1,5 @@
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
-import { CorrectOpportunity } from 'app/services/bis'
+import type { Opportunity } from 'app/services/bisTypes'
 import styles from 'components/Table.module.scss'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useRemoveOpportunity } from 'hooks/removeOpportunity'
@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 export const OpportunityTable = ({
   data: opportunities,
 }: {
-  data: CorrectOpportunity[]
+  data: Opportunity[]
 }) => {
   const { data } = useCurrentUser()
   const userId = data!.id

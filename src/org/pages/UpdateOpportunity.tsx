@@ -70,7 +70,7 @@ export const UpdateOpportunity = () => {
     await updateOpportunity({
       id: opportunityId,
       userId,
-      patchedOpportunity: merge(data, { location: locationId }),
+      patchedOpportunity: merge(data, { location: locationId as number }),
     }).unwrap()
 
     navigate(`/org/prilezitosti/${opportunityId}`)

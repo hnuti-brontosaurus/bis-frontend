@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { api, CorrectLocation } from 'app/services/bis'
+import { api } from 'app/services/bis'
+import type { Location } from 'app/services/bisTypes'
 import { ReactComponent as MapMarkerNew } from 'assets/map-marker-new.svg'
 import { ReactComponent as MapMarkerSelected } from 'assets/map-marker-selected.svg'
 import { ReactComponent as MapMarkerDefault } from 'assets/map-marker.svg'
@@ -26,8 +27,8 @@ import * as yup from 'yup'
 import styles from './SelectLocation.module.scss'
 
 export type NewLocation = Overwrite<
-  Pick<CorrectLocation, 'gps_location' | 'name' | 'address' | 'description'>,
-  { gps_location?: Omit<Required<CorrectLocation>['gps_location'], 'type'> }
+  Pick<Location, 'gps_location' | 'name' | 'address' | 'description'>,
+  { gps_location?: Omit<Required<Location>['gps_location'], 'type'> }
 >
 
 const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
@@ -46,7 +47,7 @@ const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
   description: yup.string(),
 })
 
-export type SelectedOrNewLocation = NewLocation | CorrectLocation
+export type SelectedOrNewLocation = NewLocation | Location
 
 export const SelectLocation = forwardRef<
   any,
@@ -158,9 +159,7 @@ export const SelectLocation = forwardRef<
   const handleSelect = (id: number) => {
     setIsEditing(false)
     onChange(
-      locations!.results.find(
-        location => location.id === id,
-      ) as CorrectLocation,
+      locations!.results.find(location => location.id === id) as Location,
     )
   }
 
@@ -175,9 +174,9 @@ export const SelectLocation = forwardRef<
       <div className={styles.mainContentContainer}>
         Vyber lokalitu podle názvu
         <br />
-        <SelectObject<CorrectLocation>
+        <SelectObject<Location>
           className={classNames(styles.aboveMap, styles.fullWidth)}
-          value={(value as CorrectLocation) ?? undefined}
+          value={(value as Location) ?? undefined}
           onChange={onChange}
           getLabel={location => location.name}
           placeholder="Název"
@@ -401,7 +400,7 @@ export const useCreateOrSelectLocation = () => {
   const [createLocation] = api.endpoints.createLocation.useMutation()
 
   const createOrSelectLocation = async (
-    location: NewLocation | Pick<CorrectLocation, 'id'>,
+    location: NewLocation | Pick<Location, 'id'>,
   ) => {
     if (!location) {
       return null
@@ -416,7 +415,7 @@ export const useCreateOrSelectLocation = () => {
           gps_location: {
             type: 'Point',
           },
-        }) as unknown as Omit<CorrectLocation, 'id'>,
+        }) as unknown as Omit<Location, 'id'>,
       ).unwrap()
       return newLocation.id
     }

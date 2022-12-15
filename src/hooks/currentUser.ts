@@ -9,7 +9,7 @@ export const useCurrentUser = () => {
   const { data, ...restWhoami } = api.endpoints.whoami.useQuery(
     auth ? undefined : skipToken,
   )
-  const { data: currentUser, ...restUser } = api.endpoints.getUser.useQuery(
+  const { data: currentUser, ...restUser } = api.endpoints.readUser.useQuery(
     data?.id ? { id: data.id } : skipToken,
   )
   const [logout] = api.endpoints.logout.useMutation()

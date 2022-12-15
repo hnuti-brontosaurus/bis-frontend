@@ -23,7 +23,7 @@ export const EvidenceStep = ({
   isVolunteering: boolean
   methods: UseFormReturn<EvidenceStepFormShape, any>
 }) => {
-  const { data: eventCategories } = api.endpoints.getEventCategories.useQuery()
+  const { data: eventCategories } = api.endpoints.readEventCategories.useQuery()
 
   const { register } = methods
 

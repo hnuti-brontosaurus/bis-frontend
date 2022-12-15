@@ -1,4 +1,5 @@
-import { api, EventApplicationPayload } from 'app/services/bis'
+import { api } from 'app/services/bis'
+import type { EventApplicationPayload } from 'app/services/bisTypes'
 import { Error, Loading } from 'components'
 import { useShowApiErrorMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'

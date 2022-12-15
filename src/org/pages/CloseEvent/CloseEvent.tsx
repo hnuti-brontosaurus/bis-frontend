@@ -1,4 +1,5 @@
-import { api, EventPayload } from 'app/services/bis'
+import { api } from 'app/services/bis'
+import type { EventPayload } from 'app/services/bisTypes'
 import { Error, Loading, PageHeader } from 'components'
 import {
   useShowApiErrorMessage,
