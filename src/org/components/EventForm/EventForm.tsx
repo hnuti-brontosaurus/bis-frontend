@@ -1,5 +1,10 @@
-import { api, CorrectLocation, EventPayload } from 'app/services/bis'
-import { EventPropagationImage, Question, User } from 'app/services/bisTypes'
+import { api } from 'app/services/bis'
+import type { EventPayload, Location } from 'app/services/bisTypes'
+import {
+  EventPropagationImagePayload,
+  Question,
+  User,
+} from 'app/services/bisTypes'
 import { Loading, NewLocation, Step, Steps } from 'components'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
@@ -46,9 +51,9 @@ export type SubmitShape = Assign<
   EventPayload,
   {
     questions: Optional<Question, 'id' | 'order'>[]
-    location: NewLocation | Pick<CorrectLocation, 'id'>
-    main_image: Optional<EventPropagationImage, 'id' | 'order'>
-    images: Optional<EventPropagationImage, 'id' | 'order'>[]
+    location: NewLocation | Pick<Location, 'id'>
+    main_image: EventPropagationImagePayload
+    images: EventPropagationImagePayload[]
   }
 >
 
@@ -61,7 +66,7 @@ export type InitialEventData = Overwrite<
       NonNullable<SubmitShape['propagation']>,
       { contact_person: User }
     > | null
-    location?: CorrectLocation
+    location?: Location
   }
 >
 
@@ -76,7 +81,7 @@ export type EventFormShape = Assign<
     registrationMethod: 'standard' | 'other' | 'none' | 'full'
     // contactPersonIsMainOrganizer is internal, doesn't get sent to API
     contactPersonIsMainOrganizer: boolean
-    location: CorrectLocation | NewLocation
+    location: Location | NewLocation
   }
 >
 

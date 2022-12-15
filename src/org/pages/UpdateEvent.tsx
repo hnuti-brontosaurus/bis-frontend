@@ -61,6 +61,7 @@ export const UpdateEvent = () => {
   if (isEventLoading || !event) return <Loading>Stahujeme akci</Loading>
 
   const { images, questions } = event
+
   const handleSubmit: Parameters<typeof EventForm>[0]['onSubmit'] = async ({
     main_image: updatedMainImage,
     images: updatedImages,

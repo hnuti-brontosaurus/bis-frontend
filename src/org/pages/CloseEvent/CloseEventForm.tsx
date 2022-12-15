@@ -1,6 +1,6 @@
 import {
   Event,
-  EventPhoto,
+  EventPhotoPayload,
   Finance,
   FinanceReceipt,
   PatchedEvent,
@@ -27,7 +27,7 @@ export type CloseEventPayload = DeepPick<
   PatchedEvent,
   'is_complete' | 'record' | 'finance.bank_account_number'
 > & {
-  photos: Optional<EventPhoto, 'id'>[]
+  photos: EventPhotoPayload[]
   receipts: Optional<FinanceReceipt, 'id'>[]
 }
 
@@ -39,7 +39,7 @@ export type EvidenceStepFormShape = {
   >
   finance: Pick<Finance, 'bank_account_number'>
 } & {
-  photos: Optional<EventPhoto, 'id'>[]
+  photos: EventPhotoPayload[]
   receipts: Optional<FinanceReceipt, 'id'>[]
 }
 

@@ -1,11 +1,14 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query'
+import { api } from 'app/services/bis'
+import type { Location } from 'app/services/bisTypes'
 import {
-  api,
-  CorrectEventPropagationImage,
-  CorrectLocation,
-} from 'app/services/bis'
-import { Event, Propagation, Question, User } from 'app/services/bisTypes'
+  Event,
+  EventPropagationImage,
+  Propagation,
+  Question,
+  User,
+} from 'app/services/bisTypes'
 import { mergeWith } from 'lodash'
 import { Assign, Overwrite } from 'utility-types'
 import { withOverwriteArray } from 'utils/helpers'
@@ -17,11 +20,11 @@ export type FullEvent = Assign<
       main_organizer: User // in older events, main_organizer may be missing
       other_organizers: User[]
       propagation: Overwrite<Propagation, { contact_person: User }> // in older events, contact_person may be missing
-      location: CorrectLocation | undefined
+      location: Location | undefined
     }
   >,
   {
-    images: CorrectEventPropagationImage[]
+    images: EventPropagationImage[]
     questions: Question[]
   }
 >

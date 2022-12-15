@@ -5,7 +5,7 @@ import {
   QueryDefinition,
   skipToken,
 } from '@reduxjs/toolkit/query'
-import { PaginatedList } from 'app/services/bis'
+import type { PaginatedList } from 'app/services/bisTypes'
 import { useDebouncedState } from 'hooks/debouncedState'
 import { forwardRef, InputHTMLAttributes } from 'react'
 import Select from 'react-select'

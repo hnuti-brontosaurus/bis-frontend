@@ -1,4 +1,5 @@
-import { api, CorrectLocation, OpportunityPayload } from 'app/services/bis'
+import { api } from 'app/services/bis'
+import type { Location, OpportunityPayload } from 'app/services/bisTypes'
 import { ReactComponent as HandsIcon } from 'assets/hands.svg'
 import { ReactComponent as HousesIcon } from 'assets/houses.svg'
 import { ReactComponent as OrganizerIcon } from 'assets/organizer.svg'
@@ -51,7 +52,7 @@ const categoryDetails: Record<OpportunityCategorySlug, ReactNode> = {
 
 export type OpportunityFormShape = Overwrite<
   OpportunityPayload,
-  { location: NewLocation | CorrectLocation }
+  { location: NewLocation | Location }
 >
 
 export const OpportunityForm = ({

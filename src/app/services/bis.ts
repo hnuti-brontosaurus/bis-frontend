@@ -25,50 +25,40 @@ import { RootState } from 'app/store'
 import { ClearBounds } from 'components'
 import type { Assign, Overwrite } from 'utility-types'
 import type {
-  Address,
   AdministrationUnit,
-  Answer,
   DietCategory,
   Event,
   EventApplication,
+  EventApplicationPayload,
   EventCategory,
   EventGroupCategory,
   EventIntendedForCategory,
+  EventPayload,
   EventPhoto,
+  EventPhotoPayload,
   EventProgramCategory,
   EventPropagationImage,
+  EventPropagationImagePayload,
   FinanceReceipt,
   HealthInsuranceCompany,
   Location,
+  LoginRequest,
   Opportunity,
   OpportunityCategory,
+  OpportunityPayload,
+  PaginatedList,
   PatchedEventApplication,
-  Propagation,
   QualificationCategory,
   Question,
   Questionnaire,
   Region,
   Registration,
   SexCategory,
+  TokenResponse,
   User,
+  UserPayload,
   UserSearch,
 } from './bisTypes'
-
-export type PaginatedList<T> = {
-  count: number
-  next: string | null
-  previous: string | null
-  results: T[]
-}
-
-export interface LoginRequest {
-  email: string
-  password: string
-}
-
-export interface LoginResponse {
-  token: string
-}
 
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
@@ -102,7 +92,7 @@ export const api = createApi({
     /**
      * Authentication
      */
-    login: build.mutation<LoginResponse, LoginRequest>({
+    login: build.mutation<TokenResponse, LoginRequest>({
       query: credentials => ({
         url: 'auth/login/',
         method: 'POST',
@@ -120,7 +110,7 @@ export const api = createApi({
       }),
     }),
     resetPassword: build.mutation<
-      LoginResponse,
+      TokenResponse,
       { code: string; email: string; password: string }
     >({
       query: body => ({
@@ -332,10 +322,7 @@ export const api = createApi({
     /**
      * Locations
      */
-    createLocation: build.mutation<
-      CorrectLocation,
-      Omit<CorrectLocation, 'id'>
-    >({
+    createLocation: build.mutation<Location, Omit<Location, 'id'>>({
       query: queryArg => ({
         url: `frontend/locations/`,
         method: 'POST',
@@ -346,7 +333,7 @@ export const api = createApi({
       ],
     }),
     readLocations: build.query<
-      PaginatedList<CorrectLocation>,
+      PaginatedList<Location>,
       {
         /** Více hodnot lze oddělit čárkami. */
         id?: number[]
@@ -375,13 +362,13 @@ export const api = createApi({
           : []
         ).concat([{ type: 'Location' as const, id: 'LOCATION_LIST' }]),
     }),
-    readLocation: build.query<CorrectLocation, { id: number }>({
+    readLocation: build.query<Location, { id: number }>({
       query: queryArg => ({ url: `frontend/locations/${queryArg.id}/` }),
       providesTags: (results, _, { id }) => [{ type: 'Location' as const, id }],
     }),
     updateLocation: build.mutation<
-      CorrectLocation,
-      { id: number; location: Partial<CorrectLocation> }
+      Location,
+      { id: number; location: Partial<Location> }
     >({
       query: queryArg => ({
         url: `frontend/locations/${queryArg.id}/`,
@@ -397,17 +384,14 @@ export const api = createApi({
     /**
      * Opportunities
      */
-    readOpportunity: build.query<
-      CorrectOpportunity,
-      { userId: string; id: number }
-    >({
+    readOpportunity: build.query<Opportunity, { userId: string; id: number }>({
       query: queryArg => ({
         url: `frontend/users/${queryArg.userId}/opportunities/${queryArg.id}/`,
       }),
       providesTags: (result, error, { id }) => [{ type: 'Opportunity', id }],
     }),
     readOpportunities: build.query<
-      PaginatedList<CorrectOpportunity>,
+      PaginatedList<Opportunity>,
       { userId: string; id?: number[] } & ListArguments
     >({
       query: queryArg => ({
@@ -432,7 +416,7 @@ export const api = createApi({
         ).concat([{ type: 'Opportunity' as const, id: 'OPPORTUNITY_LIST' }]),
     }),
     createOpportunity: build.mutation<
-      CorrectOpportunity,
+      Opportunity,
       { userId: string; opportunity: OpportunityPayload }
     >({
       query: ({ userId, opportunity }) => ({
@@ -443,7 +427,7 @@ export const api = createApi({
       invalidatesTags: () => [{ type: 'Opportunity', id: 'OPPORTUNITY_LIST' }],
     }),
     updateOpportunity: build.mutation<
-      CorrectOpportunity,
+      Opportunity,
       {
         id: number
         userId: string
@@ -551,7 +535,7 @@ export const api = createApi({
     }),
     createEventImage: build.mutation<
       EventPropagationImage,
-      { eventId: number; image: Omit<EventPropagationImage, 'id'> }
+      { eventId: number; image: EventPropagationImagePayload }
     >({
       query: ({ eventId, image }) => ({
         url: `frontend/events/${eventId}/propagation/images/`,
@@ -563,7 +547,7 @@ export const api = createApi({
       ],
     }),
     readEventImages: build.query<
-      PaginatedList<CorrectEventPropagationImage>,
+      PaginatedList<EventPropagationImage>,
       { eventId: number } & ListArguments
     >({
       query: queryArg => ({
@@ -591,7 +575,7 @@ export const api = createApi({
       {
         eventId: number
         id: number
-        image: Partial<Omit<EventPropagationImage, 'id'>>
+        image: Partial<EventPropagationImagePayload>
       }
     >({
       query: queryArg => ({
@@ -844,7 +828,7 @@ export const api = createApi({
     }),
     createEventPhoto: build.mutation<
       EventPhoto,
-      { eventId: number; eventPhoto: Omit<EventPhoto, 'id'> }
+      { eventId: number; eventPhoto: EventPhotoPayload }
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/record/photos/`,
@@ -856,7 +840,7 @@ export const api = createApi({
       ],
     }),
     readEventPhotos: build.query<
-      PaginatedList<Overwrite<EventPhoto, { photo: CorrectImage }>>,
+      PaginatedList<EventPhoto>,
       ListArguments & { eventId: number }
     >({
       query: queryArg => ({
@@ -884,7 +868,11 @@ export const api = createApi({
     }),
     updateEventPhoto: build.mutation<
       EventPhoto,
-      { eventId: number; id: number; patchedEventPhoto: Partial<EventPhoto> }
+      {
+        eventId: number
+        id: number
+        patchedEventPhoto: Partial<EventPhotoPayload>
+      }
     >({
       query: queryArg => ({
         url: `frontend/events/${queryArg.eventId}/record/photos/${queryArg.id}/`,
@@ -982,57 +970,6 @@ export type OSMLocation = Overwrite<
   }
 >
 
-export type PropagationPayload = Omit<Propagation, 'diets'> & {
-  diets: number[]
-}
-
-export type EventPayload = Omit<
-  Event,
-  'intended_for' | 'group' | 'category' | 'program' | 'propagation'
-> & {
-  group: number
-  category: number
-  program: number
-  intended_for: number
-  propagation?: PropagationPayload | null
-}
-
-type AddressPayload = Overwrite<
-  Address,
-  {
-    region: number | null
-  }
->
-
-export type UserPayload = Overwrite<
-  Omit<User, 'id'>,
-  {
-    sex: number | null
-    address: AddressPayload
-    contact_address: AddressPayload | null
-    health_insurance_company: number | null
-  }
->
-
-type CorrectImage = {
-  small: string
-  medium: string
-  large: string
-  original: string
-}
-
-export type OpportunityPayload = Overwrite<
-  Opportunity,
-  {
-    category: number
-  }
->
-
-export type CorrectEventPropagationImage = Overwrite<
-  EventPropagationImage,
-  { image: CorrectImage }
->
-
 interface ListArguments {
   /** A page number within the paginated result set. */
   page?: number
@@ -1041,18 +978,6 @@ interface ListArguments {
   /** A search term. */
   search?: string
 }
-
-export type CorrectOpportunity = Overwrite<Opportunity, { image: CorrectImage }>
-
-export type CorrectLocation = Overwrite<
-  Location,
-  {
-    gps_location?: {
-      type: 'Point'
-      coordinates: [number, number]
-    }
-  }
->
 
 export type WebQuestionnaire = Assign<Questionnaire, { questions: Question[] }>
 type WebRegistration = Overwrite<
@@ -1067,19 +992,3 @@ export type WebEvent = Overwrite<
     location?: Location
   }
 >
-
-export type AnswerPayload = Overwrite<Answer, { question: number }>
-
-// TODO: add address
-export type EventApplicationPayload = Pick<
-  EventApplication,
-  | 'first_name'
-  | 'last_name'
-  | 'phone'
-  | 'email'
-  | 'birthday'
-  | 'note'
-  | 'nickname'
-  | 'close_person'
-  | 'health_issues'
-> & { answers: AnswerPayload[] }

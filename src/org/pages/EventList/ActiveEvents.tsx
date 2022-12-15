@@ -1,5 +1,4 @@
-import { PaginatedList } from 'app/services/bis'
-import type { Event } from 'app/services/bisTypes'
+import type { Event, PaginatedList } from 'app/services/bisTypes'
 import { UnscalablePaginatedList } from 'components'
 import { useTitle } from 'hooks/title'
 import { EventTable } from 'org/components'

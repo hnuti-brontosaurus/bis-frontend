@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { api, UserPayload } from 'app/services/bis'
-import { EventApplication, User } from 'app/services/bisTypes'
+import { api } from 'app/services/bis'
+import { EventApplication, User, UserPayload } from 'app/services/bisTypes'
 import classNames from 'classnames'
 import {
   Button,

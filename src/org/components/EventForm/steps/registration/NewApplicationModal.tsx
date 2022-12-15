@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { AnswerPayload, api } from 'app/services/bis'
-import { EventApplication } from 'app/services/bisTypes'
+import { api } from 'app/services/bis'
+import { AnswerPayload, EventApplication } from 'app/services/bisTypes'
 import {
   BirthdayInput,
   birthdayValidation,
