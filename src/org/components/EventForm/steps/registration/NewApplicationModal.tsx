@@ -245,7 +245,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   <Label htmlFor="close_person_phone">Telefon</Label>
                   <FormInputError>
                     <input
-                      type="phone"
+                      type="tel"
                       id="close_person_phone"
                       {...register('close_person.phone')}
                     />
