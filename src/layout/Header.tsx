@@ -2,6 +2,7 @@ import { Menu, MenuButton, MenuDivider, MenuItem } from '@szhsin/react-menu'
 import { api } from 'app/services/bis'
 import logoMini from 'assets/logo-mini.png'
 import logo from 'assets/logo.png'
+import classNames from 'classnames'
 import { useCurrentUser } from 'hooks/currentUser'
 import { FaBars, FaRegUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
@@ -51,9 +52,12 @@ export const Header = () => {
       {user ? (
         <nav>
           <Menu
-            menuButton={
+            menuButton={({ open }) => (
               <MenuButton
-                className={styles.userButton}
+                className={classNames(
+                  styles.userButton,
+                  open && styles.menuButtonOpen,
+                )}
                 title={`${user.first_name} ${user.last_name}`}
               >
                 {' '}
@@ -62,7 +66,7 @@ export const Header = () => {
                   {user.first_name} {user.last_name}
                 </div>
               </MenuButton>
-            }
+            )}
             align={'end'}
           >
             <MenuItem className={styles.menuItemReadonly} disabled>
@@ -97,11 +101,11 @@ export const Header = () => {
       {isAuthenticated ? (
         <nav>
           <Menu
-            menuButton={
-              <MenuButton>
+            menuButton={({ open }) => (
+              <MenuButton className={classNames(open && styles.menuButtonOpen)}>
                 <FaBars fontSize={20} />
               </MenuButton>
-            }
+            )}
             align={'end'}
           >
             <MenuItem className={styles.menuItemCustom}>
