@@ -213,6 +213,8 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
     },
   )
 
+  finalData.registration = finalData.registration ?? { questionnaire: null }
+
   // when event is full, set it full, and vice-versa
   finalData.registration!.is_event_full = data.registrationMethod === 'full'
 

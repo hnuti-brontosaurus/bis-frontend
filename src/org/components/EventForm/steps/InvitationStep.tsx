@@ -128,7 +128,9 @@ export const InvitationStep = ({
             onWeb
             help="Hlavní foto se zobrazí v náhledu akce na webu"
           >
-            <ImageUpload required name="main_image.image" />
+            <FormInputError>
+              <ImageUpload required name="main_image.image" />
+            </FormInputError>
           </FormSubsection>
           <FormSubsection
             header="Fotky k malé ochutnávce"

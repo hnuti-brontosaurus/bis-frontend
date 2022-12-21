@@ -79,13 +79,21 @@ export const Steps = <T extends Record<string, any>>({
       ))}
       <nav className={styles.bottomNavigation}>
         {step > 1 && (
-          <button type="button" onClick={() => setStep(step - 1)}>
+          <button
+            type="button"
+            aria-label="Go to previous step"
+            onClick={() => setStep(step - 1)}
+          >
             <FaAngleLeft fontSize="5em" />
           </button>
         )}
         <span className={styles.spacer}></span>
         {step < elementProps.length && (
-          <button type="button" onClick={() => setStep(step + 1)}>
+          <button
+            type="button"
+            aria-label="Go to next step"
+            onClick={() => setStep(step + 1)}
+          >
             <FaAngleRight fontSize="5em" />
           </button>
         )}

@@ -53,7 +53,10 @@
     "eject": "react-scripts eject",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,md,css,scss}\"",
-    "generate-api": "npx @rtk-query/codegen-openapi ./src/app/services/openapi-config.json"
+    "generate-api": "npx @rtk-query/codegen-openapi ./src/app/services/openapi-config.json",
+    "pree2e": "PORT=3000 BROWSER=none yarn start & wait-on http://localhost:3000",
+    "e2e": "cypress run",
+    "poste2e": "sleep 5 && killall node"
   },
   "browserslist": {
     "production": [
@@ -71,11 +74,13 @@
     "@types/dompurify": "^2.4.0",
     "@types/leaflet": "^1.8.0",
     "@types/lodash": "^4.14.185",
+    "cypress": "^12.1.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",
     "sass": "^1.54.9",
     "ts-deep-pick": "^0.2.2",
-    "type-fest": "^3.2.0"
+    "type-fest": "^3.2.0",
+    "wait-on": "^7.0.1"
   }
 }

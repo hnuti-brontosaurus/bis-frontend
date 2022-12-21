@@ -23,8 +23,8 @@ interface INewApplicationModalProps {
   eventId: number
 }
 
-const phoneRegExp = /^(\+|00){0,1}[0-9]{1,3}[0-9]{4,14}(?:x.+)?$/
-const zipcodeRegExp = /\d{3} ?\d{2}/
+// const phoneRegExp = /^(\+|00){0,1}[0-9]{1,3}[0-9]{4,14}(?:x.+)?$/
+// const zipcodeRegExp = /\d{3} ?\d{2}/
 
 // TODO: This modal is still WIP (no need to review atm)
 
@@ -35,7 +35,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   onClose,
   eventId,
 }) => {
-  const [createEventApplication, { isLoading: isSavingOpportunity }] =
+  const [createEventApplication] =
     api.endpoints.createEventApplication.useMutation()
 
   const { data: questions } = api.endpoints.readEventQuestions.useQuery({
@@ -70,13 +70,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: { birthday: '' },
   })
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    control,
-  } = methods
+  const { register, handleSubmit, reset, control } = methods
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.stopPropagation()
