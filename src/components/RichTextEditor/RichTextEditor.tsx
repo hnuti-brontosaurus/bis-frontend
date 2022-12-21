@@ -18,6 +18,7 @@ export const RichTextEditor = forwardRef<
     }}
     formats={['bold', 'list', 'bullet', 'link']}
     {...props}
+    id={props.name}
     ref={ref}
   />
 ))

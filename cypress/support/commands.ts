@@ -66,7 +66,7 @@ Cypress.Commands.add(
     cy.get('[type=submit]').should('be.visible').click()
     // api request is sent
     if (redirect === '/') {
-      cy.location('pathname').should('not.equal', '/login')
+      cy.location('pathname').should('not.contain', 'login')
     } else {
       cy.location('pathname').should('equal', redirect)
     }

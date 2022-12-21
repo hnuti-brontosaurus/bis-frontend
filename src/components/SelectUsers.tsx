@@ -314,6 +314,7 @@ const useReadFullUser = () => {
           ...user,
           birthday,
         }).unwrap()
+
         if (fullUser._search_id === user._search_id) {
           return fullUser
         }
@@ -322,6 +323,7 @@ const useReadFullUser = () => {
     } catch (error) {
       if (
         error &&
+        typeof error === 'object' &&
         'status' in error &&
         (error as FetchBaseQueryError).status === 404
       )
