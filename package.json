@@ -54,8 +54,9 @@
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,md,css,scss}\"",
     "generate-api": "npx @rtk-query/codegen-openapi ./src/app/services/openapi-config.json",
-    "start-e2e": "PORT=4321 BROWSER=none react-scripts start",
-    "e2e": "cypress run"
+    "pree2e": "PORT=4321 BROWSER=none yarn start & wait-on http://localhost:4321",
+    "e2e": "cypress run",
+    "poste2e": "sleep 5 && killall node"
   },
   "browserslist": {
     "production": [
@@ -79,6 +80,7 @@
     "prettier": "^2.7.1",
     "sass": "^1.54.9",
     "ts-deep-pick": "^0.2.2",
-    "type-fest": "^3.2.0"
+    "type-fest": "^3.2.0",
+    "wait-on": "^7.0.1"
   }
 }
