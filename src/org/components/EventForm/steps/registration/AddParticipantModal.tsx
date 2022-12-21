@@ -133,6 +133,9 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
   const [createEventApplication, { isLoading: isSavingEventApplication }] =
     api.endpoints.createEventApplication.useMutation()
 
+  const [updateEventApplication, { isLoading: isUpdatingEventApplication }] =
+    api.endpoints.updateEventApplication.useMutation()
+
   const userOptions = Array.from(
     new Map(userOptionsDuplicates.map(item => [item['id'], item])).values(),
   )

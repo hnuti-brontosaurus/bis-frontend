@@ -1,8 +1,10 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
-import { User } from 'app/services/testApi'
+import { User, UserSearch } from 'app/services/testApi'
 import { Loading } from 'components'
+import { SelectUnknownUser } from 'components/SelectUsers'
 import stylesTable from 'components/Table.module.scss'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import styles from '../ParticipantsStep.module.scss'
@@ -27,7 +29,10 @@ export const Participants: FC<{
   const [showShowApplicationModal, setShowShowApplicationModal] =
     useState<boolean>(false)
 
+  const showMessage = useShowMessage()
+
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
+  const [newParticipant, setNewParticipant] = useState<User | UserSearch>()
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
   const { data: administrationUnits } =
@@ -38,11 +43,48 @@ export const Participants: FC<{
       currentParticipantId ? { id: currentParticipantId } : skipToken,
     )
 
+  const [patchEvent, { isLoading: isPatchingEvent }] =
+    api.endpoints.updateEvent.useMutation()
+
+  const addParticipant = async (newParticipantId: string) => {
+    let newParticipants: string[] = []
+
+    if (participants) {
+      newParticipants = [...participants.results].map(p => p.id)
+    }
+    newParticipants.push(newParticipantId)
+
+    await patchEvent({
+      id: eventId,
+      event: {
+        record: {
+          participants: newParticipants,
+        },
+      },
+    })
+  }
   return (
     <div className={styles.ListContainer}>
       <h2>Ucastnici</h2>
       {!isReadParticipantsLoading ? (
         <div>
+          <div>Add new participant:</div>
+          <SelectUnknownUser
+            onChange={selectedUser => {
+              // @ts-ignore
+              addParticipant(selectedUser.id)
+              setNewParticipant(selectedUser || undefined)
+            }}
+            onBirthdayError={message => {
+              showMessage({
+                type: 'error',
+                message: 'Nepodařilo se přidat uživatele',
+                detail: message,
+              })
+              setNewParticipant(undefined)
+            }}
+            value={newParticipant}
+          />
           {participants && participants.results && (
             <table className={styles.table}>
               <thead>
