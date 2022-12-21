@@ -96,18 +96,15 @@ export const MapyCzMap = ({
   // listen to click on marker
   useEffect(() => {
     if (map) {
-      const listener = map
-        .getSignals()
-        .addListener(this, 'marker-click', function (e: any) {
-          // vybrany marker
-          var marker = e.target
-          var id = marker.getId()
-          // zobrazime jeho jmeno - parovani vybraneho markeru pomoci jeho id a nasich vstupnich dat
-          console.log(id)
-          if (id) {
-            onSelect(Number(id))
-          }
-        })
+      map.getSignals().addListener(this, 'marker-click', function (e: any) {
+        // vybrany marker
+        var marker = e.target
+        var id = marker.getId()
+        // zobrazime jeho jmeno - parovani vybraneho markeru pomoci jeho id a nasich vstupnich dat
+        if (id) {
+          onSelect(Number(id))
+        }
+      })
 
       // return () => {
       //   console.log('removing')

@@ -51,11 +51,8 @@ export const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
     },
   })
 
-  const {
-    control: controlBirthdate,
-    handleSubmit: handleSubmitBirthdate,
-    formState: { errors: errorsBirthdate },
-  } = methodsBirthdate
+  const { control: controlBirthdate, handleSubmit: handleSubmitBirthdate } =
+    methodsBirthdate
 
   return (
     <form

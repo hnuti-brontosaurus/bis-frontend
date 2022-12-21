@@ -74,13 +74,7 @@ export const SelectLocation = forwardRef<
       ),
     [locations],
   )
-  const { data: selectedLocation } = api.endpoints.readLocation.useQuery(
-    value && 'id' in value
-      ? {
-          id: value.id,
-        }
-      : skipToken,
-  )
+  const selectedLocation = value
 
   // here we hold the coordinates of new location in map
   const [newLocationCoordinates, setNewLocationCoordinates] = useState<
@@ -102,9 +96,6 @@ export const SelectLocation = forwardRef<
       newLocationMethods.trigger('gps_location')
     }
   }, [newLocationCoordinates, newLocationMethods])
-
-  const actuallySelectedLocation =
-    value && 'id' in value ? selectedLocation : value?.name ? value : undefined
 
   const markers: MarkerType[] = useMemo(() => {
     const markers: MarkerType[] = locationsWithGPS.map(location => ({
@@ -133,7 +124,7 @@ export const SelectLocation = forwardRef<
           type: 'selected',
           name: selectedLocation.name,
           coordinates,
-          id: selectedLocation.id,
+          id: 'id' in selectedLocation ? selectedLocation.id : 0,
         })
       }
     } else if (!isEditing && value?.name && value?.gps_location?.coordinates) {
@@ -246,7 +237,7 @@ export const SelectLocation = forwardRef<
         />
       ) : (
         <div className={styles.mainContentContainer}>
-          <ViewLocation location={actuallySelectedLocation} />
+          <ViewLocation location={selectedLocation ?? undefined} />
         </div>
       )}
     </div>
@@ -382,7 +373,7 @@ const CreateLocation = ({
     </div>
   )
 }
-const ViewLocation = ({ location }: { location?: NewLocation }) => {
+const ViewLocation = ({ location }: { location?: NewLocation | Location }) => {
   return (
     <>
       <div>Název: {location?.name}</div>

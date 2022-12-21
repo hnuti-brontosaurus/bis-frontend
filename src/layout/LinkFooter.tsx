@@ -33,7 +33,11 @@ export const LinkFooter = () => {
         >
           Mozek
         </a>
-        <a href="" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://example.com/todo"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Rozcestník
         </a>
         <a
@@ -50,7 +54,11 @@ export const LinkFooter = () => {
         >
           Databáze budek
         </a>
-        <a href="" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://example.com/todo"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Newslettery
         </a>
       </nav>

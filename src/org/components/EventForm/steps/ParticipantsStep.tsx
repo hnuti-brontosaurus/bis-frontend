@@ -12,7 +12,7 @@ export const ParticipantsStep: FC<{
   const [highlightedApplication, setHighlightedApplication] = useState<string>()
   const [highlightedParticipant, setHighlightedParticipant] = useState<string>()
 
-  const { data: applicationsData, isLoading: isReadApplicationsLoading } =
+  const { data: applicationsData } =
     api.endpoints.readEventApplications.useQuery({
       eventId,
       pageSize: 10000,

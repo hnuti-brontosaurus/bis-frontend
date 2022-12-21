@@ -28,7 +28,7 @@ export const UncontrolledImageUpload = forwardRef<
   return (
     <label>
       <input
-        // ref={ref}
+        ref={ref}
         style={{ display: 'none' }}
         type="file"
         accept="image/*"
@@ -69,6 +69,8 @@ export const ImageUpload = ({
   )
 }
 
+// TODO it would be great to have multi image upload
+// i.e. users could select multiple images at once
 export const ImagesUpload = ({
   name,
   image = 'image',

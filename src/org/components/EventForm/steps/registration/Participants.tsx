@@ -38,13 +38,11 @@ export const Participants: FC<{
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
-  const { data: currentParticipant, isLoading: isCurrentParticipantLoading } =
-    api.endpoints.readUser.useQuery(
-      currentParticipantId ? { id: currentParticipantId } : skipToken,
-    )
+  const { data: currentParticipant } = api.endpoints.readUser.useQuery(
+    currentParticipantId ? { id: currentParticipantId } : skipToken,
+  )
 
-  const [patchEvent, { isLoading: isPatchingEvent }] =
-    api.endpoints.updateEvent.useMutation()
+  const [patchEvent] = api.endpoints.updateEvent.useMutation()
 
   const addParticipant = async (newParticipantId: string) => {
     let newParticipants: string[] = []
