@@ -53,28 +53,25 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
 }) => {
   if (!open) return null
 
-  const {
-    data: currentApplicationData,
-    isFetching: isCurrentApplicationDataLoading,
-  } = api.endpoints.readEventApplication.useQuery(
-    currentParticipant && savedParticipants
-      ? {
-          eventId,
-          applicationId: Number(savedParticipants[currentParticipant.id]),
-        }
-      : skipToken,
-  )
-
-  const currentApplication = currentApplicationProp || currentApplicationData
-
-  const { data: user, isFetching: isUserLoading } =
-    api.endpoints.readUser.useQuery(
-      userId
+  const { data: currentApplicationData } =
+    api.endpoints.readEventApplication.useQuery(
+      currentParticipant && savedParticipants
         ? {
-            id: userId,
+            eventId,
+            applicationId: Number(savedParticipants[currentParticipant.id]),
           }
         : skipToken,
     )
+
+  const currentApplication = currentApplicationProp || currentApplicationData
+
+  const { data: user } = api.endpoints.readUser.useQuery(
+    userId
+      ? {
+          id: userId,
+        }
+      : skipToken,
+  )
 
   return (
     <StyledModal

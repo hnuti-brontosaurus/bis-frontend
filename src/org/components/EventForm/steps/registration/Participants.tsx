@@ -33,10 +33,9 @@ export const Participants: FC<{
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
-  const { data: currentParticipant, isLoading: isCurrentParticipantLoading } =
-    api.endpoints.readUser.useQuery(
-      currentParticipantId ? { id: currentParticipantId } : skipToken,
-    )
+  const { data: currentParticipant } = api.endpoints.readUser.useQuery(
+    currentParticipantId ? { id: currentParticipantId } : skipToken,
+  )
 
   return (
     <div className={styles.ListContainer}>

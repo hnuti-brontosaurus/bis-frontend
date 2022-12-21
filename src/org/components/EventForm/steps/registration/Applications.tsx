@@ -35,8 +35,9 @@ export const Applications: FC<{
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
-  const { data: participants, isLoading: isReadParticipantsLoading } =
-    api.endpoints.readEventParticipants.useQuery({ eventId })
+  const { data: participants } = api.endpoints.readEventParticipants.useQuery({
+    eventId,
+  })
 
   const { data: currentApplication } =
     api.endpoints.readEventApplication.useQuery(

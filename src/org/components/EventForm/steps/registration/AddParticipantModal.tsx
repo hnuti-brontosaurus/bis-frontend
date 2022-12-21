@@ -82,7 +82,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
 
   const [selectedUser, setSelectedUser] = useState<User>()
 
-  const [creatingANewUser, setCreatingANewUser] = useState(false)
+  const [, /* creatingANewUser */ setCreatingANewUser] = useState(false)
   const [check, setCheck] = useState(true)
   const [errorsCreatingUser, setErrorsCreatingUser] = useState<any>(undefined)
   const [retrievedUserIsUsed, setRetrievedUserIsUsed] = useState(false)
@@ -159,7 +159,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
       ...(defaultUserData as unknown as Partial<UserPayload>),
       birthday: defaultUserData.birthday || undefined,
     })
-  }, [])
+  }, [defaultUserData, reset])
 
   const isTheSameEmail = (
     email: string | null | undefined,
@@ -173,21 +173,16 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
   const [createUser, { isLoading: isCreatingUser }] =
     api.endpoints.createUser.useMutation()
 
-  const {
-    data: retrievedUser,
-    isFetching: isGettingUserByBirthsdate,
-    error: inlineUserError,
-  } = api.endpoints.readUserByBirthdate.useQuery(
-    selectedUserInputBirthday &&
-      selectedUserInputBirthday.birthday.length === 10
-      ? selectedUserInputBirthday
-      : skipToken,
-  )
-  const [patchEvent, { isLoading: isPatchingEvent }] =
-    api.endpoints.updateEvent.useMutation()
+  const { data: retrievedUser, error: inlineUserError } =
+    api.endpoints.readUserByBirthdate.useQuery(
+      selectedUserInputBirthday &&
+        selectedUserInputBirthday.birthday.length === 10
+        ? selectedUserInputBirthday
+        : skipToken,
+    )
+  const [patchEvent] = api.endpoints.updateEvent.useMutation()
 
-  const [updateApplication, { isLoading: isUpdatingApplication }] =
-    api.endpoints.updateEventApplication.useMutation()
+  const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
   const addParticipant = async (newParticipantId: string) => {
     let newParticipants = [...eventParticipants]
     newParticipants.push(newParticipantId)
