@@ -1,11 +1,13 @@
 @use 'styles/media';
+@use 'styles/colors';
 
 .container {
   display: flex;
   position: relative;
   @include media.for-tablet-portrait-up {
     padding: 0 1.5rem;
-    height: 6rem;
+    margin-top: 0.5rem;
+    height: 4rem;
   }
   align-items: stretch;
   .spacer {
@@ -42,12 +44,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    &:hover {
-      background-color: #f8f8f8;
-    }
     padding: 0 1rem;
     height: 100%;
     border-radius: 0;
+    &:hover {
+      color: colors.$bronto;
+      transition: color 0.2s ease;
+    }
 
     @include media.for-phone-only {
       padding: 0.5rem;
@@ -56,5 +59,42 @@
 
   .userButton {
     gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .roleButton {
+    font-weight: 600;
+  }
+
+  .menuItemReadonly {
+    color: black;
+    font-weight: 400;
+    &:hover {
+      background-color: white;
+    }
+    .menuUserInfo {
+      flex-direction: column;
+      .menuEmail {
+        padding: 0;
+      }
+      .menuName {
+        font-weight: 600;
+        padding: 0;
+        justify-content: center;
+      }
+    }
+  }
+
+  .menuCustom {
+    font-weight: 600;
+  }
+  .menuItemCustom {
+    color: black;
+    font-weight: 400;
+    background-color: white !important;
+
+    &:hover {
+      background-color: white !important;
+    }
   }
 }
