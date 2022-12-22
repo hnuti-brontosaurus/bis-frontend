@@ -27,6 +27,7 @@ import { ResetPassword } from 'pages/ResetPassword'
 import { SendResetPasswordLink } from 'pages/SendResetPasswordLink'
 import { Route } from 'react-router-dom'
 import { EditProfile } from 'user/pages/EditProfile'
+import { Home as UserHome } from 'user/pages/Home'
 import { UserParticipatedEvents } from 'user/pages/UserParticipatedEvents'
 import { UserRegisteredEvents } from 'user/pages/UserRegisteredEvents'
 import { ViewMyProfile } from 'user/pages/ViewMyProfile'
@@ -55,6 +56,7 @@ export const App = () => {
       </Route>
       {/* Routes for authenticated users */}
       <Route path="/" element={<AuthenticatedOutlet />}>
+        <Route path="user" element={<UserHome />} />
         <Route path="profil">
           <Route index element={<ViewMyProfile />} />
           <Route path=":userId" element={<ProfileOutlet />}>

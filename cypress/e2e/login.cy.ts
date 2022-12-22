@@ -42,6 +42,7 @@ describe('login', () => {
     // app redirects to home
     cy.location('pathname').should('equal', '/org')
     cy.contains('Organizátor')
+    cy.contains('Po akci')
   })
 
   it('can sign in as user', () => {
@@ -60,5 +61,6 @@ describe('login', () => {
     // app redirects to home
     cy.location('pathname').should('equal', '/')
     cy.contains('Uživatel')
+    cy.contains('Dárcovství')
   })
 })

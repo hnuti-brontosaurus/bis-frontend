@@ -1,15 +1,7 @@
-import illustration from 'assets/happy-earth-TODO-replace-with-original.webp'
-import classNames from 'classnames'
-import { ReactNode } from 'react'
-import { Link, To } from 'react-router-dom'
-import styles from './Home.module.scss'
+import type { HomeButtonConfig } from 'components'
+import { Home as HomeNav } from 'components'
 
-const buttons: {
-  title: string
-  detail: ReactNode
-  link: To
-  theme: 'createEvent' | 'editEvent' | 'closeEvent' | 'opportunities'
-}[] = [
+const buttons: HomeButtonConfig[] = [
   {
     title: 'Nová akce',
     detail: '',
@@ -36,21 +28,4 @@ const buttons: {
   },
 ]
 
-export const Home = () => (
-  <div className={styles.container}>
-    <nav className={styles.mainMenu}>
-      {buttons.map(({ title, detail, link, theme }) => (
-        <Link
-          to={link}
-          key={title}
-          className={classNames(styles.menuItem, styles[theme])}
-        >
-          <header className={styles.title}>{title}</header>
-          <div className={styles.detail}>{detail}</div>
-        </Link>
-      ))}
-    </nav>
-
-    <img className={styles.illustration} src={illustration} alt="" />
-  </div>
-)
+export const Home = () => <HomeNav buttons={buttons} />
