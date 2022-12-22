@@ -23,28 +23,36 @@
     flex: 0 0 auto;
   }
 
+  margin: 0 0.5rem;
   .logoMini {
+    display: initial;
+    height: 3rem;
+    margin: 0;
+  }
+
+  .logo {
     display: none;
   }
-  .logo {
-    height: 4rem;
-    margin: 1rem;
+
+  .profileName {
+    display: none;
   }
 
-  @include media.for-phone-only {
-    margin: 0 0.5rem;
-    .logoMini {
-      display: initial;
-      height: 3rem;
-      margin: 0;
-    }
-
-    .logo {
-      display: none;
-    }
-
+  @include media.for-tablet-portrait-up {
+    margin: 0;
     .profileName {
+      display: block;
+    }
+  }
+
+  @include media.for-tablet-landscape-up {
+    .logoMini {
       display: none;
+    }
+    .logo {
+      display: block;
+      height: 4rem;
+      margin: 1rem;
     }
   }
 
