@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import { Loading, useCreateOrSelectLocation } from 'components'
+import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -52,7 +52,7 @@ export const CreateOpportunity = () => {
 
   return (
     <div>
-      <h1 style={{ textAlign: 'center' }}>Nová příležitost</h1>
+      <PageHeader>Nová příležitost</PageHeader>
       <OpportunityForm
         id="new"
         onSubmit={handleSubmit}

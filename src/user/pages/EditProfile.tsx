@@ -26,6 +26,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from 'hooks/persistForm'
+import { useTitle } from 'hooks/title'
 import { merge, omit, startsWith } from 'lodash'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -209,6 +210,13 @@ export const EditProfile = () => {
   const { data: currentUser } = useCurrentUser()
   const navigate = useNavigate()
 
+  const title =
+    currentUser?.id === user.id
+      ? 'Upravit můj profil'
+      : `Upravit profil uživatele ${user.display_name}`
+
+  useTitle(title)
+
   const showMessage = useShowMessage()
 
   const [isSaving, setIsSaving] = useState(false)
@@ -279,11 +287,7 @@ export const EditProfile = () => {
 
   return (
     <div>
-      <PageHeader>
-        {currentUser?.id === user.id
-          ? 'Upravit můj profil'
-          : `Upravit profil uživatele ${user.display_name}`}
-      </PageHeader>
+      <PageHeader>{title}</PageHeader>
       <form onSubmit={handleSubmit} onReset={handleCancel}>
         <FormProvider {...methods}>
           <FormSection>

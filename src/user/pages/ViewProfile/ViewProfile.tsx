@@ -1,6 +1,7 @@
 import { User } from 'app/services/bisTypes'
 import { Actions, ButtonLink, PageHeader } from 'components'
 import { useCurrentUser } from 'hooks/currentUser'
+import { useTitle } from 'hooks/title'
 import { FaPencilAlt } from 'react-icons/fa'
 import { useOutletContext } from 'react-router-dom'
 import { formatDateTime } from 'utils/helpers'
@@ -9,13 +10,17 @@ import styles from './ViewProfile.module.scss'
 export const ViewProfile = () => {
   const { user } = useOutletContext<{ user: User }>()
   const { data: currentUser } = useCurrentUser()
+
+  const title =
+    currentUser?.id === user.id
+      ? 'Můj profil'
+      : `Profil uživatele ${user.display_name}`
+
+  useTitle(title)
+
   return (
-    <div>
-      <PageHeader>
-        {currentUser?.id === user.id
-          ? 'Můj profil'
-          : `Profil uživatele ${user.display_name}`}
-      </PageHeader>
+    <div className={styles.pageContainer}>
+      <PageHeader>{title}</PageHeader>
       <Actions>
         <ButtonLink success to="upravit">
           <FaPencilAlt /> Upravit
@@ -56,7 +61,7 @@ export const ViewProfile = () => {
         </table>
       </section>
 
-      <pre>{JSON.stringify(user, null, 2)}</pre>
+      <pre className={styles.data}>{JSON.stringify(user, null, 2)}</pre>
     </div>
   )
 }
