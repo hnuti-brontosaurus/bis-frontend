@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import { Loading, useCreateOrSelectLocation } from 'components'
+import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -133,12 +133,21 @@ export const CreateEvent = () => {
   }
 
   return (
-    <EventForm
-      id={cloneEventId ? `clone-${cloneEventId}` : 'new'}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
-      initialData={initialData}
-      eventToEdit={false}
-    />
+    <>
+      <PageHeader>
+        {eventToClone ? (
+          <>Nová akce podle {eventToClone.name}</>
+        ) : (
+          <>Nová akce</>
+        )}
+      </PageHeader>
+      <EventForm
+        id={cloneEventId ? `clone-${cloneEventId}` : 'new'}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        initialData={initialData}
+        eventToEdit={false}
+      />
+    </>
   )
 }

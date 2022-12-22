@@ -1,6 +1,6 @@
 import { api } from 'app/services/bis'
 import type { EventApplicationPayload } from 'app/services/bisTypes'
-import { Error, Loading } from 'components'
+import { Error, Loading, PageHeader } from 'components'
 import { useShowApiErrorMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
 import {
@@ -63,13 +63,22 @@ export const EventRegistration = () => {
 
   if (!event) return <Loading>Připravujeme přihlášku</Loading>
 
-  if (!event.registration) return <>Není zadefinována registrace.</>
+  if (!event.registration)
+    return <Error message="Není zadefinována registrace."></Error>
 
   if (event.registration.is_event_full)
-    return <>Tato akce je plná. Zkuste jinou z našich akcí.</>
+    return (
+      <Error message="Tato akce je plná">
+        <a href="https://brontosaurus.cz/dobrovolnicke-akce/">
+          Zkuste jinou z našich akcí
+        </a>
+      </Error>
+    )
 
   if (!event.registration.is_registration_required)
-    return <>Na tuto akci se nemusíte přihlašovat. Stačí přijít.</>
+    return (
+      <Error message="Na tuto akci se nemusíte přihlašovat. Stačí přijít."></Error>
+    )
 
   const handleRestart = () => {
     clearPersistentData()
@@ -105,7 +114,7 @@ export const EventRegistration = () => {
 
   return (
     <div>
-      <h1 className={styles.header}>Přihláška na akci {event?.name}</h1>
+      <PageHeader>Přihláška na akci {event?.name}</PageHeader>
       <div className={styles.infoBox}>
         <div>
           <FaRegCalendarAlt /> {formatDateRange(event.start, event.end)}

@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import { Loading, useCreateOrSelectLocation } from 'components'
+import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -205,13 +205,16 @@ export const UpdateEvent = () => {
   }
 
   return (
-    <EventForm
-      id={String(eventId)}
-      initialData={event2payload(event)}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
-      eventToEdit={true}
-    />
+    <>
+      <PageHeader>Úprava akce {event.name}</PageHeader>
+      <EventForm
+        id={String(eventId)}
+        initialData={event2payload(event)}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        eventToEdit={true}
+      />
+    </>
   )
 }
 
