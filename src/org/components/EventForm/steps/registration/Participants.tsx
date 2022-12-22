@@ -1,6 +1,6 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
-import { User, UserSearch } from 'app/services/testApi'
+import { User } from 'app/services/testApi'
 import { Loading } from 'components'
 import { SelectUnknownUser } from 'components/SelectUsers'
 import stylesTable from 'components/Table.module.scss'
@@ -23,6 +23,8 @@ export const Participants: FC<{
   chooseHighlightedParticipant,
   savedParticipants,
 }) => {
+  const [lastAddedId, setLastAddedId] = useState<number>()
+  const [timeOfLastAddition, setTimeOfLastAddition] = useState<number>()
   const { data: participants, isLoading: isReadParticipantsLoading } =
     api.endpoints.readEventParticipants.useQuery({ eventId })
 
@@ -32,9 +34,10 @@ export const Participants: FC<{
   const showMessage = useShowMessage()
 
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
-  const [newParticipant, setNewParticipant] = useState<User | UserSearch>()
+  // const [newParticipant, setNewParticipant] = useState<User | UserSearch>()
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
+
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
@@ -69,9 +72,7 @@ export const Participants: FC<{
           <div>Add new participant:</div>
           <SelectUnknownUser
             onChange={selectedUser => {
-              // @ts-ignore
-              addParticipant(selectedUser.id)
-              setNewParticipant(selectedUser || undefined)
+              if (selectedUser) addParticipant(selectedUser.id)
             }}
             onBirthdayError={message => {
               showMessage({
@@ -79,9 +80,7 @@ export const Participants: FC<{
                 message: 'Nepodařilo se přidat uživatele',
                 detail: message,
               })
-              setNewParticipant(undefined)
             }}
-            value={newParticipant}
           />
           {participants && participants.results && (
             <table className={styles.table}>
