@@ -22,6 +22,8 @@ export {
   Label,
 } from './FormLayout/FormLayout'
 export { Help } from './Help/Help'
+export { Home } from './Home/Home'
+export type { HomeButtonConfig } from './Home/Home'
 export { IconSelect, IconSelectGroup } from './IconSelect/IconSelect'
 export { ImagesUpload, ImageUpload } from './ImageUpload/ImageUpload'
 export { ListHeader } from './ListHeader/ListHeader'
