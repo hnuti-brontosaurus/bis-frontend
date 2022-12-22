@@ -64,12 +64,12 @@ export const SelectFullUsers = forwardRef<any, SelectObjectsProps<User>>(
   },
 )
 
-export type SelectObjectProps<T> = Omit<
+export type SelectObjectProps<T, U = T> = Omit<
   Assign<
     InputHTMLAttributes<HTMLInputElement>,
     {
-      value?: T
-      onChange: (value: T | null) => void
+      value?: U
+      onChange: (value: U | null) => void
       getDisabled?: (value: T) => string
       getLabel?: (value: T) => string
     }
@@ -116,7 +116,7 @@ export const SelectFullUser = forwardRef<any, SelectObjectProps<User>>(
  */
 export const SelectUnknownUser = forwardRef<
   any,
-  SelectObjectProps<UserSearch | User> & {
+  SelectObjectProps<UserSearch | User, User> & {
     onBirthdayError?: (message: string) => void
   }
 >(
@@ -157,7 +157,8 @@ export const SelectUnknownUser = forwardRef<
             }
             return onChange(fullUser)
           } catch (error) {
-            if (error instanceof Error) onBirthdayError?.(error.message)
+            if (error instanceof Error && error.message === 'Canceled') return
+            else if (error instanceof Error) onBirthdayError?.(error.message)
             else onBirthdayError?.('Jiná chyba')
           }
         }}
@@ -265,7 +266,8 @@ export const SelectUnknownUsers = forwardRef<
           updatedUsers[userIndex] = fullUser
           return onChange(updatedUsers)
         } catch (e) {
-          if (e instanceof Error) onBirthdayError?.(e.message)
+          if (e instanceof Error && e.message === 'Canceled') return
+          else if (e instanceof Error) onBirthdayError?.(e.message)
           else {
             onBirthdayError?.('Jiná chyba')
           }
@@ -320,6 +322,7 @@ const useReadFullUser = () => {
         }
         throw new Error('Nesprávné datum narození')
       }
+      throw new Error('Canceled')
     } catch (error) {
       if (
         error &&
@@ -330,6 +333,5 @@ const useReadFullUser = () => {
         throw new Error('Nesprávné datum narození')
       throw error
     }
-    throw new Error('How did we get here?')
   }
 }
