@@ -1,6 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { User } from 'app/services/testApi'
+import classNames from 'classnames'
 import { Loading } from 'components'
 import { SelectUnknownUser } from 'components/SelectUsers'
 import stylesTable from 'components/Table.module.scss'
@@ -23,6 +24,8 @@ export const Participants: FC<{
   chooseHighlightedParticipant,
   savedParticipants,
 }) => {
+  const [lastAddedId, setLastAddedId] = useState<string>()
+  const [timeOfLastAddition, setTimeOfLastAddition] = useState<number>(0)
   const { data: participants, isLoading: isReadParticipantsLoading } =
     api.endpoints.readEventParticipants.useQuery({ eventId })
 
@@ -68,8 +71,12 @@ export const Participants: FC<{
         <div>
           <div>Add new participant:</div>
           <SelectUnknownUser
-            onChange={selectedUser => {
-              if (selectedUser) addParticipant(selectedUser.id)
+            onChange={async selectedUser => {
+              if (selectedUser) {
+                await addParticipant(selectedUser.id)
+                setLastAddedId(selectedUser.id)
+                setTimeOfLastAddition(Date.now())
+              }
             }}
             onBirthdayError={message => {
               showMessage({
@@ -92,11 +99,14 @@ export const Participants: FC<{
                 {participants.results.map((participant: User) => (
                   <tr
                     key={participant.id}
-                    className={
+                    className={classNames(
                       highlightedParticipant === participant.id
                         ? styles.highlightedRow
-                        : ''
-                    }
+                        : '',
+                      lastAddedId === participant.id &&
+                        timeOfLastAddition > Date.now() - 30000 &&
+                        styles.lightUp,
+                    )}
                     onMouseEnter={() => {
                       chooseHighlightedParticipant(participant.id)
                     }}
