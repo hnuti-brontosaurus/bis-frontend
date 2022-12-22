@@ -23,8 +23,6 @@ export const Participants: FC<{
   chooseHighlightedParticipant,
   savedParticipants,
 }) => {
-  const [lastAddedId, setLastAddedId] = useState<number>()
-  const [timeOfLastAddition, setTimeOfLastAddition] = useState<number>()
   const { data: participants, isLoading: isReadParticipantsLoading } =
     api.endpoints.readEventParticipants.useQuery({ eventId })
 
@@ -34,7 +32,6 @@ export const Participants: FC<{
   const showMessage = useShowMessage()
 
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
-  // const [newParticipant, setNewParticipant] = useState<User | UserSearch>()
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
 
