@@ -164,6 +164,10 @@ h2 {
         width: 210px;
       }
     }
+    .lightUp {
+      animation: sampleanimation 7s;
+      animation-iteration-count: 1;
+    }
   }
 }
 
@@ -178,4 +182,22 @@ h2 {
 
 .addedUserBlock {
   margin-top: 40px;
+}
+
+@keyframes sampleanimation {
+  0% {
+    background-color: white;
+  }
+  10% {
+    background-color: colors.$bronto-light;
+  }
+  25% {
+    background-color: colors.$bronto-light;
+  }
+  50% {
+    background-color: colors.$bronto-light;
+  }
+  75% {
+    background-color: white;
+  }
 }
