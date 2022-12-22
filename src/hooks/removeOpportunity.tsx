@@ -1,4 +1,6 @@
 import { api } from 'app/services/bis'
+import { Actions, Button } from 'components'
+import modalStyles from 'components/StyledModal/StyledModal.module.scss'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -24,27 +26,35 @@ export const useRemoveOpportunity = () => {
     const isConfirmed = await new Promise((resolve, reject) => {
       confirmAlert({
         customUI: ({ title, message, onClose }) => (
-          <div>
-            <header>{title}</header>
-            <div>{message}</div>
-            <nav>
-              <button
-                onClick={() => {
-                  resolve(false)
-                  onClose()
-                }}
-              >
-                Zruš
-              </button>
-              <button
-                onClick={() => {
-                  resolve(true)
-                  onClose()
-                }}
-              >
-                Pokračuj
-              </button>
-            </nav>
+          // this modal component is copy-pasted from similar useRemoveEvent hook
+          // TODO maybe dry it
+          <div className={modalStyles.modal}>
+            <div className={modalStyles.content}>
+              <header className={modalStyles.modalTitleBox}>{title}</header>
+              <div className={modalStyles.modalFormBox}>
+                <div className={modalStyles.infoBox}>{message}</div>
+                <Actions>
+                  <Button
+                    light
+                    onClick={() => {
+                      resolve(false)
+                      onClose()
+                    }}
+                  >
+                    Zruš
+                  </Button>
+                  <Button
+                    danger
+                    onClick={() => {
+                      resolve(true)
+                      onClose()
+                    }}
+                  >
+                    Pokračuj
+                  </Button>
+                </Actions>
+              </div>
+            </div>
           </div>
         ),
         title: `Mažeš příležitost ${opportunity.name}`,
@@ -57,7 +67,8 @@ export const useRemoveOpportunity = () => {
         message: 'Příležitost byla úspěšně smazána',
         type: 'success',
       })
-    }
+      return true
+    } else return false
   }
   return [removeOpportunityWithModal, states] as const
 }

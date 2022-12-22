@@ -41,14 +41,16 @@ export const FormSubheader = (props: HeaderProps) => {
 export const FormSection = ({
   children,
   startIndex,
+  className,
 }: {
   children: ReactNode
   startIndex?: number
+  className?: string
 }) => {
   return (
     <fieldset
       style={{ counterReset: `section ${(startIndex ?? 1) - 1}` }}
-      className={styles.section}
+      className={classNames(className, styles.section)}
     >
       {children}
     </fieldset>

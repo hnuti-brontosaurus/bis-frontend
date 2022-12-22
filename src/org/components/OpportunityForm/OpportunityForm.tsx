@@ -4,6 +4,8 @@ import { ReactComponent as HandsIcon } from 'assets/hands.svg'
 import { ReactComponent as HousesIcon } from 'assets/houses.svg'
 import { ReactComponent as OrganizerIcon } from 'assets/organizer.svg'
 import {
+  Actions,
+  Button,
   FormInputError,
   FormSection,
   FormSubheader,
@@ -122,7 +124,7 @@ export const OpportunityForm = ({
 
   return (
     <FormProvider {...methods}>
-      <FormSection>
+      <FormSection className="opportunitySection">
         <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
           <FormSubsection
             required
@@ -395,16 +397,14 @@ export const OpportunityForm = ({
               </FormInputError>
             </InlineSection>
           </FormSubsection>
-          <div className={styles.actions}>
-            <button className={styles.cancelAction} type="reset">
+          <Actions>
+            <Button light className={styles.cancelAction} type="reset">
               Zrušit
-            </button>
-            <input
-              className={styles.mainAction}
-              type="submit"
-              value={isUpdate ? 'Uložit změny' : 'Přidat příležitost'}
-            />
-          </div>
+            </Button>
+            <Button success className={styles.mainAction} type="submit">
+              {isUpdate ? 'Uložit změny' : 'Přidat příležitost'}
+            </Button>
+          </Actions>
         </form>
       </FormSection>
     </FormProvider>

@@ -5,6 +5,7 @@ import { Actions, Button, ButtonLink, Loading } from 'components'
 import { sanitize } from 'dompurify'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useRemoveOpportunity } from 'hooks/removeOpportunity'
+import { useTitle } from 'hooks/title'
 import styles from 'org/pages/ViewEvent/ViewEvent.module.scss'
 import { useNavigate, useParams } from 'react-router-dom'
 import { formatDateRange } from 'utils/helpers'
@@ -30,6 +31,8 @@ export const ViewOpportunity = () => {
       : skipToken,
   )
 
+  useTitle(`Příležitost ${opportunity?.name ?? ''}`)
+
   const [removeOpportunity, { isLoading: isOpportunityRemoving }] =
     useRemoveOpportunity()
 
@@ -41,8 +44,8 @@ export const ViewOpportunity = () => {
   if (isOpportunityRemoving) return <Loading>Mažeme příležitost</Loading>
 
   const handleClickRemove = async () => {
-    await removeOpportunity({ ...opportunity, userId })
-    navigate('..')
+    const isRemoved = await removeOpportunity({ ...opportunity, userId })
+    if (isRemoved) navigate('/org/prilezitosti')
   }
 
   return (

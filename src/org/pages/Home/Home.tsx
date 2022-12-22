@@ -1,5 +1,6 @@
 import type { HomeButtonConfig } from 'components'
 import { Home as HomeNav } from 'components'
+import { useTitle } from 'hooks/title'
 
 const buttons: HomeButtonConfig[] = [
   {
@@ -28,4 +29,7 @@ const buttons: HomeButtonConfig[] = [
   },
 ]
 
-export const Home = () => <HomeNav buttons={buttons} />
+export const Home = () => {
+  useTitle('Organizátorský přístup')
+  return <HomeNav buttons={buttons} />
+}

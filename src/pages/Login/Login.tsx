@@ -9,6 +9,7 @@ import {
   Loading,
   TogglePasswordInput,
 } from 'components'
+import { useTitle } from 'hooks/title'
 import { FormProvider, useForm } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import styles from './Login.module.scss'
@@ -29,6 +30,7 @@ const getErrorMessage = (
 }
 
 export const Login = () => {
+  useTitle('Přihlášení do Brontosauřího Informačního Systému')
   const [login, { isLoading: isLoginLoading, error }] =
     api.endpoints.login.useMutation()
 

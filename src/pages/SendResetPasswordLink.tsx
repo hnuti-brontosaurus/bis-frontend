@@ -3,11 +3,11 @@ import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { api } from 'app/services/bis'
 import { default as classNames, default as classnames } from 'classnames'
 import { Button, FormInputError, Loading } from 'components'
+import { useTitle } from 'hooks/title'
 import styles from 'pages/Login/Login.module.scss'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-
-const requiredMessage = 'Toto pole je povinné!' // TODO DRY!
+import { required } from 'utils/validationMessages'
 
 const getErrorMessage = (
   error: FetchBaseQueryError | SerializedError,
@@ -25,6 +25,7 @@ const getErrorMessage = (
 }
 
 export const SendResetPasswordLink = () => {
+  useTitle('Požádat o nastavení hesla')
   const [sendResetPasswordLink, { error, isLoading, isSuccess }] =
     api.endpoints.sendResetPasswordLink.useMutation()
 
@@ -74,7 +75,7 @@ export const SendResetPasswordLink = () => {
                 type="text"
                 placeholder="E-mail"
                 {...register('email', {
-                  required: requiredMessage,
+                  required,
                   pattern: {
                     message: 'Zadejte email',
                     // https://stackoverflow.com/a/24980411 quite random regex

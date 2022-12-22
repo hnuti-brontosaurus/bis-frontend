@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import { Loading, useCreateOrSelectLocation } from 'components'
+import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -29,6 +29,10 @@ export const UpdateOpportunity = () => {
     isLoading: isOpportunityLoading,
     isError,
   } = useReadFullOpportunity({ id: opportunityId, userId })
+
+  const title = `Upravit příležitost ${opportunity?.name ?? ''}`
+
+  useTitle(title)
 
   const [updateOpportunity, updateOpportunityStatus] =
     api.endpoints.updateOpportunity.useMutation()
@@ -87,8 +91,8 @@ export const UpdateOpportunity = () => {
   }
 
   return (
-    <div>
-      <h1 style={{ textAlign: 'center' }}>Upravit příležitost</h1>
+    <>
+      <PageHeader>{title}</PageHeader>
       <OpportunityForm
         id={String(userId + '-' + opportunityId)}
         initialData={initialData}
@@ -96,6 +100,6 @@ export const UpdateOpportunity = () => {
         onCancel={handleCancel}
         isUpdate
       />
-    </div>
+    </>
   )
 }

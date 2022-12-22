@@ -2,6 +2,7 @@ import { Actions, Button, ButtonLink, Error, Loading } from 'components'
 import { sanitize } from 'dompurify'
 import { useReadFullEvent } from 'hooks/readFullEvent'
 import { useRemoveEvent } from 'hooks/removeEvent'
+import { useTitle } from 'hooks/title'
 import {
   FaPencilAlt,
   FaRegCalendarAlt,
@@ -23,6 +24,8 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
     isError,
     error: readEventError,
   } = useReadFullEvent(eventId)
+
+  useTitle(`Akce ${event?.name ?? ''}`)
 
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
 

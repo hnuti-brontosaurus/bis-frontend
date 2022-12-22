@@ -9,6 +9,7 @@ import {
   TogglePasswordInput,
 } from 'components'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
+import { useTitle } from 'hooks/title'
 import styles from 'pages/Login/Login.module.scss'
 import { lazy, ReactNode, Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -53,6 +54,7 @@ const getErrorMessage = (
 }
 
 export const ResetPassword = () => {
+  useTitle('Nastavit heslo')
   // use search parameters
   const [searchParams] = useSearchParams()
   const email = searchParams.get('email') ?? ''
