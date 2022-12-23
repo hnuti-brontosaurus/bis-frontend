@@ -132,7 +132,7 @@ describe('create event', () => {
     cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
   }
 
-  it('can create a new event', () => {
+  it('can fill form and send data to create a new event', () => {
     cy.visit('/org/akce/vytvorit')
     cy.location('pathname').should('equal', '/org/akce/vytvorit')
     // first page
@@ -246,5 +246,17 @@ describe('create event', () => {
 
     // test that we got redirected to the event page
     cy.location('pathname').should('equal', '/org/akce/1')
+  })
+
+  it.only('shows validation errors', () => {
+    // go to form
+    cy.visit('/org/akce/vytvorit')
+    cy.location('pathname').should('equal', '/org/akce/vytvorit')
+    // submit form without filling data in
+    cy.get('[type=submit]').should('be.visible').click()
+    // still in the form
+    cy.location('pathname').should('equal', '/org/akce/vytvorit')
+    // check that error message was shown
+    cy.contains('Opravte, prosím, chyby ve validaci')
   })
 })

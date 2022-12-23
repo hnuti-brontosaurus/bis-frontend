@@ -158,6 +158,11 @@ export const pickErrors = (errors: FieldErrorsImpl) => {
   return errors
 }
 
+/**
+ * Given react-hook-form methods, returns boolean indicating whether the form has errors or not
+ * @param react-hook-form methods returned by useForm
+ * @returns boolean
+ */
 export const hasFormError = <T extends FieldValues>(
   methods: UseFormReturn<T>,
 ): boolean => !isEmpty(methods.formState.errors)

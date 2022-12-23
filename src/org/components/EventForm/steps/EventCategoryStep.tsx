@@ -70,7 +70,7 @@ export const EventCategoryStep = ({
     <FormProvider {...methods}>
       <form>
         <FormSection startIndex={1}>
-          <FormSubsection header="Jaký je typ nové akce?">
+          <FormSubsection header="Jaký je druh nové akce?">
             <FormInputError>
               <Controller
                 name="group"

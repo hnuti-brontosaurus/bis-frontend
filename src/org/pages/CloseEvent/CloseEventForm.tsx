@@ -19,7 +19,7 @@ import pick from 'lodash/pick'
 import { FieldErrorsImpl, useForm } from 'react-hook-form'
 import type { DeepPick } from 'ts-deep-pick'
 import { Optional } from 'utility-types'
-import { pickErrors, withOverwriteArray } from 'utils/helpers'
+import { hasFormError, pickErrors, withOverwriteArray } from 'utils/helpers'
 import { EvidenceStep } from './EvidenceStep'
 import { ParticipantsStep } from './ParticipantsStep'
 
@@ -232,6 +232,8 @@ export const CloseEventForm = ({
         message: 'Opravte, prosím, chyby ve validaci',
         detail: JSON.stringify(
           pickErrors(merge({}, evidenceErrors, participantsErrors)),
+          null,
+          2,
         ),
       })
     }
@@ -255,22 +257,14 @@ export const CloseEventForm = ({
         { name: 'uložit a uzavřít', props: { is_complete: true } },
       ]}
     >
-      <Step
-        name="účastníci"
-        hasError={
-          Object.keys(participantsFormMethods.formState.errors).length > 0
-        }
-      >
+      <Step name="účastníci" hasError={hasFormError(participantsFormMethods)}>
         <ParticipantsStep
           areParticipantsRequired={areParticipantsRequired}
           methods={participantsFormMethods}
           event={event}
         />
       </Step>
-      <Step
-        name="práce a další"
-        hasError={Object.keys(evidenceFormMethods.formState.errors).length > 0}
-      >
+      <Step name="práce a další" hasError={hasFormError(evidenceFormMethods)}>
         <EvidenceStep
           isVolunteering={isVolunteering}
           methods={evidenceFormMethods}
