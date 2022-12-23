@@ -170,6 +170,7 @@ export const SelectLocation = forwardRef<
           value={(value as Location) ?? undefined}
           onChange={onChange}
           getLabel={location => location.name}
+          getValue={location => String(location.id)}
           placeholder="Název"
           search={api.endpoints.readLocations}
           ref={ref}

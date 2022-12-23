@@ -166,6 +166,7 @@ export const SelectUnknownUser = forwardRef<
         getOptionLabel={
           getLabel ?? (user => user.display_name + ('id' in user ? '' : ' ?'))
         }
+        getOptionValue={user => user._search_id}
       />
     )
   },
@@ -274,7 +275,7 @@ export const SelectUnknownUsers = forwardRef<
         }
       }}
       getOptionLabel={user => user.display_name + ('id' in user ? '' : ' ?')}
-      getOptionValue={user => String(user._search_id)}
+      getOptionValue={user => user._search_id}
     />
   )
 })
