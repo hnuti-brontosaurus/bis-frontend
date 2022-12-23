@@ -28,8 +28,6 @@ interface INewApplicationModalProps {
 
 // TODO: This modal is still WIP (no need to review atm)
 
-const requiredFieldMessage = 'Toto pole je povinné!'
-
 export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
@@ -43,12 +41,12 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   })
 
   const validationSchema = yup.object().shape({
-    first_name: yup.string().required(requiredFieldMessage).trim(),
-    last_name: yup.string().required(requiredFieldMessage).trim(),
+    first_name: yup.string().required().trim(),
+    last_name: yup.string().required().trim(),
     nickname: yup.string().trim(),
-    email: yup.string().email().required(requiredFieldMessage),
-    phone: yup.string().required(requiredFieldMessage),
-    birthday: birthdayValidation.required(requiredFieldMessage),
+    email: yup.string().email().required(),
+    phone: yup.string().required(),
+    birthday: birthdayValidation.required(),
     close_person: yup.object().shape({
       first_name: yup.string(),
       last_name: yup.string(),
@@ -60,7 +58,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
         is_required: yup.boolean(),
         answer: yup.string().when('is_required', {
           is: true,
-          then: schema => schema.required(requiredFieldMessage),
+          then: schema => schema.required(),
         }),
       }),
     ),

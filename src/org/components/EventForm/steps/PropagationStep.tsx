@@ -46,9 +46,7 @@ export const PropagationStep = ({
                   id="propagation.cost"
                   maxLength={12}
                   size={12}
-                  {...register('propagation.cost', {
-                    required: 'required',
-                  })}
+                  {...register('propagation.cost', { required })}
                   placeholder="100, 150/200, 150-250"
                 />
               </FormInputError>{' '}

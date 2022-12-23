@@ -11,6 +11,7 @@ import {
 } from 'components'
 import { ReactNode } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
+import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 
 type EventGroupSlug = 'weekend_event' | 'other' | 'camp'
@@ -74,9 +75,7 @@ export const EventCategoryStep = ({
               <Controller
                 name="group"
                 control={methods.control}
-                rules={{
-                  required: 'Toto pole je povinné!',
-                }}
+                rules={{ required }}
                 render={({ field }) => (
                   <IconSelectGroup>
                     {groups &&

@@ -1,6 +1,7 @@
+import './config'
 import './index.scss'
 // this line intentionally left blank
-// it keeps reset stylesheets in index.scss imported first
+// it keeps reset stylesheets in index.scss, and generally the stuff above, imported first
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -8,7 +9,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import { App } from './App'
 import { persistor, store } from './app/store'
-import './config'
 import { ErrorBoundary, ErrorBoundaryFallback } from './config/sentry'
 import { SystemMessages } from './features/systemMessage/SystemMessages'
 import { reportWebVitals } from './reportWebVitals'

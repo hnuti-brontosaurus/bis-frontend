@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
 import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
+import { required } from 'utils/validationMessages'
 
 export function getIdBySlug<T, O extends { id: number; slug: T }>(
   objects: O[],
@@ -19,7 +20,7 @@ export function getIdsBySlugs<T, O extends { id: number; slug: T }>(
 
 export const requireBoolean = {
   validate: (value: boolean | null | undefined) => {
-    return value === true || value === false || 'Toto pole je povinné!'
+    return value === true || value === false || required
   },
 }
 
