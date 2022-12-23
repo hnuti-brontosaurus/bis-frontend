@@ -226,7 +226,10 @@ const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
 }
 
 export const event2payload = (
-  event: Optional<FullEvent, 'id' | 'start' | 'start_time' | 'end' | 'record'>,
+  event: Optional<
+    FullEvent,
+    'id' | 'start' | 'start_time' | 'end' | 'record' | 'is_canceled'
+  >,
 ): Partial<InitialEventData> => {
   const [main_image, ...otherImages] = event.images
     .map(img => ({
