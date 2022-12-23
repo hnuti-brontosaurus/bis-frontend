@@ -1,6 +1,6 @@
-import { Actions, Button, ButtonLink, Error, Loading } from 'components'
+import { Actions, Button, ButtonLink, Loading } from 'components'
 import { sanitize } from 'dompurify'
-import { useReadFullEvent } from 'hooks/readFullEvent'
+import type { FullEvent } from 'hooks/readFullEvent'
 import { useRemoveEvent } from 'hooks/removeEvent'
 import { useTitle } from 'hooks/title'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
@@ -14,19 +14,14 @@ import {
   FaTrashAlt,
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
-import { useParams } from 'react-router-dom'
+import { useOutletContext, useParams } from 'react-router-dom'
 import { formatDateRange, formatDateTime } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
 export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   const params = useParams()
   const eventId = Number(params.eventId)
-  const {
-    data: event,
-    isLoading: isEventLoading,
-    isError,
-    error: readEventError,
-  } = useReadFullEvent(eventId)
+  const { event } = useOutletContext<{ event: FullEvent }>()
 
   useTitle(`Akce ${event?.name ?? ''}`)
 
@@ -35,11 +30,6 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   const [cancelEvent, { isLoading: isEventCanceling }] = useCancelEvent()
   const [restoreCanceledEvent, { isLoading: isEventRestoring }] =
     useRestoreCanceledEvent()
-
-  if (isError)
-    return <Error error={readEventError}>Nepodařilo se nám najít akci</Error>
-
-  if (isEventLoading || !event) return <Loading>Stahujeme akci</Loading>
 
   if (isEventRemoving) return <Loading>Mažeme akci</Loading>
 

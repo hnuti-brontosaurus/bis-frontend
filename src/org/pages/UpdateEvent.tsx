@@ -4,11 +4,11 @@ import {
   useShowApiErrorMessage,
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
-import { FullEvent, useReadFullEvent } from 'hooks/readFullEvent'
+import { FullEvent } from 'hooks/readFullEvent'
 import { useTitle } from 'hooks/title'
 import merge from 'lodash/merge'
 import { EventForm, InitialEventData } from 'org/components'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
 
 export const UpdateEvent = () => {
@@ -17,11 +17,7 @@ export const UpdateEvent = () => {
   const navigate = useNavigate()
   const showMessage = useShowMessage()
 
-  const {
-    data: event,
-    isLoading: isEventLoading,
-    isError,
-  } = useReadFullEvent(eventId)
+  const { event } = useOutletContext<{ event: FullEvent }>()
 
   // TODO maybe: add star when data are unsaved (also persistent data)
   useTitle(event ? `Upravit akci ${event.name}` : 'Upravit akci')
@@ -55,10 +51,6 @@ export const UpdateEvent = () => {
     isRemovingQuestion
   )
     return <Loading>Ukládáme změny</Loading>
-
-  if (isError) return <>Event not found (or different error)</>
-
-  if (isEventLoading || !event) return <Loading>Stahujeme akci</Loading>
 
   const { images, questions } = event
 

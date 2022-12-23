@@ -3,6 +3,8 @@ import { AuthenticatedOutlet } from 'layout/AuthenticatedOutlet'
 import { MixedOutlet } from 'layout/MixedOutlet'
 import { OrganizerOutlet } from 'layout/OrganizerOutlet'
 import { UnauthenticatedOutlet } from 'layout/UnauthenticatedOutlet'
+import { EventOutlet } from 'org/EventOutlet'
+import { OpportunityOutlet } from 'org/OpportunityOutlet'
 import { CloseEvent } from 'org/pages/CloseEvent'
 import { CreateEvent } from 'org/pages/CreateEvent'
 import { CreateOpportunity } from 'org/pages/CreateOpportunity'
@@ -25,7 +27,7 @@ import { Login } from 'pages/Login'
 import { NotFound } from 'pages/NotFound'
 import { ResetPassword } from 'pages/ResetPassword'
 import { SendResetPasswordLink } from 'pages/SendResetPasswordLink'
-import { Route } from 'react-router-dom'
+import { Navigate, Route } from 'react-router-dom'
 import { EditProfile } from 'user/pages/EditProfile'
 import { Home as UserHome } from 'user/pages/Home'
 import { UserParticipatedEvents } from 'user/pages/UserParticipatedEvents'
@@ -75,18 +77,22 @@ export const App = () => {
         <Route path="org" element={<OrganizerOutlet />}>
           <Route index element={<OrgHome />} />
           <Route path="akce/vytvorit" element={<CreateEvent />} />
-          <Route path="akce/:eventId">
+          <Route path="akce/:eventId" element={<EventOutlet />}>
             <Route index element={<ViewEvent />} />
             <Route path="upravit" element={<UpdateEvent />} />
             <Route path="uzavrit" element={<CloseEvent />} />
           </Route>
           <Route path="akce" element={<EventsLayout />}>
+            <Route index element={<Navigate to="vsechny" />} />
             <Route path="aktualni" element={<ActiveEvents />} />
             <Route path="vsechny" element={<AllEvents />} />
             <Route path="nevyplnene" element={<UnfinishedEvents />} />
           </Route>
           <Route path="prilezitosti/vytvorit" element={<CreateOpportunity />} />
-          <Route path="prilezitosti/:opportunityId">
+          <Route
+            path="prilezitosti/:opportunityId"
+            element={<OpportunityOutlet />}
+          >
             <Route index element={<ViewOpportunity />} />
             <Route path="upravit" element={<UpdateOpportunity />} />
           </Route>

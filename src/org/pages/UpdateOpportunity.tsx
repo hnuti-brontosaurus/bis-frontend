@@ -5,11 +5,11 @@ import {
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
-import { useReadFullOpportunity } from 'hooks/readFullOpportunity'
+import type { FullOpportunity } from 'hooks/readFullOpportunity'
 import { useTitle } from 'hooks/title'
 import merge from 'lodash/merge'
 import { OpportunityForm, OpportunityFormShape } from 'org/components'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
 
 export const UpdateOpportunity = () => {
@@ -23,12 +23,7 @@ export const UpdateOpportunity = () => {
 
   const showMessage = useShowMessage()
 
-  const {
-    data: opportunity,
-    error,
-    isLoading: isOpportunityLoading,
-    isError,
-  } = useReadFullOpportunity({ id: opportunityId, userId })
+  const { opportunity } = useOutletContext<{ opportunity: FullOpportunity }>()
 
   const title = `Upravit příležitost ${opportunity?.name ?? ''}`
 
@@ -47,14 +42,6 @@ export const UpdateOpportunity = () => {
   if (updateOpportunityStatus.isLoading) {
     return <Loading>Ukládáme změny</Loading>
   }
-
-  if (isError)
-    return (
-      <>Opportunity not found (or different error) {JSON.stringify(error)}</>
-    )
-
-  if (isOpportunityLoading || !opportunity)
-    return <Loading>Stahujeme příležitost</Loading>
 
   const initialData = merge({}, opportunity, {
     category: opportunity.category.id,
