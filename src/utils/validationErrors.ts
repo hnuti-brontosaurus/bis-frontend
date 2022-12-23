@@ -29,6 +29,7 @@ export const validationErrors2Message = <FormShape extends FieldValues>(
   errors: FieldErrorsImpl<FormShape>,
   fieldNames: ModelTranslations = {},
   genericNames: GenericTranslations = {},
+  limit: number = 10,
 ): string => {
   const namesWithMessages = getErrorPaths(
     pickErrors(errors) as NestedObject,
@@ -39,9 +40,19 @@ export const validationErrors2Message = <FormShape extends FieldValues>(
 
   let output = ''
 
-  namesWithMessages.forEach(([name, message]) => {
+  // show the error messages, but limit their amount
+  namesWithMessages.slice(0, limit).forEach(([name, message]) => {
     output += `${name}: ${message}\n`
   })
+
+  // when there are more than 0 omitted errors
+  // show info that there is more
+  const more = namesWithMessages.length - limit
+  if (more > 0) {
+    output += `a ${namesWithMessages.length - limit} další${
+      more > 4 ? 'ch' : ''
+    } chyb${more === 1 ? 'a' : more <= 4 ? 'y' : ''}…`
+  }
 
   return output
 }
