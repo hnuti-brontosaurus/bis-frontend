@@ -15,7 +15,7 @@ import {
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useOutletContext, useParams } from 'react-router-dom'
-import { formatDateRange, formatDateTime } from 'utils/helpers'
+import { formatDateRange, formatDateTime, sortOrder } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
 export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
@@ -37,9 +37,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
 
   if (isEventRestoring) return <Loading>Obnovujeme akci</Loading>
 
-  const [mainImage, ...otherImages] = [...event.images].sort(
-    (a, b) => a.order - b.order,
-  )
+  const [mainImage, ...otherImages] = [...event.images].sort(sortOrder)
 
   return (
     <div className={styles.wrapper}>

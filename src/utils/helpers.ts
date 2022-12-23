@@ -237,3 +237,10 @@ export const stripHtml = (html: string): string => {
   let doc = new DOMParser().parseFromString(html, 'text/html')
   return doc.body.textContent || ''
 }
+
+/* This sorts lowest order first, and highest or missing order last */
+export const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
+  const aOrder = a.order ?? Infinity
+  const bOrder = b.order ?? Infinity
+  return aOrder - bOrder
+}

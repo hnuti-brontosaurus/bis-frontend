@@ -19,7 +19,9 @@ import pick from 'lodash/pick'
 import { FieldErrorsImpl, useForm } from 'react-hook-form'
 import type { DeepPick } from 'ts-deep-pick'
 import { Optional } from 'utility-types'
-import { hasFormError, pickErrors, withOverwriteArray } from 'utils/helpers'
+import { hasFormError, withOverwriteArray } from 'utils/helpers'
+import * as translations from 'utils/translations'
+import { validationErrors2Message } from 'utils/validationErrors'
 import { EvidenceStep } from './EvidenceStep'
 import { ParticipantsStep } from './ParticipantsStep'
 
@@ -230,10 +232,14 @@ export const CloseEventForm = ({
       showMessage({
         type: 'error',
         message: 'Opravte, prosím, chyby ve validaci',
-        detail: JSON.stringify(
-          pickErrors(merge({}, evidenceErrors, participantsErrors)),
-          null,
-          2,
+        detail: validationErrors2Message(
+          merge({}, evidenceErrors, participantsErrors) as FieldErrorsImpl,
+          {
+            record: translations.eventRecord,
+            finance: translations.eventFinance,
+            participantInputType: 'Způsob zadání účastníků',
+          },
+          translations.generic,
         ),
       })
     }

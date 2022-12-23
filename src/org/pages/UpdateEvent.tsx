@@ -10,6 +10,7 @@ import merge from 'lodash/merge'
 import { EventForm, InitialEventData } from 'org/components'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
+import { sortOrder } from 'utils/helpers'
 
 export const UpdateEvent = () => {
   const params = useParams()
@@ -208,13 +209,6 @@ export const UpdateEvent = () => {
       />
     </>
   )
-}
-
-/* This sorts lowest order first, and highest or missing order last */
-const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
-  const aOrder = a.order ?? Infinity
-  const bOrder = b.order ?? Infinity
-  return aOrder - bOrder
 }
 
 export const event2payload = (
