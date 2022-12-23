@@ -1,3 +1,8 @@
+// This script downloads translations from backend repository
+// and generates a module in src/utils/translations
+// You can re-run it with `yarn generate-translations` or `yarn gt` for short
+// Also, to run this script you need node v18 or higher because we use node's native fetch
+
 import fs from 'fs/promises'
 import { lowerFirst } from 'lodash'
 import * as YAML from 'yaml'
@@ -51,14 +56,26 @@ const generate = async () => {
     rawStringTranslations,
   )
 
+  const initialComment = `
+  // This file was automatically generated with a script.
+  //
+  // !!!DO NOT EDIT!!!
+  //
+  // You can generate it again with \`yarn generate-translations\` or \`yarn gt\` for short.
+  // The script is defined in \`bin/generateTranslations.ts\`
+
+
+  `
+
   await fs.writeFile(
     'src/utils/translations.ts',
-    [...modelEntries, ...stringEntries]
-      .map(
-        ([name, value]) =>
-          `export const ${name} = ${JSON.stringify(value)} as const;\n\n`,
-      )
-      .join(''),
+    initialComment +
+      [...modelEntries, ...stringEntries]
+        .map(
+          ([name, value]) =>
+            `export const ${name} = ${JSON.stringify(value)} as const;\n\n`,
+        )
+        .join(''),
   )
 }
 

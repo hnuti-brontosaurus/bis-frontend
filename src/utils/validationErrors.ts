@@ -10,12 +10,16 @@ export type ModelTranslations = Readonly<{
 
 export type GenericTranslations = { [key: string]: string }
 
+/**
+ * given field path, and translations, return the field's translation
+ * when translation is not found, it falls back to the original path name
+ */
 const getFieldName = (
   path: string,
   fieldNames: ModelTranslations,
   genericNames: GenericTranslations,
 ): string => {
-  // try to get translation from model
+  // try to get translation from model translations
   const model = get(fieldNames, path)
   // try to get translation from generic translations
   const generic = get(genericNames, path.split('.').pop() as string)
@@ -25,6 +29,10 @@ const getFieldName = (
   else return generic ?? path
 }
 
+/**
+ * Provide errors in react-hook-form format and translations of form field names
+ * And you'll get a string ready to be displayed as error message
+ */
 export const validationErrors2Message = <FormShape extends FieldValues>(
   errors: FieldErrorsImpl<FormShape>,
   fieldNames: ModelTranslations = {},

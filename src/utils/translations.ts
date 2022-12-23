@@ -1,3 +1,10 @@
+// This file was automatically generated with a script.
+//
+// !!!DO NOT EDIT!!!
+//
+// You can generate it again with `yarn generate-translations` or `yarn gt` for short.
+// The script is defined in `bin/generateTranslations.ts`
+
 export const location = {
   _name: 'Lokalita',
   _name_plural: 'Lokalita',

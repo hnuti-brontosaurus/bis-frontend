@@ -57,7 +57,7 @@
     "pree2e": "PORT=3000 BROWSER=none yarn start & wait-on http://localhost:3000",
     "e2e": "cypress run",
     "poste2e": "sleep 5 && killall node",
-    "generate-translations": "ts-node -O '{\"module\":\"commonjs\"}' bin/generateModelTranslations.ts",
+    "generate-translations": "ts-node -O '{\"module\":\"commonjs\"}' bin/generateTranslations.ts",
     "postgenerate-translations": "prettier --write \"src/utils/translations.ts\"",
     "gt": "yarn generate-translations"
   },
