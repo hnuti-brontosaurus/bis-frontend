@@ -82,9 +82,15 @@ export const toDataURL = async (url: string): Promise<string> => {
  *
  * TODO this is unfinished. We don't have info about draft and finished
  */
-export const getEventStatus = (
-  event: Event,
-): 'draft' | 'inProgress' | 'finished' | 'closed' => {
+export type EventStatus =
+  | 'draft'
+  | 'inProgress'
+  | 'finished'
+  | 'closed'
+  | 'canceled'
+
+export const getEventStatus = (event: Event): EventStatus => {
+  if (event.is_canceled) return 'canceled'
   if (isEventClosed(event)) return 'closed'
   if (event.is_complete) return 'finished'
   return 'inProgress'

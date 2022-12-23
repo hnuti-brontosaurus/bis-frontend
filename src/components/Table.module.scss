@@ -36,6 +36,10 @@
   color: black;
 }
 
+.canceled {
+  color: colors.$error;
+}
+
 .cellWithButton > *:first-child {
   display: block;
   margin: auto;

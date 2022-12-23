@@ -3,8 +3,11 @@ import { sanitize } from 'dompurify'
 import { useReadFullEvent } from 'hooks/readFullEvent'
 import { useRemoveEvent } from 'hooks/removeEvent'
 import { useTitle } from 'hooks/title'
+import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
+import { AiOutlineStop } from 'react-icons/ai'
 import {
   FaPencilAlt,
+  FaRedo,
   FaRegCalendarAlt,
   FaRegCheckCircle,
   FaRegCopy,
@@ -29,12 +32,20 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
 
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
 
+  const [cancelEvent, { isLoading: isEventCanceling }] = useCancelEvent()
+  const [restoreCanceledEvent, { isLoading: isEventRestoring }] =
+    useRestoreCanceledEvent()
+
   if (isError)
     return <Error error={readEventError}>Nepodařilo se nám najít akci</Error>
 
   if (isEventLoading || !event) return <Loading>Stahujeme akci</Loading>
 
   if (isEventRemoving) return <Loading>Mažeme akci</Loading>
+
+  if (isEventCanceling) return <Loading>Rušíme akci</Loading>
+
+  if (isEventRestoring) return <Loading>Obnovujeme akci</Loading>
 
   const [mainImage, ...otherImages] = [...event.images].sort(
     (a, b) => a.order - b.order,
@@ -43,23 +54,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   return (
     <div className={styles.wrapper}>
       <header className={styles.name}>{event.name}</header>
-      {!readonly && (
-        <Actions>
-          <ButtonLink success to={`/org/akce/${eventId}/upravit`}>
-            <FaPencilAlt /> upravit
-          </ButtonLink>
-          <ButtonLink success to={`/org/akce/${eventId}/uzavrit`}>
-            <FaRegCheckCircle /> po akci
-          </ButtonLink>
-          <ButtonLink success to={`/org/akce/vytvorit?klonovat=${eventId}`}>
-            <FaRegCopy /> klonovat
-          </ButtonLink>
-          <Button danger onClick={() => removeEvent(event)}>
-            <FaTrashAlt /> smazat
-          </Button>
-        </Actions>
-      )}
-
+      {event.is_canceled && <div>(Akce je zrušena)</div>}
       <div className={styles.infoBox}>
         <div>
           <FaRegCalendarAlt /> {formatDateRange(event.start, event.end)}
@@ -68,6 +63,32 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
           <GrLocation /> {event.location?.name}
         </div>
       </div>
+      {!readonly && (
+        <Actions>
+          <ButtonLink plain to={`/org/akce/${eventId}/upravit`}>
+            <FaPencilAlt /> upravit
+          </ButtonLink>
+          <ButtonLink plain to={`/org/akce/${eventId}/uzavrit`}>
+            <FaRegCheckCircle /> po akci
+          </ButtonLink>
+          <ButtonLink plain to={`/org/akce/vytvorit?klonovat=${eventId}`}>
+            <FaRegCopy /> klonovat
+          </ButtonLink>
+          {event.is_canceled ? (
+            <Button plain onClick={() => restoreCanceledEvent(event)}>
+              <FaRedo /> obnovit
+            </Button>
+          ) : (
+            <Button danger onClick={() => cancelEvent(event)}>
+              <AiOutlineStop /> zrušit
+            </Button>
+          )}
+          <Button danger onClick={() => removeEvent(event)}>
+            <FaTrashAlt /> smazat
+          </Button>
+        </Actions>
+      )}
+
       <div className={styles.infoBoxDetail}>
         <div className={styles.imageWrapper}>
           {mainImage ? (

@@ -5,11 +5,56 @@ import classNames from 'classnames'
 import styles from 'components/Table.module.scss'
 import { useQueries } from 'hooks/queries'
 import { useRemoveEvent } from 'hooks/removeEvent'
-import { FC, useMemo } from 'react'
-import { FaRegCheckCircle } from 'react-icons/fa'
+import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
+import { FC, ReactElement, useMemo } from 'react'
+import { AiOutlineStop } from 'react-icons/ai'
+import { FaPencilAlt, FaRegCheckCircle } from 'react-icons/fa'
 import { TbDotsVertical } from 'react-icons/tb'
 import { Link } from 'react-router-dom'
-import { formatDateRange, getEventStatus, isEventClosed } from 'utils/helpers'
+import {
+  EventStatus,
+  formatDateRange,
+  getEventStatus,
+  isEventClosed,
+} from 'utils/helpers'
+
+/**
+ * A list of default actions for different event statuses
+ */
+const appropriateActions: Record<
+  EventStatus,
+  {
+    title: string
+    link: (event: Event) => string
+    icon: ReactElement
+  }
+> = {
+  draft: {
+    title: 'upravit',
+    link: event => `/org/akce/${event.id}/upravit`,
+    icon: <FaPencilAlt className={styles.draft} />,
+  },
+  inProgress: {
+    title: 'evidence nedokončena (pokračovat v evidenci)',
+    link: event => `/org/akce/${event.id}/uzavrit`,
+    icon: <FaRegCheckCircle className={styles.inProgress} />,
+  },
+  finished: {
+    title: 'evidence uzavřena (prohlédnout akci)',
+    link: event => `/org/akce/${event.id}`,
+    icon: <FaRegCheckCircle className={styles.finished} />,
+  },
+  closed: {
+    title: 'akce uzavřena (prohlédnout akci)',
+    link: event => `/org/akce/${event.id}`,
+    icon: <FaRegCheckCircle className={styles.closed} />,
+  },
+  canceled: {
+    title: 'akce zrušena',
+    link: event => `/org/akce/${event.id}`,
+    icon: <AiOutlineStop className={styles.canceled} />,
+  },
+}
 
 export const EventTable: FC<{
   data: Event[]
@@ -26,6 +71,9 @@ export const EventTable: FC<{
   )
 
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
+  const [cancelEvent, { isLoading: isEventCanceling }] = useCancelEvent()
+  const [restoreCanceledEvent, { isLoading: isEventRestoring }] =
+    useRestoreCanceledEvent()
 
   return (
     <table className={classNames(styles.table, styles.verticalLine1)}>
@@ -41,28 +89,14 @@ export const EventTable: FC<{
       <tbody>
         {events.map(event => {
           const status = getEventStatus(event)
-          const appropriateAction = {
-            title:
-              status === 'draft'
-                ? 'upravit'
-                : status === 'inProgress'
-                ? 'upravit record'
-                : 'prohlédnout akci',
-            link:
-              status === 'draft'
-                ? `/org/akce/${event.id}/upravit`
-                : status === 'inProgress'
-                ? `/org/akce/${event.id}/uzavrit`
-                : `/org/akce/${event.id}`,
-          }
           return (
             <tr key={event.id}>
               <td className={styles.cellWithButton}>
                 <Link
-                  title={appropriateAction.title}
-                  to={appropriateAction.link}
+                  title={appropriateActions[status].title}
+                  to={appropriateActions[status].link(event)}
                 >
-                  {status && <FaRegCheckCircle className={styles[status]} />}
+                  {appropriateActions[status].icon}
                 </Link>
               </td>
               <td>
@@ -101,6 +135,23 @@ export const EventTable: FC<{
                         <Link to={`/org/akce/${event.id}/uzavrit`}>
                           po akci
                         </Link>
+                      </MenuItem>
+                      <MenuItem>
+                        {event.is_canceled ? (
+                          <button
+                            disabled={isEventRestoring}
+                            onClick={() => restoreCanceledEvent(event)}
+                          >
+                            obnovit
+                          </button>
+                        ) : (
+                          <button
+                            disabled={isEventCanceling}
+                            onClick={() => cancelEvent(event)}
+                          >
+                            zrušit
+                          </button>
+                        )}
                       </MenuItem>
                       <MenuItem>
                         <button
