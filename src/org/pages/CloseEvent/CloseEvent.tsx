@@ -1,12 +1,13 @@
 import { api } from 'app/services/bis'
-import type { EventPayload } from 'app/services/bisTypes'
-import { Error, Loading, PageHeader } from 'components'
+import type { Event, EventPayload } from 'app/services/bisTypes'
+import { Loading, PageHeader } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
+import { FullEvent } from 'hooks/readFullEvent'
 import { useTitle } from 'hooks/title'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { CloseEventForm, CloseEventPayload } from './CloseEventForm'
 
 export const CloseEvent = () => {
@@ -14,8 +15,7 @@ export const CloseEvent = () => {
   const eventId = Number(params.eventId)
   const navigate = useNavigate()
 
-  const { data: event, error: readEventError } =
-    api.endpoints.readEvent.useQuery({ id: eventId })
+  const { event } = useOutletContext<{ event: FullEvent }>()
   const { data: photos } = api.endpoints.readEventPhotos.useQuery({
     eventId,
   })
@@ -38,9 +38,7 @@ export const CloseEvent = () => {
 
   useShowApiErrorMessage(updateEventError)
 
-  if (readEventError) return <Error error={readEventError}></Error>
-
-  if (!(event && photos && receipts)) return <Loading>Stahujeme data</Loading>
+  if (!(photos && receipts)) return <Loading>Stahujeme data</Loading>
 
   const defaultValues = {
     record: event.record ?? undefined,
@@ -173,7 +171,9 @@ export const CloseEvent = () => {
       <PageHeader>Evidence akce {event.name}</PageHeader>
       <CloseEventForm
         id={String(eventId)}
-        event={event}
+        // we have FullEvent but need just Event
+        // let's not bother. we don't need the additional data
+        event={event as unknown as Event}
         initialData={defaultValues}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
