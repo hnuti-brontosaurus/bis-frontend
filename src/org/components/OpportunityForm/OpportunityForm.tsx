@@ -22,6 +22,7 @@ import {
   RichTextEditor,
   SelectLocation,
 } from 'components'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
 import {
   useClearPersistentForm,
@@ -33,6 +34,8 @@ import { FormEventHandler, ReactNode, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { getIdBySlug } from 'utils/helpers'
+import * as translations from 'utils/translations'
+import { validationErrors2Message } from 'utils/validationErrors'
 import { required } from 'utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
 
@@ -77,6 +80,8 @@ export const OpportunityForm = ({
 
   const savedData = usePersistentFormData('opportunity', id)
 
+  const showMessage = useShowMessage()
+
   const methods = useForm<OpportunityFormShape>({
     defaultValues: merge({}, initialData, savedData),
   })
@@ -96,10 +101,23 @@ export const OpportunityForm = ({
   const cancelPersist = useClearPersistentForm('opportunity', id)
 
   const categoriesList = opportunityCategories?.results
-  const handleFormSubmit = handleSubmit(async data => {
-    await onSubmit(data)
-    cancelPersist()
-  })
+  const handleFormSubmit = handleSubmit(
+    async data => {
+      await onSubmit(data)
+      cancelPersist()
+    },
+    errors => {
+      showMessage({
+        type: 'error',
+        message: 'Opravte, prosím, chyby ve formuláři',
+        detail: validationErrors2Message(
+          errors,
+          translations.opportunity,
+          translations.generic,
+        ),
+      })
+    },
+  )
 
   const handleFormReset: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()

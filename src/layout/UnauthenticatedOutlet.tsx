@@ -11,7 +11,7 @@ export const UnauthenticatedOutlet = () => {
   if (user) {
     const redirect =
       searchParams.get('next') ?? (isOrganizer(user) ? '/org' : '/')
-    return <Navigate to={redirect} />
+    return <Navigate to={redirect} replace />
   } else if (isAuthenticated) {
     return <Loading>Připravujeme aplikaci</Loading>
   } else {

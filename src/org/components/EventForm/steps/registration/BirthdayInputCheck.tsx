@@ -18,7 +18,7 @@ import * as yup from 'yup'
 import styles from './NewApplicationModal.module.scss'
 
 const validationSchemaBirthdate = yup.object().shape({
-  birthday: birthdayValidation.required('povinne'),
+  birthday: birthdayValidation.required(),
 })
 
 interface IBirthdayInputCheck {

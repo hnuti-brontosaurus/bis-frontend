@@ -194,7 +194,7 @@ const validationSchema: yup.ObjectSchema<UserForm> = yup.object({
           .when(['first_name', 'email', 'phone'], {
             is: (firstName?: string, email?: string, phone?: string) =>
               firstName || email || phone,
-            then: schema => schema.required(''),
+            then: schema => schema.required(),
             otherwise: schema => schema.defined(),
           }),
         email: yup.string().email(),

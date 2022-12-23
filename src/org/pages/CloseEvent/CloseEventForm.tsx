@@ -19,7 +19,9 @@ import pick from 'lodash/pick'
 import { FieldErrorsImpl, useForm } from 'react-hook-form'
 import type { DeepPick } from 'ts-deep-pick'
 import { Optional } from 'utility-types'
-import { pickErrors, withOverwriteArray } from 'utils/helpers'
+import { hasFormError, withOverwriteArray } from 'utils/helpers'
+import * as translations from 'utils/translations'
+import { validationErrors2Message } from 'utils/validationErrors'
 import { EvidenceStep } from './EvidenceStep'
 import { ParticipantsStep } from './ParticipantsStep'
 
@@ -230,8 +232,14 @@ export const CloseEventForm = ({
       showMessage({
         type: 'error',
         message: 'Opravte, prosím, chyby ve validaci',
-        detail: JSON.stringify(
-          pickErrors(merge({}, evidenceErrors, participantsErrors)),
+        detail: validationErrors2Message(
+          merge({}, evidenceErrors, participantsErrors) as FieldErrorsImpl,
+          {
+            record: translations.eventRecord,
+            finance: translations.eventFinance,
+            participantInputType: 'Způsob zadání účastníků',
+          },
+          translations.generic,
         ),
       })
     }
@@ -255,22 +263,14 @@ export const CloseEventForm = ({
         { name: 'uložit a uzavřít', props: { is_complete: true } },
       ]}
     >
-      <Step
-        name="účastníci"
-        hasError={
-          Object.keys(participantsFormMethods.formState.errors).length > 0
-        }
-      >
+      <Step name="účastníci" hasError={hasFormError(participantsFormMethods)}>
         <ParticipantsStep
           areParticipantsRequired={areParticipantsRequired}
           methods={participantsFormMethods}
           event={event}
         />
       </Step>
-      <Step
-        name="práce a další"
-        hasError={Object.keys(evidenceFormMethods.formState.errors).length > 0}
-      >
+      <Step name="práce a další" hasError={hasFormError(evidenceFormMethods)}>
         <EvidenceStep
           isVolunteering={isVolunteering}
           methods={evidenceFormMethods}

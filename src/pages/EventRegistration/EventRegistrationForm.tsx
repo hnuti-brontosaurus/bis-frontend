@@ -32,7 +32,9 @@ import {
   useForm,
 } from 'react-hook-form'
 import type { SetNonNullable, SetRequired } from 'type-fest'
-import { withOverwriteArray } from 'utils/helpers'
+import { sortOrder, withOverwriteArray } from 'utils/helpers'
+import * as translations from 'utils/translations'
+import { validationErrors2Message } from 'utils/validationErrors'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
 import styles from './EventRegistration.module.scss'
@@ -66,15 +68,15 @@ const initialData2form = (
     : undefined
 
   const initialQuestionnaireData = {
-    answers:
-      questionnaire?.questions?.map?.(
-        question =>
-          ({
-            question: question.id,
-            answer: '',
-            is_required: question.is_required,
-          } as AnswerPayload),
-      ) ?? [],
+    // we need to clone readonly questions if we want to sort them by their order
+    answers: [...(questionnaire?.questions ?? [])].sort(sortOrder)?.map?.(
+      question =>
+        ({
+          question: question.id,
+          answer: '',
+          is_required: question.is_required,
+        } as AnswerPayload),
+    ),
   }
 
   return omitBy(
@@ -182,6 +184,7 @@ export const EventRegistrationForm = ({
     persistedData,
     withOverwriteArray,
   )
+
   const methods = useForm<Omit<RegistrationFormShape, 'step'>>({
     resolver: yupResolver(validationSchema),
     defaultValues: defaultValues.isChild
@@ -207,11 +210,17 @@ export const EventRegistrationForm = ({
     async data => {
       await onSubmit(form2payload(data))
     },
-    error => {
+    errors => {
       showMessage({
         type: 'error',
         message: 'Opravte, prosím, chyby ve formuláři',
-        // detail: JSON.stringify(error),
+        detail: validationErrors2Message(
+          errors,
+          {},
+          merge({}, translations.generic, {
+            answer: translations.answer._name,
+          }),
+        ),
       })
     },
   )

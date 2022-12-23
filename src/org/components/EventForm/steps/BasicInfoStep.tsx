@@ -110,10 +110,7 @@ export const BasicInfoStep = ({
           <FormSubsection header="Program" required>
             <FullSizeElement>
               <FormInputError>
-                <select
-                  {...register('program', { required: 'required' })}
-                  defaultValue=""
-                >
+                <select {...register('program', { required })} defaultValue="">
                   <option disabled value="" />
                   {programs &&
                     programs.results!.map(program => (
@@ -134,7 +131,7 @@ export const BasicInfoStep = ({
               <FormInputError>
                 <Controller
                   name="administration_units"
-                  rules={{ required: 'required' }}
+                  rules={{ required }}
                   control={control}
                   render={({ field: { onChange, value, name, ref } }) => (
                     <Select

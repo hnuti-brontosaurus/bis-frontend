@@ -1,8 +1,9 @@
-import { Event, User } from 'app/services/bisTypes'
+import type { Event, User } from 'app/services/bisTypes'
 import { cloneDeep } from 'lodash'
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
 import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
+import { required } from './validationMessages'
 
 export function getIdBySlug<T, O extends { id: number; slug: T }>(
   objects: O[],
@@ -19,7 +20,7 @@ export function getIdsBySlugs<T, O extends { id: number; slug: T }>(
 
 export const requireBoolean = {
   validate: (value: boolean | null | undefined) => {
-    return value === true || value === false || 'Toto pole je povinné!'
+    return value === true || value === false || required
   },
 }
 
@@ -157,6 +158,11 @@ export const pickErrors = (errors: FieldErrorsImpl) => {
   return errors
 }
 
+/**
+ * Given react-hook-form methods, returns boolean indicating whether the form has errors or not
+ * @param react-hook-form methods returned by useForm
+ * @returns boolean
+ */
 export const hasFormError = <T extends FieldValues>(
   methods: UseFormReturn<T>,
 ): boolean => !isEmpty(methods.formState.errors)
@@ -230,4 +236,11 @@ export const withOverwriteArray = (a: any, b: any) =>
 export const stripHtml = (html: string): string => {
   let doc = new DOMParser().parseFromString(html, 'text/html')
   return doc.body.textContent || ''
+}
+
+/* This sorts lowest order first, and highest or missing order last */
+export const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
+  const aOrder = a.order ?? Infinity
+  const bOrder = b.order ?? Infinity
+  return aOrder - bOrder
 }

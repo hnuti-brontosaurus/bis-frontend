@@ -11,6 +11,7 @@ import {
   Loading,
 } from 'components'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
+import { required } from 'utils/validationMessages'
 import { EvidenceStepFormShape } from './CloseEventForm'
 
 const totalHoursHelp =
@@ -43,7 +44,7 @@ export const EvidenceStep = ({
                 <input
                   type="number"
                   {...register('record.total_hours_worked', {
-                    required: isVolunteering && 'Toto pole je povinné',
+                    required: isVolunteering && required,
                   })}
                 />
               </FormInputError>
@@ -56,7 +57,7 @@ export const EvidenceStep = ({
               <FormInputError>
                 <textarea
                   {...register('record.comment_on_work_done', {
-                    required: isVolunteering && 'Toto pole je povinné',
+                    required: isVolunteering && required,
                   })}
                 />
               </FormInputError>
