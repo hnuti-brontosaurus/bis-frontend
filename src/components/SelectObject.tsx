@@ -26,6 +26,7 @@ type SelectObjectProps<T> = Omit<
       onChange: (value: T | null) => void
       getDisabled?: (value: T) => string
       getLabel: (value: T) => string
+      getValue: (value: T) => string
     }
   >,
   'defaultValue'
@@ -48,6 +49,7 @@ const SelectObjectInner = <T,>(
     onChange,
     getDisabled,
     getLabel,
+    getValue,
     search,
     ...rest
   }: SelectObjectProps<T> & {
@@ -78,6 +80,7 @@ const SelectObjectInner = <T,>(
       onChange={onChange}
       isOptionDisabled={obj => Boolean(getDisabled?.(obj))}
       getOptionLabel={getLabel}
+      getOptionValue={getValue}
     />
   )
 }
