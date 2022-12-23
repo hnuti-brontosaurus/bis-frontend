@@ -19,8 +19,8 @@ import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
 import { getIdBySlug, hasFormError, withOverwriteArray } from 'utils/helpers'
-import { event as eventModel } from 'utils/translations'
-import { formatValidationErrors } from 'utils/validationErrors'
+import * as translations from 'utils/translations'
+import { validationErrors2Message } from 'utils/validationErrors'
 import { BasicInfoStep } from './steps/BasicInfoStep'
 import { EventCategoryStep } from './steps/EventCategoryStep'
 import { IntendedForStep } from './steps/IntendedForStep'
@@ -363,9 +363,24 @@ export const EventForm: FC<{
       showMessage({
         message: 'Opravte, prosím, chyby ve validaci',
         type: 'error',
-        detail: formatValidationErrors(
+        detail: validationErrors2Message(
           merge({}, ...Object.values(errors)),
-          eventModel,
+          merge(
+            {},
+            translations.event,
+            {
+              propagation: translations.eventPropagation,
+            },
+            {
+              propagation: {
+                vip_propagation: translations.vIPEventPropagation,
+              },
+            },
+            {
+              'main_image.image': 'Hlavní foto',
+            },
+          ),
+          translations.generic,
         ),
       })
     }

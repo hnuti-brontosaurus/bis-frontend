@@ -18,41 +18,48 @@ export type Model = Readonly<
 >
 
 const generate = async () => {
-  const yamlTranslations = await (
+  const yamlModelTranslations = await (
     await fetch(
       'https://raw.githubusercontent.com/lamanchy/bis/master/backend/translation/model_translations.yaml',
     )
   ).text()
 
-  const raw = YAML.parse(yamlTranslations)
+  const yamlStringTranslations = await (
+    await fetch(
+      'https://raw.githubusercontent.com/lamanchy/bis/master/backend/translation/string_translations.yaml',
+    )
+  ).text()
 
-  const modelEntries: [string, Model][] = Object.entries(raw).map(
-    ([name, model]) => {
-      const raw = model as RawModel
-      return [
-        lowerFirst(name),
-        {
-          _name: raw.name,
-          _name_plural: raw.name,
-          ...raw.fields,
-        },
-      ]
-    },
+  const rawModelTranslations = YAML.parse(yamlModelTranslations)
+  const rawStringTranslations = YAML.parse(yamlStringTranslations)
+
+  const modelEntries: [string, Model][] = Object.entries(
+    rawModelTranslations,
+  ).map(([name, model]) => {
+    const raw = model as RawModel
+    return [
+      lowerFirst(name),
+      {
+        _name: raw.name,
+        _name_plural: raw.name,
+        ...raw.fields,
+      },
+    ]
+  })
+
+  const stringEntries: [string, { [key: string]: string }][] = Object.entries(
+    rawStringTranslations,
   )
 
   await fs.writeFile(
     'src/utils/translations.ts',
-    modelEntries
+    [...modelEntries, ...stringEntries]
       .map(
         ([name, value]) =>
           `export const ${name} = ${JSON.stringify(value)} as const;\n\n`,
       )
       .join(''),
   )
-
-  console.log('it works!')
 }
 
 generate()
-
-export {}

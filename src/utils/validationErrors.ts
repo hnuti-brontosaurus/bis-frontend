@@ -1,17 +1,49 @@
 import { get } from 'lodash'
-import type { FieldErrorsImpl, FieldPath, FieldValues } from 'react-hook-form'
+import type { FieldErrorsImpl, FieldValues } from 'react-hook-form'
 import { pickErrors } from './helpers'
 
-export const formatValidationErrors = <FormShape extends FieldValues>(
-  errors: FieldErrorsImpl<FormShape>,
-  fieldNames: Partial<
-    Record<FieldPath<FormShape>, string | Readonly<string[]>>
-  > = {},
+export type ModelTranslations = Readonly<{
+  [key: string]: string | Readonly<string[]> | ModelTranslations | undefined
+  _name?: string
+  _name_plural?: string
+}>
+
+export type GenericTranslations = { [key: string]: string }
+
+const getFieldName = (
+  path: string,
+  fieldNames: ModelTranslations,
+  genericNames: GenericTranslations,
 ): string => {
-  const pathsWithMessages = getErrorPaths(
+  // try to get translation from model
+  const model = get(fieldNames, path)
+  // try to get translation from generic translations
+  const generic = get(genericNames, path.split('.').pop() as string)
+  // prefer model translation, then generic, and last raw path
+  if (typeof model === 'string') return model
+  else if (Array.isArray(model)) return model[0]
+  else return generic ?? path
+}
+
+export const validationErrors2Message = <FormShape extends FieldValues>(
+  errors: FieldErrorsImpl<FormShape>,
+  fieldNames: ModelTranslations = {},
+  genericNames: GenericTranslations = {},
+): string => {
+  const namesWithMessages = getErrorPaths(
     pickErrors(errors) as NestedObject,
-  ).map(path => [get(fieldNames, path) ?? path, get(errors, [path, 'message'])])
-  return JSON.stringify(pathsWithMessages, null, 2)
+  ).map(path => [
+    getFieldName(path, fieldNames, genericNames),
+    get(errors, [path, 'message'].join('.')),
+  ])
+
+  let output = ''
+
+  namesWithMessages.forEach(([name, message]) => {
+    output += `${name}: ${message}\n`
+  })
+
+  return output
 }
 
 type NestedObject =

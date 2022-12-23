@@ -248,7 +248,7 @@ describe('create event', () => {
     cy.location('pathname').should('equal', '/org/akce/1')
   })
 
-  it.only('shows validation errors', () => {
+  it('shows validation errors', () => {
     // go to form
     cy.visit('/org/akce/vytvorit')
     cy.location('pathname').should('equal', '/org/akce/vytvorit')
