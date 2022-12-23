@@ -18,12 +18,9 @@ import { FC, useMemo } from 'react'
 import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
-import {
-  getIdBySlug,
-  hasFormError,
-  pickErrors,
-  withOverwriteArray,
-} from 'utils/helpers'
+import { getIdBySlug, hasFormError, withOverwriteArray } from 'utils/helpers'
+import * as translations from 'utils/translations'
+import { validationErrors2Message } from 'utils/validationErrors'
 import { BasicInfoStep } from './steps/BasicInfoStep'
 import { EventCategoryStep } from './steps/EventCategoryStep'
 import { IntendedForStep } from './steps/IntendedForStep'
@@ -366,7 +363,25 @@ export const EventForm: FC<{
       showMessage({
         message: 'Opravte, prosím, chyby ve validaci',
         type: 'error',
-        detail: JSON.stringify(pickErrors(merge({}, ...Object.values(errors)))),
+        detail: validationErrors2Message(
+          merge({}, ...Object.values(errors)),
+          merge(
+            {},
+            translations.event,
+            {
+              propagation: translations.eventPropagation,
+            },
+            {
+              propagation: {
+                vip_propagation: translations.vIPEventPropagation,
+              },
+            },
+            {
+              'main_image.image': 'Hlavní foto',
+            },
+          ),
+          translations.generic,
+        ),
       })
     }
   }
@@ -406,7 +421,7 @@ export const EventForm: FC<{
         },
       ]}
     >
-      <Step name="kategorie akce" hasError={hasFormError(methods.category)}>
+      <Step name="druh akce" hasError={hasFormError(methods.category)}>
         <EventCategoryStep methods={methods.category} />
       </Step>
       <Step name="základní info" hasError={hasFormError(methods.basicInfo)}>

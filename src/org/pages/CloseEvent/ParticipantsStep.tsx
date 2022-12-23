@@ -52,7 +52,6 @@ export const ParticipantsStep = ({
           <FormSubsection header="Evidence účastníků">
             {!areParticipantsRequired && (
               <FormInputError
-                isBlock
                 className={styles.inputTypeOptions}
                 name="participantInputType"
               >

@@ -16,7 +16,9 @@ export const useShowMessage = () => {
   const dispatch = useAppDispatch()
 
   const showMessage = useCallback(
-    (message: Pick<SystemMessage, 'type' | 'message' | 'detail'>) => {
+    (
+      message: Pick<SystemMessage, 'type' | 'message' | 'detail' | 'timeout'>,
+    ) => {
       const id = globalThis.crypto.randomUUID()
 
       const msg = { ...message, id, time: Date.now() }

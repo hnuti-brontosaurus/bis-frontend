@@ -11,6 +11,7 @@ import {
 } from 'components'
 import { ReactNode } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
+import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 
 type EventGroupSlug = 'weekend_event' | 'other' | 'camp'
@@ -69,14 +70,12 @@ export const EventCategoryStep = ({
     <FormProvider {...methods}>
       <form>
         <FormSection startIndex={1}>
-          <FormSubsection header="Jaký je typ nové akce?">
+          <FormSubsection header="Jaký je druh nové akce?">
             <FormInputError>
               <Controller
                 name="group"
                 control={methods.control}
-                rules={{
-                  required: 'Toto pole je povinné!',
-                }}
+                rules={{ required }}
                 render={({ field }) => (
                   <IconSelectGroup>
                     {groups &&

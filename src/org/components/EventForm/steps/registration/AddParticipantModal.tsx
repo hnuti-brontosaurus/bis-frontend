@@ -36,8 +36,8 @@ const zipcodeRegExp = /\d{3} ?\d{2}/
 
 const validationSchema = yup.object().shape(
   {
-    first_name: yup.string().required('Required').trim(),
-    last_name: yup.string().required('Required'),
+    first_name: yup.string().required().trim(),
+    last_name: yup.string().required(),
     nickname: yup.string().trim(),
     email: yup.string().email().required('email or phone is required'),
     phone: yup.string().required(),
