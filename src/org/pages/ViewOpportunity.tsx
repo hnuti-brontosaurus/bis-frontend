@@ -1,13 +1,12 @@
-import { skipToken } from '@reduxjs/toolkit/query'
-import { api } from 'app/services/bis'
 import classNames from 'classnames'
 import { Actions, Button, ButtonLink, Loading } from 'components'
 import { sanitize } from 'dompurify'
 import { useCurrentUser } from 'hooks/currentUser'
+import type { FullOpportunity } from 'hooks/readFullOpportunity'
 import { useRemoveOpportunity } from 'hooks/removeOpportunity'
 import { useTitle } from 'hooks/title'
 import styles from 'org/pages/ViewEvent/ViewEvent.module.scss'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { formatDateRange } from 'utils/helpers'
 
 export const ViewOpportunity = () => {
@@ -18,28 +17,12 @@ export const ViewOpportunity = () => {
 
   const navigate = useNavigate()
 
-  const {
-    data: opportunity,
-    isLoading: isOpportunityLoading,
-    isError,
-  } = api.endpoints.readOpportunity.useQuery({ id: opportunityId, userId })
-  const { data: location } = api.endpoints.readLocation.useQuery(
-    opportunity?.location
-      ? {
-          id: opportunity.location,
-        }
-      : skipToken,
-  )
+  const { opportunity } = useOutletContext<{ opportunity: FullOpportunity }>()
 
   useTitle(`Příležitost ${opportunity?.name ?? ''}`)
 
   const [removeOpportunity, { isLoading: isOpportunityRemoving }] =
     useRemoveOpportunity()
-
-  if (isError) return <>Nepodařilo se nám najít příležitost</>
-
-  if (isOpportunityLoading || !opportunity)
-    return <Loading>Stahujeme příležitost</Loading>
 
   if (isOpportunityRemoving) return <Loading>Mažeme příležitost</Loading>
 
@@ -74,7 +57,7 @@ export const ViewOpportunity = () => {
             </tr>
             <tr>
               <th>Místo</th>
-              <td>{location?.name}</td>
+              <td>{opportunity.location.name}</td>
             </tr>
             <tr>
               <th>Kontaktní osoba</th>
