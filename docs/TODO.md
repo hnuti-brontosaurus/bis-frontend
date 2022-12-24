@@ -1,0 +1,1 @@
+- fix hanging loader when visiting /org/akce/n

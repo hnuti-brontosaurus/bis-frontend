@@ -50,7 +50,8 @@ describe('create event', () => {
 
   // sign in before each request
   beforeEach(() => {
-    cy.login('asdf@example.com', 'correcthorsebatterystaples')
+    // https://xkcd.com/936/
+    cy.login('asdf@example.com', 'correcthorsebatterystaple')
   })
 
   // stub more api endpoints
