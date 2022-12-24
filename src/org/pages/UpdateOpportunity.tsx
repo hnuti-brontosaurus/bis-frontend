@@ -46,7 +46,6 @@ export const UpdateOpportunity = () => {
   const initialData = merge({}, opportunity, {
     category: opportunity.category.id,
     image: opportunity.image.original,
-    location: { id: opportunity.location },
   })
 
   const handleSubmit = async (
