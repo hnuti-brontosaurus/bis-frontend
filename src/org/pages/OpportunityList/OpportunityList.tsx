@@ -1,11 +1,13 @@
 import { api } from 'app/services/bis'
 import {
   ButtonLink,
+  InfoMessage,
   ListHeader,
   Loading,
   UnscalablePaginatedList,
 } from 'components'
 import listStyles from 'components/ListHeader/ListHeader.module.scss'
+import * as opportunityTexts from 'config/static/opportunity'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useTitle } from 'hooks/title'
 import { ClearPageMargin, Content, Header, Layout } from 'layout/Layout'
@@ -39,6 +41,9 @@ export const OpportunityList = () => {
             ]}
           />
         </Header>
+        <InfoMessage id="opportunity-list-about" closable>
+          {opportunityTexts.about}
+        </InfoMessage>
         <Content>
           {opportunities ? (
             <UnscalablePaginatedList
