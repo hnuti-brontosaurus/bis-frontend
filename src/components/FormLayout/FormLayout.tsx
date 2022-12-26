@@ -20,7 +20,7 @@ export const FormHeader = ({
   numbered?: boolean
 }) => {
   return (
-    <header className={classNames(numbered && styles.header)}>
+    <header className={classNames(numbered && styles.numberedHeader)}>
       {help && <Help>{help}</Help>}{' '}
       <span className={classNames(required && styles.required)}>
         {children}
@@ -38,7 +38,11 @@ export const FormSubheader = (props: HeaderProps) => {
   return <FormHeader {...props} />
 }
 
-export const FormSection = ({
+/**
+ * This component wraps sections in form
+ * Practically it renders as a gray border around the particular sections
+ */
+export const FormSectionGroup = ({
   children,
   startIndex,
   className,
@@ -50,14 +54,22 @@ export const FormSection = ({
   return (
     <fieldset
       style={{ counterReset: `section ${(startIndex ?? 1) - 1}` }}
-      className={classNames(className, styles.section)}
+      className={classNames(className, styles.sectionGroup)}
     >
       {children}
     </fieldset>
   )
 }
 
-export const FormSubsection = ({
+/**
+ * This is a component that wraps a form section
+ * It has a numbered header
+ *
+ * Numbers withing FormSectionGroup get assinged automatically
+ * but FormSectionGroup needs to specify at which index it should start
+ * (TODO The manual indexing of FormSectionGroup is because of technical limitations. If you can think of better way, refactor! <3)
+ */
+export const FormSection = ({
   children,
   header,
   help,
@@ -71,7 +83,7 @@ export const FormSubsection = ({
   onWeb?: boolean
 }) => {
   return (
-    <div className={styles.subsection}>
+    <div className={styles.section}>
       <FormNumberedHeader required={required} help={help} onWeb={onWeb}>
         {header}
       </FormNumberedHeader>
@@ -80,7 +92,7 @@ export const FormSubsection = ({
   )
 }
 
-export const FormSubsubsection = ({
+export const FormSubsection = ({
   children,
   header,
   help,

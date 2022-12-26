@@ -8,8 +8,8 @@ import {
   Button,
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubsection,
-  FormSubsubsection,
   FullSizeElement,
   InlineSection,
   Label,
@@ -290,8 +290,8 @@ export const EditProfile = () => {
       <PageHeader>{title}</PageHeader>
       <form onSubmit={handleSubmit} onReset={handleCancel}>
         <FormProvider {...methods}>
-          <FormSection>
-            <FormSubsection header="Osobní údaje">
+          <FormSectionGroup>
+            <FormSection header="Osobní údaje">
               <InlineSection>
                 <Label required>Jméno</Label>
                 <FormInputError>
@@ -359,8 +359,8 @@ export const EditProfile = () => {
                 <Label>Alergie a zdravotní omezení</Label>
                 <textarea {...register('health_issues')} />
               </FullSizeElement>
-            </FormSubsection>
-            <FormSubsection header="Kontaktní údaje">
+            </FormSection>
+            <FormSection header="Kontaktní údaje">
               <InlineSection>
                 <Label required>Email</Label>
                 <FormInputError>
@@ -373,7 +373,7 @@ export const EditProfile = () => {
                   <input type="tel" {...register('phone')} />
                 </FormInputError>
               </InlineSection>
-              <FormSubsubsection header="Adresa" required>
+              <FormSubsection header="Adresa" required>
                 <InlineSection>
                   <Label>Ulice a číslo domu</Label>
                   <FormInputError>
@@ -405,8 +405,8 @@ export const EditProfile = () => {
                     </select>
                   </FormInputError>
                 </InlineSection>
-              </FormSubsubsection>
-              <FormSubsubsection header="Kontaktní adresa">
+              </FormSubsection>
+              <FormSubsection header="Kontaktní adresa">
                 <InlineSection>
                   <Label>Ulice a číslo domu</Label>
                   <FormInputError>
@@ -444,9 +444,9 @@ export const EditProfile = () => {
                     </select>
                   </FormInputError>
                 </InlineSection>
-              </FormSubsubsection>
-            </FormSubsection>
-            <FormSubsection header="Blízká osoba">
+              </FormSubsection>
+            </FormSection>
+            <FormSection header="Blízká osoba">
               <InlineSection>
                 <Label>Jméno</Label>
                 <FormInputError>
@@ -471,8 +471,8 @@ export const EditProfile = () => {
                   <input type="tel" {...register('close_person.phone')} />
                 </FormInputError>
               </InlineSection>
-            </FormSubsection>
-          </FormSection>
+            </FormSection>
+          </FormSectionGroup>
           <Actions>
             <Button type="reset">Zrušit</Button>
             <Button success type="submit">

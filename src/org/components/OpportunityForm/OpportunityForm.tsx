@@ -8,8 +8,8 @@ import {
   Button,
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubheader,
-  FormSubsection,
   FullSizeElement,
   htmlRequired,
   IconSelect,
@@ -142,9 +142,9 @@ export const OpportunityForm = ({
 
   return (
     <FormProvider {...methods}>
-      <FormSection className="opportunitySection">
+      <FormSectionGroup className="opportunitySection">
         <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
-          <FormSubsection
+          <FormSection
             required
             header={'Čeho se tvá příležitost k zapojení týká?'}
           >
@@ -172,8 +172,8 @@ export const OpportunityForm = ({
                   })}
               </IconSelectGroup>
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection header="Název" required>
+          </FormSection>
+          <FormSection header="Název" required>
             <FormInputError>
               <input
                 type="text"
@@ -181,8 +181,8 @@ export const OpportunityForm = ({
                 {...register('name', { required })}
               />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection header="Datum">
+          </FormSection>
+          <FormSection header="Datum">
             <InlineSection>
               <Label required htmlFor="start">
                 Od
@@ -207,8 +207,8 @@ export const OpportunityForm = ({
                 />
               </FormInputError>
             </InlineSection>
-          </FormSubsection>
-          <FormSubsection header="Zobrazit na webu">
+          </FormSection>
+          <FormSection header="Zobrazit na webu">
             <InlineSection>
               <Label required htmlFor="on_web_start">
                 Od
@@ -233,13 +233,13 @@ export const OpportunityForm = ({
                 />
               </FormInputError>
             </InlineSection>
-          </FormSubsection>
+          </FormSection>
         </form>
         {/** Locality has its own form inside,
          * therefore we need to keep it out of other forms
          * the issue could probably be solved differently, but this is what we did
          */}
-        <FormSubsection header="Místo konání" required>
+        <FormSection header="Místo konání" required>
           Lokalita
           <FormInputError>
             <Controller
@@ -249,10 +249,10 @@ export const OpportunityForm = ({
               render={({ field }) => <SelectLocation {...field} />}
             />
           </FormInputError>
-        </FormSubsection>
+        </FormSection>
         <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
           <FullSizeElement>
-            <FormSubsection header="Popis">
+            <FormSection header="Popis">
               <FullSizeElement>
                 <FormSubheader required>Představení příležitosti</FormSubheader>
                 <InfoBox>
@@ -365,14 +365,14 @@ export const OpportunityForm = ({
                   />
                 </FormInputError>
               </FullSizeElement>
-            </FormSubsection>
+            </FormSection>
           </FullSizeElement>
-          <FormSubsection header="Fotka příležitosti" required>
+          <FormSection header="Fotka příležitosti" required>
             <FormInputError>
               <ImageUpload name="image" required />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Kontaktní osoba"
             help="Pokud necháš kontaktní údaje prázdné, použije se Tvé jméno/email/telefon."
           >
@@ -414,7 +414,7 @@ export const OpportunityForm = ({
                 />
               </FormInputError>
             </InlineSection>
-          </FormSubsection>
+          </FormSection>
           <Actions>
             <Button light className={styles.cancelAction} type="reset">
               Zrušit
@@ -424,7 +424,7 @@ export const OpportunityForm = ({
             </Button>
           </Actions>
         </form>
-      </FormSection>
+      </FormSectionGroup>
     </FormProvider>
   )
 }

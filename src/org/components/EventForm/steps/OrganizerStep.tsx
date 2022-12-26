@@ -10,8 +10,8 @@ import type {
 import {
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubsection,
-  FormSubsubsection,
   FullSizeElement,
   InfoBox,
   InlineSection,
@@ -142,8 +142,8 @@ export const OrganizerStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={20}>
-          <FormSubsection
+        <FormSectionGroup startIndex={20}>
+          <FormSection
             header="Hlavní organizátor/ka"
             required
             help="Hlavní organizátor musí mít náležité kvalifikace a za celou akci zodpovídá. Je nutné zadávat hlavního organizátora do BIS před akcí, aby měl automaticky sjednané pojištění odpovědnosti za škodu a úrazové pojištění."
@@ -207,8 +207,8 @@ export const OrganizerStep = ({
                 />
               </FormInputError>
             </FullSizeElement>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Organizační tým"
             help="Vyberte jména dalších organizátorů. Organizátory je možné ještě připojistit na úrazové pojištění a pojištění odpovědnosti za škodu."
           >
@@ -249,7 +249,7 @@ export const OrganizerStep = ({
                 />
               </FormInputError>
             </FullSizeElement>
-            <FormSubsubsection
+            <FormSubsection
               header="Těší se na Tebe..."
               onWeb
               required
@@ -260,9 +260,9 @@ export const OrganizerStep = ({
                   <input type="text" {...register('propagation.organizers')} />
                 </FormInputError>
               </FullSizeElement>
-            </FormSubsubsection>
-          </FormSubsection>
-          <FormSubsection header="Kontaktní osoba" required onWeb>
+            </FormSubsection>
+          </FormSection>
+          <FormSection header="Kontaktní osoba" required onWeb>
             <label>
               <input
                 type="checkbox"
@@ -293,7 +293,7 @@ export const OrganizerStep = ({
                 </FormInputError>
               </FullSizeElement>
             )}
-            <FormSubsubsection
+            <FormSubsection
               header="Kontaktní údaje"
               help="Pokud necháš kontaktní údaje prázdné, použije se jméno/email/telefon kontaktní osoby."
             >
@@ -341,9 +341,9 @@ export const OrganizerStep = ({
                   />
                 </FormInputError>
               </InlineSection>
-            </FormSubsubsection>
-          </FormSubsection>
-        </FormSection>
+            </FormSubsection>
+          </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

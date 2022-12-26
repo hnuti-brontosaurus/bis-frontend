@@ -1,8 +1,8 @@
 import {
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubheader,
-  FormSubsection,
   FullSizeElement,
   htmlRequired,
   ImagesUpload,
@@ -25,8 +25,8 @@ export const InvitationStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={17}>
-          <FormSubsection header="Pozvánka">
+        <FormSectionGroup startIndex={17}>
+          <FormSection header="Pozvánka">
             <FullSizeElement>
               <FormSubheader
                 required
@@ -121,8 +121,8 @@ export const InvitationStep = ({
                 />
               </FormInputError>
             </FullSizeElement>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Hlavní foto"
             required
             onWeb
@@ -131,15 +131,15 @@ export const InvitationStep = ({
             <FormInputError>
               <ImageUpload required name="main_image.image" />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Fotky k malé ochutnávce"
             onWeb
             help="Další fotky, které se zobrazí u akce."
           >
             <ImagesUpload name="images" />
-          </FormSubsection>
-        </FormSection>
+          </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

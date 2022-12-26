@@ -2,12 +2,13 @@ import {
   Button,
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubsection,
-  FormSubsubsection,
   FullSizeElement,
   InlineSection,
   Label,
 } from 'components'
+import { form as formTexts } from 'config/static/event'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import { FaTrashAlt } from 'react-icons/fa'
 import { requireBoolean } from 'utils/helpers'
@@ -28,11 +29,11 @@ export const RegistrationStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={10}>
-          <FormSubsection
+        <FormSectionGroup startIndex={10}>
+          <FormSection
             required
             header="Zveřejnit na brontosauřím webu"
-            help="Pokud zaškrtnete ano, akce se zobrazí na webu www.brontosaurus.cz. Volbu ne zaškrtněte pouze jedná-li se o interní akci HB nebo interní akci Brďa."
+            help={formTexts.propagation.is_shown_on_web.help}
           >
             <FormInputError>
               <Controller
@@ -72,7 +73,7 @@ export const RegistrationStep = ({
                 )}
               />
             </FormInputError>
-          </FormSubsection>
+          </FormSection>
           {/*<div>
         <header>
           Způsob přihlášení *! (help?: Způsoby přihlášení na vaši akci na
@@ -80,32 +81,11 @@ export const RegistrationStep = ({
           jet”:
         </header>
           </div>*/}
-          <FormSubsection
+          <FormSection
             header="Způsob přihlášení"
             required
             onWeb
-            help={
-              <>
-                Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se
-                zobrazí po kliknutí na tlačítko “chci jet”:
-                <ul>
-                  <li>
-                    standardní přihláška na brontowebu (doporučujeme!) - Je
-                    jednotná pro celé HB. Do této přihlášky si můžete přidat
-                    vlastní otázky. Vyplněné údaje se pak rovnou zobrazí v BIS,
-                    což tobě i kanceláři ulehčí práci.
-                  </li>
-                  <li>
-                    Registrace není potřeba, stačí přijít - Zobrazí se jako text
-                    u tvojí akce na webu.
-                  </li>
-                  <li>
-                    Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se
-                    jako text u tvojí akce na webu.)
-                  </li>
-                </ul>
-              </>
-            }
+            help={formTexts.registrationMethod.help}
           >
             <FormInputError name="registrationMethod">
               <fieldset>
@@ -138,17 +118,7 @@ export const RegistrationStep = ({
                 ))}
               </fieldset>
             </FormInputError>
-            {/* <div>
-              <FormInputError>
-                <input
-                  type="checkbox"
-                  id="is_event_full"
-                  {...register('registration.is_event_full')}
-                />
-              </FormInputError>
-              <label htmlFor="is_event_full">Akce je plná</label>
-            </div> */}
-          </FormSubsection>
+          </FormSection>
 
           {watch('registrationMethod') === 'other' && (
             <InlineSection>
@@ -164,33 +134,39 @@ export const RegistrationStep = ({
 
           {/* {watch('registration.is_registration_required') && ( */}
           {watch('registrationMethod') === 'standard' && (
-            <FormSubsubsection
+            <FormSubsection
               header="Přihláška"
-              help="Zde můžeš připsat svoje doplňující otázky pro účastníky, které se zobrazí u standardní přihlášky na brontowebu"
+              help={formTexts.registration.questionnaire.help}
             >
-              <FormSubsubsection header="Úvod k dotazníku">
+              <FormSubsection
+                header="Úvod k dotazníku"
+                help={formTexts.registration.questionnaire.introduction.help}
+              >
                 <FullSizeElement>
                   <FormInputError>
                     <textarea
-                      placeholder="úvod"
                       {...register('registration.questionnaire.introduction')}
                     />
                   </FormInputError>
                 </FullSizeElement>
-              </FormSubsubsection>
-              <FormSubsubsection header="Text po odeslání">
+              </FormSubsection>
+              <FormSubsection
+                header="Text po odeslání"
+                help={
+                  formTexts.registration.questionnaire.after_submit_text.help
+                }
+              >
                 <FullSizeElement>
                   <FormInputError>
                     <textarea
-                      placeholder="text, který se zobrazí poté, co zájemce/zájemkyně odešle formulář"
                       {...register(
                         'registration.questionnaire.after_submit_text',
                       )}
                     />
                   </FormInputError>
                 </FullSizeElement>
-              </FormSubsubsection>
-              <FormSubsubsection header="Otázky">
+              </FormSubsection>
+              <FormSubsection header="Otázky">
                 <ul>
                   {questionFields.fields.map((item, index) => (
                     <li key={item.id}>
@@ -200,9 +176,7 @@ export const RegistrationStep = ({
                             type="text"
                             {...register(
                               `questions.${index}.question` as const,
-                              {
-                                required,
-                              },
+                              { required },
                             )}
                           />
                         </FormInputError>
@@ -220,21 +194,21 @@ export const RegistrationStep = ({
                           danger
                           onClick={() => questionFields.remove(index)}
                         >
-                          <FaTrashAlt />
+                          <FaTrashAlt /> smazat
                         </Button>
                       </InlineSection>
                     </li>
                   ))}
                 </ul>
-                <button
+                <Button
                   type="button"
-                  className=""
+                  plain
                   onClick={() => questionFields.append({ question: '' })}
                 >
                   Přidat otázku
-                </button>
-              </FormSubsubsection>
-            </FormSubsubsection>
+                </Button>
+              </FormSubsection>
+            </FormSubsection>
           )}
           {/*
                 <pre>
@@ -269,7 +243,7 @@ URL tvé přihlášky
 Fce: proklik na přihlášky vytvořenou externě`}
                 </pre>
 */}
-        </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

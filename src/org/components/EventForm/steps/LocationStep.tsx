@@ -1,7 +1,7 @@
 import {
   FormInputError,
   FormSection,
-  FormSubsection,
+  FormSectionGroup,
   InlineSection,
   SelectLocation,
 } from 'components'
@@ -21,8 +21,8 @@ export const LocationStep = ({
   return (
     <FormProvider {...methods}>
       <form id={formId} />
-      <FormSection startIndex={9}>
-        <FormSubsection header="Místo konání" required onWeb>
+      <FormSectionGroup startIndex={9}>
+        <FormSection header="Místo konání" required onWeb>
           <label>
             <input form={formId} type="checkbox" {...register('online')} /> Akce
             se koná online
@@ -44,8 +44,8 @@ export const LocationStep = ({
               />
             </FormInputError>
           )}
-        </FormSubsection>
-      </FormSection>
+        </FormSection>
+      </FormSectionGroup>
     </FormProvider>
   )
 }

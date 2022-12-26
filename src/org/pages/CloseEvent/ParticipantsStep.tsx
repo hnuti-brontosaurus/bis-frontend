@@ -3,7 +3,7 @@ import {
   ButtonSelect,
   FormInputError,
   FormSection,
-  FormSubsection,
+  FormSectionGroup,
   InlineSection,
   Label,
 } from 'components'
@@ -48,8 +48,8 @@ export const ParticipantsStep = ({
         {/* orgs should be able to always add people to the participants list
       but when the event group is "other", it's optional, and they must fill number_of_participants instead
       */}
-        <FormSection>
-          <FormSubsection header="Evidence účastníků">
+        <FormSectionGroup>
+          <FormSection header="Evidence účastníků">
             {!areParticipantsRequired && (
               <FormInputError
                 className={styles.inputTypeOptions}
@@ -121,8 +121,8 @@ export const ParticipantsStep = ({
             {(areParticipantsRequired || inputType === 'full-list') && (
               <ParticipantsList eventId={event.id} eventName={event.name} />
             )}
-          </FormSubsection>
-        </FormSection>
+          </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

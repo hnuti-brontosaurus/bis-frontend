@@ -2,7 +2,7 @@ import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
-  FormSubsection,
+  FormSectionGroup,
   IconSelect,
   IconSelectGroup,
 } from 'components'
@@ -24,8 +24,8 @@ export const EventGroupStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={1}>
-          <FormSubsection header="Jaký je druh nové akce?">
+        <FormSectionGroup startIndex={1}>
+          <FormSection header="Jaký je druh nové akce?">
             <FormInputError>
               <Controller
                 name="group"
@@ -61,8 +61,8 @@ export const EventGroupStep = ({
                 )}
               />
             </FormInputError>
-          </FormSubsection>
-        </FormSection>
+          </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

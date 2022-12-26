@@ -12,8 +12,8 @@ import {
   Button,
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubsection,
-  FormSubsubsection,
   InlineSection,
   Label,
 } from 'components'
@@ -254,7 +254,7 @@ export const EventRegistrationForm = ({
       )}
       <FormProvider {...methods}>
         <form onSubmit={handleFormSubmit} onReset={handleCancel}>
-          <FormSection>
+          <FormSectionGroup>
             <InlineSection>
               <Label>Přihlašuji dítě</Label>
               <FormInputError>
@@ -262,7 +262,7 @@ export const EventRegistrationForm = ({
               </FormInputError>
             </InlineSection>
             {isChild && (
-              <FormSubsection header="Rodič/zákonný zástupce">
+              <FormSection header="Rodič/zákonný zástupce">
                 <InlineSection>
                   <Label required>Jméno</Label>
                   <FormInputError>
@@ -293,9 +293,9 @@ export const EventRegistrationForm = ({
                     <input type="email" {...register('close_person.email')} />
                   </FormInputError>
                 </InlineSection>
-              </FormSubsection>
+              </FormSection>
             )}
-            <FormSubsection header={isChild ? 'Dítě' : 'Osobní data'}>
+            <FormSection header={isChild ? 'Dítě' : 'Osobní data'}>
               <InlineSection>
                 <Label required>Jméno</Label>
                 <FormInputError>
@@ -336,13 +336,13 @@ export const EventRegistrationForm = ({
                   <textarea {...register('note')} />
                 </FormInputError>
               </InlineSection>
-            </FormSubsection>
+            </FormSection>
             {showQuestions && (
-              <FormSubsection header="Dotazník">
+              <FormSection header="Dotazník">
                 {fields.map((field, index) => {
                   const question = questionnaire!.questions[index]
                   return (
-                    <FormSubsubsection
+                    <FormSubsection
                       key={field.id}
                       header={question.question}
                       required={question.is_required}
@@ -354,10 +354,10 @@ export const EventRegistrationForm = ({
                           })}
                         ></textarea>
                       </FormInputError>
-                    </FormSubsubsection>
+                    </FormSubsection>
                   )
                 })}
-              </FormSubsection>
+              </FormSection>
             )}
             <Actions>
               <Button type="reset">Zrušit</Button>
@@ -365,7 +365,7 @@ export const EventRegistrationForm = ({
                 Odeslat přihlášku
               </Button>
             </Actions>
-          </FormSection>
+          </FormSectionGroup>
         </form>
       </FormProvider>
     </>
