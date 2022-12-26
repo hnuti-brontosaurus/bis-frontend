@@ -10,6 +10,7 @@ import {
   InfoBox,
   Loading,
 } from 'components'
+import { form as formTexts } from 'config/static/closeEvent'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import { EvidenceStepFormShape } from './CloseEventForm'
@@ -64,7 +65,10 @@ export const EvidenceStep = ({
             </FormSubsubsection>
           </FormSubsection>
           <FormSubsection header="Evidence akce">
-            <FormSubsubsection header="Fotky z akce">
+            <FormSubsubsection
+              header="Fotky z akce"
+              help={formTexts.photos.help}
+            >
               <ImagesUpload name="photos" image="photo" />
             </FormSubsubsection>
             <FormSubsubsection
