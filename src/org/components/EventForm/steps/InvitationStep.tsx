@@ -1,14 +1,15 @@
 import {
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubheader,
-  FormSubsection,
   FullSizeElement,
   htmlRequired,
   ImagesUpload,
   ImageUpload,
   RichTextEditor,
 } from 'components'
+import { form as formTexts } from 'config/static/event'
 import { Controller, FormProvider } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
@@ -25,15 +26,15 @@ export const InvitationStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={17}>
-          <FormSubsection header="Pozvánka">
+        <FormSectionGroup startIndex={17}>
+          <FormSection header="Pozvánka">
             <FullSizeElement>
               <FormSubheader
                 required
                 onWeb
-                help="Prvních několik vět se zobrazí v přehledu akcí na webu. První věty jsou k upoutání pozornosti nejdůležitější, proto se na ně zaměř a shrň na co se účastníci mohou těšit."
+                help={formTexts.propagation.invitation_text_introduction.help}
               >
-                Zvací text: Co nás čeká
+                {formTexts.propagation.invitation_text_introduction.name}
               </FormSubheader>
               <FormInputError isBlock>
                 <Controller
@@ -47,7 +48,9 @@ export const InvitationStep = ({
                   }}
                   render={({ field }) => (
                     <RichTextEditor
-                      placeholder="propagation.invitation_text_introduction"
+                      placeholder={
+                        formTexts.propagation.invitation_text_introduction.help
+                      }
                       {...field}
                     />
                   )}
@@ -55,8 +58,18 @@ export const InvitationStep = ({
               </FormInputError>
             </FullSizeElement>
             <FullSizeElement>
-              <FormSubheader required onWeb>
-                Zvací text: Co, kde a jak
+              <FormSubheader
+                required
+                onWeb
+                help={
+                  formTexts.propagation.invitation_text_practical_information
+                    .help
+                }
+              >
+                {
+                  formTexts.propagation.invitation_text_practical_information
+                    .name
+                }
               </FormSubheader>
               <FormInputError isBlock>
                 <Controller
@@ -70,7 +83,10 @@ export const InvitationStep = ({
                   }}
                   render={({ field }) => (
                     <RichTextEditor
-                      placeholder="propagation.invitation_text_practical_information"
+                      placeholder={
+                        formTexts.propagation
+                          .invitation_text_practical_information.help
+                      }
                       {...field}
                     />
                   )}
@@ -78,8 +94,14 @@ export const InvitationStep = ({
               </FormInputError>
             </FullSizeElement>
             <FullSizeElement>
-              <FormSubheader required={isVolunteering} onWeb>
-                Zvací text: Dobrovolnická pomoc
+              <FormSubheader
+                required={isVolunteering}
+                onWeb
+                help={
+                  formTexts.propagation.invitation_text_work_description.help
+                }
+              >
+                {formTexts.propagation.invitation_text_work_description.name}
               </FormSubheader>
               <FormInputError isBlock>
                 <Controller
@@ -93,7 +115,10 @@ export const InvitationStep = ({
                   }}
                   render={({ field }) => (
                     <RichTextEditor
-                      placeholder="propagation.invitation_text_work_description"
+                      placeholder={
+                        formTexts.propagation.invitation_text_work_description
+                          .help
+                      }
                       {...field}
                     />
                   )}
@@ -103,9 +128,9 @@ export const InvitationStep = ({
             <FullSizeElement>
               <FormSubheader
                 onWeb
-                help="Malá ochutnávka uvádí fotky, které k akci přiložíte"
+                help={formTexts.propagation.invitation_text_about_us.help}
               >
-                Zvací text: Malá ochutnávka
+                {formTexts.propagation.invitation_text_about_us.name}
               </FormSubheader>
               <FormInputError isBlock>
                 <Controller
@@ -114,15 +139,17 @@ export const InvitationStep = ({
                   rules={{}}
                   render={({ field }) => (
                     <RichTextEditor
-                      placeholder="propagation.invitation_text_about_us"
+                      placeholder={
+                        formTexts.propagation.invitation_text_about_us.help
+                      }
                       {...field}
                     />
                   )}
                 />
               </FormInputError>
             </FullSizeElement>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Hlavní foto"
             required
             onWeb
@@ -131,15 +158,15 @@ export const InvitationStep = ({
             <FormInputError>
               <ImageUpload required name="main_image.image" />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Fotky k malé ochutnávce"
             onWeb
             help="Další fotky, které se zobrazí u akce."
           >
             <ImagesUpload name="images" />
-          </FormSubsection>
-        </FormSection>
+          </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

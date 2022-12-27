@@ -61,3 +61,18 @@
     width: 200px;
   }
 }
+
+.locationInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .fieldTitle {
+    font-weight: 600;
+  }
+}
+
+.createLocationContainer {
+  border: 1px solid lightgray; // make more generic, right now it's a copy-paste from FormLayout
+  padding: 0.5rem;
+}

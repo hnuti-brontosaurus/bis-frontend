@@ -6,6 +6,7 @@ import {
   User,
 } from 'app/services/bisTypes'
 import { Loading, NewLocation, Step, Steps } from 'components'
+import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -19,10 +20,9 @@ import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
 import { getIdBySlug, hasFormError, withOverwriteArray } from 'utils/helpers'
-import * as translations from 'utils/translations'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { BasicInfoStep } from './steps/BasicInfoStep'
-import { EventCategoryStep } from './steps/EventCategoryStep'
+import { EventGroupStep } from './steps/EventGroupStep'
 import { IntendedForStep } from './steps/IntendedForStep'
 import { InvitationStep } from './steps/InvitationStep'
 import { LocationStep } from './steps/LocationStep'
@@ -32,7 +32,7 @@ import { PropagationStep } from './steps/PropagationStep'
 import { RegistrationStep } from './steps/RegistrationStep'
 
 const steps = [
-  'category',
+  'group',
   'basicInfo',
   'intendedFor',
   'location',
@@ -83,7 +83,7 @@ export type EventFormShape = Assign<
 >
 
 const shapes = {
-  category: ['group'],
+  group: ['group'],
   basicInfo: [
     'name',
     'start',
@@ -255,8 +255,8 @@ export const EventForm: FC<{
     [initialData, savedData],
   )
 
-  const categoryForm = useForm({
-    defaultValues: pick(initialAndSavedData, shapes.category),
+  const groupForm = useForm({
+    defaultValues: pick(initialAndSavedData, shapes.group),
   })
   const basicInfoForm = useForm({
     defaultValues: pick(initialAndSavedData, shapes.basicInfo),
@@ -283,7 +283,7 @@ export const EventForm: FC<{
   const methods: MethodsShapes = useMemo(
     () =>
       ({
-        category: categoryForm,
+        group: groupForm,
         basicInfo: basicInfoForm,
         intendedFor: intendedForForm,
         location: locationForm,
@@ -294,7 +294,7 @@ export const EventForm: FC<{
       } as MethodsShapes),
     [
       basicInfoForm,
-      categoryForm,
+      groupForm,
       intendedForForm,
       invitationForm,
       locationForm,
@@ -394,9 +394,9 @@ export const EventForm: FC<{
 
   const isWeekendEvent =
     getIdBySlug(groups.results, 'weekend_event') ===
-    methods.category.watch('group')
+    methods.group.watch('group')
   const isCamp =
-    getIdBySlug(groups.results, 'camp') === methods.category.watch('group')
+    getIdBySlug(groups.results, 'camp') === methods.group.watch('group')
   const isVolunteering =
     getIdBySlug(categories.results, 'public__volunteering') ===
     +methods.basicInfo.watch('category')
@@ -404,7 +404,7 @@ export const EventForm: FC<{
     intended_for: intendedFor.results.find(
       c => c.id === +methods.intendedFor.watch('intended_for'),
     ),
-    group: groups.results.find(g => g.id === +methods.category.watch('group')),
+    group: groups.results.find(g => g.id === +methods.group.watch('group')),
     category: categories.results.find(
       c => c.id === +methods.basicInfo.watch('category'),
     ),
@@ -421,8 +421,8 @@ export const EventForm: FC<{
         },
       ]}
     >
-      <Step name="druh akce" hasError={hasFormError(methods.category)}>
-        <EventCategoryStep methods={methods.category} />
+      <Step name="druh akce" hasError={hasFormError(methods.group)}>
+        <EventGroupStep methods={methods.group} />
       </Step>
       <Step name="základní info" hasError={hasFormError(methods.basicInfo)}>
         <BasicInfoStep methods={methods.basicInfo} />

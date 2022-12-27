@@ -1,15 +1,12 @@
 import { api } from 'app/services/bis'
 import type { Location, OpportunityPayload } from 'app/services/bisTypes'
-import { ReactComponent as HandsIcon } from 'assets/hands.svg'
-import { ReactComponent as HousesIcon } from 'assets/houses.svg'
-import { ReactComponent as OrganizerIcon } from 'assets/organizer.svg'
 import {
   Actions,
   Button,
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubheader,
-  FormSubsection,
   FullSizeElement,
   htmlRequired,
   IconSelect,
@@ -22,6 +19,8 @@ import {
   RichTextEditor,
   SelectLocation,
 } from 'components'
+import { form as formTexts } from 'config/static/opportunity'
+import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
 import {
@@ -30,30 +29,13 @@ import {
   usePersistForm,
 } from 'hooks/persistForm'
 import merge from 'lodash/merge'
-import { FormEventHandler, ReactNode, useEffect } from 'react'
+import { FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { getIdBySlug } from 'utils/helpers'
-import * as translations from 'utils/translations'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { required } from 'utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
-
-const categoryIcons = {
-  organizing: OrganizerIcon,
-  collaboration: HandsIcon,
-  location_help: HousesIcon,
-} as const
-
-type OpportunityCategorySlug = keyof typeof categoryIcons
-
-const categoryDetails: Record<OpportunityCategorySlug, ReactNode> = {
-  organizing: 'Příležitosti organizovat či pomáhat s pořádáním našich akcí.',
-  collaboration:
-    'Příležitosti ke spolupráci na chodu a rozvoji Hnutí Brontosaurus.',
-  location_help:
-    'Příležitosti k pomoci dané lokalitě, která to aktuálně potřebuje.',
-}
 
 export type OpportunityFormShape = Overwrite<
   OpportunityPayload,
@@ -142,9 +124,9 @@ export const OpportunityForm = ({
 
   return (
     <FormProvider {...methods}>
-      <FormSection className="opportunitySection">
-        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
-          <FormSubsection
+      <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
+        <FormSectionGroup className="opportunitySection">
+          <FormSection
             required
             header={'Čeho se tvá příležitost k zapojení týká?'}
           >
@@ -152,18 +134,14 @@ export const OpportunityForm = ({
               <IconSelectGroup color="blue">
                 {categoriesList &&
                   categoriesList.map(category => {
-                    const Icon =
-                      categoryIcons[category.slug as OpportunityCategorySlug]
+                    const { icon: Icon, info } =
+                      formTexts.category.options[category.slug]
                     return (
                       <IconSelect
                         id={category.slug}
                         key={category.slug}
                         text={category.name}
-                        detail={
-                          categoryDetails[
-                            category.slug as OpportunityCategorySlug
-                          ]
-                        }
+                        detail={info}
                         icon={Icon}
                         value={category.id}
                         {...register('category', { required })}
@@ -172,8 +150,8 @@ export const OpportunityForm = ({
                   })}
               </IconSelectGroup>
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection header="Název" required>
+          </FormSection>
+          <FormSection header="Název" required>
             <FormInputError>
               <input
                 type="text"
@@ -181,8 +159,8 @@ export const OpportunityForm = ({
                 {...register('name', { required })}
               />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection header="Datum">
+          </FormSection>
+          <FormSection header="Datum">
             <InlineSection>
               <Label required htmlFor="start">
                 Od
@@ -207,8 +185,8 @@ export const OpportunityForm = ({
                 />
               </FormInputError>
             </InlineSection>
-          </FormSubsection>
-          <FormSubsection header="Zobrazit na webu">
+          </FormSection>
+          <FormSection header="Zobrazit na webu">
             <InlineSection>
               <Label required htmlFor="on_web_start">
                 Od
@@ -233,32 +211,25 @@ export const OpportunityForm = ({
                 />
               </FormInputError>
             </InlineSection>
-          </FormSubsection>
-        </form>
-        {/** Locality has its own form inside,
-         * therefore we need to keep it out of other forms
-         * the issue could probably be solved differently, but this is what we did
-         */}
-        <FormSubsection header="Místo konání" required>
-          Lokalita
-          <FormInputError>
-            <Controller
-              name="location"
-              control={control}
-              rules={{ required }}
-              render={({ field }) => <SelectLocation {...field} />}
-            />
-          </FormInputError>
-        </FormSubsection>
-        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
+          </FormSection>
+          <FormSection header="Místo konání" required>
+            Lokalita
+            <FormInputError>
+              <Controller
+                name="location"
+                control={control}
+                rules={{ required }}
+                render={({ field }) => <SelectLocation {...field} />}
+              />
+            </FormInputError>
+          </FormSection>
           <FullSizeElement>
-            <FormSubsection header="Popis">
+            <FormSection header="Popis">
               <FullSizeElement>
-                <FormSubheader required>Představení příležitosti</FormSubheader>
-                <InfoBox>
-                  Krátce vysvětli význam činnosti a její přínos, aby přilákala
-                  zájemce.
-                </InfoBox>
+                <FormSubheader required>
+                  {formTexts.introduction.name}
+                </FormSubheader>
+                <InfoBox>{formTexts.introduction.info}</InfoBox>
                 <FormInputError isBlock>
                   <Controller
                     name="introduction"
@@ -269,18 +240,15 @@ export const OpportunityForm = ({
                         required: htmlRequired(required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor placeholder="introduction" {...field} />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
               <FullSizeElement>
-                <FormSubheader required>Popis činnosti</FormSubheader>
-                <InfoBox>
-                  Přibliž konkrétní činnosti a aktivity, které budou součástí
-                  příležitosti.
-                </InfoBox>
+                <FormSubheader required>
+                  {formTexts.description.name}
+                </FormSubheader>
+                <InfoBox>{formTexts.description.info}</InfoBox>
                 <FormInputError isBlock>
                   <Controller
                     name="description"
@@ -291,18 +259,16 @@ export const OpportunityForm = ({
                         required: htmlRequired(required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor placeholder="description" {...field} />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
               <FullSizeElement>
                 <FormSubheader required={!isCollaboration}>
-                  Přínos pro lokalitu
+                  {formTexts.location_benefits.name}
                 </FormSubheader>
                 {/*u typu “spolupráce” nepovinná, u ostatních typů povinná*/}
-                <InfoBox>Popiš dopad a přínos činnosti pro dané místo.</InfoBox>
+                <InfoBox>{formTexts.location_benefits.info}</InfoBox>
                 {/*nebude u spolupráce*/}
                 <FormInputError isBlock>
                   <Controller
@@ -314,21 +280,15 @@ export const OpportunityForm = ({
                         required: htmlRequired(!isCollaboration && required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor
-                        placeholder="location_benefits"
-                        {...field}
-                      />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
               <FullSizeElement>
-                <FormSubheader required>Co mi to přinese?</FormSubheader>
-                <InfoBox>
-                  Uveď konkrétní osobní přínos do života z realizace této
-                  příležitosti.
-                </InfoBox>
+                <FormSubheader required>
+                  {formTexts.personal_benefits.name}
+                </FormSubheader>
+                <InfoBox>{formTexts.personal_benefits.info}</InfoBox>
                 <FormInputError isBlock>
                   <Controller
                     name="personal_benefits"
@@ -339,42 +299,32 @@ export const OpportunityForm = ({
                         required: htmlRequired(required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor
-                        placeholder="personal_benefits"
-                        {...field}
-                      />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
               <FullSizeElement>
-                <FormSubheader>Co potřebuji ke spolupráci</FormSubheader>
-                <InfoBox>
-                  Napiš dovednosti, zkušenosti či vybavení potřebné k zapojení
-                  do příležitosti.
-                </InfoBox>
+                <FormSubheader>{formTexts.requirements.name}</FormSubheader>
+                <InfoBox>{formTexts.requirements.info}</InfoBox>
                 {/* optional */}
                 <FormInputError isBlock>
                   <Controller
                     name="requirements"
                     control={control}
-                    render={({ field }) => (
-                      <RichTextEditor placeholder="requirements" {...field} />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
-            </FormSubsection>
+            </FormSection>
           </FullSizeElement>
-          <FormSubsection header="Fotka příležitosti" required>
+          <FormSection header="Fotka příležitosti" required>
             <FormInputError>
               <ImageUpload name="image" required />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Kontaktní osoba"
-            help="Pokud necháš kontaktní údaje prázdné, použije se Tvé jméno/email/telefon."
+            help={formTexts.contactPerson.help}
           >
             <InlineSection>
               <Label htmlFor="contact_name">Jméno kontaktní osoby</Label>{' '}
@@ -414,7 +364,7 @@ export const OpportunityForm = ({
                 />
               </FormInputError>
             </InlineSection>
-          </FormSubsection>
+          </FormSection>
           <Actions>
             <Button light className={styles.cancelAction} type="reset">
               Zrušit
@@ -423,8 +373,8 @@ export const OpportunityForm = ({
               {isUpdate ? 'Uložit změny' : 'Přidat příležitost'}
             </Button>
           </Actions>
-        </form>
-      </FormSection>
+        </FormSectionGroup>
+      </form>
     </FormProvider>
   )
 }

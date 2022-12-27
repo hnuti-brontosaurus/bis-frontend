@@ -3,7 +3,7 @@ import { AdministrationUnit } from 'app/services/bisTypes'
 import {
   FormInputError,
   FormSection,
-  FormSubsection,
+  FormSectionGroup,
   FullSizeElement,
   InlineSection,
   Label,
@@ -31,8 +31,8 @@ export const BasicInfoStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={2}>
-          <FormSubsection header="Název" required onWeb>
+        <FormSectionGroup startIndex={2}>
+          <FormSection header="Název" required onWeb>
             <FormInputError>
               <input
                 type="text"
@@ -41,8 +41,8 @@ export const BasicInfoStep = ({
                 })}
               />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection header="Kdy bude akce?" onWeb>
+          </FormSection>
+          <FormSection header="Kdy bude akce?" onWeb>
             <InlineSection>
               <InlineSection>
                 <Label htmlFor="start" required>
@@ -73,8 +73,8 @@ export const BasicInfoStep = ({
                 </FormInputError>
               </InlineSection>
             </InlineSection>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Počet akcí v uvedeném období"
             help="Používá se u opakovaných akcí (např. oddílové schůzky). U klasické jednorázové akce zde nechte jedničku."
             required
@@ -89,10 +89,10 @@ export const BasicInfoStep = ({
                 })}
               />
             </FormInputError>
-          </FormSubsection>
-        </FormSection>
-        <FormSection startIndex={5}>
-          <FormSubsection header="Typ akce" required>
+          </FormSection>
+        </FormSectionGroup>
+        <FormSectionGroup startIndex={5}>
+          <FormSection header="Typ akce" required>
             <FullSizeElement>
               <FormInputError>
                 <select {...register('category', { required })} defaultValue="">
@@ -106,8 +106,8 @@ export const BasicInfoStep = ({
                 </select>
               </FormInputError>
             </FullSizeElement>
-          </FormSubsection>
-          <FormSubsection header="Program" required>
+          </FormSection>
+          <FormSection header="Program" required>
             <FullSizeElement>
               <FormInputError>
                 <select {...register('program', { required })} defaultValue="">
@@ -121,12 +121,8 @@ export const BasicInfoStep = ({
                 </select>
               </FormInputError>
             </FullSizeElement>
-          </FormSubsection>
-          <FormSubsection
-            header="Pořádající organizační jednotka"
-            required
-            onWeb
-          >
+          </FormSection>
+          <FormSection header="Pořádající organizační jednotka" required onWeb>
             <FullSizeElement>
               <FormInputError>
                 <Controller
@@ -162,8 +158,8 @@ export const BasicInfoStep = ({
                 />
               </FormInputError>
             </FullSizeElement>
-          </FormSubsection>
-        </FormSection>
+          </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

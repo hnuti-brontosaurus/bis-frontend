@@ -8,7 +8,7 @@ import styles from './RichTextEditor.module.scss'
 
 export const RichTextEditor = forwardRef<
   any,
-  ControllerRenderProps<any, string> & { placeholder: string }
+  ControllerRenderProps<any, string> & { placeholder?: string }
 >((props, ref) => (
   <ReactQuill
     className={styles.wrapper}

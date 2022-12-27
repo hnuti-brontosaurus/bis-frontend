@@ -2,7 +2,7 @@ import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
-  FormSubsection,
+  FormSectionGroup,
   FullSizeElement,
   InlineSection,
   Label,
@@ -31,8 +31,8 @@ export const PropagationStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={12}>
-          <FormSubsection
+        <FormSectionGroup startIndex={12}>
+          <FormSection
             onWeb
             required
             header="Účastnický poplatek"
@@ -52,8 +52,8 @@ export const PropagationStep = ({
               </FormInputError>{' '}
               Kč
             </InlineSection>
-          </FormSubsection>
-          <FormSubsection header="Věk" onWeb>
+          </FormSection>
+          <FormSection header="Věk" onWeb>
             <InlineSection>
               <Label required htmlFor="propagation.minimum_age">
                 Od
@@ -88,21 +88,21 @@ export const PropagationStep = ({
                 />
               </FormInputError>
             </InlineSection>
-          </FormSubsection>
+          </FormSection>
           {(isWeekendEvent || isCamp) && ( // only camp and weekend
             <FullSizeElement>
-              <FormSubsection required header="Ubytování" onWeb>
+              <FormSection required header="Ubytování" onWeb>
                 <textarea
                   style={{ maxWidth: '40rem' }}
                   {...register('propagation.accommodation', {
                     required,
                   })}
                 />
-              </FormSubsection>
+              </FormSection>
             </FullSizeElement>
           )}
           {(isWeekendEvent || isCamp) && ( // only camp and weekend
-            <FormSubsection
+            <FormSection
               header="Strava"
               required
               onWeb
@@ -145,10 +145,10 @@ export const PropagationStep = ({
                   )}
                 />
               </FormInputError>
-            </FormSubsection>
+            </FormSection>
           )}
           {/* TODO povinné pouze u dobrovolnických */}
-          <FormSubsection header="Práce" onWeb>
+          <FormSection header="Práce" onWeb>
             <InlineSection>
               <Label required={isVolunteering}>Denní pracovní doba</Label>
               <FormInputError>
@@ -175,8 +175,8 @@ export const PropagationStep = ({
                 </FormInputError>
               </InlineSection>
             )}
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Web o akci"
             help="Možnost přidat odkaz na webovou stránku vaší akce."
             onWeb
@@ -188,8 +188,8 @@ export const PropagationStep = ({
                 {...register('propagation.web_url', {})}
               />
             </FormInputError>
-          </FormSubsection>
-          <FormSubsection
+          </FormSection>
+          <FormSection
             header="Poznámka"
             help="Možnost přidat interní poznámku. Poznámku uvidí pouze lidé, kteří si mohou tuto akci zobrazit přímo v BISu"
           >
@@ -198,8 +198,8 @@ export const PropagationStep = ({
                 <textarea {...register('internal_note', {})} />
               </FormInputError>
             </FullSizeElement>
-          </FormSubsection>
-        </FormSection>
+          </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

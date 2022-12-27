@@ -2,20 +2,18 @@ import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubsection,
-  FormSubsubsection,
   Help,
   ImagesUpload,
   ImageUpload,
   InfoBox,
   Loading,
 } from 'components'
+import { form as formTexts } from 'config/static/closeEvent'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import { EvidenceStepFormShape } from './CloseEventForm'
-
-const totalHoursHelp =
-  'Napište kolik hodin strávili všichni účastníci a organizátoři dobrovolnickou prací. Např.: Na akci se dva dny kosila louka. Každý den se pracovalo 6 hodin a pracovalo 10 účastníků a 2 organizátoři. Všichni tedy dobrovolnickou prací strávili 2 dny x 6 hodin x 12 lidí =  144 člověkohodin.'
 
 export const EvidenceStep = ({
   isVolunteering,
@@ -33,12 +31,12 @@ export const EvidenceStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={2}>
-          <FormSubsection header="Evidence práce">
-            <FormSubsubsection
+        <FormSectionGroup startIndex={2}>
+          <FormSection header="Evidence práce">
+            <FormSubsection
               required={isVolunteering}
               header="Odpracováno člověkohodin"
-              help={totalHoursHelp}
+              help={formTexts.record.total_hours_worked.help}
             >
               <FormInputError>
                 <input
@@ -48,8 +46,8 @@ export const EvidenceStep = ({
                   })}
                 />
               </FormInputError>
-            </FormSubsubsection>
-            <FormSubsubsection
+            </FormSubsection>
+            <FormSubsection
               required={isVolunteering}
               header="Komentáře k vykonané práci"
               help="Popište vykonanou dobrovolnickou práci."
@@ -61,35 +59,35 @@ export const EvidenceStep = ({
                   })}
                 />
               </FormInputError>
-            </FormSubsubsection>
-          </FormSubsection>
-          <FormSubsection header="Evidence akce">
-            <FormSubsubsection header="Fotky z akce">
+            </FormSubsection>
+          </FormSection>
+          <FormSection header="Evidence akce">
+            <FormSubsection header="Fotky z akce" help={formTexts.photos.help}>
               <ImagesUpload name="photos" image="photo" />
-            </FormSubsubsection>
-            <FormSubsubsection
+            </FormSubsection>
+            <FormSubsection
               header="Sken prezenční listiny"
               help="Povinné pro akce pobírající dotaci. Doporučené pro všechny ostatní."
             >
               <ImageUpload name="record.attendance_list" />
-            </FormSubsubsection>
-          </FormSubsection>
-          <FormSubsection header="Finance">
-            <FormSubsubsection
+            </FormSubsection>
+          </FormSection>
+          <FormSection header="Finance">
+            <FormSubsection
               header="Sken dokladů"
               help="Povinné pro vybrané akce. Pokud jste mezi vybranými akcemi, bude vás ústředí HB informovat."
             >
               <ImagesUpload name="receipts" image="receipt" />
-            </FormSubsubsection>
-            <FormSubsubsection
+            </FormSubsection>
+            <FormSubsection
               header="Číslo účtu k proplacení dokladů"
               help="Povinné pro vybrané akce. Pokud jste mezi vybranými akcemi, bude vás ústředí HB informovat."
             >
               {/* TODO: find or ask which field is this */}
               <input type="text" {...register('finance.bank_account_number')} />
-            </FormSubsubsection>
-          </FormSubsection>
-          <FormSubsection header="Zpětná vazba">
+            </FormSubsection>
+          </FormSection>
+          <FormSection header="Zpětná vazba">
             <InfoBox>
               Zpětná vazba od účastníků udělá vaši příští akci ještě lepší!
               Spokojení účastníci jsou tou nejlepší odměnou pro každého
@@ -110,8 +108,8 @@ export const EvidenceStep = ({
                 Připravit zpětnou vazbu
               </a>
             </div>
-          </FormSubsection>
-          <FormSubsection header="Závěrečná zpráva">
+          </FormSection>
+          <FormSection header="Závěrečná zpráva">
             <InfoBox>
               Vyplněná závěrečná zpráva o akci nám pomáhá zlepšovat podporu vám
               i dalším organizátorům. Vám zase slouží k uchování doplňkových
@@ -130,7 +128,7 @@ export const EvidenceStep = ({
                 Vyplnit závěrečnou zprávu
               </a>
             </div>
-          </FormSubsection>
+          </FormSection>
           {/* Údaje , které je třeba zadat po akci:
 Počet účastníků celkem *
 Z toho počet účastníků do 26 let * 
@@ -153,7 +151,7 @@ Vyplněná závěrečná zpráva o akci nám pomáhá zlepšovat podporu vám i 
 
 Do budoucna: Hodnocení servisu ústředí *****
         Možnost poslat follow up email - rozkliknu nabídku - zobrazí se text, který org může upravit - pošle se email všem účastníkům. Text musí být editovatelný kanceláří, aby tam mohli přidávat aktuální pozvánky na akci */}
-        </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )
