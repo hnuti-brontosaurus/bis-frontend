@@ -17,7 +17,6 @@ export type {
   FinanceReceipt,
   HealthInsuranceCompany,
   LoginRequest,
-  OpportunityCategory,
   PatchedEvent,
   PatchedEventApplication,
   Propagation,
@@ -34,6 +33,11 @@ export type {
   UserAddress as Address,
   UserSearch,
 } from './testApi'
+
+export type OpportunityCategory = Overwrite<
+  original.OpportunityCategory,
+  { slug: Required<original.WebOpportunitiesListApiArg>['category'][0] }
+>
 
 export type EventCategory = Overwrite<
   original.EventCategory,

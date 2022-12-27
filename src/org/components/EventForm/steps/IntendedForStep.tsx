@@ -2,9 +2,9 @@ import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
+  FormSectionGroup,
   FormSubheader,
   FormSubsection,
-  FormSubsubsection,
   FullSizeElement,
   InfoBox,
   InlineSection,
@@ -49,8 +49,8 @@ export const IntendedForStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSection startIndex={8}>
-          <FormSubsection
+        <FormSectionGroup startIndex={8}>
+          <FormSection
             required
             header="Pro koho"
             help="vyberte na koho je akce zaměřená"
@@ -86,7 +86,7 @@ export const IntendedForStep = ({
                 )}
               />
             </FormInputError>
-          </FormSubsection>
+          </FormSection>
           {
             /* not great hardcoded id */
             +watch('intended_for') === 5 && (
@@ -188,7 +188,7 @@ export const IntendedForStep = ({
                         https://docs.google.com/document/d/1p3nz0-kVJxwN_pRCYYyhy0BObyGox6LDk35RQPADT4g/edit?disco=AAAAc3SBnZQ
                         */
                   isCamp && (
-                    <FormSubsubsection
+                    <FormSubsection
                       header="Propagovat akci v Roverském kmeni"
                       required
                       help="Placená propagace vaší vícedenní akce v časopisu Roverský kmen za poplatek 100 Kč."
@@ -229,13 +229,13 @@ export const IntendedForStep = ({
                           )}
                         />
                       </FormInputError>
-                    </FormSubsubsection>
+                    </FormSubsection>
                   )
                 }
               </>
             )
           }
-        </FormSection>
+        </FormSectionGroup>
       </form>
     </FormProvider>
   )

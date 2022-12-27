@@ -7,6 +7,7 @@ import {
   Record,
 } from 'app/services/bisTypes'
 import { Step, Steps } from 'components'
+import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -20,7 +21,6 @@ import { FieldErrorsImpl, useForm } from 'react-hook-form'
 import type { DeepPick } from 'ts-deep-pick'
 import { Optional } from 'utility-types'
 import { hasFormError, withOverwriteArray } from 'utils/helpers'
-import * as translations from 'utils/translations'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { EvidenceStep } from './EvidenceStep'
 import { ParticipantsStep } from './ParticipantsStep'

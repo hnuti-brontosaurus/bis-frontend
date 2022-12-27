@@ -7,6 +7,7 @@ import { ReactComponent as MapMarkerSelected } from 'assets/map-marker-selected.
 import { ReactComponent as MapMarkerDefault } from 'assets/map-marker.svg'
 import classNames from 'classnames'
 import {
+  Actions,
   Button,
   ClearBounds,
   FormInputError,
@@ -21,6 +22,7 @@ import { cloneDeep } from 'lodash'
 import merge from 'lodash/merge'
 import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
 import { Overwrite } from 'utility-types'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
@@ -288,7 +290,9 @@ const CreateLocation = ({
   }
 
   return (
-    <div className={styles.container}>
+    <div
+      className={classNames(styles.container, styles.createLocationContainer)}
+    >
       <FormProvider {...methods}>
         <InlineSection>
           <Label htmlFor="location.name" required>
@@ -356,35 +360,47 @@ const CreateLocation = ({
             />
           </FormInputError>
         </InlineSection>
-        <InlineSection>
-          <input
-            type="reset"
-            value="zrušit"
-            form={formId}
-            onClick={handleCancel}
-          />
-          <input
-            type="submit"
-            value="ok"
-            form={formId}
-            onClick={handleConfirm}
-          />
-        </InlineSection>
+        <Actions>
+          <Button plain type="reset" form={formId} onClick={handleCancel}>
+            Zrušit
+          </Button>
+          <Button success type="submit" form={formId} onClick={handleConfirm}>
+            Potvrdit novou lokalitu
+          </Button>
+        </Actions>
       </FormProvider>
     </div>
   )
 }
 const ViewLocation = ({ location }: { location?: NewLocation | Location }) => {
+  const [expand, setExpand] = useState(false)
   return (
-    <>
-      <div>Název: {location?.name}</div>
+    <div className={styles.locationInfo}>
       <div>
-        GPS: {location?.gps_location?.coordinates?.[1]}{' '}
-        {location?.gps_location?.coordinates?.[0]}
+        <span className={styles.fieldTitle}>Název:</span> {location?.name}
       </div>
-      <div>Adresa: {location?.address}</div>
-      <div>Popis: {location?.description}</div>
-    </>
+      <div>
+        <span className={styles.fieldTitle}>GPS:</span>{' '}
+        {location?.gps_location?.coordinates
+          ? `${location.gps_location.coordinates[1]}N, ${location.gps_location.coordinates[0]}E`
+          : null}
+      </div>
+      <div>
+        <span className={styles.fieldTitle}>Adresa:</span> {location?.address}
+      </div>
+      <div>
+        <span className={styles.fieldTitle}>Popis:</span>{' '}
+        {expand ? location?.description : location?.description?.slice(0, 100)}
+        {location?.description && location.description.length > 100 && (
+          <>
+            &hellip;{' '}
+            <Button plain type="button" onClick={() => setExpand(e => !e)}>
+              {expand ? <FaCaretUp /> : <FaCaretDown />}
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
   )
 }
 
