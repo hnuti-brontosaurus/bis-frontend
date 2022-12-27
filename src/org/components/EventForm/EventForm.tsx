@@ -6,6 +6,7 @@ import {
   User,
 } from 'app/services/bisTypes'
 import { Loading, NewLocation, Step, Steps } from 'components'
+import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -19,7 +20,6 @@ import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
 import { DeepPick } from 'ts-deep-pick'
 import type { Assign, Optional, Overwrite } from 'utility-types'
 import { getIdBySlug, hasFormError, withOverwriteArray } from 'utils/helpers'
-import * as translations from 'utils/translations'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { BasicInfoStep } from './steps/BasicInfoStep'
 import { EventGroupStep } from './steps/EventGroupStep'

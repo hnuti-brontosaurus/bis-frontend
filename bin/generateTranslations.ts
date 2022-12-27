@@ -1,5 +1,5 @@
 // This script downloads translations from backend repository
-// and generates a module in src/utils/translations
+// and generates a module in src/config/static/translations
 // You can re-run it with `yarn generate-translations` or `yarn gt` for short
 // Also, to run this script you need node v18 or higher because we use node's native fetch
 
@@ -68,7 +68,7 @@ const generate = async () => {
   `
 
   await fs.writeFile(
-    'src/utils/translations.ts',
+    'src/config/static/translations.ts',
     initialComment +
       [...modelEntries, ...stringEntries]
         .map(

@@ -17,6 +17,7 @@ import {
   InlineSection,
   Label,
 } from 'components'
+import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -33,7 +34,6 @@ import {
 } from 'react-hook-form'
 import type { SetNonNullable, SetRequired } from 'type-fest'
 import { sortOrder, withOverwriteArray } from 'utils/helpers'
-import * as translations from 'utils/translations'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'

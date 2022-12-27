@@ -58,7 +58,7 @@
     "e2e": "cypress run",
     "poste2e": "sleep 5 && killall node",
     "generate-translations": "ts-node -O '{\"module\":\"commonjs\"}' bin/generateTranslations.ts",
-    "postgenerate-translations": "prettier --write \"src/utils/translations.ts\"",
+    "postgenerate-translations": "prettier --write \"src/config/static/translations.ts\"",
     "gt": "yarn generate-translations"
   },
   "browserslist": {

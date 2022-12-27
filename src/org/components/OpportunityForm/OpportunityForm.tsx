@@ -22,6 +22,7 @@ import {
   RichTextEditor,
   SelectLocation,
 } from 'components'
+import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
 import {
@@ -34,7 +35,6 @@ import { FormEventHandler, ReactNode, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { getIdBySlug } from 'utils/helpers'
-import * as translations from 'utils/translations'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { required } from 'utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
