@@ -1,5 +1,10 @@
 import { api } from 'app/services/bis'
-import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
+import {
+  Error,
+  Loading,
+  PageHeader,
+  useCreateOrSelectLocation,
+} from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -32,6 +37,7 @@ export const CreateEvent = () => {
     data: eventToClone,
     isLoading: isEventToCloneLoading,
     isError: isEventToCloneErrored,
+    error: eventToCloneError,
   } = useReadFullEvent(cloneEventId)
 
   const [createEvent, { isLoading: isSavingEvent, error: saveEventError }] =
@@ -59,7 +65,8 @@ export const CreateEvent = () => {
     return event2payload(eventToCloneFixed)
   }, [currentUser, eventToClone])
 
-  if (isEventToCloneErrored) return <>Event not found (or different error)</>
+  if (isEventToCloneErrored && eventToCloneError)
+    return <Error error={eventToCloneError} />
 
   if (cloneEventId > 0 && (isEventToCloneLoading || !eventToClone))
     return <Loading>Stahujeme akci ke zklonování</Loading>

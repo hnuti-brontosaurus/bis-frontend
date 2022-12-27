@@ -272,6 +272,7 @@ export const eventRegistration = {
   is_registration_required: 'Je požadována registrace?',
   is_event_full: 'Je akce plná?',
   questionnaire: 'Dotazník',
+  alternative_registration_link: 'Alternativní adresa pro přihlášení',
 } as const
 
 export const eventRecord = {
