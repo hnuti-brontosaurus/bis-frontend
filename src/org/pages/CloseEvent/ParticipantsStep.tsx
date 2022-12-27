@@ -9,6 +9,7 @@ import {
 } from 'components'
 import { ButtonSelectGroup } from 'components/ButtonSelect/ButtonSelect'
 import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
+import { useEffect } from 'react'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
 import { Entries } from 'type-fest'
 import { required } from 'utils/validationMessages'
@@ -35,12 +36,20 @@ export const ParticipantsStep = ({
   areParticipantsRequired: boolean
   methods: UseFormReturn<ParticipantsStepFormShape>
 }) => {
-  const { register, watch } = methods
+  const { register, watch, trigger, formState } = methods
 
   // list of participants is shown when it's required
   // or when organizers prefer it rather than filling just numbers
 
   const inputType = watch('participantInputType')
+
+  useEffect(() => {
+    const subscription = watch((values, { name }) => {
+      if (formState.isSubmitted && name === 'record.number_of_participants')
+        trigger('record.number_of_participants_under_26')
+    })
+    return () => subscription.unsubscribe()
+  }, [formState.isSubmitted, trigger, watch])
 
   return (
     <FormProvider {...methods}>
@@ -88,7 +97,7 @@ export const ParticipantsStep = ({
                           required,
                           min: {
                             value: 0,
-                            message: 'TODO message >=0',
+                            message: 'Hodnota musí být větší nebo rovna 0',
                           },
                         })}
                       />
@@ -105,7 +114,23 @@ export const ParticipantsStep = ({
                           required,
                           min: {
                             value: 0,
-                            message: 'TODO message >=0',
+                            message: 'Hodnota musí být větší nebo rovna 0',
+                          },
+                          validate: {
+                            lessThanParticipants: value => {
+                              const numberOfParticipants = Number(
+                                watch('record.number_of_participants'),
+                              )
+                              const numberOfParticipantsUnder26 = Number(value)
+
+                              return (
+                                (!isNaN(numberOfParticipantsUnder26) &&
+                                  !isNaN(numberOfParticipants) &&
+                                  numberOfParticipantsUnder26 <=
+                                    numberOfParticipants) ||
+                                'Hodnota nesmí být větší než počet účastníků celkem'
+                              )
+                            },
                           },
                         })}
                       />
