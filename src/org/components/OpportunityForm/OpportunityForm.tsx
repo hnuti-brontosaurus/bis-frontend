@@ -142,8 +142,8 @@ export const OpportunityForm = ({
 
   return (
     <FormProvider {...methods}>
-      <FormSectionGroup className="opportunitySection">
-        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
+      <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
+        <FormSectionGroup className="opportunitySection">
           <FormSection
             required
             header={'Čeho se tvá příležitost k zapojení týká?'}
@@ -234,23 +234,17 @@ export const OpportunityForm = ({
               </FormInputError>
             </InlineSection>
           </FormSection>
-        </form>
-        {/** Locality has its own form inside,
-         * therefore we need to keep it out of other forms
-         * the issue could probably be solved differently, but this is what we did
-         */}
-        <FormSection header="Místo konání" required>
-          Lokalita
-          <FormInputError>
-            <Controller
-              name="location"
-              control={control}
-              rules={{ required }}
-              render={({ field }) => <SelectLocation {...field} />}
-            />
-          </FormInputError>
-        </FormSection>
-        <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
+          <FormSection header="Místo konání" required>
+            Lokalita
+            <FormInputError>
+              <Controller
+                name="location"
+                control={control}
+                rules={{ required }}
+                render={({ field }) => <SelectLocation {...field} />}
+              />
+            </FormInputError>
+          </FormSection>
           <FullSizeElement>
             <FormSection header="Popis">
               <FullSizeElement>
@@ -269,9 +263,7 @@ export const OpportunityForm = ({
                         required: htmlRequired(required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor placeholder="introduction" {...field} />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -291,9 +283,7 @@ export const OpportunityForm = ({
                         required: htmlRequired(required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor placeholder="description" {...field} />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -314,12 +304,7 @@ export const OpportunityForm = ({
                         required: htmlRequired(!isCollaboration && required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor
-                        placeholder="location_benefits"
-                        {...field}
-                      />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -339,12 +324,7 @@ export const OpportunityForm = ({
                         required: htmlRequired(required),
                       },
                     }}
-                    render={({ field }) => (
-                      <RichTextEditor
-                        placeholder="personal_benefits"
-                        {...field}
-                      />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -359,9 +339,7 @@ export const OpportunityForm = ({
                   <Controller
                     name="requirements"
                     control={control}
-                    render={({ field }) => (
-                      <RichTextEditor placeholder="requirements" {...field} />
-                    )}
+                    render={({ field }) => <RichTextEditor {...field} />}
                   />
                 </FormInputError>
               </FullSizeElement>
@@ -423,8 +401,8 @@ export const OpportunityForm = ({
               {isUpdate ? 'Uložit změny' : 'Přidat příležitost'}
             </Button>
           </Actions>
-        </form>
-      </FormSectionGroup>
+        </FormSectionGroup>
+      </form>
     </FormProvider>
   )
 }
