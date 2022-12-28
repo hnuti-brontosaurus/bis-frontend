@@ -2676,8 +2676,15 @@ export type Questionnaire = {
 }
 export type Registration = {
   is_registration_required?: boolean
+  alternative_registration_link?: string
   is_event_full?: boolean
   questionnaire: Questionnaire | null
+}
+export type EventContact = {
+  first_name: string
+  last_name: string
+  email?: string
+  phone?: string
 }
 export type Record = {
   total_hours_worked?: number | null
@@ -2687,6 +2694,7 @@ export type Record = {
   number_of_participants?: number | null
   number_of_participants_under_26?: number | null
   note?: string
+  contacts?: EventContact[]
 }
 export type Event = {
   id: number
@@ -2855,6 +2863,7 @@ export type PatchedEventPhoto = {
   id?: number
   photo?: string
 }
+export type StateEnum = 'pending' | 'cancelled' | 'rejected' | 'approved'
 export type EventApplicationClosePerson = {
   first_name: string
   last_name: string
@@ -2879,7 +2888,8 @@ export type Answer = {
 }
 export type EventApplication = {
   id: number
-  user: string | null
+  user?: string | null
+  state: StateEnum
   first_name: string
   last_name: string
   nickname?: string
@@ -2903,6 +2913,7 @@ export type PaginatedEventApplicationList = {
 export type PatchedEventApplication = {
   id?: number
   user?: string | null
+  state?: StateEnum
   first_name?: string
   last_name?: string
   nickname?: string

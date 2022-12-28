@@ -323,10 +323,111 @@ describe('create event', () => {
           'Je vyžadováno celé číslo.',
         ],
       },
-    ).as('createEvent')
+    ).as('createEvent2')
 
     submit()
 
-    cy.wait('@createEvent').its('response.statusCode').should('equal', 400)
+    cy.wait('@createEvent2').its('response.statusCode').should('equal', 400)
+  })
+
+  describe('selecting alternative registration form', () => {
+    beforeEach(() => {
+      // clone event and go to proper step
+      cy.interceptFullEvent()
+      cy.visit('/org/akce/vytvorit?klonovat=1000')
+      next()
+
+      cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+      cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+
+      cy.get('button:contains(přihlášení)').should('be.visible').click()
+    })
+
+    it('should allow selecting the option, filling link, and submitting', () => {
+      cy.get('[name=registrationMethod]').should('be.visible').check('other')
+
+      cy.get('[name="registration.alternative_registration_link"]')
+        .should('be.visible')
+        .type('https://example.com/some/link')
+
+      cy.intercept(
+        { method: 'POST', pathname: '/api/frontend/events' },
+        { id: 1000 },
+      ).as('createEvent')
+
+      submit()
+
+      cy.wait('@createEvent')
+        .its('request.body')
+        .should('deep.include', {
+          registration: {
+            is_registration_required: true,
+            is_event_full: false,
+            alternative_registration_link: 'https://example.com/some/link',
+            questionnaire: null,
+          },
+        })
+    })
+
+    it('[link not filled] should fail with validation error', () => {
+      cy.get('[name=registrationMethod]').should('be.visible').check('other')
+
+      cy.get('[name="registration.alternative_registration_link"]')
+        .should('be.visible')
+        .click() // don't type anything...
+
+      submit()
+
+      cy.get('[class^=SystemMessage_header]')
+        .should('be.visible')
+        .contains('chyby ve validaci')
+      cy.get('[class^=SystemMessage_detail]')
+        .should('be.visible')
+        .contains('Alternativní adresa pro přihlášení: Toto pole je povinné')
+    })
+
+    it('[link not valid url] should fail with validation error', () => {
+      cy.get('[name=registrationMethod]').should('be.visible').check('other')
+
+      cy.get('[name="registration.alternative_registration_link"]')
+        .should('be.visible')
+        .type('hello')
+
+      submit()
+
+      cy.get('[class^=SystemMessage_header]')
+        .should('be.visible')
+        .contains('chyby ve validaci')
+      cy.get('[class^=SystemMessage_detail]')
+        .should('be.visible')
+        .contains('Alternativní adresa pro přihlášení: Zadejte platný odkaz')
+    })
+
+    it('should fill the form properly with default data', () => {
+      // change initial data so there is alternative_registration_link filled
+      // https://docs.cypress.io/api/commands/fixture#Modifying-fixture-data-before-using-it
+      cy.fixture('event').then(event => {
+        event.registration = {
+          is_registration_required: true,
+          is_event_full: false,
+          alternative_registration_link: 'https://example.com/registration',
+          questionnaire: null,
+        }
+        cy.intercept(
+          { method: 'GET', pathname: '/api/frontend/events/1000/' },
+          event,
+        ).as('getUser')
+      })
+      cy.reload(true)
+
+      cy.get('[name=registrationMethod]')
+        .get('[value=other]')
+        .should('be.visible')
+        .should('be.checked')
+
+      cy.get('[name="registration.alternative_registration_link"]')
+        .should('be.visible')
+        .should('have.value', 'https://example.com/registration')
+    })
   })
 })

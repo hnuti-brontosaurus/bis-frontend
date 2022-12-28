@@ -12,7 +12,7 @@ import { form as formTexts } from 'config/static/event'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import { FaTrashAlt } from 'react-icons/fa'
 import { requireBoolean } from 'utils/helpers'
-import { required } from 'utils/validationMessages'
+import * as messages from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 
 export const RegistrationStep = ({
@@ -74,13 +74,7 @@ export const RegistrationStep = ({
               />
             </FormInputError>
           </FormSection>
-          {/*<div>
-        <header>
-          Způsob přihlášení *! (help?: Způsoby přihlášení na vaši akci na
-          www.brontosaurus.cz, které se zobrazí po kliknutí na tlačítko “chci
-          jet”:
-        </header>
-          </div>*/}
+
           <FormSection
             header="Způsob přihlášení"
             required
@@ -109,7 +103,9 @@ export const RegistrationStep = ({
                       type="radio"
                       value={value}
                       id={`registration-method-${value}`}
-                      {...register('registrationMethod', { required })}
+                      {...register('registrationMethod', {
+                        required: messages.required,
+                      })}
                     />{' '}
                     <label htmlFor={`registration-method-${value}`}>
                       {name}
@@ -122,11 +118,24 @@ export const RegistrationStep = ({
 
           {watch('registrationMethod') === 'other' && (
             <InlineSection>
-              <Label>Odkaz na přihlášku</Label>{' '}
+              <Label required>Odkaz na přihlášku</Label>{' '}
               <FormInputError>
                 <input
                   type="url"
-                  placeholder="toto pole zatím nefunguje https://example.com"
+                  {...register('registration.alternative_registration_link', {
+                    required: messages.required,
+                    validate: {
+                      url: value => {
+                        try {
+                          new URL(value as string)
+                          return true
+                        } catch (e) {
+                          return messages.url
+                        }
+                      },
+                    },
+                  })}
+                  placeholder="odkaz na vaši přihlášku"
                 />
               </FormInputError>
             </InlineSection>
@@ -176,7 +185,7 @@ export const RegistrationStep = ({
                             type="text"
                             {...register(
                               `questions.${index}.question` as const,
-                              { required },
+                              { required: messages.required },
                             )}
                           />
                         </FormInputError>

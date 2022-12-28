@@ -127,6 +127,7 @@ export type EventApplicationPayload = Pick<
   | 'nickname'
   | 'close_person'
   | 'health_issues'
+  | 'state'
 > & { answers: AnswerPayload[] }
 
 type AddressPayload = Overwrite<original.UserAddress, { region: number | null }>

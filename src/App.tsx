@@ -70,7 +70,9 @@ export const App = () => {
           <Route path="zucastnene" element={<UserParticipatedEvents />} />
           <Route path="prihlasene" element={<UserRegisteredEvents />} />
         </Route>
-        <Route path="akce/:eventId" element={<ViewEvent readonly />} />
+        <Route path="akce/:eventId" element={<EventOutlet />}>
+          <Route index element={<ViewEvent readonly />} />
+        </Route>
         <Route path="admin/*" element={<AdminRedirect />} />
         <Route index element={<Home />} />
         {/* Routes for organizers */}

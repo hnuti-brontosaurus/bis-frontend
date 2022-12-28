@@ -177,6 +177,8 @@ const initialData2form = (
     ? 'full'
     : data?.registration?.is_registration_required === false
     ? 'none'
+    : data?.registration?.alternative_registration_link
+    ? 'other'
     : data?.registration?.is_registration_required === true
     ? 'standard'
     : ''
@@ -210,15 +212,43 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
     },
   )
 
-  finalData.registration = finalData.registration ?? { questionnaire: null }
+  finalData.registration = finalData.registration ?? {
+    questionnaire: null,
+    is_event_full: false,
+    alternative_registration_link: '',
+    is_registration_required: true,
+  }
 
-  // when event is full, set it full, and vice-versa
-  finalData.registration!.is_event_full = data.registrationMethod === 'full'
-
-  if (data.registrationMethod === 'none') {
-    finalData.registration!.is_registration_required = false
-  } else if (data.registrationMethod === 'standard') {
-    finalData.registration!.is_registration_required = true
+  if (finalData.registration) {
+    // well we know finalData.registration is set already, we just did it
+    switch (data.registrationMethod) {
+      case 'none':
+        finalData.registration.is_registration_required = false
+        finalData.registration.is_event_full = false
+        finalData.registration.alternative_registration_link = ''
+        finalData.registration.questionnaire = null
+        break
+      case 'standard':
+        finalData.registration.is_registration_required = true
+        finalData.registration.is_event_full = false
+        finalData.registration.alternative_registration_link = ''
+        // keep questionnaire set
+        break
+      case 'other':
+        finalData.registration.is_registration_required = true
+        finalData.registration.is_event_full = false
+        // keep alternative registration link set
+        finalData.registration.questionnaire = null
+        break
+      case 'full':
+        finalData.registration.is_event_full = true
+        // everything else should equal initial data
+        // we need to take care of that in UpdateEvent
+        // or whatever component updates the data
+        break
+      default:
+        break
+    }
   }
 
   if (data.propagation) {
