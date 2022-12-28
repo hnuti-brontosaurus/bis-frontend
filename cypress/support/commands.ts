@@ -48,6 +48,7 @@ declare global {
         password: string,
         redirect?: string,
       ): Chainable<Element>
+      interceptFullEvent(id?: number): Chainable<Element>
     }
   }
 }
@@ -72,5 +73,32 @@ Cypress.Commands.add(
     }
   },
 )
+
+// providing id is not implemented
+Cypress.Commands.add('interceptFullEvent', (id?: number) => {
+  cy.intercept(
+    { method: 'GET', pathname: '/api/frontend/events/1000/' },
+    { fixture: 'event' },
+  )
+  cy.intercept(
+    {
+      method: 'GET',
+      pathname: '/api/frontend/events/1000/propagation/images/',
+    },
+    { fixture: 'eventPropagationImages' },
+  )
+  cy.intercept(
+    {
+      method: 'GET',
+      pathname:
+        '/api/frontend/events/1000/registration/questionnaire/questions/',
+    },
+    { results: [] },
+  )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/frontend/locations/100/' },
+    { fixture: 'location' },
+  )
+})
 
 export {}

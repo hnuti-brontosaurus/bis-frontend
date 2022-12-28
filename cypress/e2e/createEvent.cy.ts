@@ -1,19 +1,4 @@
-import type { Location, User } from '../../src/app/services/bisTypes'
-
-const organizer: User = {
-  id: '0419781d-06ba-432b-8617-797ea14cf848',
-  roles: [
-    {
-      id: 1,
-      name: 'asdf',
-      slug: 'organizer',
-    },
-  ],
-  first_name: 'FirstName',
-  last_name: 'LastName',
-  nickname: 'Nickname',
-  display_name: 'Nickname (FirstName LastName)',
-} as User
+import type { Location } from '../../src/app/services/bisTypes'
 
 const searchUsers = new Array(47).fill('').map((val, i) => ({
   _search_id: String(i),
@@ -35,6 +20,13 @@ const locations: Location[] = new Array(35)
   }))
   .flat() as Location[]
 
+// go to next step
+const next = () =>
+  cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
+
+const submit = () =>
+  cy.get('[type=submit]:contains(Uložit)').should('be.visible').click()
+
 describe('create event', () => {
   // stub api endpoints before each request
   beforeEach(() => {
@@ -44,7 +36,7 @@ describe('create event', () => {
     })
     cy.intercept(
       { method: 'GET', path: /\/api\/frontend\/users\/[a-zA-Z0-9-]+\// },
-      organizer,
+      { fixture: 'organizer' },
     )
   })
 
@@ -127,11 +119,6 @@ describe('create event', () => {
       { results: [] },
     )
   })
-
-  // go to next step
-  const next = () => {
-    cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
-  }
 
   it('can fill form and send data to create a new event', () => {
     cy.visit('/org/akce/vytvorit')
@@ -259,5 +246,87 @@ describe('create event', () => {
     cy.location('pathname').should('equal', '/org/akce/vytvorit')
     // check that error message was shown
     cy.contains('Opravte, prosím, chyby ve validaci')
+  })
+
+  it('can clone event', () => {
+    cy.interceptFullEvent()
+    cy.visit('/org/akce/vytvorit?klonovat=1000')
+
+    // fill start and end date
+    next()
+    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+    // and submit
+    cy.intercept(
+      { method: 'POST', pathname: '/api/frontend/events/' },
+      { id: 1000 },
+    ).as('createEvent')
+
+    cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
+    cy.intercept(
+      'POST',
+      '/api/frontend/events/1000/questionnaire/questions/',
+      {},
+    )
+
+    cy.get('[type=submit]').should('be.visible').click()
+
+    // test that event was submitted and proper data were sent to backend
+    cy.wait('@createEvent')
+      .its('request.body')
+      .should('not.have.any.keys', 'is_canceled', 'is_closed', 'is_complete')
+      .and('include', { record: null, finance: null })
+  })
+
+  it('shows api error message', () => {
+    cy.interceptFullEvent()
+    cy.visit('/org/akce/vytvorit?klonovat=1000')
+    next()
+
+    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+
+    // submit and get error
+    cy.intercept(
+      { method: 'POST', pathname: '/api/frontend/events/' },
+      {
+        statusCode: 400,
+        body: {
+          name: ['Toto pole nesmí být prázdné.'],
+          group: [
+            'Chybný typ. Byl přijat typ dict místo hodnoty primárního klíče.',
+          ],
+          record: { total_hours_worked: ['Je vyžadováno celé číslo.'] },
+        },
+      },
+    ).as('createEvent')
+
+    cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
+
+    submit()
+
+    cy.wait('@createEvent').its('response.statusCode').should('equal', 400)
+
+    cy.wait(5000)
+
+    // for some buggy reason we need to fill the fields again
+    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+
+    cy.intercept(
+      { method: 'POST', pathname: '/api/frontend/events/' },
+      {
+        statusCode: 400,
+        body: [
+          'Toto pole nesmí být prázdné.',
+          'Chybný typ. Byl přijat typ dict místo hodnoty primárního klíče.',
+          'Je vyžadováno celé číslo.',
+        ],
+      },
+    ).as('createEvent')
+
+    submit()
+
+    cy.wait('@createEvent').its('response.statusCode').should('equal', 400)
   })
 })
