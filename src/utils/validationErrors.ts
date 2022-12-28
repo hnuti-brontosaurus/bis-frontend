@@ -14,7 +14,7 @@ export type GenericTranslations = { [key: string]: string }
  * given field path, and translations, return the field's translation
  * when translation is not found, it falls back to the original path name
  */
-const getFieldName = (
+export const getFieldName = (
   path: string,
   fieldNames: ModelTranslations,
   genericNames: GenericTranslations,

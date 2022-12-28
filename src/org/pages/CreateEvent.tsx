@@ -36,7 +36,6 @@ export const CreateEvent = () => {
   const {
     data: eventToClone,
     isLoading: isEventToCloneLoading,
-    isError: isEventToCloneErrored,
     error: eventToCloneError,
   } = useReadFullEvent(cloneEventId)
 
@@ -65,8 +64,7 @@ export const CreateEvent = () => {
     return event2payload(eventToCloneFixed)
   }, [currentUser, eventToClone])
 
-  if (isEventToCloneErrored && eventToCloneError)
-    return <Error error={eventToCloneError} />
+  if (eventToCloneError) return <Error error={eventToCloneError} />
 
   if (cloneEventId > 0 && (isEventToCloneLoading || !eventToClone))
     return <Loading>Stahujeme akci ke zklonování</Loading>
@@ -131,6 +129,8 @@ export const CreateEvent = () => {
 
       navigate(`/org/akce/${event.id}`)
       showMessage({ message: 'Akce byla úspěšně vytvořena', type: 'success' })
+    } catch (e) {
+      // nothing to do here, but we need to catch
     } finally {
       setIsSubmitting(false)
     }

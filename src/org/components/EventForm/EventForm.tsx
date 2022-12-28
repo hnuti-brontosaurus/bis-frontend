@@ -6,7 +6,7 @@ import {
   User,
 } from 'app/services/bisTypes'
 import { Loading, NewLocation, Step, Steps } from 'components'
-import * as translations from 'config/static/translations'
+import * as translations from 'config/static/combinedTranslations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -365,21 +365,7 @@ export const EventForm: FC<{
         type: 'error',
         detail: validationErrors2Message(
           merge({}, ...Object.values(errors)),
-          merge(
-            {},
-            translations.event,
-            {
-              propagation: translations.eventPropagation,
-            },
-            {
-              propagation: {
-                vip_propagation: translations.vIPEventPropagation,
-              },
-            },
-            {
-              'main_image.image': 'Hlavní foto',
-            },
-          ),
+          translations.event,
           translations.generic,
         ),
       })

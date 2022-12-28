@@ -20,6 +20,13 @@ const locations: Location[] = new Array(35)
   }))
   .flat() as Location[]
 
+// go to next step
+const next = () =>
+  cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
+
+const submit = () =>
+  cy.get('[type=submit]:contains(Uložit)').should('be.visible').click()
+
 describe('create event', () => {
   // stub api endpoints before each request
   beforeEach(() => {
@@ -112,11 +119,6 @@ describe('create event', () => {
       { results: [] },
     )
   })
-
-  // go to next step
-  const next = () => {
-    cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
-  }
 
   it('can fill form and send data to create a new event', () => {
     cy.visit('/org/akce/vytvorit')
@@ -246,29 +248,8 @@ describe('create event', () => {
     cy.contains('Opravte, prosím, chyby ve validaci')
   })
 
-  it.only('can clone event', () => {
-    cy.intercept(
-      {
-        method: 'GET',
-        pathname: '/api/frontend/events/1000/',
-      },
-      { fixture: 'event' },
-    )
-    cy.intercept(
-      {
-        method: 'GET',
-        pathname: '/api/frontend/events/1000/propagation/images/',
-      },
-      { fixture: 'eventPropagationImages' },
-    )
-    cy.intercept(
-      'http://localhost:3000/api/frontend/events/1000/registration/questionnaire/questions/?',
-      { results: [] },
-    )
-    cy.intercept('http://localhost:3000/api/frontend/locations/100/', {
-      fixture: 'location',
-    })
-
+  it('can clone event', () => {
+    cy.interceptFullEvent()
     cy.visit('/org/akce/vytvorit?klonovat=1000')
 
     // fill start and end date
@@ -297,5 +278,55 @@ describe('create event', () => {
       .and('include', { record: null, finance: null })
   })
 
-  it.only('shows api error message')
+  it('shows api error message', () => {
+    cy.interceptFullEvent()
+    cy.visit('/org/akce/vytvorit?klonovat=1000')
+    next()
+
+    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+
+    // submit and get error
+    cy.intercept(
+      { method: 'POST', pathname: '/api/frontend/events/' },
+      {
+        statusCode: 400,
+        body: {
+          name: ['Toto pole nesmí být prázdné.'],
+          group: [
+            'Chybný typ. Byl přijat typ dict místo hodnoty primárního klíče.',
+          ],
+          record: { total_hours_worked: ['Je vyžadováno celé číslo.'] },
+        },
+      },
+    ).as('createEvent')
+
+    cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
+
+    submit()
+
+    cy.wait('@createEvent').its('response.statusCode').should('equal', 400)
+
+    cy.wait(5000)
+
+    // for some buggy reason we need to fill the fields again
+    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+
+    cy.intercept(
+      { method: 'POST', pathname: '/api/frontend/events/' },
+      {
+        statusCode: 400,
+        body: [
+          'Toto pole nesmí být prázdné.',
+          'Chybný typ. Byl přijat typ dict místo hodnoty primárního klíče.',
+          'Je vyžadováno celé číslo.',
+        ],
+      },
+    ).as('createEvent')
+
+    submit()
+
+    cy.wait('@createEvent').its('response.statusCode').should('equal', 400)
+  })
 })

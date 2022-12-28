@@ -59,4 +59,4 @@ For `vscode`, you may find the following extensions useful:
 
 ## Contact
 
-You can contact [Michal](mailto:michal.salajka@protonmail.com) to learn more. We may call, go through the code and answer questions etc. which could make your onboarding smoother. They can speak in English, Czech and Polish. Don't hesitate to ask! :slightly\_smiling\_face:
+You can contact [Michal](mailto:michal.salajka@protonmail.com) to learn more. We may call, go through the code and answer questions etc. which could make your onboarding smoother. They can speak in English, Czech and Polish. Don't hesitate to ask!
