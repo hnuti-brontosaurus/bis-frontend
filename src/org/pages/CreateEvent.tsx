@@ -1,5 +1,10 @@
 import { api } from 'app/services/bis'
-import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
+import {
+  Error,
+  Loading,
+  PageHeader,
+  useCreateOrSelectLocation,
+} from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -31,7 +36,7 @@ export const CreateEvent = () => {
   const {
     data: eventToClone,
     isLoading: isEventToCloneLoading,
-    isError: isEventToCloneErrored,
+    error: eventToCloneError,
   } = useReadFullEvent(cloneEventId)
 
   const [createEvent, { isLoading: isSavingEvent, error: saveEventError }] =
@@ -59,7 +64,7 @@ export const CreateEvent = () => {
     return event2payload(eventToCloneFixed)
   }, [currentUser, eventToClone])
 
-  if (isEventToCloneErrored) return <>Event not found (or different error)</>
+  if (eventToCloneError) return <Error error={eventToCloneError} />
 
   if (cloneEventId > 0 && (isEventToCloneLoading || !eventToClone))
     return <Loading>Stahujeme akci ke zklonování</Loading>
@@ -124,6 +129,8 @@ export const CreateEvent = () => {
 
       navigate(`/org/akce/${event.id}`)
       showMessage({ message: 'Akce byla úspěšně vytvořena', type: 'success' })
+    } catch (e) {
+      // nothing to do here, but we need to catch
     } finally {
       setIsSubmitting(false)
     }

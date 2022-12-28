@@ -1,7 +1,10 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
 import { useAppDispatch } from 'app/hooks'
+import * as translations from 'config/static/combinedTranslations'
+import { merge } from 'lodash'
 import { useCallback, useEffect } from 'react'
+import { apiErrors2Message } from 'utils/apiErrors'
 import { actions, SystemMessage } from './systemMessageSlice'
 
 /**
@@ -32,6 +35,12 @@ export const useShowMessage = () => {
   return showMessage
 }
 
+const combinedFieldTranslations = merge(
+  {},
+  translations.event,
+  translations.opportunity,
+)
+
 /**
  * Given error from rtk-query (or probably fetch), and optional message, this displays the error message
  *
@@ -42,18 +51,25 @@ export const useShowMessage = () => {
 export const useShowApiErrorMessage = (
   error: FetchBaseQueryError | SerializedError | undefined,
   message = 'Něco se nepovedlo',
+  fieldTranslations = combinedFieldTranslations,
+  genericTranslations = translations.generic,
+  limit = Infinity,
 ) => {
   const showMessage = useShowMessage()
   useEffect(() => {
     let detail = ''
-    if (error && 'status' in error) {
-      detail += error.status
 
-      if ('data' in error) {
-        if ('detail' in (error.data as any))
-          detail += ' ' + (error.data as any).detail
-        else detail += '\n' + JSON.stringify(error.data, null, 2)
-      }
+    if (error && 'status' in error) {
+      detail += apiErrors2Message(
+        error,
+        fieldTranslations,
+        genericTranslations,
+        limit,
+      )
+    } else {
+      detail += `${error?.code ?? ''} ${error?.name ?? ''}\n${
+        error?.message ?? ''
+      }`
     }
     if (error)
       showMessage({
@@ -61,5 +77,12 @@ export const useShowApiErrorMessage = (
         detail,
         type: 'error',
       })
-  }, [error, message, showMessage])
+  }, [
+    error,
+    fieldTranslations,
+    genericTranslations,
+    limit,
+    message,
+    showMessage,
+  ])
 }

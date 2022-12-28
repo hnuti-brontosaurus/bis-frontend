@@ -7,7 +7,7 @@ import {
   Record,
 } from 'app/services/bisTypes'
 import { Step, Steps } from 'components'
-import * as translations from 'config/static/translations'
+import * as translations from 'config/static/combinedTranslations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -234,11 +234,7 @@ export const CloseEventForm = ({
         message: 'Opravte, prosím, chyby ve validaci',
         detail: validationErrors2Message(
           merge({}, evidenceErrors, participantsErrors) as FieldErrorsImpl,
-          {
-            record: translations.eventRecord,
-            finance: translations.eventFinance,
-            participantInputType: 'Způsob zadání účastníků',
-          },
+          translations.event,
           translations.generic,
         ),
       })
