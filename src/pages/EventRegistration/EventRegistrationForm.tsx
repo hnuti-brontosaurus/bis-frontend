@@ -41,7 +41,7 @@ import styles from './EventRegistration.module.scss'
 
 export type RegistrationFormShape = SetRequired<
   SetNonNullable<
-    Omit<EventApplicationPayload, 'nickname' | 'health_issues'>,
+    Omit<EventApplicationPayload, 'nickname' | 'health_issues' | 'state'>,
     'first_name' | 'last_name' | 'phone' | 'email' | 'birthday'
   >,
   'birthday'
@@ -102,6 +102,7 @@ const form2payload = (data: RegistrationFormShape): EventApplicationPayload => {
       answers,
       address: null,
       close_person: data.isChild ? data.close_person : null,
+      state: 'pending' as const,
     },
     withOverwriteArray,
   )

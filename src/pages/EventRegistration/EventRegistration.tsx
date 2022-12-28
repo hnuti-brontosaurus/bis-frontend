@@ -80,6 +80,11 @@ export const EventRegistration = () => {
       <Error message="Na tuto akci se nemusíte přihlašovat. Stačí přijít."></Error>
     )
 
+  // if (!event.registration.questionnaire)
+  //   return (
+  //     <Error message="Na tuto akci se nepřihlašuje standardním formulářem"></Error>
+  //   )
+
   const handleRestart = () => {
     clearPersistentData()
   }

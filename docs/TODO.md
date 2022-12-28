@@ -1,1 +1,4 @@
 - fix hanging loader when visiting /org/akce/n
+- event form - don't allow start to be later than end of event
+  - the same with opportunity
+- registration by email? we don't have that option currently, but it's required
