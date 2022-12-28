@@ -76,6 +76,7 @@
   "registration": {
     "is_registration_required": true,
     "is_event_full": false,
+    "alternative_registration_link": "",
     "questionnaire": {
       "introduction": "dziki",
       "after_submit_text": "Tak Ti teda pěkně děkujeme. Tak se teda těšíme. :)"
