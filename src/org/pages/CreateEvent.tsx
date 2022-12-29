@@ -39,16 +39,27 @@ export const CreateEvent = () => {
     error: eventToCloneError,
   } = useReadFullEvent(cloneEventId)
 
-  const [createEvent, { isLoading: isSavingEvent, error: saveEventError }] =
+  const [createEvent, createEventStatus] =
     api.endpoints.createEvent.useMutation()
-  const [createEventQuestion, { isLoading: isSavingQuestions }] =
+  const [createEventQuestion, createEventQuestionStatus] =
     api.endpoints.createEventQuestion.useMutation()
-  const [createEventImage, { isLoading: isSavingImages }] =
+  const [createEventImage, createEventImageStatus] =
     api.endpoints.createEventImage.useMutation()
 
   const createOrSelectLocation = useCreateOrSelectLocation()
 
-  useShowApiErrorMessage(saveEventError, 'Nepodařilo se nám uložit akci')
+  useShowApiErrorMessage(
+    createEventStatus.error,
+    'Nepodařilo se nám uložit akci',
+  )
+  useShowApiErrorMessage(
+    createEventQuestionStatus.error,
+    'Nepodařilo se nám uložit otázku',
+  )
+  useShowApiErrorMessage(
+    createEventImageStatus.error,
+    'Nepodařilo se nám uložit obrázek',
+  )
 
   const initialData = useMemo(() => {
     if (!eventToClone)
@@ -69,7 +80,12 @@ export const CreateEvent = () => {
   if (cloneEventId > 0 && (isEventToCloneLoading || !eventToClone))
     return <Loading>Stahujeme akci ke zklonování</Loading>
 
-  if (isSubmitting || isSavingEvent || isSavingQuestions || isSavingImages)
+  if (
+    isSubmitting ||
+    createEventStatus.isLoading ||
+    createEventQuestionStatus.isLoading ||
+    createEventImageStatus.isLoading
+  )
     return <Loading>Ukládáme akci</Loading>
 
   const handleSubmit = async ({
@@ -130,7 +146,11 @@ export const CreateEvent = () => {
       navigate(`/org/akce/${event.id}`)
       showMessage({ message: 'Akce byla úspěšně vytvořena', type: 'success' })
     } catch (e) {
-      // nothing to do here, but we need to catch
+      // TODO we need to display these errors
+      // and when event is saved but whole thing still fails
+      // we should probably redirect to edit event ....
+      // eslint-disable-next-line no-console
+      console.error(e)
     } finally {
       setIsSubmitting(false)
     }

@@ -16,6 +16,9 @@ export const event = merge(
     propagation: {
       vip_propagation: translations.vIPEventPropagation,
     },
+    registration: {
+      questionnaire: translations.questionnaire,
+    },
   },
   { 'main_image.image': 'Hlavní foto' },
 )
