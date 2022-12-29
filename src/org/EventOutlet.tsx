@@ -8,6 +8,9 @@ export const EventOutlet = () => {
 
   const { data: event, isError, error } = useReadFullEvent(eventId)
 
+  // when people write url with non-numeric id
+  if (!eventId) return <Error status={400}>Zadejte platné id akce!</Error>
+
   if (isError) return <Error error={error}>Nepodařilo se nám najít akci</Error>
 
   if (!event) return <Loading>Stahujeme akci</Loading>

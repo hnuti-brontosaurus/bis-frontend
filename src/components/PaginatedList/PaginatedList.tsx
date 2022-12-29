@@ -6,18 +6,21 @@ import { FC } from 'react'
 /**
  * It's unscalable, because we have to provide all the data at the beginning
  * So when there are many items to list, we have to download them all at once
+ *
+ * We can provide additional props for table in this component
  */
-export const UnscalablePaginatedList = <T,>({
+export const UnscalablePaginatedList = <T, C extends {} = {}>({
   data,
   table,
   className,
   pageSize = 10,
+  ...rest
 }: {
   data: T[]
-  table: FC<{ data: T[] }>
+  table: FC<{ data: T[] } & C>
   className?: string
   pageSize?: number
-}) => {
+} & C) => {
   const [page, setPage] = useSearchParamsState('s', 1, Number)
   const Table = table
 
@@ -25,7 +28,7 @@ export const UnscalablePaginatedList = <T,>({
 
   return (
     <div className={classNames(className)}>
-      <Table data={tableData} />
+      <Table data={tableData} {...(rest as unknown as C)} />
       <Pagination
         page={page}
         pages={Math.max(1, Math.ceil((data.length as number) / pageSize))}

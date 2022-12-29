@@ -39,11 +39,6 @@ export const EventsLayout = () => {
             theme={theme}
             tabs={[
               {
-                key: 'aktualni',
-                to: 'aktualni',
-                name: 'Aktuální akce',
-              },
-              {
                 key: 'vsechny',
                 to: 'vsechny',
                 name: 'Všechny akce',
