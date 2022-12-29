@@ -18,5 +18,11 @@ export const UnfinishedEvents = () => {
     event => getEventStatus(event) === 'inProgress',
   )
 
-  return <UnscalablePaginatedList table={EventTable} data={inputEvents} />
+  return (
+    <UnscalablePaginatedList
+      table={EventTable}
+      data={inputEvents}
+      action="finish"
+    />
+  )
 }
