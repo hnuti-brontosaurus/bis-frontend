@@ -58,7 +58,8 @@ const appropriateActions: Record<
 
 export const EventTable: FC<{
   data: Event[]
-}> = ({ data: events }) => {
+  action?: 'view' | 'edit' | 'finish'
+}> = ({ data: events, action = 'view' }) => {
   const locationRequests = useQueries(
     api.endpoints.readLocation,
     useMemo(
@@ -100,7 +101,14 @@ export const EventTable: FC<{
                 </Link>
               </td>
               <td>
-                <Link to={`/org/akce/${event.id}`}>{event.name}</Link>
+                <Link
+                  to={
+                    `/org/akce/${event.id}` +
+                    (action === 'finish' ? '/uzavrit' : '')
+                  }
+                >
+                  {event.name}
+                </Link>
               </td>
               <td>{formatDateRange(event.start, event.end)}</td>
               <td>
