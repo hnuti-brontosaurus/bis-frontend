@@ -103,54 +103,64 @@ export const CreateEvent = () => {
       const event = await createEvent(
         merge({}, data, { location: locationId, record: null, finance: null }),
       ).unwrap()
-      if (questions) {
+
+      try {
+        // save questions
+        if (questions) {
+          await Promise.all(
+            questions.map((question, order) =>
+              createEventQuestion({
+                eventId: event.id,
+                question: { ...question, order },
+              }).unwrap(),
+            ),
+          )
+        }
+
+        // get all images and convert them to base64 and save them
+        // because api saves images only in base64 form
+        // collect
+        const allImagesMixed = [
+          ...(main_image ? [main_image.image] : []),
+          ...(images.map(image => image.image) ?? []),
+        ].filter(image => Boolean(image))
+        // convert to base64
+        const allImagesBase64 = (
+          (
+            await Promise.allSettled(
+              allImagesMixed.map(image =>
+                !image || startsWith(image, 'data:') ? image : toDataURL(image),
+              ),
+            )
+          ).filter(
+            result => result.status === 'fulfilled',
+          ) as PromiseFulfilledResult<string>[]
+        ).map(result => result.value)
+        // save
         await Promise.all(
-          questions.map((question, order) =>
-            createEventQuestion({
+          allImagesBase64.map((image, order) =>
+            createEventImage({
               eventId: event.id,
-              question: { ...question, order },
+              image: { image, order },
             }).unwrap(),
           ),
         )
-      }
+      } catch (error) {
+        // when saving questions or images fails, we want to handle it differently
+        // because the event already exists...
+        navigate(`/org/akce/${event.id}/upravit`)
+        showMessage({
+          message:
+            'Akce byla vytvořena, ale něco se nepovedlo. Zkuste to opravit',
+          type: 'warning',
+        })
 
-      // get all images and convert them to base64 and save them
-      // because api saves images only in base64 form
-      // collect
-      const allImagesMixed = [
-        ...(main_image ? [main_image.image] : []),
-        ...(images.map(image => image.image) ?? []),
-      ].filter(image => Boolean(image))
-      // convert to base64
-      const allImagesBase64 = (
-        (
-          await Promise.allSettled(
-            allImagesMixed.map(image =>
-              !image || startsWith(image, 'data:') ? image : toDataURL(image),
-            ),
-          )
-        ).filter(
-          result => result.status === 'fulfilled',
-        ) as PromiseFulfilledResult<string>[]
-      ).map(result => result.value)
-      // save
-      await Promise.all(
-        allImagesBase64.map((image, order) =>
-          createEventImage({
-            eventId: event.id,
-            image: { image, order },
-          }).unwrap(),
-        ),
-      )
+        setIsSubmitting(false)
+        return
+      }
 
       navigate(`/org/akce/${event.id}`)
       showMessage({ message: 'Akce byla úspěšně vytvořena', type: 'success' })
-    } catch (e) {
-      // TODO we need to display these errors
-      // and when event is saved but whole thing still fails
-      // we should probably redirect to edit event ....
-      // eslint-disable-next-line no-console
-      console.error(e)
     } finally {
       setIsSubmitting(false)
     }
