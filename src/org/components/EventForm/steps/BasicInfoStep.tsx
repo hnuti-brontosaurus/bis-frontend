@@ -8,6 +8,7 @@ import {
   InlineSection,
   Label,
   Loading,
+  NumberInput,
 } from 'components'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
@@ -21,7 +22,8 @@ export const BasicInfoStep = ({
 }: {
   methods: MethodsShapes['basicInfo']
 }) => {
-  const { register, control, getValues, watch, trigger, formState } = methods
+  const { register, control, getValues, watch, trigger, setValue, formState } =
+    methods
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
   const { data: administrationUnits } =
@@ -111,14 +113,14 @@ export const BasicInfoStep = ({
             required
           >
             <FormInputError>
-              <input
+              <NumberInput
                 size={2}
-                type="number"
-                {...register('number_of_sub_events', {
-                  required,
-                  valueAsNumber: true,
-                })}
-              />
+                min={1}
+                register={register}
+                setValue={setValue}
+                getValues={getValues}
+                name={'number_of_sub_events'}
+              ></NumberInput>
             </FormInputError>
           </FormSection>
         </FormSectionGroup>

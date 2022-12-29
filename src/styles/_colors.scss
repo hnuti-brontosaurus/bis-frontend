@@ -1,7 +1,12 @@
-$error: #e72424;
+$error: rgb(247, 100, 100);
 $error-light: #f8d5d4;
 
-$bronto: #00a340;
+$bronto: #080;
+$bronto-500: rgb(9, 80, 9);
+$bronto-400: rgb(0, 94, 0);
+$bronto-300: #080;
+$bronto-200: rgb(125, 211, 168);
+$bronto-100: #beecd5;
 $bronto-light: #beecd5;
 $bronto-super-light: #dcf5e8;
 
@@ -21,4 +26,5 @@ $gray-300: rgb(152, 160, 163);
 $gray-400: rgb(102, 112, 116);
 $gray-500: rgb(55, 58, 63);
 
+$gray-blue: #ebeff4;
 $black: #000000;

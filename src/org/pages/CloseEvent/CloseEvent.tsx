@@ -1,6 +1,6 @@
 import { api } from 'app/services/bis'
 import type { Event, EventPayload } from 'app/services/bisTypes'
-import { Loading, PageHeader } from 'components'
+import { Breadcrumbs, Loading } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -168,7 +168,7 @@ export const CloseEvent = () => {
 
   return (
     <>
-      <PageHeader>Evidence akce {event.name}</PageHeader>
+      <Breadcrumbs eventName={event && event.name} />
       <CloseEventForm
         id={String(eventId)}
         // we have FullEvent but need just Event

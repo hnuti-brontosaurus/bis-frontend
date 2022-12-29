@@ -211,7 +211,7 @@ export const BirthdayForm = ({
         </FormInputError>
         <Actions>
           <Button type="reset">Zruš</Button>
-          <Button success type="submit">
+          <Button primary type="submit">
             Pokračuj
           </Button>
         </Actions>

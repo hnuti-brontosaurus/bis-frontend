@@ -77,12 +77,12 @@ export const Login = () => {
                 {...register('password', { required })}
               />
             </FormInputError>
-            <Button success className={styles.formElement} type="submit">
+            <Button primary className={styles.formElement} type="submit">
               Přihlásit se
             </Button>
 
             <ButtonLink
-              light
+              secondary
               style={{ marginTop: '1.5rem' }}
               className={styles.formElement}
               to="/send-reset-password-link"

@@ -1,10 +1,11 @@
 @use 'styles/colors';
 
 @mixin basic-button {
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 4px 32px;
   cursor: pointer;
   text-align: center;
+  height: 44px;
 
   display: inline-flex;
   align-items: center;
@@ -12,21 +13,37 @@
   gap: 0.5rem;
 }
 
-@mixin success-button {
+@mixin primary-button {
   color: white;
   background-color: colors.$bronto;
   border: 2px solid colors.$bronto;
   font-size: 1rem;
+  &:hover {
+    background-color: colors.$bronto-400;
+  }
 }
 
-@mixin plain-button {
-  color: black;
-  background-color: transparent;
-  border: 1px solid colors.$gray-400;
+@mixin secondary-button {
+  color: colors.$bronto;
+  background-color: white;
+  border: 1px solid colors.$bronto;
   font-size: 1rem;
 
   &:hover {
-    background-color: rgba(colors.$bronto, 0.18);
+    background-color: colors.$bronto-super-light;
+  }
+}
+
+@mixin tertiary-button {
+  color: colors.$bronto;
+  background-color: white;
+  text-decoration: underline;
+  border: 0;
+  font-size: 1rem;
+
+  &:hover {
+    color: colors.$bronto-400;
+    text-decoration: none;
   }
 }
 
@@ -34,22 +51,20 @@
   @include basic-button;
 }
 
-.success {
-  @include success-button;
+.primary {
+  @include primary-button;
 }
 
-.light {
-  &:hover {
-    background-color: colors.$gray-200;
-  }
+.secondary {
+  @include secondary-button;
 }
 
-.plain {
-  @include plain-button;
+.tertiary {
+  @include tertiary-button;
 }
 
 :global .opportunitySection {
-  :local .success {
+  :local .primary {
     background-color: colors.$opportunities;
     border-color: colors.$opportunities;
   }

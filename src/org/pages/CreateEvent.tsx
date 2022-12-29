@@ -1,8 +1,8 @@
 import { api } from 'app/services/bis'
 import {
+  Breadcrumbs,
   Error,
   Loading,
-  PageHeader,
   useCreateOrSelectLocation,
 } from 'components'
 import {
@@ -172,13 +172,7 @@ export const CreateEvent = () => {
 
   return (
     <>
-      <PageHeader>
-        {eventToClone ? (
-          <>Nová akce podle {eventToClone.name}</>
-        ) : (
-          <>Nová akce</>
-        )}
-      </PageHeader>
+      <Breadcrumbs eventToClone={eventToClone && eventToClone.name} />
       <EventForm
         id={cloneEventId ? `clone-${cloneEventId}` : 'new'}
         onSubmit={handleSubmit}

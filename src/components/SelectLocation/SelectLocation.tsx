@@ -222,7 +222,7 @@ export const SelectLocation = forwardRef<
         <>
           <div>
             nebo{' '}
-            <Button success type="button" onClick={() => setIsEditing(true)}>
+            <Button primary type="button" onClick={() => setIsEditing(true)}>
               {newLocationMethods.formState.isDirty
                 ? 'Pokračuj ve vytváření nové lokality'
                 : 'Vytvoř novou lokalitu'}
@@ -361,10 +361,10 @@ const CreateLocation = ({
           </FormInputError>
         </InlineSection>
         <Actions>
-          <Button plain type="reset" form={formId} onClick={handleCancel}>
+          <Button secondary type="reset" form={formId} onClick={handleCancel}>
             Zrušit
           </Button>
-          <Button success type="submit" form={formId} onClick={handleConfirm}>
+          <Button primary type="submit" form={formId} onClick={handleConfirm}>
             Potvrdit novou lokalitu
           </Button>
         </Actions>
@@ -394,7 +394,7 @@ const ViewLocation = ({ location }: { location?: NewLocation | Location }) => {
         {location?.description && location.description.length > 100 && (
           <>
             &hellip;{' '}
-            <Button plain type="button" onClick={() => setExpand(e => !e)}>
+            <Button secondary type="button" onClick={() => setExpand(e => !e)}>
               {expand ? <FaCaretUp /> : <FaCaretDown />}
             </Button>
           </>

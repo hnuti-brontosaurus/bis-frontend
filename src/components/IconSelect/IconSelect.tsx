@@ -22,7 +22,7 @@ export const IconSelect = forwardRef(
   ) => {
     const Icon = icon
     return (
-      <>
+      <div className={styles.iconItem}>
         <input
           type="radio"
           id={id}
@@ -46,7 +46,7 @@ export const IconSelect = forwardRef(
           </span>
           {detail && <span className={styles.detail}>{detail}</span>}
         </label>
-      </>
+      </div>
     )
   },
 )

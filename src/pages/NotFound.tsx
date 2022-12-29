@@ -10,11 +10,11 @@ export const NotFound = () => {
       <Actions>
         Pokračuj na
         {currentUser && isOrganizer(currentUser) && (
-          <ButtonLink success to="/org">
+          <ButtonLink primary to="/org">
             organizátorský přístup
           </ButtonLink>
         )}
-        <ButtonLink success to="/user">
+        <ButtonLink primary to="/user">
           uživatelský přístup
         </ButtonLink>
       </Actions>

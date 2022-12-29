@@ -405,10 +405,10 @@ export const OpportunityForm = ({
             </InlineSection>
           </FormSection>
           <Actions>
-            <Button light className={styles.cancelAction} type="reset">
+            <Button secondary className={styles.cancelAction} type="reset">
               Zrušit
             </Button>
-            <Button success className={styles.mainAction} type="submit">
+            <Button primary className={styles.mainAction} type="submit">
               {isUpdate ? 'Uložit změny' : 'Přidat příležitost'}
             </Button>
           </Actions>
