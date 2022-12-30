@@ -28,7 +28,7 @@ export const useCancelEvent = () => {
                 <div className={modalStyles.infoBox}>{message}</div>
                 <Actions>
                   <Button
-                    light
+                    secondary
                     onClick={() => {
                       resolve(false)
                       onClose()
@@ -87,7 +87,7 @@ export const useRestoreCanceledEvent = () => {
                 <div className={modalStyles.infoBox}>{message}</div>
                 <Actions>
                   <Button
-                    light
+                    secondary
                     onClick={() => {
                       resolve(false)
                       onClose()
@@ -96,7 +96,7 @@ export const useRestoreCanceledEvent = () => {
                     Ne
                   </Button>
                   <Button
-                    success
+                    primary
                     onClick={() => {
                       resolve(true)
                       onClose()

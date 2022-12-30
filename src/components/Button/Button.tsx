@@ -4,10 +4,10 @@ import { Link, LinkProps } from 'react-router-dom'
 import styles from './Button.module.scss'
 
 interface ButtonProps {
-  success?: boolean
+  primary?: boolean
   danger?: boolean
-  plain?: boolean
-  light?: boolean
+  secondary?: boolean
+  tertiary?: boolean
 }
 
 /**
@@ -16,10 +16,10 @@ interface ButtonProps {
 export const ButtonLink = ({
   children,
   className,
-  success,
+  primary,
   danger,
-  plain,
-  light,
+  secondary,
+  tertiary,
   ...props
 }: LinkProps & ButtonProps) => {
   return (
@@ -27,10 +27,10 @@ export const ButtonLink = ({
       className={classNames(
         className,
         styles.button,
-        success && styles.success,
+        primary && styles.primary,
         danger && styles.danger,
-        plain && styles.plain,
-        light && styles.light,
+        secondary && styles.secondary,
+        tertiary && styles.tertiary,
       )}
       {...props}
     >
@@ -45,10 +45,10 @@ export const ButtonLink = ({
 export const Button = ({
   children,
   className,
-  success,
+  primary,
   danger,
-  plain,
-  light,
+  secondary,
+  tertiary,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & ButtonProps) => {
   return (
@@ -56,10 +56,10 @@ export const Button = ({
       className={classNames(
         className,
         styles.button,
-        success && styles.success,
+        primary && styles.primary,
         danger && styles.danger,
-        plain && styles.plain,
-        light && styles.light,
+        secondary && styles.secondary,
+        tertiary && styles.tertiary,
       )}
       {...props}
     >

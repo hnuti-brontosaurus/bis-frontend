@@ -1,4 +1,5 @@
 @use 'styles/media';
+@use 'styles/colors';
 
 .sectionGroup {
   position: relative;
@@ -6,9 +7,9 @@
   width: 0;
   min-width: 100%;
   counter-reset: section;
-  border: 1px solid lightgray;
+  border: 2px solid colors.$gray-200;
   margin: 1rem 0;
-  padding: 2rem;
+  padding: 2rem 2rem 4rem;
   @include media.for-phone-only {
     padding: 16px;
   }
@@ -32,6 +33,9 @@
     margin-bottom: 1rem;
     font-size: 1.2rem;
     font-weight: 500;
+    @include media.for-phone-only {
+      margin-top: 0;
+    }
   }
 }
 
@@ -46,7 +50,6 @@
 
 .numberedHeader {
   text-align: center;
-
   // number for numbered headers
   &::before {
     content: counter(section);
@@ -60,17 +63,20 @@
     border-radius: 5rem;
     margin-right: 1.2rem;
   }
+  @include media.for-phone-only {
+    font-size: 1.1rem !important;
+  }
 }
 
 [required] ~ label::after,
 .required::after {
   content: '*';
-  color: red;
+  color: colors.$error;
   margin-left: 0.2rem;
 }
 
 .infoBox {
-  background-color: #ebeff4;
+  background-color: colors.$gray-blue;
   padding: 0.5rem 1rem;
 
   p {
@@ -127,7 +133,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  justify-content: center;
+  justify-content: flex-end;
 
   @include media.for-phone-only {
     // flex-direction: column-reverse;
@@ -140,4 +146,5 @@
 .actions {
   @include actions;
   margin: 1rem 0;
+  display: flex;
 }

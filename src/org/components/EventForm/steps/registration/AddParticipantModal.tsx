@@ -213,21 +213,13 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
             donor: null,
           }).unwrap()
           await addParticipant(newParticipant.id)
-          await createEventApplication({
-            eventId,
-            application: {
-              ...currentApplication,
-              answers: [],
-              first_name: 'InternalApplication',
-              last_name: newParticipant.id,
-              nickname: currentApplication.id.toString(),
-              health_issues: Date.now().toString(),
-            },
-          })
           await updateApplication({
             id: currentApplication.id,
             eventId: eventId,
-            patchedEventApplication: { user: newParticipant.id },
+            patchedEventApplication: {
+              user: newParticipant.id,
+              state: 'approved',
+            },
           })
           onClose()
           clearModalData()
@@ -441,7 +433,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                             </td>
                             <td>
                               <Button
-                                plain
+                                secondary
                                 onClick={e => {
                                   e.preventDefault()
 
@@ -466,7 +458,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                 <Loading>....</Loading>
                               ) : (
                                 <Button
-                                  plain
+                                  secondary
                                   onClick={async e => {
                                     e.preventDefault()
 
@@ -960,7 +952,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       </FormInputError>
                                     </InlineSection>
                                     <Button
-                                      plain
+                                      secondary
                                       onClick={e => {
                                         e.preventDefault()
                                         setShowAddParticipantForm(false)
@@ -969,7 +961,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       Cancel
                                     </Button>
                                     {!isCreatingUser ? (
-                                      <Button success>
+                                      <Button primary>
                                         Create a new user and add as a
                                         participant
                                       </Button>

@@ -156,7 +156,7 @@ export const ResetPassword = () => {
                 })}
               />
             </FormInputError>
-            <Button success className={styles.formElement} type="submit">
+            <Button primary className={styles.formElement} type="submit">
               Nastavit heslo
             </Button>
           </form>

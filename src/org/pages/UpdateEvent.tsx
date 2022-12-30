@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
+import { Breadcrumbs, Loading, useCreateOrSelectLocation } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -207,7 +207,7 @@ export const UpdateEvent = () => {
 
   return (
     <>
-      <PageHeader>Úprava akce {event.name}</PageHeader>
+      <Breadcrumbs eventName={event && event.name} />
       <EventForm
         id={String(eventId)}
         initialData={event2payload(event)}

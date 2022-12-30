@@ -35,7 +35,7 @@ export const ViewOpportunity = () => {
     <div className={classNames(styles.wrapper, 'opportunitySection')}>
       <header className={styles.name}>{opportunity.name}</header>
       <Actions>
-        <ButtonLink success to={`/org/prilezitosti/${opportunityId}/upravit`}>
+        <ButtonLink primary to={`/org/prilezitosti/${opportunityId}/upravit`}>
           upravit
         </ButtonLink>
         <Button danger onClick={handleClickRemove}>

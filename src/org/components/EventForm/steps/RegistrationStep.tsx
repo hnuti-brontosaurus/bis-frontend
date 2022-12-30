@@ -216,7 +216,7 @@ export const RegistrationStep = ({
                 </ul>
                 <Button
                   type="button"
-                  plain
+                  secondary
                   onClick={() => questionFields.append({ question: '' })}
                 >
                   Přidat otázku

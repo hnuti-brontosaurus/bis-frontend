@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
+import { Breadcrumbs, Loading, useCreateOrSelectLocation } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -78,7 +78,7 @@ export const UpdateOpportunity = () => {
 
   return (
     <>
-      <PageHeader>{title}</PageHeader>
+      <Breadcrumbs opportunityName={opportunity.name} />
       <OpportunityForm
         id={String(userId + '-' + opportunityId)}
         initialData={initialData}

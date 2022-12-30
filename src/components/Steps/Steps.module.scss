@@ -1,5 +1,6 @@
 @use 'styles/colors';
 @use 'components/FormLayout/FormLayout.module' as formLayout;
+@use 'styles/media';
 
 .isHidden {
   display: none;
@@ -7,9 +8,9 @@
 
 $step-button-horizontal-padding: 1rem;
 $step-button-vertical-padding: 0.2rem;
-$step-button-border-width: 2px;
+$step-button-border-width: 4px;
 $step-button-height: 1rem;
-$step-button-connect-height: 3px;
+$step-button-connect-height: 4px;
 $step-button-horizontal-gap: 1rem;
 $step-button-line-height: 1.5rem;
 
@@ -30,32 +31,35 @@ $step-button-line-height: 1.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.2rem $step-button-horizontal-gap;
+  @include media.for-phone-only {
+    margin-top: 16px;
+    overflow: hidden;
+  }
   .stepButton {
     line-height: $step-button-line-height;
     white-space: nowrap;
     padding: $step-button-vertical-padding $step-button-horizontal-padding;
     border: $step-button-border-width solid colors.$bronto-light;
     background-color: colors.$bronto-light;
-    color: colors.$bronto;
+    color: black;
     border-radius: 2rem;
+    height: 44px;
+    text-transform: capitalize;
+
+    &.isError {
+      border-color: colors.$error;
+    }
     &:hover {
-      background-color: colors.$bronto;
-      color: white;
+      border-color: colors.$bronto;
     }
     &.isActive {
       background-color: colors.$bronto;
+      border-color: colors.$bronto;
       color: white;
       &.isError {
         border-color: colors.$error;
       }
     }
-    &.isError {
-      border-color: colors.$error;
-      /*&:not(:last-child):after {
-        //background-color: colors.$error-light;
-      }*/
-    }
-
     // this connects step buttons with a line
     &:not(:last-child):after {
       z-index: -1;
@@ -72,13 +76,35 @@ $step-button-line-height: 1.5rem;
         translateY(
           calc($step-button-line-height / 2 - $step-button-connect-height / 2)
         );
+      @include media.for-phone-only {
+        width: 120px;
+        transform: translateX(0)
+          translateY(
+            calc($step-button-line-height / 2 - $step-button-connect-height / 2)
+          );
+      }
+    }
+
+    @include media.for-phone-only {
+      height: 36px;
+      line-height: 1rem;
+      font-size: 1rem;
+      color: colors.$bronto;
+      padding: $step-button-vertical-padding 0.4rem;
     }
   }
 }
 
 .bottomNavigation {
+  margin-top: 2rem;
   display: flex;
   .spacer {
     flex: auto;
+  }
+}
+
+@include media.for-phone-only {
+  .topActions {
+    display: none;
   }
 }

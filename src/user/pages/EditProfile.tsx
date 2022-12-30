@@ -475,7 +475,7 @@ export const EditProfile = () => {
           </FormSectionGroup>
           <Actions>
             <Button type="reset">Zrušit</Button>
-            <Button success type="submit">
+            <Button primary type="submit">
               Uložit
             </Button>
           </Actions>

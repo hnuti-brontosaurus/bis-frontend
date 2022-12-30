@@ -13,7 +13,7 @@ export const ErrorBoundaryFallback: Sentry.FallbackRender = ({
     <div>{error.toString()}</div>
     <div>{componentStack}</div>
     <Button
-      success
+      primary
       onClick={() => {
         /* When resetError() is called it will remove the Fallback component
         and render the Sentry ErrorBoundary's children in their initial state */

@@ -22,7 +22,7 @@ export const ViewProfile = () => {
     <div className={styles.pageContainer}>
       <PageHeader>{title}</PageHeader>
       <Actions>
-        <ButtonLink success to="upravit">
+        <ButtonLink primary to="upravit">
           <FaPencilAlt /> Upravit
         </ButtonLink>
       </Actions>

@@ -91,7 +91,7 @@ export const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
       ) && (
         <Button
           className={styles.birthsdayButton}
-          plain
+          secondary
           type="submit"
           onClick={() => setCheckAndAdd(true)}
         >
@@ -102,14 +102,14 @@ export const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
       retrievedUser._search_id === result._search_id &&
       retrievedUserIsUsed ? (
         !isSavingEventApplication ? (
-          <Button className={styles.birthsdayButton} plain type="submit">
+          <Button className={styles.birthsdayButton} secondary type="submit">
             přidej k účastníkům
           </Button>
         ) : (
           <Loading>...</Loading>
         )
       ) : (
-        <Button className={styles.birthsdayButton} plain type="submit">
+        <Button className={styles.birthsdayButton} secondary type="submit">
           zkontroluj
         </Button>
       )}

@@ -23,11 +23,6 @@ interface INewApplicationModalProps {
   eventId: number
 }
 
-// const phoneRegExp = /^(\+|00){0,1}[0-9]{1,3}[0-9]{4,14}(?:x.+)?$/
-// const zipcodeRegExp = /\d{3} ?\d{2}/
-
-// TODO: This modal is still WIP (no need to review atm)
-
 export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
@@ -106,10 +101,10 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
           answers: filteredAnswers,
           address: null,
           close_person: closePersonData,
+          state: 'pending' as const,
         },
         eventId,
       }
-
       await createEventApplication(eventDataWithAnswers)
       onClose()
     })(e)
@@ -285,7 +280,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     })}
                   </>
                 )}
-                <Button success>
+                <Button primary>
                   <input type="submit" value="přidaj přihlášku" />
                 </Button>
               </>

@@ -8,6 +8,7 @@ import {
   InlineSection,
   Label,
   Loading,
+  NumberInput,
 } from 'components'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
@@ -111,13 +112,15 @@ export const BasicInfoStep = ({
             required
           >
             <FormInputError>
-              <input
-                size={2}
-                type="number"
-                {...register('number_of_sub_events', {
+              <Controller
+                control={control}
+                name="number_of_sub_events"
+                rules={{
                   required,
-                  valueAsNumber: true,
-                })}
+                }}
+                render={({ field }) => (
+                  <NumberInput {...field} min={1}></NumberInput>
+                )}
               />
             </FormInputError>
           </FormSection>
