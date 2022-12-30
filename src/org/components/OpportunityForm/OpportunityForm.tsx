@@ -34,6 +34,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
 import { getIdBySlug } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
+import * as validationMessages from 'utils/validationMessages'
 import { required } from 'utils/validationMessages'
 import styles from './OpportunityForm.module.scss'
 
@@ -111,16 +112,30 @@ export const OpportunityForm = ({
     onCancel()
   }
 
+  // revalidate fields that depend on other fields
+  // when the other fields change
+  useEffect(() => {
+    const subscription = watch((_, { name }) => {
+      if (formState.isSubmitted) {
+        // the validations have to wait one tick
+        // somehow they need to update first for the validation to work properly
+        // because the validation rule of the other field depends on the value of this field
+        setTimeout(() => {
+          if (name === 'category') trigger('location_benefits')
+          if (name === 'start') trigger('end')
+          if (name === 'end') trigger('start')
+          if (name === 'on_web_start') trigger('on_web_end')
+          if (name === 'on_web_end') trigger('on_web_start')
+        }, 0)
+      }
+    })
+    return subscription.unsubscribe
+  }, [formState.isSubmitted, trigger, watch])
+
   const isCollaboration =
     opportunityCategories &&
     getIdBySlug(opportunityCategories.results, 'collaboration') ===
       +watch('category')
-
-  // when switching to or from collaboration, and if form was already validated, revalidate form
-  // in order to update error messages on location_benefits
-  useEffect(() => {
-    if (formState.isSubmitted) trigger('location_benefits')
-  }, [isCollaboration, formState.isSubmitted, trigger])
 
   return (
     <FormProvider {...methods}>
@@ -169,8 +184,14 @@ export const OpportunityForm = ({
                 <input
                   type="date"
                   id="start"
-                  placeholder="start"
-                  {...register('start', { required })}
+                  max={watch('end')}
+                  {...register('start', {
+                    required,
+                    max: {
+                      value: watch('end'),
+                      message: validationMessages.startBeforeEnd,
+                    },
+                  })}
                 />
               </FormInputError>{' '}
               <Label required htmlFor="end">
@@ -180,8 +201,14 @@ export const OpportunityForm = ({
                 <input
                   type="date"
                   id="end"
-                  placeholder="end"
-                  {...register('end', { required })}
+                  min={watch('start')}
+                  {...register('end', {
+                    required,
+                    min: {
+                      value: watch('start'),
+                      message: validationMessages.endAfterStart,
+                    },
+                  })}
                 />
               </FormInputError>
             </InlineSection>
@@ -195,8 +222,14 @@ export const OpportunityForm = ({
                 <input
                   type="date"
                   id="on_web_start"
-                  placeholder="onWebStart"
-                  {...register('on_web_start', { required })}
+                  max={watch('on_web_end')}
+                  {...register('on_web_start', {
+                    required,
+                    max: {
+                      value: watch('on_web_end'),
+                      message: validationMessages.startBeforeEnd,
+                    },
+                  })}
                 />
               </FormInputError>{' '}
               <Label required htmlFor="on_web_end">
@@ -206,8 +239,14 @@ export const OpportunityForm = ({
                 <input
                   type="date"
                   id="on_web_end"
-                  placeholder="onWebEnd"
-                  {...register('on_web_end', { required })}
+                  min={watch('on_web_start')}
+                  {...register('on_web_end', {
+                    required,
+                    min: {
+                      value: watch('on_web_start'),
+                      message: validationMessages.endAfterStart,
+                    },
+                  })}
                 />
               </FormInputError>
             </InlineSection>
