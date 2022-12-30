@@ -9,8 +9,10 @@ import {
   Label,
   Loading,
 } from 'components'
+import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
+import * as validationMessages from 'utils/validationMessages'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 
@@ -19,11 +21,26 @@ export const BasicInfoStep = ({
 }: {
   methods: MethodsShapes['basicInfo']
 }) => {
-  const { register, control, getValues } = methods
+  const { register, control, getValues, watch, trigger, formState } = methods
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
+
+  // trigger validation of fields which are dependent on other fields
+  useEffect(() => {
+    const subscription = watch((_, { name }) => {
+      if (formState.isSubmitted) {
+        // the validations have to wait one tick
+        // so the validation rule has time to update based on the other field
+        setTimeout(() => {
+          if (name === 'start') trigger('end')
+          if (name === 'end') trigger('start')
+        }, 0)
+      }
+    })
+    return subscription.unsubscribe
+  }, [formState.isSubmitted, trigger, watch])
 
   if (!(administrationUnits && categories && programs))
     return <Loading>Připravujeme formulář</Loading>
@@ -53,7 +70,14 @@ export const BasicInfoStep = ({
                   <input
                     type="date"
                     id="start"
-                    {...register('start', { required })}
+                    max={watch('end')}
+                    {...register('start', {
+                      required,
+                      max: {
+                        value: watch('end'),
+                        message: validationMessages.startBeforeEnd,
+                      },
+                    })}
                   />
                 </FormInputError>
                 <FormInputError>
@@ -68,7 +92,14 @@ export const BasicInfoStep = ({
                   <input
                     type="date"
                     id="end"
-                    {...register('end', { required })}
+                    min={watch('start')}
+                    {...register('end', {
+                      required,
+                      min: {
+                        value: watch('start'),
+                        message: validationMessages.endAfterStart,
+                      },
+                    })}
                   />
                 </FormInputError>
               </InlineSection>
