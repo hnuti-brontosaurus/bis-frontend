@@ -8,3 +8,4 @@ Check out documents in this folder to read more
 - [Programming style guide](style-guide.md)
 - [Api endpoints](api.md)
 - [Forms]()
+- [Testing](testing.md)
