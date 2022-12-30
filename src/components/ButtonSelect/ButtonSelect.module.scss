@@ -11,10 +11,10 @@
 
   // style label of checked input
   &:checked + .label {
-    @include btn.success-button;
+    @include btn.primary-button;
   }
   &:not(:checked) + .label {
-    @include btn.plain-button;
+    @include btn.secondary-button;
   }
 }
 

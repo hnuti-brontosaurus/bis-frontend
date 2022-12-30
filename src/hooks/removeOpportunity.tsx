@@ -35,7 +35,7 @@ export const useRemoveOpportunity = () => {
                 <div className={modalStyles.infoBox}>{message}</div>
                 <Actions>
                   <Button
-                    light
+                    secondary
                     onClick={() => {
                       resolve(false)
                       onClose()

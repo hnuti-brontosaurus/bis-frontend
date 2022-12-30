@@ -7,6 +7,7 @@ import { useTitle } from 'hooks/title'
 import styles from 'pages/Login/Login.module.scss'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 import { required } from 'utils/validationMessages'
 
 const getErrorMessage = (
@@ -57,6 +58,10 @@ export const SendResetPasswordLink = () => {
     <div className={styles.loginContainer}>
       <div className={styles.formContainer}>
         <header className={styles.title}>Reset hesla</header>
+        <div>
+          {' '}
+          <Link to="https://bronto.vercel.app/login"> back</Link>
+        </div>
         <p className={styles.subtitle}>
           Zadej svou e-mailovou adresu použitou při registraci.
           <br />
@@ -86,7 +91,7 @@ export const SendResetPasswordLink = () => {
                 })}
               />
             </FormInputError>
-            <Button success className={styles.formElement} type="submit">
+            <Button primary className={styles.formElement} type="submit">
               Obnovit
             </Button>
           </form>

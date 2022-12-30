@@ -362,7 +362,7 @@ export const EventRegistrationForm = ({
             )}
             <Actions>
               <Button type="reset">Zrušit</Button>
-              <Button success type="submit">
+              <Button primary type="submit">
                 Odeslat přihlášku
               </Button>
             </Actions>
@@ -386,10 +386,10 @@ export const FinishedStep = ({
     <div>
       <div className={styles.info}>{message}</div>
       <Actions>
-        <Button success onClick={onFinish}>
+        <Button primary onClick={onFinish}>
           Hotovo!
         </Button>
-        <Button success onClick={onRestart}>
+        <Button primary onClick={onRestart}>
           Přihlásit někoho dalšího
         </Button>
       </Actions>

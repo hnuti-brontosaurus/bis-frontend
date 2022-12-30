@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import { Loading, PageHeader, useCreateOrSelectLocation } from 'components'
+import { Breadcrumbs, Loading, useCreateOrSelectLocation } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -52,7 +52,7 @@ export const CreateOpportunity = () => {
 
   return (
     <div>
-      <PageHeader>Nová příležitost</PageHeader>
+      <Breadcrumbs />
       <OpportunityForm
         id="new"
         onSubmit={handleSubmit}

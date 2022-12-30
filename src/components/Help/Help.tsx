@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
+import { GoInfo } from 'react-icons/go'
 import Tooltip from 'react-tooltip-lite'
 import styles from './Help.module.scss'
 
@@ -53,7 +54,7 @@ export const Help = ({ children }: { children: ReactNode }) => {
         }}
         className={styles.trigger}
       >
-        i
+        <GoInfo />
       </button>
     </Tooltip>
   )

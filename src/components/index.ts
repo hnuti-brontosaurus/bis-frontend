@@ -2,6 +2,7 @@ export {
   BirthdayInput,
   birthdayValidation,
 } from './BirthdayInput/BirthdayInput'
+export { Breadcrumbs } from './Breadcrumbs/Breadcrumbs'
 export { Button, ButtonLink } from './Button/Button'
 export { ButtonSelect } from './ButtonSelect/ButtonSelect'
 export { Error } from './Error/Error'
@@ -33,6 +34,7 @@ export { Map } from './Map/Map'
 export type { ClearBounds, MarkerType } from './Map/Map'
 export { MapyCzMap } from './MapyCzMap/MapyCzMap'
 export { MapyCzSearch } from './MapyCzSearch/MapyCzSearch'
+export { NumberInput } from './NumberInput/NumberInput'
 export { OSMSearch } from './OSMSearch/OSMSearch'
 export { PageHeader } from './PageHeader/PageHeader'
 export { UnscalablePaginatedList } from './PaginatedList/PaginatedList'

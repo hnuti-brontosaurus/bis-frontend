@@ -28,7 +28,7 @@
       width: 100%;
 
       .menuItem {
-        height: 120px;
+        height: 80px;
         width: 100%;
         &:hover {
           margin: -0.3rem;
@@ -41,7 +41,7 @@
     }
 
     .menuItem {
-      background-color: pink;
+      background-color: white;
       border-radius: 1rem;
       padding: 1rem;
       display: flex;

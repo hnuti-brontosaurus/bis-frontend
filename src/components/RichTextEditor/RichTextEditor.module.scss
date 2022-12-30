@@ -1,9 +1,11 @@
+@use 'styles/colors';
+
 .wrapper {
   border: 2px solid #ebeff4;
   border-radius: 10px;
 
   &::placeholder {
-    color: rgb(166, 166, 166);
+    color: colors.$gray-200;
     font-size: 0.875rem;
   }
 

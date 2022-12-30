@@ -54,7 +54,7 @@ export const OSMSearch = ({
           placeholder="Najít na mapě (OpenStreetMap)"
           {...register('query')}
         />
-        <Button plain type="submit" form="osm-place-query">
+        <Button secondary type="submit" form="osm-place-query">
           <FaSearchLocation />
         </Button>
       </fieldset>
