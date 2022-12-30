@@ -27,7 +27,6 @@ export const ParticipantsStep: FC<{
       },
       {} as { [s: string]: string },
     )
-  console.log(savedApplications)
   const savedParticipants: { [s: string]: string } | undefined = {}
   if (savedApplications)
     for (const [key, value] of Object.entries(savedApplications)) {

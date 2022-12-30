@@ -22,8 +22,7 @@ export const BasicInfoStep = ({
 }: {
   methods: MethodsShapes['basicInfo']
 }) => {
-  const { register, control, getValues, watch, trigger, setValue, formState } =
-    methods
+  const { register, control, getValues, watch, trigger, formState } = methods
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
   const { data: administrationUnits } =
@@ -118,7 +117,6 @@ export const BasicInfoStep = ({
                 name="number_of_sub_events"
                 rules={{
                   required,
-                  valueAsNumber: true,
                 }}
                 render={({ field }) => (
                   <NumberInput {...field} min={1}></NumberInput>

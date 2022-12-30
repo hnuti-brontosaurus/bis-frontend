@@ -3,7 +3,6 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import styles from './Breadcrumbs.module.scss'
 
 export const Breadcrumbs = ({
-  title,
   eventToClone,
   eventName,
   opportunityName,
@@ -13,13 +12,6 @@ export const Breadcrumbs = ({
   eventName?: string
   opportunityName?: string
 }) => {
-  const breadcrumbsDictionary = {
-    'org/akce': { name: 'akce', path: '/' },
-    org: 'organizator',
-    vytvorit: 'nova akce',
-    upravit: title,
-  }
-
   // if we want the route show in breadcrumbs, we need to add it to this array
   // path: path we want to link to
   // name: link name we want to show to the user
