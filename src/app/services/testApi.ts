@@ -3092,7 +3092,7 @@ export type Opportunity = {
   description: string
   location_benefits?: string
   personal_benefits: string
-  requirements: string
+  requirements?: string
   contact_name?: string
   contact_phone?: string
   contact_email?: string

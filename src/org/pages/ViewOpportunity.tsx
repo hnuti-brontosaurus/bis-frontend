@@ -95,12 +95,16 @@ export const ViewOpportunity = () => {
             __html: sanitize(opportunity.personal_benefits),
           }}
         />
-        <header>Co potřebuji ke spolupráci</header>
-        <section
-          dangerouslySetInnerHTML={{
-            __html: sanitize(opportunity.requirements),
-          }}
-        />
+        {opportunity.requirements ? (
+          <>
+            <header>Co potřebuji ke spolupráci</header>
+            <section
+              dangerouslySetInnerHTML={{
+                __html: sanitize(opportunity.requirements),
+              }}
+            />
+          </>
+        ) : null}
       </div>
       <pre className={styles.data}>
         {JSON.stringify(opportunity, null, '  ')}
