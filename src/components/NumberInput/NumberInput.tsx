@@ -1,49 +1,58 @@
-import { useState } from 'react'
+import { forwardRef, InputHTMLAttributes } from 'react'
 import { FaMinus, FaPlus } from 'react-icons/fa'
-import { required } from 'utils/validationMessages'
+import { Overwrite } from 'utility-types'
 import styles from './NumberInput.module.scss'
 
-export const NumberInput = ({
-  register,
-  setValue,
-  getValues,
-  name,
-  ...props
-}: any) => {
-  const [inputValue, setInputValue] = useState<number>(getValues(name))
-  return (
-    <div className={styles.container}>
-      <div
-        className={styles.button}
-        onClick={() => {
-          setInputValue(prev => {
-            setValue(name, Math.max(prev - 1, props.min))
-            return Math.max(prev - 1, props.min)
-          })
-        }}
-      >
-        <FaMinus />
+export const NumberInput = forwardRef<
+  HTMLInputElement,
+  Overwrite<
+    InputHTMLAttributes<HTMLInputElement>,
+    {
+      value: number | undefined
+      onChange: (value: number | undefined) => void
+      min?: number
+      max?: number
+    }
+  >
+>(
+  (
+    { name, value, onChange, min = -Infinity, max = Infinity, ...props },
+    ref,
+  ) => {
+    return (
+      <div className={styles.container}>
+        <div
+          className={styles.button}
+          onClick={() => {
+            onChange(typeof value === 'number' ? Math.max(value - 1, min) : 1)
+          }}
+        >
+          <FaMinus />
+        </div>
+        <input
+          className={styles.input}
+          type="number"
+          value={value}
+          min={min}
+          max={max}
+          onChange={e =>
+            onChange(
+              e.target.value.length > 0 && !isNaN(Number(e.target.value))
+                ? Number(e.target.value)
+                : ('' as unknown as number),
+            )
+          }
+          {...props}
+        />
+        <div
+          className={styles.button}
+          onClick={() => {
+            onChange(typeof value === 'number' ? Math.min(value + 1, max) : 1)
+          }}
+        >
+          <FaPlus />
+        </div>
       </div>
-      <input
-        className={styles.input}
-        type={'number'}
-        {...register(name, {
-          required,
-          valueAsNumber: true,
-        })}
-        value={inputValue.toString()}
-      />
-      <div
-        className={styles.button}
-        onClick={() => {
-          setInputValue(prev => {
-            setValue(name, prev + 1)
-            return prev + 1
-          })
-        }}
-      >
-        <FaPlus />
-      </div>
-    </div>
-  )
-}
+    )
+  },
+)

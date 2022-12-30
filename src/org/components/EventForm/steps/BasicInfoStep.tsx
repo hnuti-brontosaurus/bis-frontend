@@ -113,14 +113,17 @@ export const BasicInfoStep = ({
             required
           >
             <FormInputError>
-              <NumberInput
-                size={2}
-                min={1}
-                register={register}
-                setValue={setValue}
-                getValues={getValues}
-                name={'number_of_sub_events'}
-              ></NumberInput>
+              <Controller
+                control={control}
+                name="number_of_sub_events"
+                rules={{
+                  required,
+                  valueAsNumber: true,
+                }}
+                render={({ field }) => (
+                  <NumberInput {...field} min={1}></NumberInput>
+                )}
+              />
             </FormInputError>
           </FormSection>
         </FormSectionGroup>

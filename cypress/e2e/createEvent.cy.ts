@@ -25,7 +25,7 @@ const next = () =>
   cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
 
 const submit = () =>
-  cy.get('[type=submit]:contains(Uložit)').should('be.visible').click()
+  cy.get('[type=submit]:contains(Uložit)').first().should('be.visible').click()
 
 describe('create event', () => {
   // stub api endpoints before each request
@@ -227,7 +227,7 @@ describe('create event', () => {
     cy.intercept('POST', '/api/frontend/events/1/propagation/images/', {})
     cy.intercept('POST', '/api/frontend/events/1/questionnaire/questions/', {})
 
-    cy.get('[type=submit]').should('be.visible').click()
+    submit()
 
     // test that event was saved
     cy.wait('@createEvent')
@@ -241,7 +241,7 @@ describe('create event', () => {
     cy.visit('/org/akce/vytvorit')
     cy.location('pathname').should('equal', '/org/akce/vytvorit')
     // submit form without filling data in
-    cy.get('[type=submit]').should('be.visible').click()
+    submit()
     // still in the form
     cy.location('pathname').should('equal', '/org/akce/vytvorit')
     // check that error message was shown
@@ -269,7 +269,7 @@ describe('create event', () => {
       {},
     )
 
-    cy.get('[type=submit]').should('be.visible').click()
+    submit()
 
     // test that event was submitted and proper data were sent to backend
     cy.wait('@createEvent')
