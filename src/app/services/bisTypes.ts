@@ -11,6 +11,7 @@ export type {
   Answer,
   DietCategory,
   EventApplication,
+  EventContact,
   EventIntendedForCategory,
   EventProgramCategory,
   Finance,

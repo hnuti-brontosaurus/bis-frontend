@@ -1,5 +1,5 @@
 import type { Event, User } from 'app/services/bisTypes'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, findKey, mapKeys } from 'lodash'
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
 import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
@@ -243,4 +243,36 @@ export const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
   const aOrder = a.order ?? Infinity
   const bOrder = b.order ?? Infinity
   return aOrder - bOrder
+}
+
+/**
+ * Input unnormalized object and config that shows how raw object keys map on final object key
+ * Output object with normalized keys and the same values as the other one
+ */
+export const normalizeKeys = <T extends {}>(
+  obj: { [key: string]: unknown },
+  shape: Record<keyof T, string[]>,
+): T => {
+  return mapKeys(obj, (value, rawKey) =>
+    findKey(
+      shape,
+      values =>
+        values.findIndex(val =>
+          normalizeString(rawKey).includes(normalizeString(val)),
+        ) > -1,
+    ),
+  ) as T
+}
+
+/**
+ * Transform string to lowercase without diacritics, for more graceful comparison
+ */
+const normalizeString = (input: string): string => {
+  return (
+    input
+      .toLowerCase()
+      // remove diacritics https://stackoverflow.com/a/37511463/4551707
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+  )
 }
