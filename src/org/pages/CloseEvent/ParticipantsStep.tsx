@@ -17,7 +17,8 @@ import type {
   CloseEventFormShape,
   ParticipantsStepFormShape,
 } from './CloseEventForm'
-import styles from './ParticipantStep.module.scss'
+import styles from './ParticipantsStep.module.scss'
+import { SimpleParticipants } from './SimpleParticipants'
 
 type ParticipantInputType = CloseEventFormShape['participantInputType']
 
@@ -139,9 +140,7 @@ export const ParticipantsStep = ({
                 </>
               )}
             {!areParticipantsRequired && inputType === 'simple-list' && (
-              <div>
-                TODO: Tady bude rozhraní pro jednoduché přidávání účastníků
-              </div>
+              <SimpleParticipants />
             )}
             {(areParticipantsRequired || inputType === 'full-list') && (
               <ParticipantsList eventId={event.id} eventName={event.name} />
