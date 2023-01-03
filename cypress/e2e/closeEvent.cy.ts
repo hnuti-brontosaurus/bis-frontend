@@ -26,7 +26,7 @@ describe('Close event - evidence and participants', () => {
       cy.get('label:contains(Mám jen jméno + příjmení + email)')
         .should('be.visible')
         .click()
-      cy.get('input[type=file]')
+      cy.get('label:contains(Importovat seznam)')
         .should('be.visible')
         .selectFile('cypress/e2e/simple-participants.xlsx')
     })
