@@ -2,12 +2,11 @@ import { SerializedError } from '@reduxjs/toolkit'
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { api } from 'app/services/bis'
 import { default as classNames, default as classnames } from 'classnames'
-import { Button, FormInputError, Loading } from 'components'
+import { Button, ButtonLink, FormInputError, Loading } from 'components'
 import { useTitle } from 'hooks/title'
 import styles from 'pages/Login/Login.module.scss'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
 import { required } from 'utils/validationMessages'
 
 const getErrorMessage = (
@@ -59,8 +58,9 @@ export const SendResetPasswordLink = () => {
       <div className={styles.formContainer}>
         <header className={styles.title}>Reset hesla</header>
         <div>
-          {' '}
-          <Link to="https://bronto.vercel.app/login"> back</Link>
+          <ButtonLink tertiary to="/login">
+            zpět
+          </ButtonLink>
         </div>
         <p className={styles.subtitle}>
           Zadej svou e-mailovou adresu použitou při registraci.

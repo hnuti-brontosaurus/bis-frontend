@@ -77,12 +77,12 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
     <StyledModal
       open={open}
       onClose={onClose}
-      title={`Prihlaska na akce ${eventName}`}
+      title={`Přihláška na akci ${eventName}`}
     >
       {currentApplication && (
         <div>
           {' '}
-          <h3>Prihlaska:</h3>
+          <h3>Přihláška:</h3>
           <div className={styles.showUserApplicationNameBox}>
             <h4>
               {currentApplication.first_name} {currentApplication.last_name}{' '}
@@ -92,19 +92,19 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
           </div>
           {currentApplication.birthday && (
             <div>
-              <span>Datum narozeni: </span>
+              <span>Datum narození: </span>
               <span>{currentApplication.birthday}</span>
             </div>
           )}
           {currentApplication.sex?.name && (
             <div>
-              <span>Pohlavi: </span>
+              <span>Pohlaví: </span>
               <span>{currentApplication.sex.name}</span>
             </div>
           )}
           {currentApplication.email && (
             <div>
-              <span>Email: </span>
+              <span>E-mail: </span>
               <span>{currentApplication.email}</span>
             </div>
           )}
@@ -116,13 +116,13 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
           )}
           {currentApplication.health_issues && (
             <div>
-              <span>Zdravotni omezeni: </span>
+              <span>Zdravotní omezení: </span>
               <span>{currentApplication.health_issues}</span>
             </div>
           )}
           {currentApplication.close_person && (
             <div>
-              <span>Blizska osoba: </span>
+              <span>Blízká osoba: </span>
               <span>{`${currentApplication.close_person.first_name} ${currentApplication.close_person.last_name}`}</span>
               {currentApplication.close_person.email && (
                 <span>{` email: ${currentApplication.close_person.email}`}</span>
@@ -146,7 +146,7 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
       {userId && user && (
         <div>
           <div className={styles.addedUserBlock}>
-            <h3>Uzivatel pridany na akce: </h3>
+            <h3>Uživatel přidaný na akci: </h3>
             <h4>
               {user.first_name} {user.last_name}{' '}
               {user.nickname && `(${user.nickname})`}{' '}
@@ -155,20 +155,20 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
 
           {user.birthday && (
             <div>
-              <span>Datum narozeni: </span>
+              <span>Datum narození: </span>
               <span>{user.birthday}</span>
             </div>
           )}
           {user.sex?.name && (
             <div>
-              <span>Pohlavi: </span>
+              <span>Pohlaví: </span>
               <span>{user.sex.name}</span>
             </div>
           )}
 
           {user.email && (
             <div>
-              <span>Email: </span>
+              <span>E-mail: </span>
               <span>{user.email}</span>
             </div>
           )}
@@ -180,13 +180,13 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
           )}
           {user.health_issues && (
             <div>
-              <span>Zdravotni omezeni: </span>
+              <span>Zdravotní omezení: </span>
               <span>{user.health_issues}</span>
             </div>
           )}
           {user.close_person && (
             <div>
-              <span>Blizska osoba: </span>
+              <span>Blízká osoba: </span>
               <span>{`${user.close_person.first_name} ${user.close_person.last_name}`}</span>
               {user.close_person.email && (
                 <span>{` email: ${user.close_person.email}`}</span>
@@ -198,7 +198,7 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
           )}
           {user.memberships && user.memberships.length !== 0 && (
             <div>
-              <span>Clenstvi: </span>
+              <span>Členství: </span>
               <span>
                 {user.memberships.map(membership => {
                   return (
