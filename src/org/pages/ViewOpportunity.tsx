@@ -106,9 +106,10 @@ export const ViewOpportunity = () => {
           </>
         ) : null}
       </div>
-      <pre className={styles.data}>
+      {/* <pre className={styles.data}>
         {JSON.stringify(opportunity, null, '  ')}
-      </pre>
+      </pre> */}
+      <div>Tady chybí data (TODO)</div>
     </div>
   )
 }

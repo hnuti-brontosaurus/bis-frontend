@@ -189,7 +189,8 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             ))}
           </div>
         </div>
-        <pre className={styles.data}>{JSON.stringify(event, null, '  ')}</pre>
+        {/* <pre className={styles.data}>{JSON.stringify(event, null, '  ')}</pre> */}
+        <div>Tady chybí data (TODO)</div>
       </div>
     </>
   )

@@ -290,7 +290,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
         onClose()
         clearModalData()
       }}
-      title={'Pridavani ucastnika'}
+      title="Přidání účastníka"
     >
       <div
         onClick={e => {
@@ -299,7 +299,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
       >
         {userOptions.length === 0 && allUsers.length === 0 ? (
           <div className={styles.infoBox}>
-            Podle data z přihlášky jsme našli zadne uživatele, kteří už mají
+            Podle data z přihlášky jsme nenašli žádné uživatele, kteří už mají
             svůj účet v BISu.{' '}
           </div>
         ) : (
@@ -309,7 +309,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
             <p>Zelení - uživatelé, ke kterým máš přístup</p>
             <p>
               Šedí - uživatelé, ke kterým nemáš přístup; a musíš zadat datum
-              narození, abys je mohl(a) přidat jako účastníkynnn
+              narození, abys je mohl(a) přidat jako účastníky
             </p>
           </div>
         )}
@@ -334,10 +334,10 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                 setShowAddParticipantForm(false)
                               }}
                             >
-                              Uzivatele obecni v BISu +
+                              Uživatelé přítomní v BISu +
                             </h3>
                           ) : (
-                            <h3>Uzivatele obecni v BISu</h3>
+                            <h3>Uživatelé přítomní v BISu</h3>
                           )}
                         </td>
                       </tr>
@@ -448,7 +448,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                   setShowAddParticipantForm(false)
                                 }}
                               >
-                                Ukaz
+                                Ukaž
                               </Button>
                             </td>
                             <td>
@@ -481,7 +481,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     clearModalData()
                                   }}
                                 >
-                                  Pridaj
+                                  Přidej
                                 </Button>
                               )}
                             </td>
@@ -490,26 +490,26 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                             <tr>
                               <td colSpan={6}>
                                 <>
-                                  <span>Uzivatel/ka: </span>
+                                  <span>Uživatel/ka: </span>
                                   <span>
                                     {result.first_name} {result.last_name}{' '}
                                     {result.nickname && `(${result.nickname})`}{' '}
                                   </span>
                                   {result.birthday && (
                                     <div>
-                                      <span>Datum narozeni: </span>
+                                      <span>Datum narození: </span>
                                       <span>{result.birthday}</span>
                                     </div>
                                   )}
                                   {result.sex?.name && (
                                     <div>
-                                      <span>Pohlavi: </span>
+                                      <span>Pohlaví: </span>
                                       <span>{result.sex.name}</span>
                                     </div>
                                   )}
                                   {result.email && (
                                     <div>
-                                      <span>Email: </span>
+                                      <span>E-mail: </span>
                                       <span>{result.email}</span>
                                     </div>
                                   )}
@@ -522,13 +522,13 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
 
                                   {result.health_issues && (
                                     <div>
-                                      <span>Zdravotni omezeni: </span>
+                                      <span>Zdravotní omezení: </span>
                                       <span>{result.health_issues}</span>
                                     </div>
                                   )}
                                   {result.close_person && (
                                     <div>
-                                      <span>Blizska osoba: </span>
+                                      <span>Blízká osoba: </span>
                                       <span>{`${result.close_person.first_name} ${result.close_person.last_name}`}</span>
                                       {result.close_person.email && (
                                         <span>{` email: ${result.close_person.email}`}</span>
@@ -595,7 +595,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               <tr>
                                 <td colSpan={6}>
                                   <>
-                                    <span>Uzivatel/ka: </span>
+                                    <span>Uživatel/ka: </span>
                                     <span>
                                       {retrievedUser.first_name}{' '}
                                       {retrievedUser.last_name}{' '}
@@ -604,13 +604,13 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     </span>
                                     {retrievedUser.birthday && (
                                       <div>
-                                        <span>Datum narozeni: </span>
+                                        <span>Datum narození: </span>
                                         <span>{retrievedUser.birthday}</span>
                                       </div>
                                     )}
                                     {retrievedUser.memberships && (
                                       <div>
-                                        <span>Clenstvi: </span>
+                                        <span>Členství: </span>
                                         <span>
                                           {retrievedUser.memberships.map(
                                             membership => {
@@ -660,13 +660,13 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     )}
                                     {retrievedUser.sex?.name && (
                                       <div>
-                                        <span>Pohlavi: </span>
+                                        <span>Pohlaví: </span>
                                         <span>{retrievedUser.sex.name}</span>
                                       </div>
                                     )}
                                     {retrievedUser.email && (
                                       <div>
-                                        <span>Email: </span>
+                                        <span>E-mail: </span>
                                         <span>{retrievedUser.email}</span>
                                       </div>
                                     )}
@@ -688,7 +688,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
       )} */}
                                     {retrievedUser.health_issues && (
                                       <div>
-                                        <span>Zdravotni omezeni: </span>
+                                        <span>Zdravotní omezení: </span>
                                         <span>
                                           {retrievedUser.health_issues}
                                         </span>
@@ -696,7 +696,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     )}
                                     {retrievedUser.close_person && (
                                       <div>
-                                        <span>Blizska osoba: </span>
+                                        <span>Blízká osoba: </span>
                                         <span>{`${retrievedUser.close_person.first_name} ${retrievedUser.close_person.last_name}`}</span>
                                         {retrievedUser.close_person.email && (
                                           <span>{` email: ${retrievedUser.close_person.email}`}</span>
@@ -721,7 +721,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                             userOptions.length === 0 &&
                             allUsers &&
                             allUsers.length === 0) ? (
-                            <h3>Pridaj noveho uzivatela</h3>
+                            <h3>Přidej nového uživatele</h3>
                           ) : (
                             <h3
                               onClick={() => {
@@ -737,7 +737,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                 // TODO: is it possible to scroll to it?
                               }}
                             >
-                              Pridaj noveho uzivatela +
+                              Přidej nového uživatele +
                             </h3>
                           )}
                         </span>
@@ -753,7 +753,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                 <form onSubmit={handleFormSubmit}>
                                   <>
                                     <InlineSection>
-                                      <Label required>Jmeno:</Label>
+                                      <Label required>Jméno:</Label>
                                       <FormInputError>
                                         <input
                                           type="text"
@@ -764,7 +764,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       </FormInputError>
                                       {errors.first_name?.message}
 
-                                      <Label required>Prijmeni: </Label>
+                                      <Label required>Příjmení: </Label>
                                       <FormInputError>
                                         <input
                                           type="text"
@@ -772,7 +772,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                         />
                                       </FormInputError>
 
-                                      <Label>Prezdivka:</Label>
+                                      <Label>Přezdívka:</Label>
 
                                       <input
                                         type="text"
@@ -807,7 +807,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       </FormInputError>
                                     </InlineSection>
                                     <InlineSection>
-                                      <Label>Datum narozeni:</Label>
+                                      <Label>Datum narození:</Label>
 
                                       <input
                                         type="date"
@@ -815,9 +815,9 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       />
                                     </InlineSection>
 
-                                    <h3>Bliska osoba:</h3>
+                                    <h3>Blízká osoba:</h3>
                                     <InlineSection>
-                                      <Label required>Jmeno:</Label>
+                                      <Label required>Jméno:</Label>
                                       <FormInputError>
                                         <input
                                           type="text"
@@ -827,7 +827,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                         />
                                       </FormInputError>
 
-                                      <Label required>Prijmeni:</Label>
+                                      <Label required>Příjmení:</Label>
                                       <FormInputError>
                                         <input
                                           type="text"
@@ -865,7 +865,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                           
                                         </Label> */}
                                       <Label>
-                                        Alergie a zdravotni omezeni:
+                                        Alergie a zdravotní omezení:
                                       </Label>
 
                                       <input
@@ -874,22 +874,22 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       />
                                     </InlineSection>
                                     <InlineSection>
-                                      <Label required>Pohlavi:</Label>
-                                      <Label htmlFor="male">Male</Label>
+                                      <Label required>Pohlaví:</Label>
+                                      <Label htmlFor="male">Mužské</Label>
                                       <input
                                         id="male"
                                         type="radio"
                                         {...register('sex')}
                                         value={1}
                                       />
-                                      <Label htmlFor="female">Female</Label>
+                                      <Label htmlFor="female">Ženské</Label>
                                       <input
                                         id="female"
                                         type="radio"
                                         {...register('sex')}
                                         value={2}
                                       />
-                                      <Label htmlFor="other">Other</Label>
+                                      <Label htmlFor="other">Jiné</Label>
                                       <input
                                         id="other"
                                         type="radio"
@@ -912,7 +912,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                           
                                         </Label> */}
 
-                                    <h3>Trvala adresa:</h3>
+                                    <h3>Trvalé bydliště:</h3>
                                     <InlineSection>
                                       <Label required>Ulice:</Label>
                                       <FormInputError>
@@ -923,7 +923,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                         />
                                       </FormInputError>
 
-                                      <Label required>PSC:</Label>
+                                      <Label required>PSČ:</Label>
                                       <FormInputError>
                                         <input
                                           id="address_zip_code"
@@ -933,7 +933,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       </FormInputError>
                                     </InlineSection>
                                     <InlineSection>
-                                      <Label required>Mesto:</Label>
+                                      <Label required>Město:</Label>
                                       <FormInputError>
                                         <input
                                           id="address_city"
@@ -958,16 +958,16 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                         setShowAddParticipantForm(false)
                                       }}
                                     >
-                                      Cancel
+                                      Zrušit
                                     </Button>
                                     {!isCreatingUser ? (
                                       <Button primary>
-                                        Create a new user and add as a
-                                        participant
+                                        Vytvořit nového uživatele a přidat jako
+                                        účastníka
                                       </Button>
                                     ) : (
                                       <Loading>
-                                        Pridavani noveho ucastnika
+                                        Přidáváme nového účastníka
                                       </Loading>
                                     )}
                                     {errorsCreatingUser && (
@@ -986,7 +986,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                   </tbody>
                 </table>
               ) : (
-                <Loading>Searching existing users</Loading>
+                <Loading>Hledáme existující uživatele</Loading>
               )}
             </div>
           </div>

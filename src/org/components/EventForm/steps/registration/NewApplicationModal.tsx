@@ -118,7 +118,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
         onClose()
         reset()
       }}
-      title="Nova prihlaska"
+      title="Nová přihláška"
     >
       <div
         onClick={e => {
@@ -130,11 +130,11 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
           <FormProvider {...methods}>
             <form onSubmit={handleFormSubmit}>
               <>
-                <h3>Dane prihlaseneho:</h3>
+                <h3>Údaje přihlášeného:</h3>
 
                 <InlineSection>
                   <Label htmlFor="first_name" required>
-                    Jmeno
+                    Jméno
                   </Label>
                   <FormInputError>
                     <input
@@ -144,7 +144,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     />
                   </FormInputError>
                   <Label htmlFor="last_name" required>
-                    Prijmeni
+                    Příjmení
                   </Label>
                   <FormInputError>
                     <input
@@ -156,7 +156,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                 </InlineSection>
 
                 <InlineSection>
-                  <Label htmlFor="nickname">Prezdivka</Label>
+                  <Label htmlFor="nickname">Přezdívka</Label>
                   <FormInputError>
                     <input
                       type="text"
@@ -197,7 +197,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
 
                 <InlineSection>
                   <Label htmlFor="health_issues">
-                    Alergie a zdravotni omezeni:
+                    Alergie a zdravotní omezení:
                   </Label>
                   <FormInputError>
                     <textarea
@@ -207,10 +207,10 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   </FormInputError>
                 </InlineSection>
 
-                <h3>Bliska osoba:</h3>
+                <h3>Blízká osoba:</h3>
 
                 <InlineSection>
-                  <Label htmlFor="close_person_first_name">Jmeno</Label>
+                  <Label htmlFor="close_person_first_name">Jméno</Label>
                   <FormInputError>
                     <input
                       type="text"
@@ -218,7 +218,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                       {...register('close_person.first_name')}
                     />
                   </FormInputError>
-                  <Label htmlFor="close_person_last_name">Prijmeni</Label>
+                  <Label htmlFor="close_person_last_name">Příjmení</Label>
                   <FormInputError>
                     <input
                       type="text"
@@ -248,7 +248,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                 </InlineSection>
                 {questions && (
                   <>
-                    <h3>Otazky:</h3>
+                    <h3>Otázky:</h3>
                     {questions.results.map((question: any, i) => {
                       return (
                         <>
@@ -281,7 +281,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                   </>
                 )}
                 <Button primary>
-                  <input type="submit" value="přidaj přihlášku" />
+                  <input type="submit" value="Přidej přihlášku" />
                 </Button>
               </>
             </form>

@@ -85,7 +85,7 @@ export const Steps = <T extends Record<string, any>>({
             aria-label="Go to previous step"
             onClick={() => setStep(step - 1)}
           >
-            <ImArrowLeft /> Krok zpatky
+            <ImArrowLeft /> Krok zpátky
           </Button>
         )}
         <span className={styles.spacer}></span>
@@ -96,7 +96,7 @@ export const Steps = <T extends Record<string, any>>({
             aria-label="Go to next step"
             onClick={() => setStep(step + 1)}
           >
-            Dalsi krok <ImArrowRight />
+            Další krok <ImArrowRight />
           </Button>
         )}
       </nav>

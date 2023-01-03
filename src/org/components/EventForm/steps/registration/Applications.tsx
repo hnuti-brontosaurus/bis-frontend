@@ -96,7 +96,7 @@ export const Applications: FC<{
   return (
     <>
       <div className={styles.ListContainer}>
-        <h2>Prihlaseni</h2>
+        <h2>Přihlášení</h2>
         <div className={styles.buttonsContainer}>
           <button
             type="button"
@@ -104,7 +104,7 @@ export const Applications: FC<{
               !thereAreApplications ? styles.disabledButton : undefined
             }
           >
-            Export do csv (WIP)
+            Export do CSV (WIP)
           </button>
           <button
             type="button"
@@ -112,7 +112,7 @@ export const Applications: FC<{
               !thereAreApplications ? styles.disabledButton : undefined
             }
           >
-            Tisknij prezencni listinu (WIP)
+            Tiskni prezenční listinu (WIP)
           </button>
         </div>
         <div className={styles.searchContainer}>
@@ -123,7 +123,7 @@ export const Applications: FC<{
                 setShowNewApplicationModal(true)
               }}
             >
-              Pridaj novou prihlasku
+              Přidej novou přihlášku
             </button>
           </div>
         </div>
@@ -133,7 +133,7 @@ export const Applications: FC<{
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Jmeno, prijmeni, datum narozeni</th>
+                    <th>Jméno, příjmení, datum narození</th>
                     <th></th>
                     <th></th>
                   </tr>
@@ -228,12 +228,12 @@ export const Applications: FC<{
                   alt=""
                   width="200"
                 ></img>
-                <div>Jesce se nikdo neprihlasil</div>
+                <div>Ještě se nikdo nepřihlásil</div>
               </div>
             )}
           </div>
         ) : (
-          <Loading>Stahujeme prihlaski</Loading>
+          <Loading>Stahujeme přihlášky</Loading>
         )}
         <NewApplicationModal
           open={showNewApplicationModal}
