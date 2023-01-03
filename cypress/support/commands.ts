@@ -49,6 +49,7 @@ declare global {
         redirect?: string,
       ): Chainable<Element>
       interceptFullEvent(id?: number): Chainable<Element>
+      interceptLogin(): Chainable<Element>
     }
   }
 }
@@ -98,6 +99,31 @@ Cypress.Commands.add('interceptFullEvent', (id?: number) => {
   cy.intercept(
     { method: 'GET', pathname: '/api/frontend/locations/100/' },
     { fixture: 'location' },
+  )
+  cy.intercept(
+    {
+      method: 'GET',
+      pathname: /\/api\/frontend\/users\/[a-z0-9-]+\//,
+    },
+    { fixture: 'organizer' },
+  )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/frontend/users/' },
+    { results: [] },
+  )
+})
+
+Cypress.Commands.add('interceptLogin', () => {
+  cy.intercept('POST', '/api/auth/login/', { token: '1234567890abcdef' })
+  cy.intercept('GET', '/api/auth/whoami/', {
+    id: '0419781d-06ba-432b-8617-797ea14cf848',
+  })
+  cy.intercept(
+    {
+      method: 'GET',
+      pathname: '/api/frontend/users/0419781d-06ba-432b-8617-797ea14cf848/',
+    },
+    { fixture: 'organizer' },
   )
 })
 

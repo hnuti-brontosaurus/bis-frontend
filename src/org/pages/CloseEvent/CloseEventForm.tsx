@@ -51,6 +51,7 @@ export type ParticipantsStepFormShape = {
     | 'participants'
     | 'number_of_participants'
     | 'number_of_participants_under_26'
+    | 'contacts'
   >
   participantInputType: 'count' | 'simple-list' | 'full-list'
 }
@@ -76,6 +77,7 @@ const pickParticipantsData = (data: Partial<CloseEventFormShape>) =>
     'record.number_of_participants',
     'record.number_of_participants_under_26',
     'participantInputType',
+    'record.contacts',
   )
 
 const formData2payload = ({
@@ -112,9 +114,13 @@ const initialData2form = (
   if (event.group.slug === 'other') {
     if (event.record?.participants?.length) {
       participantInputType = 'full-list'
-    }
-    // TODO there is an option missing - when there is a partial list filled
-    else if (typeof event.record?.number_of_participants === 'number') {
+    } else if (
+      typeof event.record?.number_of_participants === 'number' &&
+      event.record?.contacts &&
+      event.record.contacts.length > 0
+    ) {
+      participantInputType = 'simple-list'
+    } else if (typeof event.record?.number_of_participants === 'number') {
       participantInputType = 'count'
     }
   }

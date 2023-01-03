@@ -1,0 +1,35 @@
+@use 'components/Button/Button.module' as button;
+
+.importButton {
+  input {
+    display: none;
+  }
+
+  @include button.basic-button();
+  @include button.secondary-button();
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.phoneTable {
+  overflow: hidden;
+  table-layout: fixed;
+  th,
+  td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      overflow: visible;
+    }
+  }
+
+  td:last-child {
+    width: 10px;
+  }
+}

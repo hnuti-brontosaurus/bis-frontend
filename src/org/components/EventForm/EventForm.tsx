@@ -254,6 +254,10 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
   if (data.propagation) {
     finalData.propagation!.vip_propagation =
       data.propagation.vip_propagation ?? null
+
+    if (String(data.propagation.working_hours) === '') {
+      delete finalData.propagation?.working_hours
+    }
   }
   if (data.online) {
     finalData.location = { id: 1 }
