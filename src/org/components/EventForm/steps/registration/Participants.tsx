@@ -66,10 +66,10 @@ export const Participants: FC<{
   }
   return (
     <div className={styles.ListContainer}>
-      <h2>Ucastnici</h2>
+      <h2>Účastníci</h2>
       {!isReadParticipantsLoading ? (
         <div>
-          <div>Add new participant:</div>
+          <div>Přidat nového účastníka:</div>
           <SelectUnknownUser
             onChange={async selectedUser => {
               if (selectedUser) {
@@ -90,7 +90,7 @@ export const Participants: FC<{
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Jmeno, prijmeni, datum narozeni</th>
+                  <th>Jméno, příjmení, datum narození</th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -147,7 +147,7 @@ export const Participants: FC<{
           )}
         </div>
       ) : (
-        <Loading>Stahujeme ucastniky</Loading>
+        <Loading>Stahujeme účastníky</Loading>
       )}
       {currentParticipant && (
         <ShowApplicationModal

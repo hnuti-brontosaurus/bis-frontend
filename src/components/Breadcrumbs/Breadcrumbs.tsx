@@ -20,7 +20,7 @@ export const Breadcrumbs = ({
       path: '/send-reset-password-link',
       name: 'Akce',
     },
-    { path: '/org', name: 'Organizator' },
+    { path: '/org', name: 'Organizátor' },
 
     {
       path: '/send-reset-password-link',
@@ -31,7 +31,7 @@ export const Breadcrumbs = ({
     { path: '/org/akce', name: 'Akce' },
     {
       path: '/org/akce/vytvorit',
-      name: eventToClone ? `Nova akce podle: ${eventToClone}` : 'Nova akce',
+      name: eventToClone ? `Nová akce podle: ${eventToClone}` : 'Nová akce',
     },
     {
       path: '/org/akce/:eventId',
@@ -43,11 +43,11 @@ export const Breadcrumbs = ({
     },
     {
       path: '/org/akce/:eventId/uzavrit',
-      name: 'Uzavrit',
+      name: 'Uzavřít',
     },
     {
       path: '/org/prilezitosti',
-      name: 'Prilezitosti',
+      name: 'Příležitosti',
     },
     {
       path: '/org/prilezitosti/:opportunityId',
