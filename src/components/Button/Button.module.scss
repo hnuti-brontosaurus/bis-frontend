@@ -6,6 +6,7 @@
   cursor: pointer;
   text-align: center;
   height: 44px;
+  font-size: 1rem;
 
   display: inline-flex;
   align-items: center;
@@ -17,18 +18,15 @@
   color: white;
   background-color: colors.$bronto;
   border: 2px solid colors.$bronto;
-  font-size: 1rem;
   &:hover {
     background-color: colors.$bronto-400;
   }
 }
 
 @mixin secondary-button {
-  color: colors.$bronto;
   background-color: white;
-  border: 1px solid colors.$bronto;
-  font-size: 1rem;
-
+  border: 2px solid colors.$bronto;
+  color: black;
   &:hover {
     background-color: colors.$bronto-super-light;
   }
@@ -39,8 +37,6 @@
   background-color: white;
   text-decoration: underline;
   border: 0;
-  font-size: 1rem;
-
   &:hover {
     color: colors.$bronto-400;
     text-decoration: none;
@@ -73,13 +69,4 @@
 .danger {
   background-color: colors.$error;
   color: black;
-}
-
-.secondary {
-  color: black;
-  background: none;
-  font-size: 0.875rem;
-  &:hover {
-    font-weight: bold;
-  }
 }
