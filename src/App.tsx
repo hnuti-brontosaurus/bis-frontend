@@ -1,5 +1,6 @@
 import { Routes } from 'config/sentry'
 import { AuthenticatedOutlet } from 'layout/AuthenticatedOutlet'
+import { EventOrganizerOutlet } from 'layout/EventOrganizerOutlet'
 import { MixedOutlet } from 'layout/MixedOutlet'
 import { OrganizerOutlet } from 'layout/OrganizerOutlet'
 import { UnauthenticatedOutlet } from 'layout/UnauthenticatedOutlet'
@@ -78,7 +79,9 @@ export const App = () => {
         {/* Routes for organizers */}
         <Route path="org" element={<OrganizerOutlet />}>
           <Route index element={<OrgHome />} />
-          <Route path="akce/vytvorit" element={<CreateEvent />} />
+          <Route path="akce/vytvorit" element={<EventOrganizerOutlet />}>
+            <Route index element={<CreateEvent />} />
+          </Route>
           <Route path="akce/:eventId" element={<EventOutlet />}>
             <Route index element={<ViewEvent />} />
             <Route path="upravit" element={<UpdateEvent />} />

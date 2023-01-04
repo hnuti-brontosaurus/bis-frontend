@@ -3,10 +3,9 @@ import { hasRequiredQualification } from 'org/utils/validateQualifications'
 import { useCurrentUser } from './currentUser'
 
 export const useAllowedToCreateEvent = () => {
-  const { data: currentUser } = useCurrentUser()
-  const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
-    {},
-  )
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser()
+  const { data: allQualifications, isLoading } =
+    api.endpoints.readQualifications.useQuery({})
 
   const canAddNewEvent =
     currentUser &&
@@ -16,5 +15,5 @@ export const useAllowedToCreateEvent = () => {
       allQualifications.results.map(q => q.slug),
       allQualifications.results,
     )
-  return [canAddNewEvent]
+  return [canAddNewEvent, isLoading || isLoadingUser]
 }
