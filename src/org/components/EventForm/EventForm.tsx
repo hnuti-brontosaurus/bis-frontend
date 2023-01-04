@@ -102,7 +102,6 @@ const shapes = {
     'propagation.vip_propagation.rover_propagation',
   ],
   registration: [
-    'is_internal',
     'propagation.is_shown_on_web',
     'registrationMethod',
     'registration',

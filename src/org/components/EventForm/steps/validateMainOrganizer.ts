@@ -118,15 +118,21 @@ const hasRequiredQualification = (
   allQualifications: QualificationCategory[],
 ) => {
   const allQualificationsDict = getQualificationDict(allQualifications)
+
+  const requiredCategoryIsPresent = (category: QualificationCategory) => {
+    if (required_one_of.includes(category.slug)) {
+      return true
+    }
+    for (const c of category.parents) {
+      if (requiredCategoryIsPresent(allQualificationsDict[c])) return true
+    }
+    return false
+  }
+
   const qualifications = getValidQualifications(user)
   for (const qualification of qualifications) {
     let category: QualificationCategory | undefined = qualification.category
-    while (category) {
-      if (required_one_of.includes(category.slug)) return true
-      category = category.parent
-        ? allQualificationsDict[category!.parent]
-        : undefined
-    }
+    if (requiredCategoryIsPresent(category)) return true
   }
   return false
 }
