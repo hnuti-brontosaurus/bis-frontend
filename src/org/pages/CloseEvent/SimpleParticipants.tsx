@@ -1,13 +1,13 @@
 import type { EventContact } from 'app/services/bisTypes'
 import classNames from 'classnames'
-import { Button, FormInputError, StyledModal } from 'components'
-import tableStyles from 'org/components/EventForm/steps/ParticipantsStep.module.scss'
 import {
-  ChangeEventHandler,
-  FormHTMLAttributes,
-  useEffect,
-  useState,
-} from 'react'
+  Button,
+  FormInputError,
+  ImportExcelButton,
+  StyledModal,
+} from 'components'
+import tableStyles from 'org/components/EventForm/steps/ParticipantsStep.module.scss'
+import { FormHTMLAttributes, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   FormProvider,
@@ -16,35 +16,20 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { FaCheck, FaPencilAlt, FaTrash } from 'react-icons/fa'
-import { normalizeKeys } from 'utils/helpers'
 import * as validationMessages from 'utils/validationMessages'
-import * as xlsx from 'xlsx'
 import type { ParticipantsStepFormShape } from './CloseEventForm'
 import styles from './SimpleParticipants.module.scss'
+
+const importMap = {
+  first_name: ['jméno', 'first-name', 'first_name', 'given_name'],
+  last_name: ['příjmení', 'last-name', 'last_name', 'family_name'],
+  email: ['email', 'e-mail', 'mail'],
+  phone: ['telefon', 'phone', 'mobil'],
+}
 
 export const SimpleParticipants = () => {
   const { control } = useFormContext<ParticipantsStepFormShape>()
   const peopleFields = useFieldArray({ control, name: 'record.contacts' })
-  const handleUpload: ChangeEventHandler<HTMLInputElement> = e => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0]
-      const reader = new FileReader()
-      reader.readAsBinaryString(file)
-      reader.onload = () => {
-        const wb = xlsx.read(reader.result, { type: 'binary' })
-        const json = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-        const normalizedJson = json.map(entry =>
-          normalizeKeys<EventContact>(entry as { [key: string]: string }, {
-            first_name: ['jméno', 'first-name', 'first_name', 'given_name'],
-            last_name: ['příjmení', 'last-name', 'last_name', 'family_name'],
-            email: ['email', 'e-mail', 'mail'],
-            phone: ['telefon', 'phone', 'mobil'],
-          }),
-        )
-        peopleFields.append(normalizedJson)
-      }
-    }
-  }
 
   const [open, setOpen] = useState(false)
   const [defaultValues, setDefaultValues] = useState<EventContact>()
@@ -102,14 +87,14 @@ export const SimpleParticipants = () => {
         />
       </StyledModal>
       <header>Jednoduchý seznam účastníků</header>
-      <label className={styles.importButton}>
+      <ImportExcelButton<EventContact>
+        keyMap={importMap}
+        onUpload={data => {
+          peopleFields.append(data)
+        }}
+      >
         Importovat seznam účastníků z excelu
-        <input
-          type="file"
-          accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
-          onChange={handleUpload}
-        />
-      </label>
+      </ImportExcelButton>
       <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
       <table className={classNames(tableStyles.table, styles.phoneTable)}>
         <thead>
