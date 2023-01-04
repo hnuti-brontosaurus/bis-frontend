@@ -12,6 +12,19 @@ const organizer: User = {
       slug: 'organizer',
     },
   ],
+  qualifications: [
+    {
+      category: {
+        id: 6,
+        name: 'Vedoucí Brďo',
+        slug: 'kids_leader',
+        parents: [5],
+      },
+      valid_since: '01-01-2001',
+      valid_till: '01-01-2400',
+      approved_by: { first_name: 'fghj', last_name: 'hjkl' },
+    },
+  ],
   first_name: 'FirstName',
   last_name: 'LastName',
 } as User

@@ -91,6 +91,7 @@
 
       &.disabled {
         background-color: colors.$gray-100;
+        pointer-events: none;
         cursor: not-allowed;
         .title {
           color: colors.$gray-250;
