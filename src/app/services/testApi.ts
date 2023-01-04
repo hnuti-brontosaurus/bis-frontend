@@ -2555,7 +2555,7 @@ export type QualificationCategory = {
   id: number
   name: string
   slug: string
-  parent?: number | null
+  parents: number[]
 }
 export type PaginatedQualificationCategoryList = {
   count?: number
@@ -2716,7 +2716,6 @@ export type Event = {
   main_organizer: string
   other_organizers?: string[]
   is_attendance_list_required?: boolean
-  is_internal?: boolean
   internal_note?: string
   duration: number
   finance: Finance | null
@@ -2960,7 +2959,6 @@ export type PatchedEvent = {
   main_organizer?: string
   other_organizers?: string[]
   is_attendance_list_required?: boolean
-  is_internal?: boolean
   internal_note?: string
   duration?: number
   finance?: Finance | null
