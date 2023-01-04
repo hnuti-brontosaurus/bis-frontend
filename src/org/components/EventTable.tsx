@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import styles from 'components/Table.module.scss'
 import { useQueries } from 'hooks/queries'
 import { useRemoveEvent } from 'hooks/removeEvent'
+import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
 import { FC, ReactElement, useMemo } from 'react'
 import { AiOutlineStop } from 'react-icons/ai'
@@ -75,6 +76,7 @@ export const EventTable: FC<{
   const [cancelEvent, { isLoading: isEventCanceling }] = useCancelEvent()
   const [restoreCanceledEvent, { isLoading: isEventRestoring }] =
     useRestoreCanceledEvent()
+  const [canAddEvent] = useAllowedToCreateEvent()
 
   return (
     <table className={classNames(styles.table, styles.verticalLine1)}>
@@ -132,11 +134,13 @@ export const EventTable: FC<{
                       <Link to={`/org/akce/${event.id}/upravit`}>upravit</Link>
                     </MenuItem>
                   )}
-                  <MenuItem>
-                    <Link to={`/org/akce/vytvorit?klonovat=${event.id}`}>
-                      klonovat
-                    </Link>
-                  </MenuItem>
+                  {canAddEvent && (
+                    <MenuItem>
+                      <Link to={`/org/akce/vytvorit?klonovat=${event.id}`}>
+                        klonovat
+                      </Link>
+                    </MenuItem>
+                  )}
                   {!isEventClosed(event) && (
                     <>
                       <MenuItem>

@@ -88,6 +88,17 @@
       &.simple {
         background-color: colors.$gray-300;
       }
+
+      &.disabled {
+        background-color: colors.$gray-100;
+        cursor: not-allowed;
+        .title {
+          color: colors.$gray-250;
+        }
+        &:hover {
+          margin: 0;
+        }
+      }
     }
   }
 

@@ -112,7 +112,7 @@ const getValidQualifications = (user: User): Qualification[] =>
       new Date() <= new Date(qualification.valid_till),
   )
 
-const hasRequiredQualification = (
+export const hasRequiredQualification = (
   user: User,
   required_one_of: string[],
   allQualifications: QualificationCategory[],

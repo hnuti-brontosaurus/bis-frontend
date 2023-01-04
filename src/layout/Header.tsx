@@ -4,6 +4,7 @@ import logoMini from 'assets/logo-mini.png'
 import logo from 'assets/logo.png'
 import classNames from 'classnames'
 import { useCurrentUser } from 'hooks/currentUser'
+import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { FaRegUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
@@ -13,6 +14,7 @@ import styles from './Header.module.scss'
 export const Header = () => {
   const { data: user, isAuthenticated } = useCurrentUser()
   const [logout] = api.endpoints.logout.useMutation()
+  const [canAddEvent] = useAllowedToCreateEvent()
 
   const navigate = useNavigate()
 
@@ -71,9 +73,11 @@ export const Header = () => {
             <MenuItem className={styles.menuItemCustom}>
               <Link to="/org/akce/vsechny">Organizované akce</Link>
             </MenuItem>
-            <MenuItem className={styles.menuItemCustom}>
-              <Link to="/org/akce/vytvorit">Vytvořit akci</Link>
-            </MenuItem>
+            {canAddEvent && (
+              <MenuItem className={styles.menuItemCustom}>
+                <Link to="/org/akce/vytvorit">Vytvořit akci</Link>
+              </MenuItem>
+            )}
             <MenuDivider />
             <MenuItem className={styles.menuItemCustom}>
               <Link to="/org/prilezitosti">Příležitosti</Link>
