@@ -82,7 +82,7 @@ export const Login = () => {
             </Button>
 
             <ButtonLink
-              secondary
+              tertiary
               style={{ marginTop: '1.5rem' }}
               className={styles.formElement}
               to="/send-reset-password-link"

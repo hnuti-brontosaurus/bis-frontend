@@ -1,8 +1,13 @@
 @use 'styles/colors';
+@use 'styles/media';
 
 .wrapper {
   border: 2px solid #ebeff4;
   border-radius: 10px;
+  overflow: hidden;
+  @include media.for-phone-only {
+    min-height: 250px;
+  }
 
   &::placeholder {
     color: colors.$gray-200;
