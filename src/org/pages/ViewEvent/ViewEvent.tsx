@@ -3,6 +3,7 @@ import { sanitize } from 'dompurify'
 import type { FullEvent } from 'hooks/readFullEvent'
 import { useRemoveEvent } from 'hooks/removeEvent'
 import { useTitle } from 'hooks/title'
+import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
 import { AiOutlineStop } from 'react-icons/ai'
 import {
@@ -22,6 +23,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   const params = useParams()
   const eventId = Number(params.eventId)
   const { event } = useOutletContext<{ event: FullEvent }>()
+  const [canAddEvent] = useAllowedToCreateEvent()
 
   useTitle(`Akce ${event?.name ?? ''}`)
 
@@ -61,9 +63,14 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             <ButtonLink secondary to={`/org/akce/${eventId}/uzavrit`}>
               <FaRegCheckCircle /> po akci
             </ButtonLink>
-            <ButtonLink secondary to={`/org/akce/vytvorit?klonovat=${eventId}`}>
-              <FaRegCopy /> klonovat
-            </ButtonLink>
+            {canAddEvent && (
+              <ButtonLink
+                secondary
+                to={`/org/akce/vytvorit?klonovat=${eventId}`}
+              >
+                <FaRegCopy /> klonovat
+              </ButtonLink>
+            )}
             {event.is_canceled ? (
               <Button secondary onClick={() => restoreCanceledEvent(event)}>
                 <FaRedo /> obnovit
