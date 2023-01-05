@@ -201,3 +201,8 @@ h2 {
     background-color: white;
   }
 }
+
+.rejectedRow {
+  color: colors.$gray-300;
+  pointer-events: none;
+}
