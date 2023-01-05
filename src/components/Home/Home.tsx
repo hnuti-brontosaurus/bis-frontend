@@ -35,6 +35,7 @@ export const Home = ({ buttons }: { buttons: HomeButtonConfig[] }) => {
                 styles[theme],
                 !canAddEvent && theme === 'createEvent' && styles.disabled,
               )}
+              aria-disabled={!canAddEvent && theme === 'createEvent'}
               id={theme}
             >
               <header className={styles.title}>{title}</header>
