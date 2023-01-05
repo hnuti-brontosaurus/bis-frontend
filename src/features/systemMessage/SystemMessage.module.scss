@@ -1,3 +1,5 @@
+@use 'styles/colors';
+
 $opacity: 0.85;
 
 .header {
@@ -11,14 +13,16 @@ $opacity: 0.85;
 .container {
   padding: 1rem;
   background-color: rgba(#ddd, $opacity);
+  opacity: 0.95;
 }
 
 .success {
-  background-color: rgba(green, $opacity);
+  background-color: colors.$bronto-light;
 }
 
 .error {
-  background-color: rgba(red, $opacity);
+  background-color: colors.$error-light;
+  margin: 1rem;
 }
 
 .info {

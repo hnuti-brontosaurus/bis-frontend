@@ -4,6 +4,7 @@ import { EventApplication } from 'app/services/bisTypes'
 import classnames from 'classnames'
 import { Loading } from 'components'
 import stylesTable from 'components/Table.module.scss'
+import { useRejectApplication } from 'hooks/rejectApplication'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserPlus as AddUser } from 'react-icons/fa'
 import styles from '../ParticipantsStep.module.scss'
@@ -29,6 +30,9 @@ export const Applications: FC<{
   const [showShowApplicationModal, setShowShowApplicationModal] =
     useState<boolean>(false)
   const [currentApplicationId, setCurrentApplicationId] = useState<number>()
+
+  const [rejectApplication, { isLoading: isApplicationRejecting }] =
+    useRejectApplication()
 
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
@@ -93,6 +97,88 @@ export const Applications: FC<{
   const thereAreApplications =
     applications && applications && applications.length !== 0
 
+  const ApplicationRow = ({
+    application,
+    className,
+  }: {
+    application: EventApplication
+    className?: string
+  }) => (
+    <tr
+      key={application.id}
+      className={classnames(
+        highlightedApplication === application.id.toString()
+          ? styles.highlightedRow
+          : '',
+        application.id &&
+          savedApplications &&
+          // @ts-ignore
+          savedApplications[application.id.toString()]
+          ? styles.applicationWithParticipant
+          : '',
+        className,
+      )}
+      onMouseEnter={() => {
+        chooseHighlightedApplication(application.id.toString())
+      }}
+      onMouseLeave={() => {
+        chooseHighlightedApplication(undefined)
+      }}
+    >
+      <td
+        onClick={() => handleShowApplication(application.id)}
+        colSpan={
+          savedApplications &&
+          // @ts-ignore
+          savedApplications[application.id.toString()]
+            ? 1
+            : 2
+        }
+      >
+        {application.first_name}, {application.last_name}
+        {application.birthday && ', '}
+        {application.birthday}
+      </td>
+      {savedApplications &&
+        // @ts-ignore
+        savedApplications[application.id.toString()] && (
+          <td className={styles.applicationAddedTag}>'pridano!'</td>
+        )}
+      <td
+        onClick={() => {
+          setCurrentApplicationId(application.id)
+          setShowAddParticipantModal(true)
+        }}
+        className={classnames(
+          stylesTable.cellWithButton,
+          savedApplications &&
+            // @ts-ignore
+            savedApplications[application.id.toString()] &&
+            styles.disabledIconContainer,
+        )}
+      >
+        <AddUser className={classnames(styles.addUserIconContainer)} />
+      </td>
+      <td
+        onClick={async () => {
+          rejectApplication({
+            application,
+            event: { id: eventId, name: eventName },
+          })
+        }}
+        className={classnames(
+          stylesTable.cellWithButton,
+          savedApplications &&
+            // @ts-ignore
+            savedApplications[application.id.toString()] &&
+            styles.disabledIconContainer,
+        )}
+      >
+        <Bin className={styles.binIconContainer}></Bin>
+      </td>
+    </tr>
+  )
+
   return (
     <>
       <div className={styles.ListContainer}>
@@ -139,86 +225,19 @@ export const Applications: FC<{
                   </tr>
                 </thead>
                 <tbody>
-                  {applications.map((application: EventApplication) => (
-                    <tr
-                      key={application.id}
-                      className={classnames(
-                        highlightedApplication === application.id.toString()
-                          ? styles.highlightedRow
-                          : '',
-                        application.id &&
-                          savedApplications &&
-                          // @ts-ignore
-                          savedApplications[application.id.toString()]
-                          ? styles.applicationWithParticipant
-                          : '',
-                      )}
-                      onMouseEnter={() => {
-                        chooseHighlightedApplication(application.id.toString())
-                      }}
-                      onMouseLeave={() => {
-                        chooseHighlightedApplication(undefined)
-                      }}
-                    >
-                      <td
-                        onClick={() => handleShowApplication(application.id)}
-                        colSpan={
-                          savedApplications &&
-                          // @ts-ignore
-                          savedApplications[application.id.toString()]
-                            ? 1
-                            : 2
-                        }
-                      >
-                        {application.first_name}, {application.last_name}
-                        {application.birthday && ', '}
-                        {application.birthday}
-                      </td>
-                      {savedApplications &&
-                        // @ts-ignore
-                        savedApplications[application.id.toString()] && (
-                          <td className={styles.applicationAddedTag}>
-                            'pridano!'
-                          </td>
-                        )}
-                      <td
-                        onClick={() => {
-                          setCurrentApplicationId(application.id)
-                          setShowAddParticipantModal(true)
-                        }}
-                        className={classnames(
-                          stylesTable.cellWithButton,
-                          savedApplications &&
-                            // @ts-ignore
-                            savedApplications[application.id.toString()] &&
-                            styles.disabledIconContainer,
-                        )}
-                      >
-                        <AddUser
-                          className={classnames(styles.addUserIconContainer)}
-                        />
-                      </td>
-                      <td
-                        onClick={() => {
-                          deleteEventApplication({
-                            applicationId: application.id,
-                            eventId,
-                          })
-                        }}
-                        className={classnames(
-                          stylesTable.cellWithButton,
-                          savedApplications &&
-                            // @ts-ignore
-                            savedApplications[application.id.toString()] &&
-                            styles.disabledIconContainer,
-                        )}
-                      >
-                        {/* <div className={styles.binIconContainer}> */}
-                        <Bin className={styles.binIconContainer}></Bin>
-                        {/* </div> */}
-                      </td>
-                    </tr>
-                  ))}
+                  {applications
+                    .filter(a => ['pending', 'approved'].includes(a.state))
+                    .map((application: EventApplication) => (
+                      <ApplicationRow application={application} />
+                    ))}
+                  {applications
+                    .filter(a => ['rejected'].includes(a.state))
+                    .map((application: EventApplication) => (
+                      <ApplicationRow
+                        application={application}
+                        className={styles.rejectedRow}
+                      />
+                    ))}
                 </tbody>
               </table>
             ) : (
