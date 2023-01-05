@@ -7,7 +7,7 @@ import styles from './StyledModal.module.scss'
 interface IShowApplicationModalProps {
   open: boolean
   onClose: () => void
-  title: string
+  title?: string
   children: any
 }
 
@@ -31,7 +31,7 @@ export const StyledModal: FC<IShowApplicationModalProps> = ({
       <div className={styles.content}>
         <div className={styles.modalTitleBox}>
           <div className={styles.showUserApplicationNameBox}>
-            <h2>{title}</h2>{' '}
+            {title ? <h2>{title}</h2> : null}
             <MdClose
               className={styles.closeIcon}
               size="1.5em"

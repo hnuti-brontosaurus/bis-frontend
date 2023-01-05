@@ -34,8 +34,8 @@ export const Applications: FC<{
   const [rejectApplication, { isLoading: isApplicationRejecting }] =
     useRejectApplication()
 
-  const { data: categories } = api.endpoints.readEventCategories.useQuery()
-  const { data: programs } = api.endpoints.readPrograms.useQuery()
+  const { data: membershipCategories } =
+    api.endpoints.readMembershipCategories.useQuery({})
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
@@ -294,8 +294,7 @@ export const Applications: FC<{
             setCurrentApplicationId={setCurrentApplicationId}
             setShowAddParticipantModal={setShowAddParticipantModal}
             deleteEventApplication={deleteEventApplication}
-            categories={categories ? categories.results : []}
-            programs={programs ? programs.results : []}
+            categories={membershipCategories?.results ?? []}
             administrationUnits={
               administrationUnits ? administrationUnits.results : []
             }

@@ -50,7 +50,6 @@ describe('create event', () => {
     cy.login('asdf@example.com', 'correcthorsebatterystaple')
   })
 
-
   it('shows a gray "NOVA AKCE" button that is disabled', () => {
     cy.visit('/org/')
     cy.location('pathname').should('equal', '/org/')

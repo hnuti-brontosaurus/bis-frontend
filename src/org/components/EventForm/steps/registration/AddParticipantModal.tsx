@@ -209,9 +209,8 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
             ...data,
             offers: null, //{ programs: [], organizer_roles: [], team_roles: [] },
             birthday: dayjs(data.birthday).format('YYYY-MM-DD'),
-            contact_address: null,
             donor: null,
-          }).unwrap()
+          } as UserPayload).unwrap()
           await addParticipant(newParticipant.id)
           await updateApplication({
             id: currentApplication.id,

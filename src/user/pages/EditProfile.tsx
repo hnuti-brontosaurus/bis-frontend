@@ -91,7 +91,7 @@ const form2payload = (data: UserForm): Partial<UserPayload> => {
     Number(data.address.region)
       ? {
           ...data.address,
-          region: Number(data.address.region) || null,
+          region: Number(data.address.region),
         }
       : undefined
 
@@ -102,7 +102,7 @@ const form2payload = (data: UserForm): Partial<UserPayload> => {
     Number(data.contact_address.region)
       ? {
           ...data.contact_address,
-          region: Number(data.contact_address.region) || null,
+          region: Number(data.contact_address.region),
         }
       : null
 

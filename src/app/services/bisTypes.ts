@@ -18,6 +18,7 @@ export type {
   FinanceReceipt,
   HealthInsuranceCompany,
   LoginRequest,
+  MembershipCategory,
   PatchedEvent,
   PatchedEventApplication,
   Propagation,
@@ -30,7 +31,6 @@ export type {
   Registration,
   SexCategory,
   TokenResponse,
-  User,
   UserAddress as Address,
   UserSearch,
 } from './testApi'
@@ -38,6 +38,17 @@ export type {
 export type OpportunityCategory = Overwrite<
   original.OpportunityCategory,
   { slug: Required<original.WebOpportunitiesListApiArg>['category'][0] }
+>
+
+export type User = Overwrite<
+  original.User,
+  {
+    memberships: {
+      category: number
+      administration_unit: number
+      year: number
+    }[]
+  }
 >
 
 export type EventCategory = Overwrite<
@@ -131,10 +142,26 @@ export type EventApplicationPayload = Pick<
   | 'state'
 > & { answers: AnswerPayload[] }
 
-type AddressPayload = Overwrite<original.UserAddress, { region: number | null }>
+type AddressPayload = Overwrite<original.UserAddress, { region: number }>
+
+type UserPayloadFields =
+  | 'first_name' // required
+  | 'last_name' // required
+  | 'birth_name'
+  | 'nickname'
+  | 'sex'
+  | 'birthday' // required
+  | 'email'
+  | 'phone'
+  | 'close_person'
+  | 'address' // required
+  | 'contact_address'
+  | 'health_insurance_company'
+  | 'health_issues'
+  | 'all_emails'
 
 export type UserPayload = Overwrite<
-  Omit<original.User, 'id'>,
+  Pick<original.User, UserPayloadFields>,
   {
     sex: number | null
     address: AddressPayload
