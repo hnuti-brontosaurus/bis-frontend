@@ -1,0 +1,75 @@
+@use 'styles/colors';
+@use 'styles/media';
+
+.questionsBox {
+  background-color: colors.$gray-100;
+  width: 100%;
+  padding: 1.5rem;
+  @include media.for-phone-only {
+    padding: 0.1rem;
+  }
+  .question {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+
+    button {
+      background-color: transparent !important;
+      color: colors.$error;
+      @include media.for-phone-only {
+        width: 100%;
+      }
+    }
+    .questionRequired {
+      display: flex;
+      column-gap: 0.5rem;
+      @include media.for-phone-only {
+        flex-direction: column;
+        order: -1;
+        font-size: 0.8rem;
+      }
+    }
+    .questionInputGroup {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 90%;
+      justify-content: space-between;
+    }
+    .questionInput {
+      width: 70%;
+      @include media.for-phone-only {
+        width: 100%;
+      }
+    }
+    input {
+      width: 100%;
+    }
+    @include media.for-phone-only {
+      flex-direction: column;
+      row-gap: 8px;
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+
+    .delete {
+      @include media.for-phone-only {
+        width: 40px;
+        padding: 4px;
+        span {
+          display: none;
+        }
+      }
+    }
+  }
+  .questionsAddNew {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    @include media.for-phone-only {
+      margin-top: 0.5rem;
+    }
+  }
+}
