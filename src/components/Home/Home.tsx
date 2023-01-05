@@ -13,26 +13,28 @@ export interface HomeButtonConfig {
 }
 
 export const Home = ({ buttons }: { buttons: HomeButtonConfig[] }) => {
-  const [canAddEvent] = useAllowedToCreateEvent()
+  const [canAddEvent, isLoading] = useAllowedToCreateEvent()
 
   return (
     <div className={styles.container}>
-      <nav className={styles.mainMenu}>
-        {buttons.map(({ title, detail, link, theme }) => (
-          <Link
-            to={canAddEvent || theme !== 'createEvent' ? link : ''}
-            key={title}
-            className={classNames(
-              styles.menuItem,
-              styles[theme],
-              !canAddEvent && theme === 'createEvent' && styles.disabled,
-            )}
-          >
-            <header className={styles.title}>{title}</header>
-            <div className={styles.detail}>{detail}</div>
-          </Link>
-        ))}
-      </nav>
+      {!isLoading && (
+        <nav className={styles.mainMenu}>
+          {buttons.map(({ title, detail, link, theme }) => (
+            <Link
+              to={canAddEvent || theme !== 'createEvent' ? link : ''}
+              key={title}
+              className={classNames(
+                styles.menuItem,
+                styles[theme],
+                !canAddEvent && theme === 'createEvent' && styles.disabled,
+              )}
+            >
+              <header className={styles.title}>{title}</header>
+              <div className={styles.detail}>{detail}</div>
+            </Link>
+          ))}
+        </nav>
+      )}
       <img className={styles.illustration} src={illustration} alt="" />
     </div>
   )

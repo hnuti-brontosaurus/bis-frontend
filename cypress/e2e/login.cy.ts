@@ -33,6 +33,10 @@ const user: User = mergeWith({}, organizer, { roles: [] }, withOverwriteArray)
 
 describe('login', () => {
   beforeEach(() => {
+    // cy.intercept(
+    //   { method: 'GET', pathname: '/api/categories/qualification_categories/' },
+    //   { fixture: 'qualificationCategories' },
+    // )
     cy.intercept('POST', '/api/auth/login/', { token: '1234567890abcdef' })
     cy.intercept('GET', '/api/auth/whoami/', {
       id: '0419781d-06ba-432b-8617-797ea14cf848',

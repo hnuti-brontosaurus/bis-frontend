@@ -120,6 +120,7 @@ export const hasRequiredQualification = (
   const allQualificationsDict = getQualificationDict(allQualifications)
 
   const requiredCategoryIsPresent = (category: QualificationCategory) => {
+    if (!category) return false
     if (required_one_of.includes(category.slug)) {
       return true
     }
