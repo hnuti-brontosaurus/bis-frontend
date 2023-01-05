@@ -7,13 +7,13 @@ const buttons: HomeButtonConfig[] = [
     title: 'Moje akce',
     detail: '',
     link: '/akce/zucastnene',
-    theme: 'createEvent',
+    theme: 'myEvents',
   },
   {
     title: 'Můj profil',
     detail: '',
     link: '/profil',
-    theme: 'editEvent',
+    theme: 'myProfile',
   },
   {
     title: 'Členství',

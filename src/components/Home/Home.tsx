@@ -9,7 +9,14 @@ export interface HomeButtonConfig {
   title: string
   detail: ReactNode
   link: To
-  theme: 'createEvent' | 'editEvent' | 'closeEvent' | 'opportunities' | 'simple'
+  theme:
+    | 'createEvent'
+    | 'editEvent'
+    | 'closeEvent'
+    | 'opportunities'
+    | 'myEvents'
+    | 'myProfile'
+    | 'simple'
 }
 
 export const Home = ({ buttons }: { buttons: HomeButtonConfig[] }) => {
@@ -28,6 +35,7 @@ export const Home = ({ buttons }: { buttons: HomeButtonConfig[] }) => {
                 styles[theme],
                 !canAddEvent && theme === 'createEvent' && styles.disabled,
               )}
+              id={theme}
             >
               <header className={styles.title}>{title}</header>
               <div className={styles.detail}>{detail}</div>
