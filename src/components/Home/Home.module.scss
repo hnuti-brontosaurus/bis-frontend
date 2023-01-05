@@ -67,11 +67,17 @@
       }
 
       // .detail {
-      //   // any need to style detail?
+      //   // any need to style detail?                
       // }
 
       &.createEvent {
         background-color: colors.$create-event-main;
+      }
+      &.myEvents {
+        background-color: colors.$create-event-main;
+      }
+      &.myProfile {
+        background-color: rgb(235, 207, 84);
       }
       &.editEvent {
         background-color: colors.$edit-event-main;
@@ -87,6 +93,18 @@
       }
       &.simple {
         background-color: colors.$gray-300;
+      }
+
+      &.disabled {
+        background-color: colors.$gray-100;
+        pointer-events: none;
+        cursor: not-allowed;
+        .title {
+          color: colors.$gray-250;
+        }
+        &:hover {
+          margin: 0;
+        }
       }
     }
   }

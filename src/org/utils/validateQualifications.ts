@@ -112,7 +112,7 @@ const getValidQualifications = (user: User): Qualification[] =>
       new Date() <= new Date(qualification.valid_till),
   )
 
-const hasRequiredQualification = (
+export const hasRequiredQualification = (
   user: User,
   required_one_of: string[],
   allQualifications: QualificationCategory[],
@@ -120,6 +120,7 @@ const hasRequiredQualification = (
   const allQualificationsDict = getQualificationDict(allQualifications)
 
   const requiredCategoryIsPresent = (category: QualificationCategory) => {
+    if (!category) return false
     if (required_one_of.includes(category.slug)) {
       return true
     }

@@ -30,6 +30,10 @@ const submit = () =>
 describe('create event', () => {
   // stub api endpoints before each request
   beforeEach(() => {
+    cy.intercept(
+      { method: 'GET', pathname: '/api/categories/qualification_categories/' },
+      { fixture: 'qualificationCategories' },
+    )
     cy.intercept('POST', '/api/auth/login/', { token: '1234567890abcdef' })
     cy.intercept('GET', '/api/auth/whoami/', {
       id: '0419781d-06ba-432b-8617-797ea14cf848',
@@ -93,9 +97,6 @@ describe('create event', () => {
           category: { id: 1, name: 'ZC', slug: 'zc' },
         },
       ],
-    })
-    cy.intercept('GET', '/api/categories/qualification_categories/*', {
-      results: [],
     })
     cy.intercept('GET', '/api/frontend/locations/\\?*', { results: locations })
     cy.intercept('GET', '/api/frontend/search_users/?search=*', req => {

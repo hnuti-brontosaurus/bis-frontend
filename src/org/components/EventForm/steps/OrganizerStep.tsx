@@ -30,7 +30,7 @@ import { MethodsShapes } from '..'
 import {
   canBeMainOrganizer,
   getRequiredQualifications,
-} from './validateMainOrganizer'
+} from '../../../utils/validateQualifications'
 
 export const OrganizerStep = ({
   methods,
