@@ -1,13 +1,19 @@
+@use 'styles/colors';
+
 .addButton {
   height: 10rem;
   width: 10rem;
-  background-color: black;
-  color: white;
-  display: inline-flex;
+  background-color: colors.$bronto-light;
+  color: colors.$bronto;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
+  font-size: 1rem;
   cursor: pointer;
+  svg {
+    color: white;
+  }
 }
 
 .imageWrapper {

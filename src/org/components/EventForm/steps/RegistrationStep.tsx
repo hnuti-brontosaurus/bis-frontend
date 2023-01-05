@@ -14,6 +14,7 @@ import { FaTrashAlt } from 'react-icons/fa'
 import { requireBoolean } from 'utils/helpers'
 import * as messages from 'utils/validationMessages'
 import { MethodsShapes } from '..'
+import styles from './RegistrationStep.module.scss'
 
 export const RegistrationStep = ({
   methods,
@@ -47,7 +48,7 @@ export const RegistrationStep = ({
                         { name: 'Ano', value: true },
                         { name: 'Ne', value: false },
                       ].map(({ name, value }) => (
-                        <div key={name}>
+                        <label key={name}>
                           <input
                             ref={field.ref}
                             type="radio"
@@ -65,8 +66,8 @@ export const RegistrationStep = ({
                               )
                             }
                           />{' '}
-                          <label htmlFor={name}>{name}</label>
-                        </div>
+                          {name}
+                        </label>
                       ))}
                     </InlineSection>
                   </fieldset>
@@ -98,7 +99,7 @@ export const RegistrationStep = ({
                     value: 'full',
                   },
                 ].map(({ name, value }) => (
-                  <div key={value}>
+                  <label key={value}>
                     <input
                       type="radio"
                       value={value}
@@ -107,10 +108,8 @@ export const RegistrationStep = ({
                         required: messages.required,
                       })}
                     />{' '}
-                    <label htmlFor={`registration-method-${value}`}>
-                      {name}
-                    </label>
-                  </div>
+                    {name}
+                  </label>
                 ))}
               </fieldset>
             </FormInputError>
@@ -181,46 +180,56 @@ export const RegistrationStep = ({
                 </FullSizeElement>
               </FormSubsection>
               <FormSubsection header="Otázky">
-                <ul>
-                  {questionFields.fields.map((item, index) => (
-                    <li key={item.id}>
-                      <InlineSection>
-                        <FormInputError>
-                          <input
-                            type="text"
-                            {...register(
-                              `questions.${index}.question` as const,
-                              { required: messages.required },
-                            )}
-                          />
-                        </FormInputError>
-                        <label>
-                          <input
-                            type="checkbox"
-                            {...register(
-                              `questions.${index}.is_required` as const,
-                            )}
-                          />{' '}
-                          povinné?
-                        </label>
-                        <Button
-                          type="button"
-                          danger
-                          onClick={() => questionFields.remove(index)}
-                        >
-                          <FaTrashAlt /> smazat
-                        </Button>
-                      </InlineSection>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  type="button"
-                  secondary
-                  onClick={() => questionFields.append({ question: '' })}
-                >
-                  Přidat otázku
-                </Button>
+                <div className={styles.questionsBox}>
+                  <ul>
+                    {questionFields.fields.map((item, index) => (
+                      <li key={item.id}>
+                        <div className={styles.question}>
+                          Otazka {index + 1}:
+                          <div className={styles.questionInputGroup}>
+                            <FormInputError className={styles.questionInput}>
+                              <input
+                                type="text"
+                                {...register(
+                                  `questions.${index}.question` as const,
+                                  { required: messages.required },
+                                )}
+                              />
+                            </FormInputError>
+                            <label className={styles.questionRequired}>
+                              <input
+                                type="checkbox"
+                                {...register(
+                                  `questions.${index}.is_required` as const,
+                                )}
+                              />{' '}
+                              povinné?
+                            </label>
+                            <Button
+                              type="button"
+                              danger
+                              onClick={() => questionFields.remove(index)}
+                              className={styles.delete}
+                            >
+                              <FaTrashAlt /> <span>smazat</span>
+                            </Button>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className={styles.questionsAddNew}>
+                    {questionFields.fields.length === 0 &&
+                      'Nejsou pridane zadne otazky '}
+                    <Button
+                      type="button"
+                      secondary
+                      onClick={() => questionFields.append({ question: '' })}
+                    >
+                      Přidat otázku
+                    </Button>
+                  </div>
+                </div>
               </FormSubsection>
             </FormSubsection>
           )}
