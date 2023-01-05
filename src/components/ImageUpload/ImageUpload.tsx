@@ -1,7 +1,8 @@
 import get from 'lodash/get'
 import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
-import { FaPencilAlt, FaPlus, FaTimes } from 'react-icons/fa'
+import { FaPencilAlt, FaTimes } from 'react-icons/fa'
+import { MdPhotoCamera } from 'react-icons/md'
 import { file2base64 } from 'utils/helpers'
 import * as messages from 'utils/validationMessages'
 import styles from './ImageUpload.module.scss'
@@ -44,7 +45,8 @@ export const UncontrolledImageUpload = forwardRef<
         </div>
       ) : (
         <div className={styles.addButton}>
-          <FaPlus size={26} />
+          <MdPhotoCamera size={60} />
+          Pridaj fotku
         </div>
       )}
     </label>
