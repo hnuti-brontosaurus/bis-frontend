@@ -65,7 +65,7 @@ export const IntendedForStep = ({
                     <InlineSection>
                       {intendedFor &&
                         intendedFor.results!.map(({ id, name, slug }) => (
-                          <div key={id}>
+                          <label key={id}>
                             <input
                               ref={field.ref}
                               key={id}
@@ -78,8 +78,8 @@ export const IntendedForStep = ({
                                 field.onChange(parseInt(e.target.value))
                               }
                             />{' '}
-                            <label htmlFor={slug}>{name}</label>
-                          </div>
+                            {name}
+                          </label>
                         ))}
                     </InlineSection>
                   </fieldset>
