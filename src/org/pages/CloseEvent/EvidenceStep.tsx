@@ -1,4 +1,3 @@
-import { api } from 'app/services/bis'
 import {
   FormInputError,
   FormSection,
@@ -8,7 +7,6 @@ import {
   ImagesUpload,
   ImageUpload,
   InfoBox,
-  Loading,
 } from 'components'
 import { form as formTexts } from 'config/static/closeEvent'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
@@ -22,11 +20,7 @@ export const EvidenceStep = ({
   isVolunteering: boolean
   methods: UseFormReturn<EvidenceStepFormShape, any>
 }) => {
-  const { data: eventCategories } = api.endpoints.readEventCategories.useQuery()
-
   const { register } = methods
-
-  if (!eventCategories) return <Loading>Připravujeme formulář</Loading>
 
   return (
     <FormProvider {...methods}>

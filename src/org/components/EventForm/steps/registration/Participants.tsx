@@ -1,11 +1,17 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
-import { User } from 'app/services/testApi'
+import type { User, UserPayload } from 'app/services/bisTypes'
 import classNames from 'classnames'
-import { Loading } from 'components'
+import { Button, Loading } from 'components'
 import { SelectUnknownUser } from 'components/SelectUsers'
 import stylesTable from 'components/Table.module.scss'
-import { useShowMessage } from 'features/systemMessage/useSystemMessage'
+import { UserForm } from 'components/UserForm/UserForm'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from 'features/systemMessage/useSystemMessage'
+import { useAwaitModal } from 'hooks/useAwaitModal'
+import { merge } from 'lodash'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import styles from '../ParticipantsStep.module.scss'
@@ -35,8 +41,8 @@ export const Participants: FC<{
   const showMessage = useShowMessage()
 
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
-  const { data: categories } = api.endpoints.readEventCategories.useQuery()
-  const { data: programs } = api.endpoints.readPrograms.useQuery()
+  const { data: membershipCategories } =
+    api.endpoints.readMembershipCategories.useQuery({})
 
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
@@ -46,12 +52,17 @@ export const Participants: FC<{
   )
 
   const [patchEvent] = api.endpoints.updateEvent.useMutation()
+  const [createUser, createUserStatus] = api.endpoints.createUser.useMutation()
+
+  useShowApiErrorMessage(createUserStatus.error)
+
+  const [inputNewUserData, newUserModal] = useAwaitModal(TestUserForm)
 
   const addParticipant = async (newParticipantId: string) => {
     let newParticipants: string[] = []
 
     if (participants) {
-      newParticipants = [...participants.results].map(p => p.id)
+      newParticipants = participants.results.map(p => p.id)
     }
     newParticipants.push(newParticipantId)
 
@@ -62,20 +73,38 @@ export const Participants: FC<{
           participants: newParticipants,
         },
       },
-    })
+    }).unwrap()
+
+    setLastAddedId(newParticipantId)
+    setTimeOfLastAddition(Date.now())
   }
+
+  // Add a participant who doesn't yet exist in the database
+  const handleAddNewParticipant = async () => {
+    // first we open a modal with new user form
+    try {
+      const inputData = await inputNewUserData({ title: 'Nový účastník' })
+      const data = merge({ donor: null, offers: null }, inputData)
+      // then we create the user and add them as participant
+      const { id: userId } = await createUser(data).unwrap()
+      await addParticipant(userId)
+    } catch (e) {
+      // not sure if we need to do anything here
+      // one case is when adding is cancelled
+    }
+  }
+
   return (
     <div className={styles.ListContainer}>
+      {newUserModal}
       <h2>Účastníci</h2>
       {!isReadParticipantsLoading ? (
         <div>
-          <div>Přidat nového účastníka:</div>
+          <div>Přidat účastníka:</div>
           <SelectUnknownUser
             onChange={async selectedUser => {
               if (selectedUser) {
                 await addParticipant(selectedUser.id)
-                setLastAddedId(selectedUser.id)
-                setTimeOfLastAddition(Date.now())
               }
             }}
             onBirthdayError={message => {
@@ -86,6 +115,9 @@ export const Participants: FC<{
               })
             }}
           />
+          <Button type="button" secondary onClick={handleAddNewParticipant}>
+            Přidat nového účastníka
+          </Button>
           {participants && participants.results && (
             <table className={styles.table}>
               <thead>
@@ -159,8 +191,7 @@ export const Participants: FC<{
           currentParticipant={currentParticipant}
           eventName={eventName}
           eventId={eventId}
-          categories={categories ? categories.results : []}
-          programs={programs ? programs.results : []}
+          categories={membershipCategories?.results ?? []}
           administrationUnits={
             administrationUnits ? administrationUnits.results : []
           }
@@ -170,3 +201,11 @@ export const Participants: FC<{
     </div>
   )
 }
+
+const TestUserForm = ({
+  onResolve,
+  onReject,
+}: {
+  onResolve: (user: UserPayload) => void
+  onReject: () => void
+}) => <UserForm onSubmit={onResolve} onCancel={onReject} />

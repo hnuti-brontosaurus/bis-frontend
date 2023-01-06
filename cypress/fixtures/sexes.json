@@ -1,0 +1,10 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    { "id": 1, "name": "Ženské", "slug": "female" },
+    { "id": 2, "name": "Mužské", "slug": "male" },
+    { "id": 3, "name": "Jiné", "slug": "other" }
+  ]
+}
