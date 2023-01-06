@@ -11,7 +11,6 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 // open modal before before removing event
 
 export const useRejectApplication = () => {
-  //const [removeEvent, states] = api.endpoints.deleteEvent.useMutation()
   const [updateApplication, states] =
     api.endpoints.updateEventApplication.useMutation()
 

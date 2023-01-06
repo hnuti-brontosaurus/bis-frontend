@@ -1,8 +1,14 @@
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster'
-import markerNew from 'assets/map-marker-new.svg'
-import markerSelected from 'assets/map-marker-selected.svg'
-import markerExistent from 'assets/map-marker.svg'
-import { MapyCzSearch } from 'components'
+import markerNew, {
+  ReactComponent as MapMarkerNew,
+} from 'assets/map-marker-new.svg'
+import markerSelected, {
+  ReactComponent as MapMarkerSelected,
+} from 'assets/map-marker-selected.svg'
+import markerExistent, {
+  ReactComponent as MapMarkerDefault,
+} from 'assets/map-marker.svg'
+import { MapyCzSearch } from 'components/MapyCzSearch/MapyCzSearch'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useOnScreen } from 'hooks/onScreen'
 import * as L from 'leaflet'
@@ -19,21 +25,24 @@ import {
 } from 'react-leaflet'
 import styles from './Map.module.scss'
 
-const iconSize = [20, 20] as L.PointTuple
-
-const newIcon = L.icon({
-  iconUrl: markerNew,
-  iconSize,
-})
+const iconSize = [30, 30] as L.PointTuple
 
 const selectedIcon = L.icon({
   iconUrl: markerSelected,
   iconSize,
+  iconAnchor: [15, 30] as L.PointTuple,
 })
 
 const existentIcon = L.icon({
   iconUrl: markerExistent,
   iconSize,
+  iconAnchor: [15, 30] as L.PointTuple,
+})
+
+const newIcon = L.icon({
+  iconUrl: markerNew,
+  iconSize,
+  iconAnchor: [15, 30] as L.PointTuple,
 })
 
 export type MarkerType = {
@@ -129,6 +138,8 @@ export interface MapProps {
   onDeselect: () => void
   onChangeBounds?: (bounds: ClearBounds) => void
   onError?: (error: Error) => void
+  isLoading: boolean
+  editMode?: boolean
 }
 
 export const Map = ({
@@ -140,7 +151,8 @@ export const Map = ({
   onSelect,
   onDeselect,
   onChangeBounds,
-  onError,
+  isLoading,
+  editMode,
 }: MapProps) => {
   const [flyPosition, setFlyPosition] = useState<L.LatLngTuple>()
   const [flyZoom, setFlyZoom] = useState<number | undefined>()
@@ -174,43 +186,86 @@ export const Map = ({
   }
 
   return (
-    <>
-      <MapContainer
-        className={className}
-        center={[49.82381, 15.46875]}
-        zoom={6}
-      >
-        <TileLayer url="https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
-        <MapEvents
-          onClick={({ lat, lng }) => onChange([lat, lng])}
-          onMoveEnd={onChangeBounds}
-        />
-        <MapRefresh onRefresh={bounds => onChangeBounds?.(bounds)} />
-        <MapFly value={flyPosition} zoom={flyZoom} />
-        <MapFlyBounds value={flyBounds} />
-        <MarkerClusterGroup maxClusterRadius={20}>
-          {value && <Marker position={value} icon={newIcon}></Marker>}
-          {markers.map(marker => {
-            return (
-              <Marker
-                key={marker.id}
-                title={marker.name}
-                position={marker.coordinates}
-                icon={marker.id === selection?.id ? selectedIcon : existentIcon}
-                eventHandlers={{ click: () => onSelect(marker.id) }}
-              ></Marker>
-            )
-          })}
-        </MarkerClusterGroup>
-      </MapContainer>
-      {/* This can be replaced with OSMSearch */}
-      {/* OSMSearch can additionally return boundingbox,
+    <div className={styles.mapWrapper}>
+      {' '}
+      <div className={styles.legend}>
+        <div>Hledej na mapie:</div>
+        <div id={styles.idSearchMap}>
+          {isLoading ? (
+            <div>
+              <small>Načítáme lokality</small>
+            </div>
+          ) : (
+            /* In theory, this could be replaced by MapyCzMap 1-1
+          but that component is still unfinished and buggy
+          we don't recommend it */
+            <MapyCzSearch
+              onSelect={handleSearch}
+              onError={handleError}
+              className={styles.searchForm}
+            />
+          )}
+        </div>
+        <div className={styles.legendMenu} id={styles.idMenuLegend}>
+          <div className={styles.legendItem}>
+            <MapMarkerDefault width={20} height={20} /> existující lokalita
+          </div>
+          {!editMode && (
+            <div
+              className={styles.legendItem}
+              onClick={() => {
+                setFlyZoom(undefined)
+                setFlyZoom(10)
+
+                setFlyPosition(selection?.coordinates)
+              }}
+            >
+              <MapMarkerSelected width={20} height={20} /> vybraná lokalita
+            </div>
+          )}
+          {editMode && (
+            <div className={styles.legendItem}>
+              <MapMarkerNew width={20} height={20} /> nova lokalita
+            </div>
+          )}
+        </div>
+      </div>
+      <div className={styles.mainMapContentContainer}>
+        <MapContainer
+          className={className}
+          center={[49.82381, 15.46875]}
+          zoom={6}
+        >
+          <TileLayer url="https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
+          <MapEvents
+            onClick={({ lat, lng }) => onChange([lat, lng])}
+            onMoveEnd={onChangeBounds}
+          />
+          <MapRefresh onRefresh={bounds => onChangeBounds?.(bounds)} />
+          <MapFly value={flyPosition} zoom={flyZoom} />
+          <MapFlyBounds value={flyBounds} />
+          <MarkerClusterGroup maxClusterRadius={20}>
+            {value && <Marker position={value} icon={newIcon}></Marker>}
+            {markers.map(marker => {
+              return (
+                <Marker
+                  key={marker.id}
+                  title={marker.name}
+                  position={marker.coordinates}
+                  icon={
+                    marker.id === selection?.id ? selectedIcon : existentIcon
+                  }
+                  eventHandlers={{ click: () => onSelect(marker.id) }}
+                ></Marker>
+              )
+            })}
+          </MarkerClusterGroup>
+        </MapContainer>
+        {/* This can be replaced with OSMSearch */}
+        {/* OSMSearch can additionally return boundingbox,
       which can make the experience of zooming to found feature better */}
-      <MapyCzSearch
-        onSelect={handleSearch}
-        onError={handleError}
-        className={styles.searchForm}
-      />
-    </>
+      </div>
+      <div className={styles.mapSpacer}></div>
+    </div>
   )
 }
