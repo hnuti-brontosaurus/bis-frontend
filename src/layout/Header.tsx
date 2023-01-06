@@ -1,33 +1,20 @@
 import { Menu, MenuButton, MenuDivider, MenuItem } from '@szhsin/react-menu'
-import { api } from 'app/services/bis'
 import logoMini from 'assets/logo-mini.png'
 import logo from 'assets/logo.png'
 import classNames from 'classnames'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
+import { useLogout } from 'hooks/useLogout'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { FaRegUser } from 'react-icons/fa'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { isOrganizer } from 'utils/helpers'
 import styles from './Header.module.scss'
 
 export const Header = () => {
   const { data: user, isAuthenticated } = useCurrentUser()
-  const [logout] = api.endpoints.logout.useMutation()
+  const logout = useLogout()
   const [canAddEvent] = useAllowedToCreateEvent()
-
-  const navigate = useNavigate()
-
-  const handleLogout = async () => {
-    // logout with endpoint
-    await logout().unwrap()
-    // remove auth token from local storage and state
-
-    // go to homepage
-    navigate('/')
-    // and hard redirect to cleanup the state and whatnot
-    // globalThis.location.href = '/'
-  }
 
   return (
     <div className={styles.container}>
@@ -136,7 +123,7 @@ export const Header = () => {
             <MenuDivider />
 
             <MenuItem className={styles.menuItemCustom}>
-              <button onClick={handleLogout}>Odhlásit se</button>
+              <button onClick={logout}>Odhlásit se</button>
             </MenuItem>
           </Menu>
         </nav>
