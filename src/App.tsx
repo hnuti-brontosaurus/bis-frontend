@@ -25,6 +25,7 @@ import { AdminRedirect } from 'pages/AdminRedirect'
 import { EventRegistration } from 'pages/EventRegistration/EventRegistration'
 import { Home } from 'pages/Home'
 import { Login } from 'pages/Login'
+import { Logout } from 'pages/Logout'
 import { NotFound } from 'pages/NotFound'
 import { ResetPassword } from 'pages/ResetPassword'
 import { SendResetPasswordLink } from 'pages/SendResetPasswordLink'
@@ -48,6 +49,7 @@ export const App = () => {
           element={<EventRegistration />}
         />
       </Route>
+      <Route path="/logout" element={<Logout />} />
       {/* Routes for unauthenticated users */}
       <Route element={<UnauthenticatedOutlet />}>
         <Route path="/login" element={<Login />} />
