@@ -1,4 +1,6 @@
 @use 'styles/media';
+@use 'styles/sizes';
+@use 'styles/colors';
 
 .aboveMap {
   z-index: 1000;
@@ -8,11 +10,6 @@
   width: 100%;
 }
 
-.container {
-  width: 100%;
-  position: relative;
-}
-
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -20,45 +17,87 @@
   align-items: center;
 }
 
-.mapContainer {
-  width: 350px;
+.topContentContainer {
+  width: 100%;
+  display: flex;
+  gap: 8px;
   @include media.for-phone-only {
     width: 100%;
+    flex-direction: column;
   }
-  height: 250px;
-}
-
-.mainContentContainer {
-  width: 350px;
-  @include media.for-phone-only {
+  .selectLocationBox {
+    display: flex;
+    flex-direction: row;
     width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    @include media.for-phone-only {
+      flex-direction: column;
+    }
+    .editingLocation {
+      font-size: 1.4rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .selectLocationItem {
+      align-items: center;
+      gap: 16px;
+      display: flex;
+      @include media.for-phone-only {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .selectLocation {
+        width: 300px;
+      }
+    }
+  }
+  .editStatePending {
+    color: colors.$edit;
+  }
+  .editStateDone {
+    color: colors.$bronto;
   }
 }
 
-.mapWrapper {
+.mainContentContainerWrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  .legend {
-    width: 200px;
-    margin-bottom: 0.5rem;
-    width: 200px;
-    display: flex;
-    align-items: right;
+
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  @include media.for-phone-only {
+    width: 100%;
     flex-direction: column;
-    gap: 0.25rem;
-    .legendItem {
-      font-size: 0.8rem;
-      display: inline-flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
   }
-  // .map {
-  // }
-  .mapSpacer {
-    width: 200px;
+  .mainContentContainer {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    @include media.for-phone-only {
+      width: 100%;
+      flex-direction: column;
+    }
+    .mapColumn {
+      .mapContainer {
+        width: sizes.$map-width;
+        @include media.for-phone-only {
+          width: 100%;
+        }
+        height: sizes.$map-height;
+      }
+      button {
+        margin: 1rem auto;
+      }
+    }
+
+    .mapSpacer {
+      width: 4px;
+    }
   }
 }
 
@@ -66,13 +105,64 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
+  width: 300px;
+  border: 3px solid colors.$bronto-100;
+  padding: 0.8rem;
+  border-radius: 8px;
+  @include media.for-phone-only {
+    width: 100%;
+  }
+  div {
+    column-gap: 0.3rem;
+  }
   .fieldTitle {
     font-weight: 600;
   }
+  .GPS {
+    width: 70px !important;
+  }
+
+  .saveLocationButtons {
+    flex-wrap: nowrap;
+    margin: 0;
+    display: flex;
+    button {
+      width: 48%;
+      height: 60px;
+    }
+  }
+  .emptyLocation {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: colors.$gray-400;
+    svg {
+      margin-top: -100px;
+      path {
+        fill: colors.$gray-400;
+      }
+    }
+    div {
+      text-align: center;
+    }
+  }
+}
+.locationSelected {
+  background-color: colors.$bronto-100;
 }
 
-.createLocationContainer {
-  border: 1px solid lightgray; // make more generic, right now it's a copy-paste from FormLayout
-  padding: 0.5rem;
+.buttonBigScreen {
+  display: block;
+  @include media.for-phone-only {
+    display: none;
+  }
+}
+.buttonSmallScreen {
+  display: none;
+  @include media.for-phone-only {
+    display: block;
+  }
 }

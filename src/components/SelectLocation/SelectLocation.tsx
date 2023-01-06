@@ -2,15 +2,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { Location } from 'app/services/bisTypes'
-import { ReactComponent as MapMarkerNew } from 'assets/map-marker-new.svg'
-import { ReactComponent as MapMarkerSelected } from 'assets/map-marker-selected.svg'
-import { ReactComponent as MapMarkerDefault } from 'assets/map-marker.svg'
+import { ReactComponent as SelectMap } from 'assets/select-map.svg'
 import classNames from 'classnames'
 import {
-  Actions,
   Button,
   ClearBounds,
   FormInputError,
+  InfoBox,
   InlineSection,
   Label,
   Map,
@@ -22,7 +20,8 @@ import { cloneDeep } from 'lodash'
 import merge from 'lodash/merge'
 import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
-import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
+import { AiOutlineEdit } from 'react-icons/ai'
+import { FiCheckCircle } from 'react-icons/fi'
 import { Overwrite } from 'utility-types'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
@@ -164,85 +163,115 @@ export const SelectLocation = forwardRef<
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.mainContentContainer}>
-        Vyber lokalitu podle názvu
-        <br />
-        <SelectObject<Location>
-          className={classNames(styles.aboveMap, styles.fullWidth)}
-          value={(value as Location) ?? undefined}
-          onChange={onChange}
-          getLabel={location => location.name}
-          getValue={location => String(location.id)}
-          placeholder="Název"
-          search={api.endpoints.readLocations}
-          ref={ref}
-        />
-        <br />
-        nebo Vyber lokalitu na mapě
-        {isLoading && (
-          <div>
-            <small>Načítáme lokality</small>
-          </div>
-        )}
-      </div>
-      <div className={styles.mapWrapper}>
-        <aside className={styles.legend}>
-          <div className={styles.legendItem}>
-            <MapMarkerNew width={20} height={20} /> nová lokalita
-          </div>
-          <div className={styles.legendItem}>
-            <MapMarkerDefault width={20} height={20} /> existující lokalita
-          </div>
-          <div className={styles.legendItem}>
-            <MapMarkerSelected width={20} height={20} /> vybraná lokalita
-          </div>
-        </aside>
-        <div className={styles.mainContentContainer}>
-          {/* In theory, this could be replaced by MapyCzMap 1-1
-          but that component is still unfinished and buggy
-          we don't recommend it */}
-          <Map
-            className={styles.mapContainer}
-            markers={markers}
-            selection={selection}
-            value={isEditing ? newLocationCoordinates : undefined}
-            onChange={coordinates => {
-              if (isEditing) {
-                setNewLocationCoordinates(coordinates)
-              }
-            }}
-            onSelect={handleSelect}
-            onChangeBounds={bounds => setBounds(bounds)}
-            onDeselect={() => {}}
-          />
+      <div className={styles.topContentContainer}>
+        <div className={styles.selectLocationBox}>
+          {isEditing ? (
+            <div className={styles.editingLocation}>
+              <h3>Pridavani nove lokality</h3>
+              <AiOutlineEdit size={36} className={styles.editStatePending} />
+            </div>
+          ) : (
+            <div className={styles.selectLocationItem}>
+              Vyber lokalitu podle názvu
+              <br />
+              <SelectObject<Location>
+                className={classNames(
+                  styles.aboveMap,
+                  styles.fullWidth,
+                  styles.selectLocation,
+                )}
+                value={(value as Location) ?? undefined}
+                onChange={onChange}
+                getLabel={location => location.name}
+                getValue={location => String(location.id)}
+                placeholder="Název"
+                search={api.endpoints.readLocations}
+                ref={ref}
+              />
+              {value ? (
+                <FiCheckCircle size={36} className={styles.editStateDone} />
+              ) : (
+                <AiOutlineEdit size={36} className={styles.editStatePending} />
+              )}
+            </div>
+          )}
         </div>
-        <div className={styles.mapSpacer}></div>
       </div>
-      {!isEditing ? (
-        <>
-          <div>
-            nebo{' '}
-            <Button primary type="button" onClick={() => setIsEditing(true)}>
-              {newLocationMethods.formState.isDirty
-                ? 'Pokračuj ve vytváření nové lokality'
-                : 'Vytvoř novou lokalitu'}
+      <div className={styles.mainContentContainerWrapper}>
+        <div className={styles.mainContentContainer}>
+          <div className={styles.mapColumn}>
+            <Map
+              className={styles.mapContainer}
+              markers={markers}
+              selection={selection}
+              value={isEditing ? newLocationCoordinates : undefined}
+              onChange={coordinates => {
+                if (isEditing) {
+                  setNewLocationCoordinates(coordinates)
+                }
+              }}
+              onSelect={handleSelect}
+              onChangeBounds={bounds => setBounds(bounds)}
+              onDeselect={() => {}}
+              isLoading={isLoading}
+              editMode={isEditing}
+            />{' '}
+            {isEditing ? (
+              <Button
+                secondary
+                onClick={() => {
+                  setIsEditing(false)
+                }}
+                className={styles.buttonBigScreen}
+              >
+                Vyber ezgistujicy lokalizace{' '}
+              </Button>
+            ) : (
+              <Button
+                secondary
+                onClick={() => {
+                  setIsEditing(true)
+                  onChange(null)
+                }}
+                className={styles.buttonBigScreen}
+              >
+                Didnt find your localization? Add new!
+              </Button>
+            )}
+          </div>
+          <div className={styles.mapSpacer}></div>
+          {isEditing ? (
+            <CreateLocation
+              methods={newLocationMethods}
+              onChangeCoordinates={coords => setNewLocationCoordinates(coords)}
+              onFinish={handleFinish}
+            />
+          ) : (
+            <ViewLocation location={selectedLocation ?? undefined} />
+          )}
+          {isEditing ? (
+            <Button
+              secondary
+              onClick={() => {
+                setIsEditing(false)
+              }}
+              className={styles.buttonSmallScreen}
+            >
+              Vyber ezgistujicy lokalizace{' '}
             </Button>
-          </div>
-        </>
-      ) : (
-        <div>Kliknutím do mapy můžeš vybrat GPS</div>
-      )}
-      {isEditing ? (
-        <CreateLocation
-          methods={newLocationMethods}
-          onChangeCoordinates={coords => setNewLocationCoordinates(coords)}
-          onFinish={handleFinish}
-        />
-      ) : (
-        <div className={styles.mainContentContainer}>
-          <ViewLocation location={selectedLocation ?? undefined} />
+          ) : (
+            <Button
+              secondary
+              onClick={() => {
+                setIsEditing(true)
+              }}
+              className={styles.buttonSmallScreen}
+            >
+              Add new localization!
+            </Button>
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 })
@@ -290,9 +319,7 @@ const CreateLocation = ({
   }
 
   return (
-    <div
-      className={classNames(styles.container, styles.createLocationContainer)}
-    >
+    <div className={classNames(styles.locationInfo)}>
       <FormProvider {...methods}>
         <InlineSection>
           <Label htmlFor="location.name" required>
@@ -307,6 +334,7 @@ const CreateLocation = ({
             />
           </FormInputError>
         </InlineSection>
+        <InfoBox>Select point on the map or type GPS coordinates.</InfoBox>
         <InlineSection>
           <Label htmlFor="location.gps" required>
             GPS:
@@ -322,6 +350,7 @@ const CreateLocation = ({
                 handleGPSBlur(e)
                 blurLatitude(e)
               }}
+              className={styles.GPS}
             />
           </FormInputError>
           N{' '}
@@ -335,6 +364,7 @@ const CreateLocation = ({
                 handleGPSBlur(e)
                 blurLongitude(e)
               }}
+              className={styles.GPS}
             />
           </FormInputError>
           E
@@ -360,46 +390,39 @@ const CreateLocation = ({
             />
           </FormInputError>
         </InlineSection>
-        <Actions>
+        <div className={styles.saveLocationButtons}>
           <Button secondary type="reset" form={formId} onClick={handleCancel}>
             Zrušit
           </Button>
           <Button primary type="submit" form={formId} onClick={handleConfirm}>
-            Potvrdit novou lokalitu
+            Potvrdit lokalitu
           </Button>
-        </Actions>
+        </div>
       </FormProvider>
     </div>
   )
 }
 const ViewLocation = ({ location }: { location?: NewLocation | Location }) => {
-  const [expand, setExpand] = useState(false)
   return (
-    <div className={styles.locationInfo}>
-      <div>
-        <span className={styles.fieldTitle}>Název:</span> {location?.name}
-      </div>
-      <div>
-        <span className={styles.fieldTitle}>GPS:</span>{' '}
-        {location?.gps_location?.coordinates
-          ? `${location.gps_location.coordinates[1]}N, ${location.gps_location.coordinates[0]}E`
-          : null}
-      </div>
-      <div>
-        <span className={styles.fieldTitle}>Adresa:</span> {location?.address}
-      </div>
-      <div>
-        <span className={styles.fieldTitle}>Popis:</span>{' '}
-        {expand ? location?.description : location?.description?.slice(0, 100)}
-        {location?.description && location.description.length > 100 && (
-          <>
-            &hellip;{' '}
-            <Button secondary type="button" onClick={() => setExpand(e => !e)}>
-              {expand ? <FaCaretUp /> : <FaCaretDown />}
-            </Button>
-          </>
-        )}
-      </div>
+    <div
+      className={classNames(
+        styles.locationInfo,
+        location && styles.locationSelected,
+      )}
+    >
+      {location && location.name ? (
+        <>
+          <div className={styles.fieldTitle}>{location?.name}</div>
+
+          <div className={styles.fieldText}>{location?.address}</div>
+          <div className={styles.fieldText}> {location?.description}</div>
+        </>
+      ) : (
+        <div className={styles.emptyLocation}>
+          <SelectMap width={150} height={100} />
+          <div>Vyber lokalitu podle názvu anebo na mapie</div>
+        </div>
+      )}
     </div>
   )
 }

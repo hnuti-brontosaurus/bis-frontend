@@ -17,7 +17,7 @@
 @mixin primary-button {
   color: white;
   background-color: colors.$bronto;
-  border: 2px solid colors.$bronto;
+  border: 4px solid colors.$bronto;
   &:hover {
     background-color: colors.$bronto-400;
   }
@@ -25,7 +25,7 @@
 
 @mixin secondary-button {
   background-color: white;
-  border: 2px solid colors.$bronto;
+  border: 3px solid colors.$bronto;
   color: black;
   &:hover {
     background-color: colors.$bronto-super-light;
