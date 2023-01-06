@@ -31,8 +31,7 @@ export const Applications: FC<{
     useState<boolean>(false)
   const [currentApplicationId, setCurrentApplicationId] = useState<number>()
 
-  const [rejectApplication, { isLoading: isApplicationRejecting }] =
-    useRejectApplication()
+  const [rejectApplication] = useRejectApplication()
 
   const { data: membershipCategories } =
     api.endpoints.readMembershipCategories.useQuery({})

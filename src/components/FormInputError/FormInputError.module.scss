@@ -20,6 +20,11 @@
     :global .quill {
       border-color: colors.$error;
     }
+    :global .customInput {
+      > div {
+        border-color: colors.$error;
+      }
+    }
   }
 }
 

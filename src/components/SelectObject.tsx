@@ -10,6 +10,7 @@ import { useDebouncedState } from 'hooks/debouncedState'
 import { forwardRef, InputHTMLAttributes } from 'react'
 import Select from 'react-select'
 import { Assign } from 'utility-types'
+import styles from './SelectObject.module.scss'
 
 // Redeclare forwardRef - to be able to forward refs to generic components
 // https://fettblog.eu/typescript-react-generic-forward-refs/#option-3%3A-augment-forwardref
@@ -51,6 +52,7 @@ const SelectObjectInner = <T,>(
     getLabel,
     getValue,
     search,
+    className,
     ...rest
   }: SelectObjectProps<T> & {
     search: QueryReturning<T>
@@ -81,6 +83,7 @@ const SelectObjectInner = <T,>(
       isOptionDisabled={obj => Boolean(getDisabled?.(obj))}
       getOptionLabel={getLabel}
       getOptionValue={getValue}
+      className={`${className} customInput ${styles.selectObject}`}
     />
   )
 }

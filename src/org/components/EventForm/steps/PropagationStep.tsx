@@ -171,6 +171,7 @@ export const PropagationStep = ({
                     {...register('propagation.working_days', {
                       required: isVolunteering && required,
                     })}
+                    defaultValue={undefined}
                   />
                 </FormInputError>
               </InlineSection>
