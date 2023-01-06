@@ -831,10 +831,10 @@ export const api = createApi({
       providesTags: results =>
         (results?.results
           ? results.results.map(
-              application =>
+              participant =>
                 ({
                   type: 'Participant' as const,
-                  id: application.id,
+                  id: participant.id,
                 } as { type: 'Participant'; id: 'PARTICIPANT_LIST' | number }),
             )
           : []

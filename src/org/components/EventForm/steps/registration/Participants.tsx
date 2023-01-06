@@ -2,7 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { User, UserPayload } from 'app/services/bisTypes'
 import classNames from 'classnames'
-import { Button, Loading } from 'components'
+import { Actions, Button, Loading } from 'components'
 import { SelectUnknownUser } from 'components/SelectUsers'
 import stylesTable from 'components/Table.module.scss'
 import { UserForm } from 'components/UserForm/UserForm'
@@ -41,6 +41,7 @@ export const Participants: FC<{
   const showMessage = useShowMessage()
 
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const { data: membershipCategories } =
     api.endpoints.readMembershipCategories.useQuery({})
 
@@ -51,12 +52,16 @@ export const Participants: FC<{
     currentParticipantId ? { id: currentParticipantId } : skipToken,
   )
 
-  const [patchEvent] = api.endpoints.updateEvent.useMutation()
+  const [patchEvent, patchEventStatus] = api.endpoints.updateEvent.useMutation()
   const [createUser, createUserStatus] = api.endpoints.createUser.useMutation()
 
   useShowApiErrorMessage(createUserStatus.error)
+  useShowApiErrorMessage(patchEventStatus.error)
 
   const [inputNewUserData, newUserModal] = useAwaitModal(TestUserForm)
+  const [confirmRemoveParticipant, removeParticipantModal] = useAwaitModal(
+    RemoveParticipantConfirmDialog,
+  )
 
   const addParticipant = async (newParticipantId: string) => {
     let newParticipants: string[] = []
@@ -71,6 +76,7 @@ export const Participants: FC<{
       event: {
         record: {
           participants: newParticipants,
+          contacts: [],
         },
       },
     }).unwrap()
@@ -94,17 +100,47 @@ export const Participants: FC<{
     }
   }
 
+  const handleRemoveParticipant = async (participant: User) => {
+    try {
+      const isConfirmed = await confirmRemoveParticipant({
+        title: `Opravdu chcete smazat účastnici/účastníka ${participant.first_name} ${participant.last_name} z akce ${eventName}?`,
+      })
+
+      if (isConfirmed) {
+        // make array of participants without this one
+        const updatedParticipants = participants?.results
+          .map(p => p.id)
+          .filter(id => id !== participant.id)
+        await patchEvent({
+          id: eventId,
+          event: {
+            record: {
+              participants: updatedParticipants,
+              contacts: [],
+            },
+          },
+        }).unwrap()
+      }
+    } catch {
+      // we don't have to do anything, just catching a rejected confirmation
+    }
+  }
+
   return (
     <div className={styles.ListContainer}>
       {newUserModal}
+      {removeParticipantModal}
       <h2>Účastníci</h2>
       {!isReadParticipantsLoading ? (
         <div>
           <div>Přidat účastníka:</div>
           <SelectUnknownUser
+            value={selectedUser ?? undefined}
             onChange={async selectedUser => {
+              setSelectedUser(selectedUser)
               if (selectedUser) {
                 await addParticipant(selectedUser.id)
+                setSelectedUser(null)
               }
             }}
             onBirthdayError={message => {
@@ -162,15 +198,22 @@ export const Participants: FC<{
                       onClick={() => {}}
                       className={stylesTable.cellWithButton}
                     >
-                      <EditUser
-                        className={styles.editUserIconContainer}
-                      ></EditUser>
+                      <EditUser className={styles.editUserIconContainer} />
                     </td>
                     <td
                       onClick={() => {}}
                       className={stylesTable.cellWithButton}
                     >
-                      <Bin className={styles.binIconContainer}></Bin>
+                      <button
+                        type="button"
+                        aria-label={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
+                        onClick={() => handleRemoveParticipant(participant)}
+                      >
+                        <Bin
+                          aria-hidden="true"
+                          className={styles.binIconContainer}
+                        />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -209,3 +252,20 @@ const TestUserForm = ({
   onResolve: (user: UserPayload) => void
   onReject: () => void
 }) => <UserForm onSubmit={onResolve} onCancel={onReject} />
+
+const RemoveParticipantConfirmDialog = ({
+  onResolve,
+  onReject,
+}: {
+  onResolve: (confirm: boolean) => void
+  onReject: () => void
+}) => (
+  <Actions>
+    <Button secondary onClick={() => onResolve(false)}>
+      Ne
+    </Button>
+    <Button danger onClick={() => onResolve(true)}>
+      Ano, smazat
+    </Button>
+  </Actions>
+)

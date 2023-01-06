@@ -228,12 +228,16 @@ export const Applications: FC<{
                   {applications
                     .filter(a => ['pending', 'approved'].includes(a.state))
                     .map((application: EventApplication) => (
-                      <ApplicationRow application={application} />
+                      <ApplicationRow
+                        key={application.id}
+                        application={application}
+                      />
                     ))}
                   {applications
                     .filter(a => ['rejected'].includes(a.state))
                     .map((application: EventApplication) => (
                       <ApplicationRow
+                        key={application.id}
                         application={application}
                         className={styles.rejectedRow}
                       />

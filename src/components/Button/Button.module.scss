@@ -59,14 +59,17 @@
   @include tertiary-button;
 }
 
+.danger {
+  background-color: colors.$error;
+  color: black;
+  &:hover {
+    background-color: colors.$error-400;
+  }
+}
+
 :global .opportunitySection {
   :local .primary {
     background-color: colors.$opportunities;
     border-color: colors.$opportunities;
   }
-}
-
-.danger {
-  background-color: colors.$error;
-  color: black;
 }
