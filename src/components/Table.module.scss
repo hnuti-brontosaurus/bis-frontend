@@ -40,7 +40,22 @@
   color: colors.$error;
 }
 
-.cellWithButton > *:first-child {
-  display: block;
-  margin: auto;
+.cellWithButton {
+  padding: 0 !important;
+  position: relative;
+
+  & > *:first-child {
+    display: block;
+    margin: auto;
+  }
+
+  & > button:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
 }
