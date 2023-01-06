@@ -1,3 +1,12 @@
+/**
+ * This UserForm is very similar to the form in EditProfile
+ * We actually copy-pasted the code from there
+ * However, this form is primarily used in participant list and modals
+ * so it may need to have a different design than that one
+ * So when the design is clearer, this component may or may not be used
+ * for simplifying EditProfile
+ */
+
 import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from 'app/services/bis'
 import { User, UserPayload } from 'app/services/bisTypes'
@@ -172,9 +181,11 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
 export const UserForm = ({
   onSubmit,
   onCancel,
+  initialData,
 }: {
   onSubmit: (data: UserPayload) => void
   onCancel: () => void
+  initialData?: User
 }) => {
   const showMessage = useShowMessage()
 
@@ -189,7 +200,10 @@ export const UserForm = ({
   // const persistedData = usePersistentFormData('user', user.id)
 
   const methods = useForm<UserFormShape>({
-    defaultValues: { sex: 0, health_insurance_company: 0 },
+    defaultValues: merge(
+      { sex: 0, health_insurance_company: 0 },
+      initialData ? data2form(initialData) : {},
+    ),
     resolver: yupResolver(validationSchema),
   })
   const { register, watch, control, trigger, formState, handleSubmit } = methods

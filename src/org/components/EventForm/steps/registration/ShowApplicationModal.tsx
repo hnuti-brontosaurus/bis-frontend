@@ -7,7 +7,7 @@ import type {
   User,
 } from 'app/services/bisTypes'
 import { StyledModal } from 'components'
-import { FC } from 'react'
+import { FC, Fragment } from 'react'
 import styles from '../ParticipantsStep.module.scss'
 
 interface IShowApplicationModalProps {
@@ -52,7 +52,9 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
 
   const { data: currentApplicationData } =
     api.endpoints.readEventApplication.useQuery(
-      currentParticipant && savedParticipants
+      currentParticipant &&
+        savedParticipants &&
+        savedParticipants[currentParticipant.id]
         ? {
             eventId,
             applicationId: Number(savedParticipants[currentParticipant.id]),
@@ -131,7 +133,7 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
           )}
           {currentApplication.answers &&
             currentApplication.answers.map(answer => (
-              <div>
+              <div key={answer.question.id}>
                 <div>
                   <h4>{answer.question.question}</h4>
                 </div>
@@ -199,7 +201,9 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
               <span>
                 {user.memberships.map(membership => {
                   return (
-                    <>
+                    <Fragment
+                      key={`${membership.year}-${membership.administration_unit}-${membership.category}`}
+                    >
                       {administrationUnits && categories && (
                         <div>
                           <>
@@ -224,7 +228,7 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
                           </>
                         </div>
                       )}
-                    </>
+                    </Fragment>
                   )
                 })}
               </span>
