@@ -205,6 +205,7 @@ export const api = createApi({
       invalidatesTags: (results, _, { id }) => [
         { type: 'User' as const, id: 'USER_LIST' },
         { type: 'User', id },
+        { type: 'Participant', id: 'PARTICIPANT_LIST' },
       ],
     }),
 

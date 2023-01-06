@@ -166,5 +166,58 @@ describe('Close event - evidence and participants', () => {
         .should('contain', '11111111-1111-1111-1111-111111111111')
         .should('not.contain', '00000000-1111-2222-3333-444444444444')
     })
+
+    it('[when clicking update] should open user edit form, and save after editing', () => {
+      // go to participants page
+      cy.visit('/org/akce/1000/uzavrit')
+      cy.get('label:contains(Mám všechny informace)')
+        .should('be.visible')
+        .click()
+
+      // click update participant
+      cy.get('button[aria-label="Upravit účastníka Jana Novak"]').click()
+
+      // a form with pre-filled participant's data should open
+      cy.contains('Úprava dat účastnice/účastníka Jana Novak')
+      cy.get('[name="last_name"]').should('have.value', 'Novak')
+
+      // let's edit some data
+      cy.get('[name="first_name"]')
+        .should('have.value', 'Jana')
+        .clear()
+        .type('Dana')
+
+      cy.get('[name=address\\.street]').clear().type('NewStreetName 42')
+      cy.get('[name=address\\.city]').clear().type('NewTown')
+      cy.get('[name=address\\.zip_code]').clear().type('12345')
+      cy.get('[name=address\\.region]').select(5)
+      cy.get('[name=health_insurance_company]').select(4)
+
+      // intercept the updates of user
+      cy.intercept(
+        { method: 'PATCH', pathname: '/api/frontend/users/*/' },
+        {},
+      ).as('updateUser')
+      // submit
+      cy.get('[type=submit]:contains(Potvrdit)').click()
+
+      // a proper request should be sent to update user
+      cy.wait('@updateUser').then(a => {
+        expect(a.request.body).to.deep.include({
+          first_name: 'Dana',
+          address: {
+            street: 'NewStreetName 42',
+            city: 'NewTown',
+            zip_code: '12345',
+            region: 5,
+          },
+          health_insurance_company: 4,
+        })
+        expect(a.request.url).to.contain(
+          '/api/frontend/users/00000000-1111-2222-3333-444444444444',
+        )
+        expect(a.request.method).to.equal('PATCH')
+      })
+    })
   })
 })

@@ -2,17 +2,26 @@ import { StyledModal } from 'components'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // T - data that are returned when resolved
-export const useAwaitModal = <T,>(
-  Child: (props: {
-    onResolve: (data: T) => void
-    onReject: () => void
-  }) => JSX.Element,
+// P - additional props of the Child
+export const useAwaitModal = <
+  T,
+  PP extends { [key: string]: unknown },
+  P = Omit<PP, 'onResolve' | 'onReject'>,
+>(
+  Child: (
+    props: P & {
+      onResolve: (data: T) => void
+      onReject: () => void
+    },
+  ) => JSX.Element,
   options?: {
     title: string
+    props: P
   },
 ) => {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState<string | undefined>(options?.title)
+  const [props, setProps] = useState<P>(options?.props as P)
   const [editPromise, setEditPromise] = useState<{
     resolve: (data: T) => void
     reject: (reason?: any) => void
@@ -23,28 +32,40 @@ export const useAwaitModal = <T,>(
     setTitle(options?.title)
   }, [options?.title])
 
-  const getModalData = useCallback((options?: { title: string }) => {
-    if (options?.title) setTitle(options.title)
+  useEffect(() => {
+    setProps(options?.props as P)
+  }, [options?.props])
 
-    let res = undefined
-    let rej = undefined
+  useEffect(() => {
+    setTitle(options?.title)
+  }, [options?.title])
 
-    const promise = new Promise<T>((resolve, reject) => {
-      res = resolve
-      rej = reject
-    })
+  const getModalData = useCallback(
+    (options?: { title?: string; props?: P }) => {
+      if (options?.title) setTitle(options.title)
+      if (options?.props) setProps(options.props)
 
-    const p = {
-      promise,
-      resolve: res as any,
-      reject: rej as any,
-    }
+      let res = undefined
+      let rej = undefined
 
-    setEditPromise(p)
-    setOpen(true)
+      const promise = new Promise<T>((resolve, reject) => {
+        res = resolve
+        rej = reject
+      })
 
-    return promise
-  }, [])
+      const p = {
+        promise,
+        resolve: res as any,
+        reject: rej as any,
+      }
+
+      setEditPromise(p)
+      setOpen(true)
+
+      return promise
+    },
+    [],
+  )
 
   const handleResolve = useCallback(
     (data: T) => {
@@ -62,10 +83,10 @@ export const useAwaitModal = <T,>(
   const modal = useMemo(
     () => (
       <StyledModal title={title} open={open} onClose={handleReject}>
-        <Child onResolve={handleResolve} onReject={handleReject} />
+        <Child {...props} onResolve={handleResolve} onReject={handleReject} />
       </StyledModal>
     ),
-    [Child, handleReject, handleResolve, open, title],
+    [Child, handleReject, handleResolve, open, props, title],
   )
 
   return [getModalData, modal] as const
