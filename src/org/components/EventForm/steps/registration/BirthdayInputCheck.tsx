@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
-import { User, UserSearch } from 'app/services/testApi'
+import { User, UserSearch } from 'app/services/bisTypes'
 import {
   BirthdayInput,
   birthdayValidation,

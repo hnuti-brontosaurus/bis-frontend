@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { MdOutlineKeyboardArrowRight } from 'react-icons/md'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import styles from './Breadcrumbs.module.scss'
@@ -90,16 +91,16 @@ export const Breadcrumbs = ({
 
   return (
     <div className={styles.container}>
-      {crumbs.map((crumb, key) =>
-        key + 1 === crumbs.length ? (
-          <span key={key}>{crumb.name}</span>
+      {crumbs.map((crumb, i) =>
+        i + 1 === crumbs.length ? (
+          <span key={crumb.path}>{crumb.name}</span>
         ) : (
-          <>
-            <Link className={styles.link} key={key} to={crumb.path}>
+          <Fragment key={crumb.path}>
+            <Link className={styles.link} to={crumb.path}>
               {crumb.name}
             </Link>
             <MdOutlineKeyboardArrowRight />
-          </>
+          </Fragment>
         ),
       )}
     </div>

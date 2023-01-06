@@ -43,6 +43,7 @@ import type {
   HealthInsuranceCompany,
   Location,
   LoginRequest,
+  MembershipCategory,
   Opportunity,
   OpportunityCategory,
   OpportunityPayload,
@@ -311,6 +312,19 @@ export const api = createApi({
     >({
       query: queryArg => ({
         url: `categories/opportunity_categories/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    readMembershipCategories: build.query<
+      PaginatedList<MembershipCategory>,
+      ListArguments
+    >({
+      query: queryArg => ({
+        url: `categories/membership_categories/`,
         params: {
           page: queryArg.page,
           page_size: queryArg.pageSize,

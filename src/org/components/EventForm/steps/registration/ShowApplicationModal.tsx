@@ -1,12 +1,11 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
-import {
+import type {
   AdministrationUnit,
   EventApplication,
-  EventCategory,
-  EventProgramCategory,
+  MembershipCategory,
   User,
-} from 'app/services/testApi'
+} from 'app/services/bisTypes'
 import { StyledModal } from 'components'
 import { FC } from 'react'
 import styles from '../ParticipantsStep.module.scss'
@@ -27,8 +26,7 @@ interface IShowApplicationModalProps {
     eventId: number
   }) => void
   userId?: string
-  categories: EventCategory[]
-  programs: EventProgramCategory[]
+  categories: MembershipCategory[]
   administrationUnits: AdministrationUnit[]
   currentParticipant?: User
   savedParticipants?: { [s: string]: string }
@@ -46,7 +44,6 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
   deleteEventApplication,
   userId,
   categories,
-  programs,
   administrationUnits,
   currentParticipant,
   savedParticipants,
@@ -209,24 +206,16 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
                             <span>
                               {
                                 administrationUnits.find(
-                                  // @ts-ignore
                                   unit =>
-                                    // @ts-ignore
-                                    membership.administration_unit ===
-                                    // @ts-ignore
-                                    unit.id,
+                                    membership.administration_unit === unit.id,
                                 )?.name
                               }
                             </span>
                             <span>
                               {
                                 categories.find(
-                                  // @ts-ignore
                                   category =>
-                                    // @ts-ignore
-                                    membership.category ===
-                                    // @ts-ignore
-                                    category.id,
+                                    membership.category === category.id,
                                 )?.name
                               }
                             </span>
