@@ -172,27 +172,31 @@ export const SelectLocation = forwardRef<
             </div>
           ) : (
             <div className={styles.selectLocationItem}>
-              Vyber lokalitu podle názvu
-              <br />
-              <SelectObject<Location>
-                className={classNames(
-                  styles.aboveMap,
-                  styles.fullWidth,
-                  styles.selectLocation,
+              <span>Vyber lokalitu podle názvu</span>
+              <div className={styles.selectLocationWithIcon}>
+                <SelectObject<Location>
+                  className={classNames(
+                    styles.aboveMap,
+                    styles.fullWidth,
+                    styles.selectLocation,
+                  )}
+                  value={(value as Location) ?? undefined}
+                  onChange={onChange}
+                  getLabel={location => location.name}
+                  getValue={location => String(location.id)}
+                  placeholder="Název"
+                  search={api.endpoints.readLocations}
+                  ref={ref}
+                />
+                {value ? (
+                  <FiCheckCircle size={36} className={styles.editStateDone} />
+                ) : (
+                  <AiOutlineEdit
+                    size={36}
+                    className={styles.editStatePending}
+                  />
                 )}
-                value={(value as Location) ?? undefined}
-                onChange={onChange}
-                getLabel={location => location.name}
-                getValue={location => String(location.id)}
-                placeholder="Název"
-                search={api.endpoints.readLocations}
-                ref={ref}
-              />
-              {value ? (
-                <FiCheckCircle size={36} className={styles.editStateDone} />
-              ) : (
-                <AiOutlineEdit size={36} className={styles.editStatePending} />
-              )}
+              </div>
             </div>
           )}
         </div>

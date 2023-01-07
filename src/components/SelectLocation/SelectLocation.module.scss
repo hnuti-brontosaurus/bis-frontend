@@ -19,37 +19,59 @@
 
 .topContentContainer {
   width: 100%;
+  flex-direction: column;
   display: flex;
   gap: 8px;
-  @include media.for-phone-only {
+  @include media.for-tablet-landscape-up {
     width: 100%;
-    flex-direction: column;
   }
   .selectLocationBox {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 16px;
-    @include media.for-phone-only {
-      flex-direction: column;
+
+    @include media.for-tablet-landscape-up {
+      flex-direction: row;
     }
     .editingLocation {
       font-size: 1.4rem;
       display: flex;
       gap: 0.5rem;
+      align-items: center;
     }
     .selectLocationItem {
-      align-items: center;
-      gap: 16px;
+      align-items: flex-start;
+      gap: 2px;
       display: flex;
-      @include media.for-phone-only {
-        flex-direction: column;
-        align-items: flex-start;
+      flex-direction: column;
+      width: 100%;
+      white-space: nowrap;
+
+      @include media.for-tablet-landscape-up {
+        gap: 16px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
       }
-      .selectLocation {
-        width: 300px;
+      .selectLocationWithIcon {
+        display: flex;
+
+        gap: 2px;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        @include media.for-tablet-landscape-up {
+          gap: 16px;
+        }
+        .selectLocation {
+          width: calc(100% - 40px);
+          @include media.for-tablet-landscape-up {
+            width: 300px;
+          }
+        }
       }
     }
   }
@@ -66,29 +88,27 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-
-  width: 100%;
   display: flex;
   gap: 8px;
-  @include media.for-phone-only {
-    width: 100%;
-    flex-direction: column;
+  flex-direction: column;
+  @include media.for-tablet-landscape-up {
+    flex-direction: row;
   }
   .mainContentContainer {
     width: 100%;
     display: flex;
     gap: 8px;
-    @include media.for-phone-only {
-      width: 100%;
-      flex-direction: column;
+    flex-direction: column;
+    @include media.for-tablet-landscape-up {
+      flex-direction: row;
     }
     .mapColumn {
       .mapContainer {
-        width: sizes.$map-width;
-        @include media.for-phone-only {
-          width: 100%;
-        }
+        width: 100%;
         height: sizes.$map-height;
+        @include media.for-tablet-landscape-up {
+          width: sizes.$map-width;
+        }
       }
       button {
         margin: 1rem auto;
@@ -105,12 +125,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 300px;
   border: 3px solid colors.$bronto-100;
   padding: 0.8rem;
   border-radius: 8px;
-  @include media.for-phone-only {
-    width: 100%;
+  width: 100%;
+  @include media.for-tablet-landscape-up {
+    width: 300px;
   }
   div {
     column-gap: 0.3rem;
@@ -140,7 +160,10 @@
     align-items: center;
     color: colors.$gray-400;
     svg {
-      margin-top: -100px;
+      margin-top: unset;
+      @include media.for-tablet-landscape-up {
+        margin-top: -100px;
+      }
       path {
         fill: colors.$gray-400;
       }
@@ -154,15 +177,15 @@
   background-color: colors.$bronto-100;
 }
 
-.buttonBigScreen {
+.buttonSmallScreen {
   display: block;
-  @include media.for-phone-only {
+  @include media.for-tablet-landscape-up {
     display: none;
   }
 }
-.buttonSmallScreen {
+.buttonBigScreen {
   display: none;
-  @include media.for-phone-only {
+  @include media.for-tablet-landscape-up {
     display: block;
   }
 }
