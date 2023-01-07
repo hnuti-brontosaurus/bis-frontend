@@ -9,9 +9,9 @@
   counter-reset: section;
   border: 2px solid colors.$gray-200;
   margin: 1rem 0;
-  padding: 2rem 2rem 4rem;
-  @include media.for-phone-only {
-    padding: 16px;
+  padding: 0;
+  @include media.for-tablet-landscape-up {
+    padding: 2rem 2rem 4rem;
   }
   gap: 1rem;
   display: flex;
