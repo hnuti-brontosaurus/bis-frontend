@@ -8,7 +8,7 @@ export const NumberInput = forwardRef<
   Overwrite<
     InputHTMLAttributes<HTMLInputElement>,
     {
-      value: number | undefined
+      value: number | undefined | null
       onChange: (value: number | undefined) => void
       min?: number
       max?: number
@@ -32,7 +32,7 @@ export const NumberInput = forwardRef<
         <input
           className={styles.input}
           type="number"
-          value={value}
+          value={value ?? undefined}
           min={min}
           max={max}
           onChange={e =>
