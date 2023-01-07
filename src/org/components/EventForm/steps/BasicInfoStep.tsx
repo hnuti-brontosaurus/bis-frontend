@@ -119,7 +119,7 @@ export const BasicInfoStep = ({
                   required,
                 }}
                 render={({ field }) => (
-                  <NumberInput {...field} min={1}></NumberInput>
+                  <NumberInput {...field} min={1} name="number_of_sub_events"></NumberInput>
                 )}
               />
             </FormInputError>

@@ -9,11 +9,12 @@ import {
   FormSectionGroup,
   InlineSection,
   Label,
+  NumberInput,
 } from 'components'
 import { ButtonSelectGroup } from 'components/ButtonSelect/ButtonSelect'
 import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
 import { ReactElement, useEffect } from 'react'
-import { FormProvider, UseFormReturn } from 'react-hook-form'
+import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
 import { Entries } from 'type-fest'
 import { required } from 'utils/validationMessages'
 import type {
@@ -61,6 +62,7 @@ export const ParticipantsStep = ({
     return () => subscription.unsubscribe()
   }, [formState.isSubmitted, trigger, watch])
 
+  const { control } = methods
   return (
     <FormProvider {...methods}>
       <form>
@@ -101,53 +103,62 @@ export const ParticipantsStep = ({
                     <InlineSection>
                       <Label required>Počet účastníků celkem</Label>
                       <FormInputError>
-                        <input
-                          type="number"
-                          min={0}
-                          placeholder="number_of_participants"
-                          {...register('record.number_of_participants', {
+                        <Controller
+                          control={control}
+                          name="record.number_of_participants"
+                          rules={{
                             required,
                             min: {
                               value: 0,
                               message: 'Hodnota musí být větší nebo rovna 0',
                             },
-                          })}
+                          }}
+                          render={({ field }) => (
+                            <NumberInput
+                              {...field}
+                              min={0}
+                              name="record.number_of_participants"
+                            ></NumberInput>
+                          )}
                         />
                       </FormInputError>
                     </InlineSection>
                     <InlineSection>
                       <Label required>Z toho počet účastníků do 26 let</Label>
                       <FormInputError>
-                        <input
-                          type="number"
-                          min={0}
-                          placeholder="number_of_participants_under_26"
-                          {...register(
-                            'record.number_of_participants_under_26',
-                            {
-                              required,
-                              min: {
-                                value: 0,
-                                message: 'Hodnota musí být větší nebo rovna 0',
-                              },
-                              validate: {
-                                lessThanParticipants: value => {
-                                  const numberOfParticipants = Number(
-                                    watch('record.number_of_participants'),
-                                  )
-                                  const numberOfParticipantsUnder26 =
-                                    Number(value)
+                        <Controller
+                          control={control}
+                          name="record.number_of_participants_under_26"
+                          rules={{
+                            required,
+                            min: {
+                              value: 0,
+                              message: 'Hodnota musí být větší nebo rovna 0',
+                            },
+                            validate: {
+                              lessThanParticipants: value => {
+                                const numberOfParticipants = Number(
+                                  watch('record.number_of_participants'),
+                                )
+                                const numberOfParticipantsUnder26 =
+                                  Number(value)
 
-                                  return (
-                                    (!isNaN(numberOfParticipantsUnder26) &&
-                                      !isNaN(numberOfParticipants) &&
-                                      numberOfParticipantsUnder26 <=
-                                        numberOfParticipants) ||
-                                    'Hodnota nesmí být větší než počet účastníků celkem'
-                                  )
-                                },
+                                return (
+                                  (!isNaN(numberOfParticipantsUnder26) &&
+                                    !isNaN(numberOfParticipants) &&
+                                    numberOfParticipantsUnder26 <=
+                                      numberOfParticipants) ||
+                                  'Hodnota nesmí být větší než počet účastníků celkem'
+                                )
                               },
                             },
+                          }}
+                          render={({ field }) => (
+                            <NumberInput
+                              {...field}
+                              min={0}
+                              name="record.number_of_participants_under_26"
+                            ></NumberInput>
                           )}
                         />
                       </FormInputError>
