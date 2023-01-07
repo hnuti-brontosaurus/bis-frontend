@@ -950,14 +950,17 @@ const injectedRtkApi = api.injectEndpoints({
         method: 'DELETE',
       }),
     }),
-    frontendGetUnknownUserCreate: build.mutation<
-      FrontendGetUnknownUserCreateApiResponse,
-      FrontendGetUnknownUserCreateApiArg
+    frontendGetUnknownUserRetrieve: build.query<
+      FrontendGetUnknownUserRetrieveApiResponse,
+      FrontendGetUnknownUserRetrieveApiArg
     >({
       query: queryArg => ({
         url: `/api/frontend/get_unknown_user/`,
-        method: 'POST',
-        body: queryArg.getUnknownUserRequest,
+        params: {
+          birthday: queryArg.birthday,
+          first_name: queryArg.firstName,
+          last_name: queryArg.lastName,
+        },
       }),
     }),
     frontendLocationsList: build.query<
@@ -1249,12 +1252,17 @@ const injectedRtkApi = api.injectEndpoints({
           duration: queryArg.duration,
           duration__gte: queryArg.durationGte,
           duration__lte: queryArg.durationLte,
+          end__gte: queryArg.endGte,
+          end__lte: queryArg.endLte,
           group: queryArg.group,
           intended_for: queryArg.intendedFor,
+          ordering: queryArg.ordering,
           page: queryArg.page,
           page_size: queryArg.pageSize,
           program: queryArg.program,
           search: queryArg.search,
+          start__gte: queryArg.startGte,
+          start__lte: queryArg.startLte,
         },
       }),
     }),
@@ -1997,9 +2005,11 @@ export type FrontendEventsDestroyApiArg = {
   /** A unique integer value identifying this Událost. */
   id: number
 }
-export type FrontendGetUnknownUserCreateApiResponse = /** status 200  */ User
-export type FrontendGetUnknownUserCreateApiArg = {
-  getUnknownUserRequest: GetUnknownUserRequest
+export type FrontendGetUnknownUserRetrieveApiResponse = /** status 200  */ User
+export type FrontendGetUnknownUserRetrieveApiArg = {
+  birthday: string
+  firstName: string
+  lastName: string
 }
 export type FrontendLocationsListApiResponse =
   /** status 200  */ PaginatedLocationList
@@ -2328,6 +2338,8 @@ export type WebEventsListApiArg = {
   duration?: number
   durationGte?: number
   durationLte?: number
+  endGte?: string
+  endLte?: string
   /** Více hodnot lze oddělit čárkami. */
   group?: ('camp' | 'other' | 'weekend_event')[]
   /** Více hodnot lze oddělit čárkami. */
@@ -2338,6 +2350,8 @@ export type WebEventsListApiArg = {
     | 'for_parents_with_kids'
     | 'for_young_and_adult'
   )[]
+  /** Řazení */
+  ordering?: ('-end' | '-start' | 'end' | 'start')[]
   /** A page number within the paginated result set. */
   page?: number
   /** Number of results to return per page. */
@@ -2355,6 +2369,8 @@ export type WebEventsListApiArg = {
   )[]
   /** A search term. */
   search?: string
+  startGte?: string
+  startLte?: string
 }
 export type WebEventsRetrieveApiResponse = /** status 200  */ Event
 export type WebEventsRetrieveApiArg = {
@@ -2966,11 +2982,6 @@ export type PatchedEvent = {
   registration?: Registration | null
   record?: Record | null
 }
-export type GetUnknownUserRequest = {
-  first_name: string
-  last_name: string
-  birthday: string
-}
 export type LocationPatron = {
   first_name: string
   last_name: string
@@ -3241,7 +3252,7 @@ export const {
   useFrontendEventsUpdateMutation,
   useFrontendEventsPartialUpdateMutation,
   useFrontendEventsDestroyMutation,
-  useFrontendGetUnknownUserCreateMutation,
+  useFrontendGetUnknownUserRetrieveQuery,
   useFrontendLocationsListQuery,
   useFrontendLocationsCreateMutation,
   useFrontendLocationsRetrieveQuery,
