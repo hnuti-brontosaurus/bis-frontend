@@ -205,16 +205,19 @@ describe('create event', () => {
     cy.get('[placeholder=DD]').should('be.visible').type('29')
     cy.get('[placeholder=MM]').should('be.visible').type('02')
     cy.get('[placeholder=RRRR]').should('be.visible').type('2000')
-    cy.intercept('POST', '/api/frontend/get_unknown_user/', {
-      id: '1345',
-      first_name: 'FirstName',
-      last_name: 'LastName',
-      nickname: 'Nickname',
-      _search_id: '27',
-      display_name: 'Found User',
-      birthday: '2000-01-01',
-      qualifications: [],
-    })
+    cy.intercept(
+      { method: 'GET', pathname: '/api/frontend/get_unknown_user/' },
+      {
+        id: '1345',
+        first_name: 'FirstName',
+        last_name: 'LastName',
+        nickname: 'Nickname',
+        _search_id: '27',
+        display_name: 'Found User',
+        birthday: '2000-01-01',
+        qualifications: [],
+      },
+    )
     cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()
 
     cy.get('[name=contactPersonIsMainOrganizer]').should('be.visible').check()
