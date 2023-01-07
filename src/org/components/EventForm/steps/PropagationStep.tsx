@@ -7,6 +7,7 @@ import {
   InlineSection,
   Label,
   Loading,
+  NumberInput,
 } from 'components'
 import { Controller, FormProvider } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
@@ -59,32 +60,42 @@ export const PropagationStep = ({
                 Od
               </Label>
               <FormInputError>
-                <input
-                  id="propagation.minimum_age"
-                  type="number"
-                  size={2}
-                  {...register('propagation.minimum_age', {
-                    required,
-                    valueAsNumber: true,
-                  })}
+                <Controller
+                  control={control}
+                  name="propagation.minimum_age"
+                  rules={{
+                    required: required,
+                  }}
+                  render={({ field }) => (
+                    <NumberInput
+                      {...field}
+                      min={0}
+                      name="propagation.minimum_age"
+                    ></NumberInput>
+                  )}
                 />
               </FormInputError>
               <Label required htmlFor="propagation.maximum_age">
                 Do
               </Label>
               <FormInputError>
-                <input
-                  id="propagation.maximum_age"
-                  type="number"
-                  size={2}
-                  {...register('propagation.maximum_age', {
+                <Controller
+                  control={control}
+                  name="propagation.maximum_age"
+                  rules={{
                     required,
-                    valueAsNumber: true,
                     validate: maxAge =>
                       Number(getValues('propagation.minimum_age')) <=
                         Number(maxAge) ||
                       'Maximální věk musí být vyšší než minimální věk',
-                  })}
+                  }}
+                  render={({ field }) => (
+                    <NumberInput
+                      {...field}
+                      min={0}
+                      name="propagation.maximum_age"
+                    ></NumberInput>
+                  )}
                 />
               </FormInputError>
             </InlineSection>
@@ -166,12 +177,15 @@ export const PropagationStep = ({
                   Počet pracovních dní na akci
                 </Label>
                 <FormInputError>
-                  <input
-                    type="number"
-                    {...register('propagation.working_days', {
+                  <Controller
+                    control={control}
+                    name="propagation.working_days"
+                    rules={{
                       required: isVolunteering && required,
-                    })}
-                    defaultValue={undefined}
+                    }}
+                    render={({ field }) => (
+                      <NumberInput {...field} min={0} name="propagation.working_days"></NumberInput>
+                    )}
                   />
                 </FormInputError>
               </InlineSection>
