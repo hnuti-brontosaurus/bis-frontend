@@ -192,6 +192,9 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
       event: {
         record: {
           participants: newParticipants,
+          contacts: [],
+          number_of_participants: null,
+          number_of_participants_under_26: null,
         },
       },
     })

@@ -90,6 +90,7 @@ const formData2payload = ({
   if (participantInputType === 'full-list') {
     payload.record.number_of_participants = null
     payload.record.number_of_participants_under_26 = null
+    payload.record.contacts = []
     // participants get saved separately
     // so we don't want to overwrite them with potentially outdated list
     delete payload.record.participants
