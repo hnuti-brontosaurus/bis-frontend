@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/dist/query'
+import { FetchBaseQueryError, skipToken } from '@reduxjs/toolkit/query'
 import { api } from 'app/services/bis'
 import { User, UserSearch } from 'app/services/bisTypes'
 import {
@@ -325,13 +325,20 @@ const useReadFullUser = () => {
       }
       throw new Error('Canceled')
     } catch (error) {
-      if (
-        error &&
-        typeof error === 'object' &&
-        'status' in error &&
-        (error as FetchBaseQueryError).status === 404
-      )
-        throw new Error('Nesprávné datum narození')
+      if (error && typeof error === 'object' && 'status' in error) {
+        switch ((error as FetchBaseQueryError).status) {
+          case 404:
+            throw new Error('Nesprávné datum narození')
+          case 429:
+            if ('data' in error)
+              throw new Error(
+                ((error as FetchBaseQueryError).data as any).detail,
+              )
+            break
+          default:
+            break
+        }
+      }
       throw error
     }
   }
