@@ -15,6 +15,7 @@
   &:hover {
     .icon {
       border-color: colors.$bronto;
+      transition: 120ms ease-in;
     }
   }
   .input {
@@ -23,8 +24,10 @@
     // style label of checked input
     &:checked + .label .icon {
       background-color: colors.$bronto;
+      transition: 220ms ease-in;
       svg {
         fill: white;
+        transition: 220ms ease-in;
       }
     }
   }
@@ -40,6 +43,7 @@
 
     &:hover {
       border-color: colors.$bronto;
+      transition: 120ms transform ease-in-out;
     }
 
     svg {
@@ -88,6 +92,7 @@
   .input {
     &:checked + .label .icon {
       background-color: colors.$opportunities;
+      transition: 120ms ease-in-out;
     }
   }
 

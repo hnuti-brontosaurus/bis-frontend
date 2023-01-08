@@ -1,4 +1,7 @@
 import { api } from 'app/services/bis'
+import { ReactComponent as Cheese } from 'assets/cheese.svg'
+import { ReactComponent as Leaf } from 'assets/leaf.svg'
+import { ReactComponent as Piglet } from 'assets/mama-i-laura.svg'
 import {
   FormInputError,
   FormSection,
@@ -9,9 +12,16 @@ import {
   Loading,
   NumberInput,
 } from 'components'
+import { ReactElement } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
+
+const foodIcons: { [name: string]: ReactElement } = {
+  's masem': <Piglet />,
+  vegetariánská: <Cheese />,
+  veganská: <Leaf />,
+}
 
 export const PropagationStep = ({
   methods,
@@ -129,7 +139,7 @@ export const PropagationStep = ({
                       {[...diets.results]
                         .reverse() // fast hack to show meaty diet last
                         .map(({ id, name }) => (
-                          <label key={id}>
+                          <label key={id} className="labelCheckboxTag">
                             <input
                               ref={field.ref}
                               key={id}
@@ -149,7 +159,8 @@ export const PropagationStep = ({
                                 field.onChange(Array.from(set))
                               }}
                             />{' '}
-                            {name}
+                            <div>{name}</div>
+                            {foodIcons[name]}
                           </label>
                         ))}
                     </InlineSection>
