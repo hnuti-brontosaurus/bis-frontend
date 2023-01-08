@@ -5,6 +5,7 @@ export {
 export { Breadcrumbs } from './Breadcrumbs/Breadcrumbs'
 export { Button, ButtonLink } from './Button/Button'
 export { ButtonSelect } from './ButtonSelect/ButtonSelect'
+export { DataView } from './DataView/DataView'
 export { Error } from './Error/Error'
 export { ErrorBox } from './ErrorBox/ErrorBox'
 export type { ObjectWithStrings } from './ErrorBox/ErrorBox'

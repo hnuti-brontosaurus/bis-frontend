@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { Actions, Button, ButtonLink, Loading } from 'components'
+import { Actions, Button, ButtonLink, DataView, Loading } from 'components'
+import * as combinedTranslations from 'config/static/combinedTranslations'
 import { sanitize } from 'dompurify'
 import { useCurrentUser } from 'hooks/currentUser'
 import type { FullOpportunity } from 'hooks/readFullOpportunity'
@@ -107,9 +108,14 @@ export const ViewOpportunity = () => {
         ) : null}
       </div>
       {/* <pre className={styles.data}>
-        {JSON.stringify(opportunity, null, '  ')}
+        {JSON.stringify(opportunity, null, 2)}
       </pre> */}
-      <div>Tady chybí data (TODO)</div>
+      <h2>Data</h2>
+      <DataView
+        data={opportunity}
+        translations={combinedTranslations.opportunity}
+        genericTranslations={combinedTranslations.generic}
+      />
     </div>
   )
 }
