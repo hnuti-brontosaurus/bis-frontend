@@ -20,6 +20,7 @@
     height: 44px;
     &:hover {
       background-color: colors.$bronto;
+      transition: 220ms ease-in;
       color: white;
     }
   }
