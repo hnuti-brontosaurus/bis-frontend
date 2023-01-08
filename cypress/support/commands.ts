@@ -76,7 +76,7 @@ Cypress.Commands.add(
 )
 
 // providing id is not implemented
-Cypress.Commands.add('interceptFullEvent', (id?: number) => {
+Cypress.Commands.add('interceptFullEvent', () => {
   cy.intercept(
     { method: 'GET', pathname: '/api/frontend/events/1000/' },
     { fixture: 'event' },

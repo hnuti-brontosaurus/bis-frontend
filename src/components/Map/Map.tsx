@@ -64,7 +64,7 @@ const MapEvents = ({
       const ll = map.mouseEventToLatLng(e.originalEvent)
       if (onClick) onClick(ll)
     },
-    moveend(e) {
+    moveend() {
       onMoveEnd?.(getClearBounds(map))
     },
   })
@@ -135,7 +135,6 @@ export interface MapProps {
   value?: L.LatLngTuple
   onChange: (location: L.LatLngTuple) => void
   onSelect: (id: number) => void
-  onDeselect: () => void
   onChangeBounds?: (bounds: ClearBounds) => void
   onError?: (error: Error) => void
   isLoading: boolean
@@ -149,7 +148,6 @@ export const Map = ({
   value,
   onChange,
   onSelect,
-  onDeselect,
   onChangeBounds,
   isLoading,
   editMode,
@@ -196,9 +194,9 @@ export const Map = ({
               <small>Načítáme lokality</small>
             </div>
           ) : (
-            /* In theory, this could be replaced by MapyCzMap 1-1
-          but that component is still unfinished and buggy
-          we don't recommend it */
+            /**
+             * This can be replaced byt OSMSearch if needed
+             */
             <MapyCzSearch
               onSelect={handleSearch}
               onError={handleError}

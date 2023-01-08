@@ -15,7 +15,7 @@ export const UncontrolledImageUpload = forwardRef<
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
     onBlur: any
   }
->(({ name, value, onChange, onBlur }, ref) => {
+>(({ value, onChange, ...rest }, ref) => {
   const [internalState, setInternalState] = useState<string>('')
 
   const actualValue = value ?? internalState
@@ -33,8 +33,8 @@ export const UncontrolledImageUpload = forwardRef<
         style={{ display: 'none' }}
         type="file"
         accept="image/*"
-        name={name}
         onChange={handleChange}
+        {...rest}
       />
       {actualValue ? (
         <div className={styles.imageWrapper}>

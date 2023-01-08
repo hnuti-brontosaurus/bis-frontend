@@ -41,7 +41,7 @@ listenerMiddleware.startListening({
     api.endpoints.logout.matchFulfilled,
     api.endpoints.logout.matchRejected,
   ),
-  effect: async (action, listenerApi) => {
+  effect: async () => {
     await resetStore()
   },
 })

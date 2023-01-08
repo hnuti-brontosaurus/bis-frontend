@@ -24,10 +24,12 @@ import {
   Label,
   Loading,
 } from 'components'
+import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { merge, omit, startsWith } from 'lodash'
 import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { validationErrors2Message } from 'utils/validationErrors'
 import { requiredSelect } from 'utils/validationMessages'
 import * as yup from 'yup'
 
@@ -232,6 +234,11 @@ export const UserForm = ({
       showMessage({
         type: 'error',
         message: 'Opravte, prosím, chyby ve validaci',
+        detail: validationErrors2Message(
+          merge({}, ...Object.values(errors)),
+          translations.user,
+          translations.generic,
+        ),
       })
     },
   )

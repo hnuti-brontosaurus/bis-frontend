@@ -84,7 +84,7 @@ const SelectObjectInner = <T,>(
       getOptionLabel={getLabel}
       getOptionValue={getValue}
       className={`${className} customInput ${styles.selectObject}`}
-      noOptionsMessage={prop => {
+      noOptionsMessage={() => {
         if (!searchQuery || searchQuery.length < 3)
           return <div>Zadej alespoň 2 znaky</div>
         return <div>Nenalezeno</div>

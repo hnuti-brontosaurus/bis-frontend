@@ -11,7 +11,7 @@ export const apiErrors2Message = (
   error: FetchBaseQueryError,
   fieldNames: ModelTranslations = {},
   genericNames: GenericTranslations = {},
-  limit: number = Infinity,
+  // limit: number = Infinity,
 ): string => {
   let output = ''
   output += error.status

@@ -17,7 +17,6 @@ export const ImportExcelButton = <T extends {}>({
   keyMap,
   children,
   onUpload,
-  ...props
 }: ImportExcelButtonProps<T>) => {
   const handleUpload: ChangeEventHandler<HTMLInputElement> = async e => {
     if (e.target.files && e.target.files.length > 0) {
