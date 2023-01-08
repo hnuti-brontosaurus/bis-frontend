@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { ButtonHTMLAttributes } from 'react'
+import { RiLoader4Fill } from 'react-icons/ri'
 import { Link, LinkProps } from 'react-router-dom'
 import styles from './Button.module.scss'
 
@@ -8,6 +9,8 @@ interface ButtonProps {
   danger?: boolean
   secondary?: boolean
   tertiary?: boolean
+  isLoading?: boolean
+  disabled?: boolean
 }
 
 /**
@@ -49,6 +52,8 @@ export const Button = ({
   danger,
   secondary,
   tertiary,
+  disabled,
+  isLoading,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & ButtonProps) => {
   return (
@@ -60,10 +65,13 @@ export const Button = ({
         danger && styles.danger,
         secondary && styles.secondary,
         tertiary && styles.tertiary,
+        (isLoading || disabled) && styles.disabled,
       )}
+      disabled={disabled}
       {...props}
     >
       {children}
+      {isLoading && <RiLoader4Fill className={styles.icon} size={40} />}
     </button>
   )
 }
