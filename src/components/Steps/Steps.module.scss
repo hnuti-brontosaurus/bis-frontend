@@ -41,23 +41,28 @@ $step-button-line-height: 1.5rem;
     padding: $step-button-vertical-padding $step-button-horizontal-padding;
     border: $step-button-border-width solid colors.$bronto-light;
     background-color: colors.$bronto-light;
-    color: black;
+    color: colors.$bronto;
     border-radius: 2rem;
     height: 44px;
-    text-transform: capitalize;
+    &::first-letter {
+      text-transform: uppercase;
+    }
 
     &.isError {
       border-color: colors.$error;
     }
     &:hover {
       border-color: colors.$bronto;
+      transition: 220ms ease-in;
     }
     &.isActive {
       background-color: colors.$bronto;
       border-color: colors.$bronto;
+      transition: 220ms ease-in;
       color: white;
       &.isError {
         border-color: colors.$error;
+        transition: 220ms ease-in;
       }
     }
     // this connects step buttons with a line

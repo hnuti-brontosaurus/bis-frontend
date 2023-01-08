@@ -34,7 +34,7 @@ input[type='reset'] {
 
 label {
   &:has(input[type='radio']) {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     line-height: 1.1;
     cursor: pointer;
     display: grid;
@@ -85,5 +85,105 @@ label {
         }
       }
     }
+  }
+}
+
+label {
+  &:has(input[type='checkbox']) {
+    padding: 0.5rem 1.2rem;
+    display: grid;
+    grid-template-columns: 1em auto 2em;
+    gap: 1em;
+    align-items: center;
+    width: 100%;
+    margin: 1rem 1rem 0;
+    cursor: pointer;
+    @include media.for-tablet-landscape-up {
+      gap: 0.7em;
+      width: unset;
+      margin: 0;
+    }
+
+    svg {
+      width: 30px;
+      height: 30px;
+      @include media.for-tablet-landscape-up {
+        width: 50px;
+        height: 50px;
+        transform: translateX(-5px);
+      }
+      path {
+        fill: colors.$bronto;
+        stroke: colors.$bronto;
+        stroke-width: 1px;
+      }
+    }
+
+    input[type='checkbox'] {
+      /* Add if not using autoprefixer */
+      -webkit-appearance: none;
+      appearance: none;
+      /* For iOS < 15 to remove gradient background */
+      background-color: white;
+      /* Not removed via appearance */
+      margin: 0;
+
+      font: inherit;
+      color: currentColor;
+      width: 1.15em;
+      height: 1.15em;
+      border: 0.15em solid currentColor;
+      border-radius: 0.15em;
+      transform: translateY(0.075em);
+      display: grid;
+      place-content: center;
+      cursor: pointer;
+    }
+  }
+}
+
+input[type='checkbox']::before {
+  content: '';
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em colors.$bronto;
+  box-shadow: colors.$bronto;
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+input[type='checkbox']:disabled {
+  --form-control-color: colors.$gray-200;
+  color: colors.$gray-300;
+  cursor: not-allowed;
+}
+
+.labelCheckboxTag {
+  border: 3px solid colors.$bronto-light;
+  background-color: colors.$bronto-light;
+  border-radius: 40px;
+  color: colors.$bronto;
+
+  &:has(input[type='checkbox']:checked) {
+    background-color: colors.$bronto;
+    color: white;
+
+    svg {
+      // transform: scaleY(-1);
+      path {
+        fill: white;
+        stroke: white;
+      }
+    }
+  }
+  &:hover {
+    border: 3px solid colors.$bronto;
+    transition: 120ms ease-in-out;
   }
 }
