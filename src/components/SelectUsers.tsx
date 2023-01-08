@@ -284,7 +284,7 @@ const useReadFullUser = () => {
   const [readUserByBirthday] = api.endpoints.readUserByBirthdate.useLazyQuery()
   return async (user: UserSearch): Promise<User> => {
     try {
-      const birthday = (await new Promise((resolve, reject) => {
+      const birthday = (await new Promise(resolve => {
         confirmAlert({
           customUI: ({ title, message, onClose }) => {
             return (

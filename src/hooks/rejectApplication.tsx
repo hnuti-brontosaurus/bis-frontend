@@ -22,7 +22,7 @@ export const useRejectApplication = () => {
     application: { id: number; first_name: string; last_name: string }
   }) => {
     // replace with custom ui
-    const isConfirmed = await new Promise((resolve, reject) => {
+    const isConfirmed = await new Promise(resolve => {
       confirmAlert({
         customUI: ({ title, message, onClose }) => (
           <div className={modalStyles.modal}>

@@ -26,6 +26,7 @@ export const NumberInput = forwardRef<
         <FaMinus />
       </div>
       <input
+        ref={ref}
         className={styles.input}
         type="number"
         value={value ?? undefined}

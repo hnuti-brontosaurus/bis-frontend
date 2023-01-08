@@ -119,7 +119,11 @@ export const BasicInfoStep = ({
                   required,
                 }}
                 render={({ field }) => (
-                  <NumberInput {...field} min={1} name="number_of_sub_events"></NumberInput>
+                  <NumberInput
+                    {...field}
+                    min={1}
+                    name="number_of_sub_events"
+                  ></NumberInput>
                 )}
               />
             </FormInputError>
@@ -163,7 +167,7 @@ export const BasicInfoStep = ({
                   name="administration_units"
                   rules={{ required }}
                   control={control}
-                  render={({ field: { onChange, value, name, ref } }) => (
+                  render={({ field: { onChange /*, value, name, ref */ } }) => (
                     <Select
                       isMulti
                       options={

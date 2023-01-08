@@ -128,7 +128,7 @@ export const PropagationStep = ({
                     <InlineSection>
                       {[...diets.results]
                         .reverse() // fast hack to show meaty diet last
-                        .map(({ id, name, slug }) => (
+                        .map(({ id, name }) => (
                           <label key={id}>
                             <input
                               ref={field.ref}
@@ -184,7 +184,11 @@ export const PropagationStep = ({
                       required: isVolunteering && required,
                     }}
                     render={({ field }) => (
-                      <NumberInput {...field} min={0} name="propagation.working_days"></NumberInput>
+                      <NumberInput
+                        {...field}
+                        min={0}
+                        name="propagation.working_days"
+                      ></NumberInput>
                     )}
                   />
                 </FormInputError>

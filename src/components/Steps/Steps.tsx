@@ -108,7 +108,7 @@ export const Steps = <T extends Record<string, any>>({
         )}
         {onSubmit &&
           actions &&
-          actions.map(({ props, name }, i) => (
+          actions.map(({ props, name }) => (
             <Button
               key={name}
               primary

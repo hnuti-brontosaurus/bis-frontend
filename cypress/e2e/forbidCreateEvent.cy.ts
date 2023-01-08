@@ -1,32 +1,3 @@
-import type { Location } from '../../src/app/services/bisTypes'
-
-const searchUsers = new Array(47).fill('').map((val, i) => ({
-  _search_id: String(i),
-  first_name: `FirstName${i}`,
-  last_name: `LastName${i}`,
-  nickname: `Nickname${i}`,
-  display_name: `Displayname${i}`,
-}))
-
-const locations: Location[] = new Array(35)
-  .fill('')
-  .map((val, i) => ({
-    id: i,
-    name: `Location ${i}`,
-    gps_location: {
-      type: 'Point',
-      coordinates: [12 + Math.random() * 7, 49 + Math.random() * 2],
-    },
-  }))
-  .flat() as Location[]
-
-// go to next step
-const next = () =>
-  cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
-
-const submit = () =>
-  cy.get('[type=submit]:contains(Uložit)').first().should('be.visible').click()
-
 describe('create event', () => {
   // stub api endpoints before each request
   beforeEach(() => {

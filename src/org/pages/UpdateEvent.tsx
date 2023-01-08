@@ -98,7 +98,7 @@ export const UpdateEvent = () => {
 
     const newImages: { image: string; order: number }[] = []
     const imagesToPatch: { id: number; image?: string; order?: number }[] = []
-    imagesWithOrder.forEach((image, i, imagesWithOrder) => {
+    imagesWithOrder.forEach(image => {
       // save every new image
       // images without id are new
       if (!image.id) return newImages.push(image)

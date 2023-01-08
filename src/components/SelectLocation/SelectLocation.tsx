@@ -18,7 +18,7 @@ import {
 import { LatLngTuple } from 'leaflet'
 import { cloneDeep } from 'lodash'
 import merge from 'lodash/merge'
-import { FocusEvent, forwardRef, useEffect, useMemo, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { FiCheckCircle } from 'react-icons/fi'
@@ -216,7 +216,6 @@ export const SelectLocation = forwardRef<
               }}
               onSelect={handleSelect}
               onChangeBounds={bounds => setBounds(bounds)}
-              onDeselect={() => {}}
               isLoading={isLoading}
               editMode={isEditing}
             />{' '}
@@ -300,7 +299,7 @@ const CreateLocation = ({
     { required },
   )
 
-  const handleGPSBlur = (e: FocusEvent<HTMLInputElement, Element>) => {
+  const handleGPSBlur = () => {
     const rawCoordinates = methods.getValues('gps_location.coordinates')
     const areCoordinatesNumeric = rawCoordinates.every(
       a => !isNaN(parseInt(a as unknown as string)),
@@ -351,7 +350,7 @@ const CreateLocation = ({
               form={formId}
               {...registerLatitude}
               onBlur={e => {
-                handleGPSBlur(e)
+                handleGPSBlur()
                 blurLatitude(e)
               }}
               className={styles.GPS}
@@ -365,7 +364,7 @@ const CreateLocation = ({
               form={formId}
               {...registerLongitude}
               onBlur={e => {
-                handleGPSBlur(e)
+                handleGPSBlur()
                 blurLongitude(e)
               }}
               className={styles.GPS}

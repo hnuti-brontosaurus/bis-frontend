@@ -50,7 +50,7 @@ export const usePersistForm = (
   for (const watch of watches) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-      const subscription = watch((data, asdf) => {
+      const subscription = watch(data => {
         debouncedDispatch(
           actions.saveForm({
             id,

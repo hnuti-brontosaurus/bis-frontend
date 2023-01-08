@@ -506,7 +506,7 @@ export const api = createApi({
           search: queryArg.search,
         },
       }),
-      providesTags: (results, error, { userId, id, page }) =>
+      providesTags: results =>
         results?.results
           ? [
               ...results.results.map(event => ({

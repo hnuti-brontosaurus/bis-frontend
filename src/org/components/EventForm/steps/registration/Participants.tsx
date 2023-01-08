@@ -285,10 +285,8 @@ const UserModalForm = ({
 
 const RemoveParticipantConfirmDialog = ({
   onResolve,
-  onReject,
 }: {
   onResolve: (confirm: boolean) => void
-  onReject: () => void
 }) => (
   <Actions>
     <Button secondary onClick={() => onResolve(false)}>

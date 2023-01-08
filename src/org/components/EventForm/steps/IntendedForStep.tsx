@@ -28,7 +28,7 @@ export const IntendedForStep = ({
 
   // unregister stuff
   useEffect(() => {
-    const subscription = watch((data, { name, type }) => {
+    const subscription = watch((data, { name }) => {
       if (
         name === 'intended_for' &&
         getIdBySlug(
