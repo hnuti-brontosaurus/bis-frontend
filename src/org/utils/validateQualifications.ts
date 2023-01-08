@@ -119,13 +119,27 @@ export const hasRequiredQualification = (
 ) => {
   const allQualificationsDict = getQualificationDict(allQualifications)
 
-  const requiredCategoryIsPresent = (category: QualificationCategory) => {
+  // get requiredOneOf as full qualification categories
+  // because we'll need to access parent qualification categories, too
+  const requiredOneOf = required_one_of.map(slug =>
+    allQualifications.find(q => q.slug === slug),
+  ) as QualificationCategory[]
+
+  const requiredCategoryIsPresent = (
+    category: QualificationCategory,
+    requiredOneOf: QualificationCategory[],
+  ) => {
     if (!category) return false
-    if (required_one_of.includes(category.slug)) {
+    if (requiredOneOf.map(r => r.id).includes(category.id)) {
       return true
     }
-    for (const c of category.parents) {
-      if (requiredCategoryIsPresent(allQualificationsDict[c])) return true
+
+    // check within parents of requiredOneOf
+    for (const required of requiredOneOf) {
+      const requiredParents = required.parents.map(
+        id => allQualificationsDict[id],
+      )
+      if (requiredCategoryIsPresent(category, requiredParents)) return true
     }
     return false
   }
@@ -133,7 +147,7 @@ export const hasRequiredQualification = (
   const qualifications = getValidQualifications(user)
   for (const qualification of qualifications) {
     let category: QualificationCategory | undefined = qualification.category
-    if (requiredCategoryIsPresent(category)) return true
+    if (requiredCategoryIsPresent(category, requiredOneOf)) return true
   }
   return false
 }
