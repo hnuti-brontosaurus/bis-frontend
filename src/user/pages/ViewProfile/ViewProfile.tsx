@@ -1,5 +1,6 @@
 import { User } from 'app/services/bisTypes'
-import { Actions, ButtonLink, PageHeader } from 'components'
+import { Actions, ButtonLink, DataView, PageHeader } from 'components'
+import * as combinedTranslations from 'config/static/combinedTranslations'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useTitle } from 'hooks/title'
 import { FaPencilAlt } from 'react-icons/fa'
@@ -60,8 +61,12 @@ export const ViewProfile = () => {
           </tbody>
         </table>
       </section>
-
-      <pre className={styles.data}>{JSON.stringify(user, null, 2)}</pre>
+      {/* <pre className={styles.data}>{JSON.stringify(user, null, 2)}</pre> */}
+      <DataView
+        data={user}
+        translations={combinedTranslations.user}
+        genericTranslations={combinedTranslations.generic}
+      />
     </div>
   )
 }

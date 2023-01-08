@@ -175,7 +175,6 @@ export const event = {
     'Webová adresa pro připojení',
     'Vyplňte, pokud se událost koná online',
   ],
-  is_internal: 'Určeno pro členy?',
   number_of_sub_events: 'Počet akcí v uvedeném období',
   administration_units: 'Administrativní jednotky',
   main_organizer: 'Hlavní organizátor',
@@ -370,7 +369,7 @@ export const dietCategory = {
 export const qualificationCategory = {
   _name: 'Typ kvalifikace',
   _name_plural: 'Typ kvalifikace',
-  parent: 'Nadřazená kvalifikace',
+  parents: 'Nadřazené kvalifikace',
 } as const
 
 export const administrationUnitCategory = {
