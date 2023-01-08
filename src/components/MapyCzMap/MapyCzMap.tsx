@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { MapyCzSearch } from 'components'
 import type { MapProps } from 'components/Map/Map'
 import { useOnScreen } from 'hooks/onScreen'
@@ -21,7 +23,6 @@ export const MapyCzMap = ({
   value,
   onChange,
   onSelect,
-  onDeselect,
   onChangeBounds,
   onError,
 }: MapProps) => {

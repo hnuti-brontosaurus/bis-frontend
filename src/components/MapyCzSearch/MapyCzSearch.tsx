@@ -4,11 +4,11 @@ import { useEffect, useRef } from 'react'
 export const MapyCzSearch = ({
   onSelect,
   className,
-  onError,
 }: {
   onSelect: (coords: [number, number], name: string) => void
   className?: string
-  onError?: (e: Error) => void
+  // unused prop to ensure that the component has the same interface as OSMSearch
+  onError: (error: Error) => void
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [SMap] = useSMap()

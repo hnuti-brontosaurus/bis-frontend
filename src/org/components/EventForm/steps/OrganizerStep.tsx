@@ -95,7 +95,7 @@ export const OrganizerStep = ({
    * Automatically fill organizer team
    */
   useEffect(() => {
-    const subscription = watch((data, { name, value }) => {
+    const subscription = watch((data, { name }) => {
       if (name === 'main_organizer' || name === 'other_organizers') {
         const mainOrganizer = get(data, 'main_organizer')
         const otherOrganizers = get(data, 'other_organizers', [])

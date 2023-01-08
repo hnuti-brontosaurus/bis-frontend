@@ -23,7 +23,7 @@ export const useRemoveOpportunity = () => {
     name: string
   }) => {
     // replace with custom ui
-    const isConfirmed = await new Promise((resolve, reject) => {
+    const isConfirmed = await new Promise(resolve => {
       confirmAlert({
         customUI: ({ title, message, onClose }) => (
           // this modal component is copy-pasted from similar useRemoveEvent hook

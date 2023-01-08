@@ -277,7 +277,7 @@ export const EventForm: FC<{
   onCancel: () => void
   eventToEdit: boolean
   id: string
-}> = ({ onSubmit, onCancel, initialData, eventToEdit, id }) => {
+}> = ({ onSubmit, onCancel, initialData, id }) => {
   const savedData = usePersistentFormData('event', id) as
     | Partial<EventFormShape>
     | undefined

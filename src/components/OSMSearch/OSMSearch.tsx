@@ -20,7 +20,7 @@ export const OSMSearch = ({
   const [searchOSMLocation, { isLoading: isSearching }] =
     api.endpoints.searchLocationOSM.useLazyQuery()
 
-  const handleSearchFormSubmit = handleSubmit(async (data, e) => {
+  const handleSearchFormSubmit = handleSubmit(async data => {
     if (data.query.length > 2) {
       try {
         const foundLocations = await searchOSMLocation(data.query).unwrap()

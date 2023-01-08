@@ -53,7 +53,7 @@ export const useShowApiErrorMessage = (
   message = 'Něco se nepovedlo',
   fieldTranslations = combinedFieldTranslations,
   genericTranslations = translations.generic,
-  limit = Infinity,
+  // limit = Infinity,
 ) => {
   const showMessage = useShowMessage()
   useEffect(() => {
@@ -64,7 +64,7 @@ export const useShowApiErrorMessage = (
         error,
         fieldTranslations,
         genericTranslations,
-        limit,
+        // limit,
       )
     } else {
       detail += `${error?.code ?? ''} ${error?.name ?? ''}\n${
@@ -77,12 +77,5 @@ export const useShowApiErrorMessage = (
         detail,
         type: 'error',
       })
-  }, [
-    error,
-    fieldTranslations,
-    genericTranslations,
-    limit,
-    message,
-    showMessage,
-  ])
+  }, [error, fieldTranslations, genericTranslations, message, showMessage])
 }

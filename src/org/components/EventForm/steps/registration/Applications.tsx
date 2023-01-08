@@ -52,8 +52,8 @@ export const Applications: FC<{
         : skipToken,
     )
 
-  const [deleteEventApplication] =
-    api.endpoints.deleteEventApplication.useMutation()
+  // const [deleteEventApplication] =
+  //   api.endpoints.deleteEventApplication.useMutation()
 
   const { data: applicationsData, isLoading: isReadApplicationsLoading } =
     api.endpoints.readEventApplications.useQuery({
@@ -294,9 +294,9 @@ export const Applications: FC<{
             currentApplication={currentApplication}
             eventName={eventName}
             eventId={eventId}
-            setCurrentApplicationId={setCurrentApplicationId}
-            setShowAddParticipantModal={setShowAddParticipantModal}
-            deleteEventApplication={deleteEventApplication}
+            // setCurrentApplicationId={setCurrentApplicationId}
+            // setShowAddParticipantModal={setShowAddParticipantModal}
+            // deleteEventApplication={deleteEventApplication}
             categories={membershipCategories?.results ?? []}
             administrationUnits={
               administrationUnits ? administrationUnits.results : []

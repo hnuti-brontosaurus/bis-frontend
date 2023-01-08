@@ -39,7 +39,7 @@ export const SimpleParticipants = () => {
     promise: Promise<EventContact>
   }>()
 
-  const getModalData = (data: EventContact) => {
+  const getModalData = () => {
     let res = undefined
     let rej = undefined
 
@@ -62,7 +62,7 @@ export const SimpleParticipants = () => {
   const handleEdit = async (data: EventContact, i: number) => {
     setOpen(true)
     setDefaultValues(data)
-    const finalData = await getModalData(data)
+    const finalData = await getModalData()
     peopleFields.update(i, finalData)
   }
 
