@@ -83,7 +83,10 @@ export const Steps = <T extends Record<string, any>>({
             tertiary
             type="button"
             aria-label="Go to previous step"
-            onClick={() => setStep(step - 1)}
+            onClick={() => {
+              setStep(step - 1)
+              window.scrollTo(0, 0)
+            }}
           >
             <ImArrowLeft /> Krok zpátky
           </Button>
@@ -94,7 +97,10 @@ export const Steps = <T extends Record<string, any>>({
             tertiary
             type="button"
             aria-label="Go to next step"
-            onClick={() => setStep(step + 1)}
+            onClick={() => {
+              setStep(step + 1)
+              window.scrollTo(0, 0)
+            }}
           >
             Další krok <ImArrowRight />
           </Button>
