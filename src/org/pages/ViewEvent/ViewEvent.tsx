@@ -1,4 +1,12 @@
-import { Actions, Breadcrumbs, Button, ButtonLink, Loading } from 'components'
+import {
+  Actions,
+  Breadcrumbs,
+  Button,
+  ButtonLink,
+  DataView,
+  Loading,
+} from 'components'
+import * as combinedTranslations from 'config/static/combinedTranslations'
 import { sanitize } from 'dompurify'
 import type { FullEvent } from 'hooks/readFullEvent'
 import { useRemoveEvent } from 'hooks/removeEvent'
@@ -97,7 +105,9 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             ) : (
               <div className={styles.imageMissing}>
                 Obrázek chybí
-                <ButtonLink to="upravit?krok=7">Přidat</ButtonLink>
+                {readonly ? null : (
+                  <ButtonLink to="upravit?krok=7">Přidat</ButtonLink>
+                )}
               </div>
             )}
             <div className={styles.tags}>
@@ -196,8 +206,13 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             ))}
           </div>
         </div>
-        {/* <pre className={styles.data}>{JSON.stringify(event, null, '  ')}</pre> */}
-        <div>Tady chybí data (TODO)</div>
+        {/* <pre className={styles.data}>{JSON.stringify(event, null, 2)}</pre> */}
+        <h2>Data</h2>
+        <DataView
+          data={event}
+          translations={combinedTranslations.event}
+          genericTranslations={combinedTranslations.generic}
+        />
       </div>
     </>
   )
