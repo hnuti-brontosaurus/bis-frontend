@@ -213,6 +213,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
             offers: null, //{ programs: [], organizer_roles: [], team_roles: [] },
             birthday: dayjs(data.birthday).format('YYYY-MM-DD'),
             donor: null,
+            contact_address: null,
           } as UserPayload).unwrap()
           await addParticipant(newParticipant.id)
           await updateApplication({
@@ -454,38 +455,37 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               </Button>
                             </td>
                             <td>
-                              {isSavingEventApplication &&
-                              retrievedUser &&
-                              result._search_id === retrievedUser._search_id ? (
-                                <Loading>....</Loading>
-                              ) : (
-                                <Button
-                                  secondary
-                                  onClick={async e => {
-                                    e.preventDefault()
+                              <Button
+                                secondary
+                                isLoading={
+                                  isSavingEventApplication &&
+                                  retrievedUser &&
+                                  result._search_id === retrievedUser._search_id
+                                }
+                                onClick={async e => {
+                                  e.preventDefault()
 
-                                    setCreatingANewUser(false)
+                                  setCreatingANewUser(false)
 
-                                    await addParticipant(result.id)
-                                    await createEventApplication({
-                                      eventId,
-                                      application: {
-                                        ...currentApplication,
-                                        answers: [],
-                                        first_name: 'InternalApplication',
-                                        last_name: result.id,
-                                        nickname:
-                                          currentApplication.id.toString(),
-                                        health_issues: Date.now().toString(),
-                                      },
-                                    })
-                                    onClose()
-                                    clearModalData()
-                                  }}
-                                >
-                                  Přidej
-                                </Button>
-                              )}
+                                  await addParticipant(result.id)
+                                  await createEventApplication({
+                                    eventId,
+                                    application: {
+                                      ...currentApplication,
+                                      answers: [],
+                                      first_name: 'InternalApplication',
+                                      last_name: result.id,
+                                      nickname:
+                                        currentApplication.id.toString(),
+                                      health_issues: Date.now().toString(),
+                                    },
+                                  })
+                                  onClose()
+                                  clearModalData()
+                                }}
+                              >
+                                Přidej
+                              </Button>
                             </td>
                           </tr>
                           {result._search_id === selectedUserId && (
@@ -962,16 +962,10 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     >
                                       Zrušit
                                     </Button>
-                                    {!isCreatingUser ? (
-                                      <Button primary>
-                                        Vytvořit nového uživatele a přidat jako
-                                        účastníka
-                                      </Button>
-                                    ) : (
-                                      <Loading>
-                                        Přidáváme nového účastníka
-                                      </Loading>
-                                    )}
+                                    <Button primary isLoading={isCreatingUser}>
+                                      Vytvořit nového uživatele a přidat jako
+                                      účastníka
+                                    </Button>
                                     {errorsCreatingUser && (
                                       <ErrorBox
                                         error={errorsCreatingUser.data}

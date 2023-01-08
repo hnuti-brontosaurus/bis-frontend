@@ -28,7 +28,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   onClose,
   eventId,
 }) => {
-  const [createEventApplication] =
+  const [createEventApplication, { isLoading: isLoadingCreateApplication }] =
     api.endpoints.createEventApplication.useMutation()
 
   const { data: questions } = api.endpoints.readEventQuestions.useQuery({
@@ -280,7 +280,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                     })}
                   </>
                 )}
-                <Button primary>
+                <Button primary isLoading={isLoadingCreateApplication}>
                   <input type="submit" value="Přidej přihlášku" />
                 </Button>
               </>
