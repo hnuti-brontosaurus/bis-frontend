@@ -2,7 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { User, UserPayload } from 'app/services/bisTypes'
 import classNames from 'classnames'
-import { Actions, Button, Loading } from 'components'
+import { Actions, Button, Loading, StyledModal } from 'components'
 import { SelectUnknownUser } from 'components/SelectUsers'
 import stylesTable from 'components/Table.module.scss'
 import { UserForm } from 'components/UserForm/UserForm'
@@ -10,9 +10,8 @@ import {
   useShowApiErrorMessage,
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
-import { useAwaitModal } from 'hooks/useAwaitModal'
 import { merge } from 'lodash'
-import { FC, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
@@ -60,14 +59,6 @@ export const Participants: FC<{
   useShowApiErrorMessage(updateUserStatus.error)
   useShowApiErrorMessage(patchEventStatus.error)
 
-  const [inputUserData, userDataModal] = useAwaitModal(UserModalForm, {
-    title: '',
-    props: useMemo(() => ({ user: {} as User }), []),
-  })
-  const [confirmRemoveParticipant, removeParticipantModal] = useAwaitModal(
-    RemoveParticipantConfirmDialog,
-  )
-
   const addParticipant = async (newParticipantId: string) => {
     let newParticipants: string[] = []
 
@@ -92,66 +83,126 @@ export const Participants: FC<{
     setTimeOfLastAddition(Date.now())
   }
 
-  // Add a participant who doesn't yet exist in the database
-  const handleAddNewParticipant = async () => {
-    // first we open a modal with new user form
-    try {
-      const inputData = await inputUserData({
-        title: 'Nový účastník',
-        props: { user: {} as User },
+  /**
+   * Handle adding a new participant and updating a participant
+   * This is done through a form in modal
+   */
+  // keep state
+  const [userModalOpen, setUserModalOpen] = useState(false)
+  const [userModalData, setUserModalData] = useState<User | undefined>()
+
+  const handleCancelUserForm = () => {
+    setUserModalOpen(false)
+  }
+
+  const handleSubmitUserForm = async (data: UserPayload, id?: string) => {
+    // if id is passed, update user
+    if (id) {
+      await updateUser({ id, patchedUser: data }).unwrap()
+      // say that it was success
+      showMessage({
+        type: 'success',
+        message: 'Změny byly uloženy',
       })
-      const data = merge({ donor: null, offers: null }, inputData)
+    }
+    // otherwise create new user and add them as participant
+    else {
+      const fixedData = merge({ donor: null, offers: null }, data)
       // then we create the user and add them as participant
-      const { id: userId } = await createUser(data).unwrap()
+      const { id: userId } = await createUser(fixedData).unwrap()
       await addParticipant(userId)
-    } catch (e) {
-      // not sure if we need to do anything here
-      // one case is when adding is cancelled
+      // say that it was success
+      showMessage({
+        type: 'success',
+        message: 'Nový účastník byl úspěšně vytvořen a přidán',
+      })
     }
+    // and if everything works, close the form
+    setUserModalOpen(false)
   }
 
-  const handleEditParticipant = async (participant: User) => {
-    try {
-      const inputData = await inputUserData({
-        title: `Úprava dat účastnice/účastníka ${participant.first_name} ${participant.last_name}`,
-        props: { user: participant },
-      })
-      await updateUser({ id: participant.id, patchedUser: inputData }).unwrap()
-    } catch (e) {
-      // do something with error?
-    }
+  const handleClickNewParticipant = () => {
+    setUserModalData(undefined)
+    setUserModalOpen(true)
   }
 
-  const handleRemoveParticipant = async (participant: User) => {
-    try {
-      const isConfirmed = await confirmRemoveParticipant({
-        title: `Opravdu chcete smazat účastnici/účastníka ${participant.first_name} ${participant.last_name} z akce ${eventName}?`,
-      })
+  const handleClickEditParticipant = (data: User) => {
+    setUserModalData(data)
+    setUserModalOpen(true)
+  }
 
-      if (isConfirmed) {
-        // make array of participants without this one
-        const updatedParticipants = participants?.results
-          .map(p => p.id)
-          .filter(id => id !== participant.id)
-        await patchEvent({
-          id: eventId,
-          event: {
-            record: {
-              participants: updatedParticipants,
-              contacts: [],
-            },
+  const userModalTitle = userModalData
+    ? `Úprava dat účastnice/účastníka ${userModalData.first_name} ${userModalData.last_name}`
+    : 'Nový účastník'
+
+  /**
+   * Handle removing a participant
+   */
+  const [removeModalOpen, setRemoveModalOpen] = useState(false)
+  const [removeModalData, setRemoveModalData] = useState<User | undefined>()
+  const handleClickRemoveParticipant = (data: User) => {
+    setRemoveModalData(data)
+    setRemoveModalOpen(true)
+  }
+
+  const handleCancelRemoveParticipant = () => {
+    setRemoveModalOpen(false)
+  }
+
+  const handleConfirmRemoveParticipant = async () => {
+    try {
+      // make array of participants without this one
+      const updatedParticipants = participants?.results
+        .map(p => p.id)
+        .filter(id => id !== removeModalData!.id)
+      await patchEvent({
+        id: eventId,
+        event: {
+          record: {
+            participants: updatedParticipants,
+            contacts: [],
           },
-        }).unwrap()
-      }
-    } catch {
-      // we don't have to do anything, just catching a rejected confirmation
+        },
+      }).unwrap()
+
+      showMessage({
+        type: 'success',
+        message: `Uživatel/ka ${removeModalData!.first_name} ${
+          removeModalData!.last_name
+        } byl/a úspěšně smazán/a ze seznamu účastníků`,
+      })
+    } finally {
+      setRemoveModalOpen(false)
     }
   }
+
+  const removeModalTitle = removeModalData
+    ? `Opravdu chcete smazat účastnici/účastníka ${removeModalData.first_name} ${removeModalData.last_name} z akce ${eventName}?`
+    : undefined
 
   return (
     <div className={styles.ListContainer}>
-      {userDataModal}
-      {removeParticipantModal}
+      <StyledModal
+        title={userModalTitle}
+        open={userModalOpen}
+        onClose={handleCancelUserForm}
+      >
+        <UserForm
+          initialData={userModalData}
+          onCancel={handleCancelUserForm}
+          onSubmit={handleSubmitUserForm}
+        />
+      </StyledModal>
+      <StyledModal
+        title={removeModalTitle}
+        open={removeModalOpen}
+        onClose={handleCancelRemoveParticipant}
+      >
+        <RemoveParticipantConfirmDialog
+          onConfirm={handleConfirmRemoveParticipant}
+          onCancel={handleCancelRemoveParticipant}
+        />
+      </StyledModal>
       <h2>Účastníci</h2>
       {!isReadParticipantsLoading ? (
         <div>
@@ -173,7 +224,7 @@ export const Participants: FC<{
               })
             }}
           />
-          <Button type="button" secondary onClick={handleAddNewParticipant}>
+          <Button type="button" secondary onClick={handleClickNewParticipant}>
             Přidat nového účastníka
           </Button>
           {participants && participants.results && (
@@ -223,7 +274,7 @@ export const Participants: FC<{
                       <button
                         type="button"
                         aria-label={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}
-                        onClick={() => handleEditParticipant(participant)}
+                        onClick={() => handleClickEditParticipant(participant)}
                       >
                         <EditUser className={styles.editUserIconContainer} />
                       </button>
@@ -235,7 +286,9 @@ export const Participants: FC<{
                       <button
                         type="button"
                         aria-label={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
-                        onClick={() => handleRemoveParticipant(participant)}
+                        onClick={() =>
+                          handleClickRemoveParticipant(participant)
+                        }
                       >
                         <Bin
                           aria-hidden="true"
@@ -273,27 +326,33 @@ export const Participants: FC<{
   )
 }
 
-const UserModalForm = ({
-  onResolve,
-  onReject,
-  user,
-}: {
-  onResolve: (user: UserPayload) => void
-  onReject: () => void
-  user: User
-}) => <UserForm initialData={user} onSubmit={onResolve} onCancel={onReject} />
-
 const RemoveParticipantConfirmDialog = ({
-  onResolve,
+  onConfirm,
+  onCancel,
 }: {
-  onResolve: (confirm: boolean) => void
-}) => (
-  <Actions>
-    <Button secondary onClick={() => onResolve(false)}>
-      Ne
-    </Button>
-    <Button danger onClick={() => onResolve(true)}>
-      Ano, smazat
-    </Button>
-  </Actions>
-)
+  onConfirm: () => void
+  onCancel: () => void
+}) => {
+  const [saving, setSaving] = useState(false)
+  const handleClickConfirm = async () => {
+    setSaving(true)
+    try {
+      await onConfirm()
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (saving) return <Loading>Mažeme účastníka</Loading>
+
+  return (
+    <Actions>
+      <Button secondary onClick={onCancel}>
+        Ne
+      </Button>
+      <Button danger onClick={handleClickConfirm}>
+        Ano, smazat
+      </Button>
+    </Actions>
+  )
+}

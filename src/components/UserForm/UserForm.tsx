@@ -27,7 +27,7 @@ import {
 import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { merge, omit, startsWith } from 'lodash'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { requiredSelect } from 'utils/validationMessages'
@@ -185,7 +185,7 @@ export const UserForm = ({
   onCancel,
   initialData,
 }: {
-  onSubmit: (data: UserPayload) => void
+  onSubmit: (data: UserPayload, id?: string) => void
   onCancel: () => void
   initialData?: User
 }) => {
@@ -229,7 +229,15 @@ export const UserForm = ({
   }, [formState.isSubmitted, trigger, watch])
 
   const handleFormSubmit = handleSubmit(
-    data => onSubmit(form2payload(data) as UserPayload),
+    async data => {
+      setIsSaving(true)
+      try {
+        await onSubmit(form2payload(data) as UserPayload, initialData?.id)
+        // TODO on success clear the form
+      } finally {
+        setIsSaving(false)
+      }
+    },
     errors => {
       showMessage({
         type: 'error',
@@ -242,6 +250,8 @@ export const UserForm = ({
       })
     },
   )
+
+  const [isSaving, setIsSaving] = useState(false)
 
   if (!(regions && sexes && healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
@@ -431,7 +441,7 @@ export const UserForm = ({
         </FormSectionGroup>
         <Actions>
           <Button type="reset">Zrušit</Button>
-          <Button primary type="submit">
+          <Button primary isLoading={isSaving} type="submit">
             Potvrdit
           </Button>
         </Actions>
