@@ -73,6 +73,7 @@ type NestedObject =
 
 export const getObjectPaths = <O extends NestedObject>(obj: O): string[] =>
   Object.entries(obj)
+    .filter(([key]) => key !== 'ref')
     .map(([key, value]) => {
       if (typeof value === 'object')
         return getObjectPaths(value).map(path => `${key}.${path}`)
