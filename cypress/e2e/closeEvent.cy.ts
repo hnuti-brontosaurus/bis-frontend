@@ -97,6 +97,9 @@ describe('Close event - evidence and participants', () => {
         cy.get('[name=address\\.city]').type('de')
         cy.get('[name=address\\.zip_code]').type('10000')
         cy.get('[name=address\\.region]').select(3)
+
+        // give form a chance to persist
+        cy.wait(1000)
       }
 
       const checkForm = (exists: boolean) => {
@@ -222,11 +225,6 @@ describe('Close event - evidence and participants', () => {
         checkForm(true)
         // and to fill some data
         fillUserForm()
-
-        // wait a bit for the persistent data to get saved
-        // TODO this is funny - if we cancel too quickly,
-        // the data will get persisted after cancellation due to debounce
-        cy.wait(1000)
 
         // then click cancel
         cy.get('[class^=StyledModal] [type=reset]:contains(Zrušit)').click()
