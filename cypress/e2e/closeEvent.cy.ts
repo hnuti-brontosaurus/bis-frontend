@@ -70,24 +70,23 @@ describe('Close event - evidence and participants', () => {
     })
 
     describe('Adding non-existent user as participant', () => {
-      beforeEach(() => {
-        cy.intercept(
-          { method: 'POST', pathname: '/api/frontend/users' },
-          { fixture: 'newUser' },
-        ).as('createUser')
-      })
-
-      it('should open a modal, receive data of new user, and save them as a participant', () => {
+      // do the initial visiting and clicking to open user form modal
+      const visitPage = () => {
         cy.visit('/org/akce/1000/uzavrit')
         cy.get('label:contains(Mám všechny informace)')
           .should('be.visible')
           .click()
+      }
+
+      const clickAddNewParticipant = () => {
         cy.get('button:contains(Přidat nového účastníka)')
           .should('be.visible')
           .click()
+      }
 
-        // we should be able to see a form waiting for user data
-
+      // check open form waiting for user data
+      // and fill some data
+      const fillUserForm = () => {
         cy.get('input[name=first_name]').should('be.visible').type('first_name')
         cy.get('input[name=last_name]').should('be.visible').type('last_name')
         cy.get('[placeholder=DD]').should('be.visible').type('01')
@@ -98,7 +97,28 @@ describe('Close event - evidence and participants', () => {
         cy.get('[name=address\\.city]').type('de')
         cy.get('[name=address\\.zip_code]').type('10000')
         cy.get('[name=address\\.region]').select(3)
+      }
 
+      const checkForm = (exists: boolean) => {
+        cy.get('[class^=StyledModal]:contains(Nový účastník)').should(
+          exists ? 'exist' : 'not.exist',
+        )
+      }
+
+      it('should open a modal, receive data of new user, and save them as a participant', () => {
+        visitPage()
+        clickAddNewParticipant()
+
+        // we should be able to see an open form
+        checkForm(true)
+        // and to fill some data
+        fillUserForm()
+
+        // click Submit and succeed
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/users' },
+          { fixture: 'newUser' },
+        ).as('createUser')
         cy.get('[type=submit]:contains(Potvrdit)').click()
 
         // we should call create user with proper data
@@ -141,6 +161,81 @@ describe('Close event - evidence and participants', () => {
               number_of_participants_under_26: null,
             },
           })
+
+        // the modal should be invisible at this point
+        checkForm(false)
+
+        // afterwards, the modal should be cleared
+        clickAddNewParticipant()
+        checkForm(true)
+        cy.get('[name=first_name]').should('have.value', '')
+      })
+
+      it('[api error] should show error and keep modal open', () => {
+        visitPage()
+        clickAddNewParticipant()
+
+        // we should be able to see an open form
+        checkForm(true)
+        // and to fill some data
+        fillUserForm()
+
+        // click Submit and fail
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/users' },
+          { statusCode: 400 },
+        ).as('createUser')
+        cy.get('[type=submit]:contains(Potvrdit)').click()
+
+        // check that error is shown
+        cy.get('div:contains(Něco se nepovedlo)').should('be.visible')
+
+        // wait a bit and check that modal is still open
+        cy.wait(1000)
+        checkForm(true)
+      })
+
+      it('should keep data in form after leaving and returning', () => {
+        visitPage()
+        clickAddNewParticipant()
+
+        // we should be able to see an open form
+        checkForm(true)
+        // and to fill some data
+        fillUserForm()
+
+        // leave
+        cy.get('body').type('{esc}')
+        checkForm(false)
+
+        // return
+        clickAddNewParticipant()
+
+        cy.get('[name=first_name]').should('have.value', 'first_name')
+      })
+
+      it('should clear form when clicking Cancel', () => {
+        visitPage()
+        clickAddNewParticipant()
+
+        // we should be able to see an open form
+        checkForm(true)
+        // and to fill some data
+        fillUserForm()
+
+        // wait a bit for the persistent data to get saved
+        // TODO this is funny - if we cancel too quickly,
+        // the data will get persisted after cancellation due to debounce
+        cy.wait(1000)
+
+        // then click cancel
+        cy.get('[class^=StyledModal] [type=reset]:contains(Zrušit)').click()
+        // the form should close
+        checkForm(false)
+
+        // and it should be empty after reopening
+        clickAddNewParticipant()
+        cy.get('[name=first_name]').should('have.value', '')
       })
     })
 

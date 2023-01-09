@@ -188,6 +188,7 @@ export const Participants: FC<{
         onClose={handleCancelUserForm}
       >
         <UserForm
+          id={(userModalData?.id ?? 'new') + '-participant'}
           initialData={userModalData}
           onCancel={handleCancelUserForm}
           onSubmit={handleSubmitUserForm}

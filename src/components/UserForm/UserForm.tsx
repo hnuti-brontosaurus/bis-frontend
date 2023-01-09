@@ -26,9 +26,15 @@ import {
 } from 'components'
 import * as translations from 'config/static/translations'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
-import { merge, omit, startsWith } from 'lodash'
+import {
+  useClearPersistentForm,
+  usePersistentFormData,
+  usePersistForm,
+} from 'hooks/persistForm'
+import { merge, mergeWith, omit, startsWith } from 'lodash'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { withOverwriteArray } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { requiredSelect } from 'utils/validationMessages'
 import * as yup from 'yup'
@@ -181,10 +187,14 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
 })
 
 export const UserForm = ({
+  id,
   onSubmit,
   onCancel,
   initialData,
 }: {
+  // provide id for persisting form data
+  // because we don't want to overwrite contexts
+  id: string
   onSubmit: (data: UserPayload, id?: string) => void
   onCancel: () => void
   initialData?: User
@@ -199,20 +209,22 @@ export const UserForm = ({
   const { data: healthInsuranceCompanies } =
     api.endpoints.readHealthInsuranceCompanies.useQuery({ pageSize: 1000 })
 
-  // const persistedData = usePersistentFormData('user', user.id)
+  const persistedData = usePersistentFormData('user', id)
 
   const methods = useForm<UserFormShape>({
-    defaultValues: merge(
+    defaultValues: mergeWith(
       { sex: 0, health_insurance_company: 0 },
       initialData ? data2form(initialData) : {},
+      persistedData,
+      withOverwriteArray,
     ),
     resolver: yupResolver(validationSchema),
   })
   const { register, watch, control, trigger, formState, handleSubmit } = methods
 
-  // usePersistForm('user', user.id, watch)
+  usePersistForm('user', id, watch)
 
-  // const clearForm = useClearPersistentForm('user', user.id)
+  const cancelPersist = useClearPersistentForm('user', id)
 
   // validate form fields dependent on other fields
   // i wish there was a better way
@@ -234,6 +246,10 @@ export const UserForm = ({
       try {
         await onSubmit(form2payload(data) as UserPayload, initialData?.id)
         // TODO on success clear the form
+        cancelPersist()
+      } catch {
+        // here we just catch the api error when it appears
+        // that's to satisfy cypress tests
       } finally {
         setIsSaving(false)
       }
@@ -251,13 +267,18 @@ export const UserForm = ({
     },
   )
 
+  const handleFormCancel = () => {
+    cancelPersist()
+    onCancel()
+  }
+
   const [isSaving, setIsSaving] = useState(false)
 
   if (!(regions && sexes && healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
 
   return (
-    <form onSubmit={handleFormSubmit} onReset={onCancel}>
+    <form onSubmit={handleFormSubmit} onReset={handleFormCancel}>
       <FormProvider {...methods}>
         <FormSectionGroup>
           <FormSection header="Osobní údaje">
@@ -440,7 +461,9 @@ export const UserForm = ({
           </FormSection>
         </FormSectionGroup>
         <Actions>
-          <Button type="reset">Zrušit</Button>
+          <Button secondary type="reset">
+            Zrušit
+          </Button>
           <Button primary isLoading={isSaving} type="submit">
             Potvrdit
           </Button>
