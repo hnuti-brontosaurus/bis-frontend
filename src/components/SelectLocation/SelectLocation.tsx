@@ -11,14 +11,19 @@ import {
   InfoBox,
   InlineSection,
   Label,
-  Map,
   MarkerType,
   SelectObject,
 } from 'components'
 import { LatLngTuple } from 'leaflet'
 import { cloneDeep } from 'lodash'
 import merge from 'lodash/merge'
-import { forwardRef, useEffect, useMemo, useState } from 'react'
+import React, {
+  forwardRef,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { FiCheckCircle } from 'react-icons/fi'
@@ -26,6 +31,10 @@ import { Overwrite } from 'utility-types'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
 import styles from './SelectLocation.module.scss'
+const Map = React.lazy(async () => {
+  const { Map } = await import('components/Map')
+  return { default: Map }
+})
 
 export type NewLocation = Overwrite<
   Pick<Location, 'gps_location' | 'name' | 'address' | 'description'>,
@@ -204,21 +213,32 @@ export const SelectLocation = forwardRef<
       <div className={styles.mainContentContainerWrapper}>
         <div className={styles.mainContentContainer}>
           <div className={styles.mapColumn}>
-            <Map
-              className={styles.mapContainer}
-              markers={markers}
-              selection={selection}
-              value={isEditing ? newLocationCoordinates : undefined}
-              onChange={coordinates => {
-                if (isEditing) {
-                  setNewLocationCoordinates(coordinates)
-                }
-              }}
-              onSelect={handleSelect}
-              onChangeBounds={bounds => setBounds(bounds)}
-              isLoading={isLoading}
-              editMode={isEditing}
-            />{' '}
+            <Suspense
+              fallback={
+                <div
+                  className={classNames(
+                    styles.mapContainer,
+                    'leaflet-container',
+                  )}
+                />
+              }
+            >
+              <Map
+                className={styles.mapContainer}
+                markers={markers}
+                selection={selection}
+                value={isEditing ? newLocationCoordinates : undefined}
+                onChange={coordinates => {
+                  if (isEditing) {
+                    setNewLocationCoordinates(coordinates)
+                  }
+                }}
+                onSelect={handleSelect}
+                onChangeBounds={bounds => setBounds(bounds)}
+                isLoading={isLoading}
+                editMode={isEditing}
+              />
+            </Suspense>
             {isEditing ? (
               <Button
                 secondary

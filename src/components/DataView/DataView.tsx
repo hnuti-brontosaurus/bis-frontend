@@ -126,7 +126,7 @@ export const DataView = <T extends Data>({
           !('id' in value && 'name' in value)
         )
           return (
-            <div>
+            <div key={key}>
               {createElement(
                 `h${depth + 2}`,
                 {},
@@ -142,7 +142,7 @@ export const DataView = <T extends Data>({
           )
 
         return (
-          <div>
+          <div key={key}>
             <span className={styles.inlineTitle}>
               {translateKey(key, translations, genericTranslations)}
             </span>

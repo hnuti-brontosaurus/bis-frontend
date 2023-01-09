@@ -32,9 +32,9 @@ export { LazyImportExcelButton as ImportExcelButton } from './ImportExcelButton/
 export { InfoMessage } from './InfoMessage/InfoMessage'
 export { ListHeader } from './ListHeader/ListHeader'
 export { Loading } from './Loading/Loading'
-export { Map } from './Map/Map'
+// export { Map } from './Map/Map' // export separately to split bundle
 export type { ClearBounds, MarkerType } from './Map/Map'
-export { MapyCzMap } from './MapyCzMap/MapyCzMap'
+// export { MapyCzMap } from './MapyCzMap/MapyCzMap' // not used
 export { MapyCzSearch } from './MapyCzSearch/MapyCzSearch'
 export { NumberInput } from './NumberInput/NumberInput'
 export { OSMSearch } from './OSMSearch/OSMSearch'
