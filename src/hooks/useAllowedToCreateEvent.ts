@@ -16,5 +16,11 @@ export const useAllowedToCreateEvent = () => {
       allQualifications.results.map(q => q.slug),
       allQualifications.results,
     )
-  return [canAddNewEvent, isLoading || isLoadingUser]
+  /* The line below is commented out because at the moment,
+      we want to allow every organizer to create actions
+      To make it work again (stop organizers without qualifications to create events), 
+      just uncomment the line
+      */
+  // return [canAddNewEvent, isLoading || isLoadingUser]
+  return [true, false]
 }
