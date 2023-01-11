@@ -4,6 +4,7 @@ import {
   Button,
   ButtonLink,
   DataView,
+  ExternalButtonLink,
   Loading,
 } from 'components'
 import * as combinedTranslations from 'config/static/combinedTranslations'
@@ -13,8 +14,10 @@ import { useRemoveEvent } from 'hooks/removeEvent'
 import { useTitle } from 'hooks/title'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
+import { getRegistrationMethod } from 'org/components/EventForm/EventForm'
 import { AiOutlineStop } from 'react-icons/ai'
 import {
+  FaExternalLinkAlt,
   FaPencilAlt,
   FaRedo,
   FaRegCalendarAlt,
@@ -90,6 +93,21 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             )}
             {!isEventClosed(event) ? (
               <>
+                {getRegistrationMethod(event) === 'standard' && (
+                  <ButtonLink secondary to={`/akce/${eventId}/prihlasit`}>
+                    přihláška
+                  </ButtonLink>
+                )}
+                {getRegistrationMethod(event) === 'other' && (
+                  <ExternalButtonLink
+                    secondary
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={event.registration!.alternative_registration_link}
+                  >
+                    přihláška <FaExternalLinkAlt />
+                  </ExternalButtonLink>
+                )}
                 {event.is_canceled ? (
                   <Button secondary onClick={() => restoreCanceledEvent(event)}>
                     <FaRedo /> obnovit

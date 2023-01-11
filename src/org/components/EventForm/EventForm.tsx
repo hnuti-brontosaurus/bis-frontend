@@ -1,5 +1,5 @@
 import { api } from 'app/services/bis'
-import type { EventPayload, Location } from 'app/services/bisTypes'
+import type { Event, EventPayload, Location } from 'app/services/bisTypes'
 import {
   EventPropagationImagePayload,
   Question,
@@ -164,15 +164,8 @@ type ErrorShapes = {
   [K in StepName]: FieldErrorsImpl<StepShapes[K]>
 }
 
-const initialData2form = (
-  data?: Partial<InitialEventData>,
-): Partial<EventFormShape> => {
-  const returnData: Partial<EventFormShape> = merge(
-    { number_of_sub_events: 1 },
-    data,
-  ) as Partial<EventFormShape>
-
-  const registrationMethod = data?.registration?.is_event_full
+export const getRegistrationMethod = (data?: Pick<Event, 'registration'>) =>
+  data?.registration?.is_event_full
     ? 'full'
     : data?.registration?.is_registration_required === false
     ? 'none'
@@ -181,6 +174,18 @@ const initialData2form = (
     : data?.registration?.is_registration_required === true
     ? 'standard'
     : ''
+
+const initialData2form = (
+  data?: Partial<InitialEventData>,
+): Partial<EventFormShape> => {
+  const returnData: Partial<EventFormShape> = merge(
+    { number_of_sub_events: 1 },
+    data,
+  ) as Partial<EventFormShape>
+
+  const registrationMethod = getRegistrationMethod(
+    merge({ registration: null }, data),
+  )
 
   if (registrationMethod) {
     returnData.registrationMethod = registrationMethod

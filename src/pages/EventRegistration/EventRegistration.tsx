@@ -9,6 +9,7 @@ import {
   usePersistentFormData,
 } from 'hooks/persistForm'
 import { useTitle } from 'hooks/title'
+import { getRegistrationMethod } from 'org/components/EventForm/EventForm'
 import { useState } from 'react'
 import { FaRegCalendarAlt } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
@@ -66,7 +67,9 @@ export const EventRegistration = () => {
   if (!event.registration)
     return <Error message="Není zadefinována registrace."></Error>
 
-  if (event.registration.is_event_full)
+  const registrationMethod = getRegistrationMethod(event)
+
+  if (registrationMethod === 'full')
     return (
       <Error message="Tato akce je plná">
         <a href="https://brontosaurus.cz/dobrovolnicke-akce/">
@@ -75,15 +78,20 @@ export const EventRegistration = () => {
       </Error>
     )
 
-  if (!event.registration.is_registration_required)
+  if (registrationMethod === 'none')
     return (
       <Error message="Na tuto akci se nemusíte přihlašovat. Stačí přijít."></Error>
     )
 
-  // if (!event.registration.questionnaire)
-  //   return (
-  //     <Error message="Na tuto akci se nepřihlašuje standardním formulářem"></Error>
-  //   )
+  // currently this is not displayed because of https://github.com/lamanchy/bis/issues/15
+  if (registrationMethod === 'other')
+    return (
+      <Error message="Přihláška je jinde">
+        <a href={event.registration.alternative_registration_link}>
+          Pokračujte zde
+        </a>
+      </Error>
+    )
 
   const handleRestart = () => {
     clearPersistentData()
