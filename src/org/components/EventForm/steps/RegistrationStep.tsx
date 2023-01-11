@@ -48,7 +48,7 @@ export const RegistrationStep = ({
                         { name: 'Ano', value: true },
                         { name: 'Ne', value: false },
                       ].map(({ name, value }) => (
-                        <label key={name}>
+                        <label key={name} className="radioLabel">
                           <input
                             ref={field.ref}
                             type="radio"
@@ -99,7 +99,7 @@ export const RegistrationStep = ({
                     value: 'full',
                   },
                 ].map(({ name, value }) => (
-                  <label key={value}>
+                  <label key={value} className="radioLabel">
                     <input
                       type="radio"
                       value={value}
@@ -196,7 +196,11 @@ export const RegistrationStep = ({
                                 )}
                               />
                             </FormInputError>
-                            <label className={styles.questionRequired}>
+                            <label
+                              className={
+                                (styles.questionRequired, 'checkboxLabel')
+                              }
+                            >
                               <input
                                 type="checkbox"
                                 {...register(

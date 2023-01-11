@@ -23,7 +23,7 @@ export const LocationStep = ({
       <form id={formId} />
       <FormSectionGroup startIndex={9}>
         <FormSection header="Místo konání" required onWeb>
-          <label>
+          <label className='checkboxLabel'>
             <input form={formId} type="checkbox" {...register('online')} /> Akce
             se koná online
           </label>
