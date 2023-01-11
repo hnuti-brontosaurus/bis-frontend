@@ -17,8 +17,9 @@ import {
   InlineSection,
   Label,
   Loading,
+  SelectUnknownUser,
+  SelectUnknownUsers,
 } from 'components'
-import { SelectUnknownUser, SelectUnknownUsers } from 'components/SelectUsers'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
 import { get, uniqBy } from 'lodash'
@@ -77,9 +78,10 @@ export const OrganizerStep = ({
   )
   const getMainOrganizerLabel = useCallback(
     (user: User | UserSearch) =>
-      `${user.display_name} (${
-        'id' in user
-          ? user.qualifications
+      user.display_name +
+      ('id' in user
+        ? ` (${
+            user.qualifications
               .filter(
                 q =>
                   new Date(q.valid_since) <= new Date() &&
@@ -87,8 +89,8 @@ export const OrganizerStep = ({
               )
               .map(q => q.category.name)
               .join(', ') || '—'
-          : '?'
-      })`,
+          })`
+        : ''),
     [],
   )
   /**

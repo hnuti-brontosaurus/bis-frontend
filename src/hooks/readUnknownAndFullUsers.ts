@@ -14,7 +14,7 @@ export const useReadUnknownAndFullUsers = (
       }
     | typeof skipToken,
 ) => {
-  const { data: allUsers, isLoading: isAllUsersLoading } =
+  const { data: allUsers, ...allUsersStatus } =
     api.endpoints.readAllUsers.useQuery(params)
 
   const searchIds = useMemo(
@@ -22,7 +22,7 @@ export const useReadUnknownAndFullUsers = (
     [allUsers],
   )
 
-  const { data: fullUsers, isLoading: isFullUsersLoading } =
+  const { data: fullUsers, ...fullUsersStatus } =
     api.endpoints.readUsers.useQuery(
       searchIds && searchIds.length > 0 ? { _search_id: searchIds } : skipToken,
     )
@@ -38,6 +38,7 @@ export const useReadUnknownAndFullUsers = (
 
   return {
     data: combinedUsers,
-    isLoading: isAllUsersLoading || isFullUsersLoading,
+    isLoading: allUsersStatus.isLoading || fullUsersStatus.isLoading,
+    isFetching: allUsersStatus.isFetching || fullUsersStatus.isFetching,
   }
 }

@@ -51,7 +51,6 @@
   @include basic-button;
   .icon {
     color: colors.$bronto;
-    animation: animate 1s linear infinite;
     width: 30px;
   }
 }
@@ -87,14 +86,5 @@
   :local .primary {
     background-color: colors.$opportunities;
     border-color: colors.$opportunities;
-  }
-}
-
-@keyframes animate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
