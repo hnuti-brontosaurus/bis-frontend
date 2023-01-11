@@ -24,7 +24,12 @@ import {
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useOutletContext, useParams } from 'react-router-dom'
-import { formatDateRange, formatDateTime, sortOrder } from 'utils/helpers'
+import {
+  formatDateRange,
+  formatDateTime,
+  isEventClosed,
+  sortOrder,
+} from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
 export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
@@ -65,12 +70,16 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
         </div>
         {!readonly && (
           <Actions>
-            <ButtonLink secondary to={`/org/akce/${eventId}/upravit`}>
-              <FaPencilAlt /> upravit
-            </ButtonLink>
-            <ButtonLink secondary to={`/org/akce/${eventId}/uzavrit`}>
-              <FaRegCheckCircle /> po akci
-            </ButtonLink>
+            {!isEventClosed(event) ? (
+              <>
+                <ButtonLink secondary to={`/org/akce/${eventId}/upravit`}>
+                  <FaPencilAlt /> upravit
+                </ButtonLink>
+                <ButtonLink secondary to={`/org/akce/${eventId}/uzavrit`}>
+                  <FaRegCheckCircle /> po akci
+                </ButtonLink>
+              </>
+            ) : null}
             {canAddEvent && (
               <ButtonLink
                 secondary
@@ -79,18 +88,22 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
                 <FaRegCopy /> klonovat
               </ButtonLink>
             )}
-            {event.is_canceled ? (
-              <Button secondary onClick={() => restoreCanceledEvent(event)}>
-                <FaRedo /> obnovit
-              </Button>
-            ) : (
-              <Button danger onClick={() => cancelEvent(event)}>
-                <AiOutlineStop /> zrušit
-              </Button>
-            )}
-            <Button danger onClick={() => removeEvent(event)}>
-              <FaTrashAlt /> smazat
-            </Button>
+            {!isEventClosed(event) ? (
+              <>
+                {event.is_canceled ? (
+                  <Button secondary onClick={() => restoreCanceledEvent(event)}>
+                    <FaRedo /> obnovit
+                  </Button>
+                ) : (
+                  <Button danger onClick={() => cancelEvent(event)}>
+                    <AiOutlineStop /> zrušit
+                  </Button>
+                )}
+                <Button danger onClick={() => removeEvent(event)}>
+                  <FaTrashAlt /> smazat
+                </Button>
+              </>
+            ) : null}
           </Actions>
         )}
 

@@ -98,7 +98,7 @@ export const getEventStatus = (event: Event): EventStatus => {
 }
 
 // event should be finished until February next year
-const shouldBeFinishedUntil = (event: Event): number => {
+const shouldBeFinishedUntil = (event: { end: string }): number => {
   const eventEnd = new Date(event.end)
   eventEnd.getFullYear()
 
@@ -113,7 +113,7 @@ const shouldBeFinishedUntil = (event: Event): number => {
 /**
  * Find out whether event is so old that it can't be edited anymore
  */
-export const isEventClosed = (event: Event): boolean =>
+export const isEventClosed = (event: { end: string }): boolean =>
   shouldBeFinishedUntil(event) < Date.now()
 
 export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>

@@ -1,5 +1,10 @@
 import { api } from 'app/services/bis'
-import { Breadcrumbs, Loading, useCreateOrSelectLocation } from 'components'
+import {
+  Breadcrumbs,
+  Error,
+  Loading,
+  useCreateOrSelectLocation,
+} from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -10,7 +15,7 @@ import merge from 'lodash/merge'
 import { EventForm, InitialEventData } from 'org/components'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
-import { sortOrder } from 'utils/helpers'
+import { isEventClosed, sortOrder } from 'utils/helpers'
 
 export const UpdateEvent = () => {
   const params = useParams()
@@ -41,6 +46,17 @@ export const UpdateEvent = () => {
   useShowApiErrorMessage(updateEventError, 'Nepodařilo se uložit změny')
 
   const createOrSelectLocation = useCreateOrSelectLocation()
+
+  if (isEventClosed(event))
+    return (
+      <>
+        <Breadcrumbs eventName={event && event.name} />
+        <Error status={403} message="Tuto akci už nelze upravovat">
+          Upravovat akce můžete jen do konce ledna roku následujícího po roce
+          konání akce
+        </Error>
+      </>
+    )
 
   if (
     isUpdatingEvent ||
