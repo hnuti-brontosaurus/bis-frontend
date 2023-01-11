@@ -70,6 +70,18 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
       : skipToken,
   )
 
+  // we'll also show last year membership till end of February
+  // we want to give people time to register for the new year
+  // and still show continuity of membership
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().getMonth()
+  const currentMemberships = (user?.memberships ?? []).filter(
+    membership =>
+      membership.year === currentYear ||
+      (currentMonth < 2 && membership.year === currentYear - 1),
+  )
+  // TODO consider showing historical memberships, too
+
   if (!open) return null
 
   return (
@@ -195,43 +207,37 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
               )}
             </div>
           )}
-          {user.memberships && user.memberships.length !== 0 && (
+          {currentMemberships && currentMemberships.length !== 0 && (
             <div>
               <span>Členství: </span>
-              <span>
-                {user.memberships.map(membership => {
+              <div>
+                {currentMemberships.map(membership => {
                   return (
                     <Fragment
                       key={`${membership.year}-${membership.administration_unit}-${membership.category}`}
                     >
                       {administrationUnits && categories && (
                         <div>
-                          <>
-                            <span>
-                              {
-                                administrationUnits.find(
-                                  unit =>
-                                    membership.administration_unit === unit.id,
-                                )?.name
-                              }
-                            </span>
-                            <span>
-                              {
-                                categories.find(
-                                  category =>
-                                    membership.category.id === category.id,
-                                )?.name
-                              }
-                            </span>
-                            <span>{' od: '}</span>
-                            <span>{membership.year}</span>
-                          </>
+                          {
+                            administrationUnits.find(
+                              unit =>
+                                membership.administration_unit === unit.id,
+                            )?.name
+                          }
+                          {' - '}
+                          {
+                            categories.find(
+                              category =>
+                                membership.category.id === category.id,
+                            )?.name
+                          }{' '}
+                          ({membership.year})
                         </div>
                       )}
                     </Fragment>
                   )
                 })}
-              </span>
+              </div>
             </div>
           )}
         </div>
