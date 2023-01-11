@@ -48,8 +48,6 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
   currentParticipant,
   savedParticipants,
 }) => {
-  if (!open) return null
-
   const { data: currentApplicationData } =
     api.endpoints.readEventApplication.useQuery(
       currentParticipant &&
@@ -71,6 +69,8 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
         }
       : skipToken,
   )
+
+  if (!open) return null
 
   return (
     <StyledModal
@@ -219,7 +219,7 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
                               {
                                 categories.find(
                                   category =>
-                                    membership.category === category.id,
+                                    membership.category.id === category.id,
                                 )?.name
                               }
                             </span>

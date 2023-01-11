@@ -31,6 +31,7 @@ export type {
   Registration,
   SexCategory,
   TokenResponse,
+  User,
   UserAddress as Address,
   UserSearch,
 } from './testApi'
@@ -38,17 +39,6 @@ export type {
 export type OpportunityCategory = Overwrite<
   original.OpportunityCategory,
   { slug: Required<original.WebOpportunitiesListApiArg>['category'][0] }
->
-
-export type User = Overwrite<
-  original.User,
-  {
-    memberships: {
-      category: number
-      administration_unit: number
-      year: number
-    }[]
-  }
 >
 
 export type EventCategory = Overwrite<
