@@ -7,17 +7,20 @@ import {
   BirthdayInput,
   birthdayValidation,
   FormInputError,
+  LoadingIcon,
 } from 'components'
 import modalStyles from 'components/StyledModal/StyledModal.module.scss'
 import { useDebouncedState } from 'hooks/debouncedState'
 import { useReadUnknownAndFullUsers } from 'hooks/readUnknownAndFullUsers'
-import { forwardRef, InputHTMLAttributes } from 'react'
+import { forwardRef, InputHTMLAttributes, ReactNode } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { FaBirthdayCake } from 'react-icons/fa'
 import Select from 'react-select'
 import { Assign } from 'utility-types'
 import * as yup from 'yup'
-import { Button } from '.'
+import { Button } from '..'
+import styles from './SelectUsers.module.scss'
 
 type SelectObjectsProps<T> = Omit<
   Assign<
@@ -126,7 +129,7 @@ export const SelectUnknownUser = forwardRef<
   ) => {
     const [searchQuery, debouncedSearchQuery, setSearchQuery] =
       useDebouncedState(1000, '')
-    const { data: userOptions, isLoading: isOptionsLoading } =
+    const { data: userOptions, isFetching: isOptionsFetching } =
       useReadUnknownAndFullUsers(
         debouncedSearchQuery.length >= 2
           ? {
@@ -140,7 +143,7 @@ export const SelectUnknownUser = forwardRef<
     return (
       <Select<UserSearch | User>
         {...rest}
-        isLoading={searchQuery !== debouncedSearchQuery || isOptionsLoading}
+        isLoading={searchQuery !== debouncedSearchQuery || isOptionsFetching}
         ref={ref}
         isClearable
         options={userOptions ? userOptions : []}
@@ -166,10 +169,24 @@ export const SelectUnknownUser = forwardRef<
         getOptionLabel={
           getLabel ?? (user => user.display_name + ('id' in user ? '' : ' ?'))
         }
+        formatOptionLabel={user =>
+          formatUnknownUserOptionLabel(user, isOptionsFetching, getLabel)
+        }
         getOptionValue={user => user._search_id}
       />
     )
   },
+)
+
+const formatUnknownUserOptionLabel = (
+  user: User | UserSearch,
+  isLoading: boolean,
+  getLabel?: (user: User | UserSearch) => string | ReactNode,
+): ReactNode => (
+  <div className={styles.optionLabel}>
+    {getLabel ? getLabel(user) : user.display_name}
+    {'id' in user ? null : isLoading ? <LoadingIcon /> : <FaBirthdayCake />}
+  </div>
 )
 
 const birthdayValidationSchema: yup.ObjectSchema<{
@@ -233,7 +250,7 @@ export const SelectUnknownUsers = forwardRef<
     1000,
     '',
   )
-  const { data: userOptions, isLoading: isOptionsLoading } =
+  const { data: userOptions, isFetching: isOptionsFetching } =
     useReadUnknownAndFullUsers(
       debouncedSearchQuery.length >= 2
         ? {
@@ -247,7 +264,7 @@ export const SelectUnknownUsers = forwardRef<
   return (
     <Select
       {...rest}
-      isLoading={searchQuery !== debouncedSearchQuery || isOptionsLoading}
+      isLoading={searchQuery !== debouncedSearchQuery || isOptionsFetching}
       ref={ref}
       isMulti
       isClearable={false}
@@ -276,6 +293,9 @@ export const SelectUnknownUsers = forwardRef<
       }}
       getOptionLabel={user => user.display_name + ('id' in user ? '' : ' ?')}
       getOptionValue={user => user._search_id}
+      formatOptionLabel={user =>
+        formatUnknownUserOptionLabel(user, isOptionsFetching)
+      }
     />
   )
 })

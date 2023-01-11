@@ -32,6 +32,7 @@ export { LazyImportExcelButton as ImportExcelButton } from './ImportExcelButton/
 export { InfoMessage } from './InfoMessage/InfoMessage'
 export { ListHeader } from './ListHeader/ListHeader'
 export { Loading } from './Loading/Loading'
+export { LoadingIcon } from './LoadingIcon/LoadingIcon'
 // export { Map } from './Map/Map' // export separately to split bundle
 export type { ClearBounds, MarkerType } from './Map/Map'
 // export { MapyCzMap } from './MapyCzMap/MapyCzMap' // not used
@@ -48,6 +49,10 @@ export {
 } from './SelectLocation/SelectLocation'
 export type { NewLocation } from './SelectLocation/SelectLocation'
 export { SelectObject } from './SelectObject'
+export {
+  SelectUnknownUser,
+  SelectUnknownUsers,
+} from './SelectUsers/SelectUsers'
 export { Step, Steps } from './Steps/Steps'
 export { StyledModal } from './StyledModal/StyledModal'
 export { TogglePasswordInput } from './TogglePasswordInput/TogglePasswordInput'
