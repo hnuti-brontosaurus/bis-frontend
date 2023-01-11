@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// TODO enable the above rule again when we use this feature again
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { hasRequiredQualification } from 'org/utils/validateQualifications'
