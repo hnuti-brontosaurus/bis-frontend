@@ -11,6 +11,8 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-width: 2000px;
+  margin: auto;
 
   & > .row {
     // border: 1px dotted grey; // for debugging

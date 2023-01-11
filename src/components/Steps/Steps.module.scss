@@ -6,7 +6,7 @@
   display: none;
 }
 
-$step-button-horizontal-padding: 1rem;
+$step-button-horizontal-padding: 0.5rem;
 $step-button-vertical-padding: 0.2rem;
 $step-button-border-width: 4px;
 $step-button-height: 1rem;
@@ -30,20 +30,27 @@ $step-button-line-height: 1.5rem;
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem $step-button-horizontal-gap;
-  @include media.for-phone-only {
-    margin-top: 16px;
-    overflow: hidden;
+  gap: 0.2rem 0.5rem;
+  overflow: hidden;
+  margin-top: 16px;
+  @include media.for-tablet-landscape-up {
+    margin-top: 0;
+  }
+  @include media.for-big-desktop-up {
+    gap: 0.2rem $step-button-horizontal-gap;
   }
   .stepButton {
     line-height: $step-button-line-height;
     white-space: nowrap;
-    padding: $step-button-vertical-padding $step-button-horizontal-padding;
+    padding: 0.1rem 0.5rem;
     border: $step-button-border-width solid colors.$bronto-light;
     background-color: colors.$bronto-light;
     color: colors.$bronto;
     border-radius: 2rem;
     height: 44px;
+    @include media.for-big-desktop-up {
+      padding: $step-button-vertical-padding $step-button-horizontal-padding;
+    }
     &::first-letter {
       text-transform: uppercase;
     }
@@ -108,8 +115,11 @@ $step-button-line-height: 1.5rem;
   }
 }
 
-@include media.for-phone-only {
+.topActions {
+  display: none;
+}
+@include media.for-desktop-up {
   .topActions {
-    display: none;
+    display: flex;
   }
 }
