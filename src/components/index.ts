@@ -3,7 +3,7 @@ export {
   birthdayValidation,
 } from './BirthdayInput/BirthdayInput'
 export { Breadcrumbs } from './Breadcrumbs/Breadcrumbs'
-export { Button, ButtonLink } from './Button/Button'
+export { Button, ButtonLink, ExternalButtonLink } from './Button/Button'
 export { ButtonSelect } from './ButtonSelect/ButtonSelect'
 export { DataView } from './DataView/DataView'
 export { Error } from './Error/Error'

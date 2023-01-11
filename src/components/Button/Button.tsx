@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { LoadingIcon } from 'components'
-import { ButtonHTMLAttributes } from 'react'
+import { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import styles from './Button.module.scss'
 
@@ -39,6 +39,35 @@ export const ButtonLink = ({
     >
       {children}
     </Link>
+  )
+}
+
+/**
+ * A react-router-dom Link styled to look like button
+ */
+export const ExternalButtonLink = ({
+  children,
+  className,
+  primary,
+  danger,
+  secondary,
+  tertiary,
+  ...props
+}: AnchorHTMLAttributes<HTMLAnchorElement> & ButtonProps) => {
+  return (
+    <a
+      className={classNames(
+        className,
+        styles.button,
+        primary && styles.primary,
+        danger && styles.danger,
+        secondary && styles.secondary,
+        tertiary && styles.tertiary,
+      )}
+      {...props}
+    >
+      {children}
+    </a>
   )
 }
 
