@@ -275,7 +275,6 @@ export const Participants: FC<{
                     </td>
                     <td
                       onClick={() => {}}
-                      className={stylesTable.cellWithButton}
                     >
                       <button
                         type="button"
@@ -287,7 +286,6 @@ export const Participants: FC<{
                     </td>
                     <td
                       onClick={() => {}}
-                      className={stylesTable.cellWithButton}
                     >
                       <button
                         type="button"
