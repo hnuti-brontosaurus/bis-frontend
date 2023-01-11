@@ -1,7 +1,7 @@
 import { useAppDispatch } from 'app/hooks'
+import { LoadingIcon } from 'components'
 import { actions } from 'features/ui/uiSlice'
 import { ReactNode, useEffect } from 'react'
-import { RiLoader4Fill } from 'react-icons/ri'
 import styles from './Loading.module.scss'
 
 export const Loading = ({
@@ -26,7 +26,7 @@ export const Loading = ({
 
   return (
     <div className={styles.container}>
-      <RiLoader4Fill className={styles.icon} size={40} />
+      <LoadingIcon className={styles.icon} size={40} />
       <div className={styles.message}>{children}</div>
     </div>
   )

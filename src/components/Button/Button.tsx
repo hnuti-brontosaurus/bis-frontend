@@ -1,6 +1,6 @@
 import classNames from 'classnames'
+import { LoadingIcon } from 'components'
 import { ButtonHTMLAttributes } from 'react'
-import { RiLoader4Fill } from 'react-icons/ri'
 import { Link, LinkProps } from 'react-router-dom'
 import styles from './Button.module.scss'
 
@@ -71,7 +71,7 @@ export const Button = ({
       {...props}
     >
       {children}
-      {isLoading && <RiLoader4Fill className={styles.icon} size={40} />}
+      {isLoading && <LoadingIcon className={styles.icon} size={40} />}
     </button>
   )
 }

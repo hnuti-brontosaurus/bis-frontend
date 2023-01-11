@@ -2,8 +2,13 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { User, UserPayload } from 'app/services/bisTypes'
 import classNames from 'classnames'
-import { Actions, Button, Loading, StyledModal } from 'components'
-import { SelectUnknownUser } from 'components/SelectUsers'
+import {
+  Actions,
+  Button,
+  Loading,
+  SelectUnknownUser,
+  StyledModal,
+} from 'components'
 import stylesTable from 'components/Table.module.scss'
 import { UserForm } from 'components/UserForm/UserForm'
 import {
