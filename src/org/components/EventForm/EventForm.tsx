@@ -13,7 +13,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from 'hooks/persistForm'
-import { merge, mergeWith, omit } from 'lodash'
+import { merge, mergeWith, omit, uniq } from 'lodash'
 import pick from 'lodash/pick'
 import { FC, useMemo } from 'react'
 import { FieldErrorsImpl, useForm, UseFormReturn } from 'react-hook-form'
@@ -207,7 +207,11 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
     {
       // map users to user ids
       main_organizer: data.main_organizer.id,
-      other_organizers: data.other_organizers.map(({ id }) => id),
+      other_organizers: uniq(
+        data.other_organizers
+          .map(({ id }) => id)
+          .concat([data.main_organizer.id]),
+      ),
       propagation: merge({}, data.propagation, {
         contact_person: data.contactPersonIsMainOrganizer
           ? data.main_organizer.id

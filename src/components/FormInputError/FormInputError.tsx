@@ -1,23 +1,22 @@
 import classNames from 'classnames'
-import get from 'lodash/get'
 import { ReactElement } from 'react'
 import {
-  FieldError,
+  FieldName,
   FieldValues,
   useFormContext,
   UseFormReturn,
 } from 'react-hook-form'
+import { getErrorMessage } from 'utils/helpers'
 import styles from './FormInputError.module.scss'
 
 export const FormInputError = <T extends FieldValues>({
   children,
   name,
   formMethods,
-  isBlock,
-  className,
+  ...props
 }: {
   children: ReactElement
-  name?: string
+  name?: FieldName<T>
   formMethods?: UseFormReturn<T>
   isBlock?: boolean
   className?: string
@@ -26,13 +25,29 @@ export const FormInputError = <T extends FieldValues>({
 
   const methods = formMethods ?? defaultMethods
 
-  const error =
-    methods && methods.formState
-      ? (get(methods.formState.errors, name ?? children.props.name) as
-          | FieldError
-          | undefined)
-      : undefined
+  const errorMessage = getErrorMessage(
+    methods.formState.errors,
+    name ?? children.props.name,
+  )
 
+  return (
+    <FormInputErrorSimple errorMessage={errorMessage} {...props}>
+      {children}
+    </FormInputErrorSimple>
+  )
+}
+
+export const FormInputErrorSimple = ({
+  children,
+  isBlock,
+  className,
+  errorMessage,
+}: {
+  children: ReactElement
+  isBlock?: boolean
+  className?: string
+  errorMessage?: string
+}) => {
   return (
     <div
       className={classNames(
@@ -40,10 +55,15 @@ export const FormInputError = <T extends FieldValues>({
         className,
       )}
     >
-      <div className={classNames(styles.inputWrapper, error && styles.isError)}>
+      <div
+        className={classNames(
+          styles.inputWrapper,
+          errorMessage && styles.isError,
+        )}
+      >
         {children}
       </div>
-      <div className={styles.errorMessage}>{error?.message ?? <>&nbsp;</>}</div>
+      <div className={styles.errorMessage}>{errorMessage ?? <>&nbsp;</>}</div>
     </div>
   )
 }

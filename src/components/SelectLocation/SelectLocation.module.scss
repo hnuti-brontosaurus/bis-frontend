@@ -50,6 +50,13 @@
       width: 100%;
       white-space: nowrap;
 
+      margin-bottom: 0.5rem;
+
+      .selectLocationErrorWrapper {
+        height: 36px;
+        overflow: visible;
+      }
+
       @include media.for-tablet-landscape-up {
         gap: 16px;
         flex-direction: row;

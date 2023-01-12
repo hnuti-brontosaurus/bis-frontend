@@ -187,7 +187,7 @@ export const Map = ({
     <div className={styles.mapWrapper}>
       {' '}
       <div className={styles.legend}>
-        <div>Hledej na mapie:</div>
+        <div>Hledej na mapě:</div>
         <div id={styles.idSearchMap}>
           {isLoading ? (
             <div>
@@ -223,7 +223,7 @@ export const Map = ({
           )}
           {editMode && (
             <div className={styles.legendItem}>
-              <MapMarkerNew width={20} height={20} /> nova lokalita
+              <MapMarkerNew width={20} height={20} /> nová lokalita
             </div>
           )}
         </div>
