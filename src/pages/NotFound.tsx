@@ -1,23 +1,14 @@
-import { Actions, ButtonLink, Error } from 'components'
-import { useCurrentUser } from 'hooks/currentUser'
-import { isOrganizer } from 'utils/helpers'
+import { ButtonLink, Error } from 'components'
 
 export const NotFound = () => {
-  const { data: currentUser } = useCurrentUser()
   return (
     <Error status={404} message="Tady nic není…">
-      TODO let's put here something nice
-      <Actions>
-        Pokračuj na
-        {currentUser && isOrganizer(currentUser) && (
-          <ButtonLink primary to="/org">
-            organizátorský přístup
-          </ButtonLink>
-        )}
-        <ButtonLink primary to="/user">
-          uživatelský přístup
+      <div>
+        Pokračuj na{' '}
+        <ButtonLink tertiary to="/">
+          hlavní stránku
         </ButtonLink>
-      </Actions>
+      </div>
     </Error>
   )
 }

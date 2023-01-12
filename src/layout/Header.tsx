@@ -4,17 +4,28 @@ import logo from 'assets/logo.png'
 import classNames from 'classnames'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
+import { useCurrentRole } from 'hooks/useCurrentRole'
 import { useLogout } from 'hooks/useLogout'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { FaRegUser } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
-import { isOrganizer } from 'utils/helpers'
+import { Link, useNavigate } from 'react-router-dom'
+import { availableRoles, getUserRoles, RoleSlug } from 'utils/helpers'
 import styles from './Header.module.scss'
 
 export const Header = () => {
   const { data: user, isAuthenticated } = useCurrentUser()
   const logout = useLogout()
   const [canAddEvent] = useAllowedToCreateEvent()
+  const navigate = useNavigate()
+
+  const roles = user ? getUserRoles(user) : []
+
+  const [role, setRole] = useCurrentRole()
+
+  const handleSwitchRole = (role: RoleSlug) => {
+    if (role !== 'admin') setRole(role)
+    navigate(availableRoles[role].url)
+  }
 
   return (
     <div className={styles.container}>
@@ -29,14 +40,29 @@ export const Header = () => {
         </Link>
       </nav>
       <div className={styles.spacer}></div>
-      {user ? (
+      {user && role ? (
         <nav>
-          <Link
-            to={isOrganizer(user) ? '/org' : ''}
-            className={styles.menuButton}
+          <Menu
+            menuButton={({ open }) => (
+              <MenuButton
+                className={classNames(
+                  open && styles.menuButtonOpen,
+                  styles.menuButton,
+                )}
+              >
+                {availableRoles[role].name}
+              </MenuButton>
+            )}
+            // align={'center'}
           >
-            {isOrganizer(user) ? 'Organizátor' : 'Uživatel'}
-          </Link>
+            {roles.map(slug => (
+              <MenuItem key={slug} className={styles.menuItemCustom}>
+                <button onClick={() => handleSwitchRole(slug)}>
+                  {availableRoles[slug].name}
+                </button>
+              </MenuItem>
+            ))}
+          </Menu>
         </nav>
       ) : null}
       {isAuthenticated ? (
@@ -55,7 +81,7 @@ export const Header = () => {
                 <div className={styles.profileName}>Menu</div>
               </MenuButton>
             )}
-            align={'end'}
+            // align={'center'}
           >
             <MenuItem className={styles.menuItemCustom}>
               <Link to="/org/akce/vsechny">Organizované akce</Link>
