@@ -8,6 +8,7 @@ import {
   Button,
   ClearBounds,
   FormInputError,
+  FormInputErrorSimple,
   InfoBox,
   InlineSection,
   Label,
@@ -62,10 +63,11 @@ export type SelectedOrNewLocation = NewLocation | Location
 export const SelectLocation = forwardRef<
   any,
   {
+    errorMessage?: string
     value: SelectedOrNewLocation | null
     onChange: (location: SelectedOrNewLocation | null) => void
   }
->(({ value, onChange }, ref) => {
+>(({ value, onChange, errorMessage }, ref) => {
   const [isEditing, setIsEditing] = useState(false)
   const [bounds, setBounds] = useState<ClearBounds>()
 
@@ -176,36 +178,42 @@ export const SelectLocation = forwardRef<
         <div className={styles.selectLocationBox}>
           {isEditing ? (
             <div className={styles.editingLocation}>
-              <h3>Pridavani nove lokality</h3>
+              <h3>Přidávání nové lokality</h3>
               <AiOutlineEdit size={36} className={styles.editStatePending} />
             </div>
           ) : (
             <div className={styles.selectLocationItem}>
               <span>Vyber lokalitu podle názvu</span>
-              <div className={styles.selectLocationWithIcon}>
-                <SelectObject<Location>
-                  className={classNames(
-                    styles.aboveMap,
-                    styles.fullWidth,
-                    styles.selectLocation,
-                  )}
-                  value={(value as Location) ?? undefined}
-                  onChange={onChange}
-                  getLabel={location => location.name}
-                  getValue={location => String(location.id)}
-                  placeholder="Název"
-                  search={api.endpoints.readLocations}
-                  ref={ref}
-                />
-                {value ? (
-                  <FiCheckCircle size={36} className={styles.editStateDone} />
-                ) : (
-                  <AiOutlineEdit
-                    size={36}
-                    className={styles.editStatePending}
+              <FormInputErrorSimple
+                className={styles.selectLocationErrorWrapper}
+                errorMessage={errorMessage}
+                isBlock
+              >
+                <div className={styles.selectLocationWithIcon}>
+                  <SelectObject<Location>
+                    className={classNames(
+                      styles.aboveMap,
+                      styles.fullWidth,
+                      styles.selectLocation,
+                    )}
+                    value={(value as Location) ?? undefined}
+                    onChange={onChange}
+                    getLabel={location => location.name}
+                    getValue={location => String(location.id)}
+                    placeholder="Název"
+                    search={api.endpoints.readLocations}
+                    ref={ref}
                   />
-                )}
-              </div>
+                  {value ? (
+                    <FiCheckCircle size={36} className={styles.editStateDone} />
+                  ) : (
+                    <AiOutlineEdit
+                      size={36}
+                      className={styles.editStatePending}
+                    />
+                  )}
+                </div>
+              </FormInputErrorSimple>
             </div>
           )}
         </div>
@@ -247,7 +255,7 @@ export const SelectLocation = forwardRef<
                 }}
                 className={styles.buttonBigScreen}
               >
-                Vyber ezgistujicy lokalizace{' '}
+                Vyber existující lokalitu{' '}
               </Button>
             ) : (
               <Button
@@ -258,7 +266,7 @@ export const SelectLocation = forwardRef<
                 }}
                 className={styles.buttonBigScreen}
               >
-                Didnt find your localization? Add new!
+                Nenašla/nenašel jsi svoji lokalitu? Vytvoř novou!
               </Button>
             )}
           </div>
@@ -280,7 +288,7 @@ export const SelectLocation = forwardRef<
               }}
               className={styles.buttonSmallScreen}
             >
-              Vyber ezgistujicy lokalizace{' '}
+              Vyber existující lokalitu
             </Button>
           ) : (
             <Button
@@ -290,7 +298,7 @@ export const SelectLocation = forwardRef<
               }}
               className={styles.buttonSmallScreen}
             >
-              Add new localization!
+              Přidat novou lokalitu!
             </Button>
           )}
         </div>
@@ -357,7 +365,7 @@ const CreateLocation = ({
             />
           </FormInputError>
         </InlineSection>
-        <InfoBox>Select point on the map or type GPS coordinates.</InfoBox>
+        <InfoBox>Vyber bod na mapě nebo vpiš GPS souřadnice.</InfoBox>
         <InlineSection>
           <Label htmlFor="location.gps" required>
             GPS:
@@ -443,7 +451,7 @@ const ViewLocation = ({ location }: { location?: NewLocation | Location }) => {
       ) : (
         <div className={styles.emptyLocation}>
           <SelectMap width={150} height={100} />
-          <div>Vyber lokalitu podle názvu anebo na mapie</div>
+          <div>Vyber lokalitu podle názvu nebo na mapě</div>
         </div>
       )}
     </div>

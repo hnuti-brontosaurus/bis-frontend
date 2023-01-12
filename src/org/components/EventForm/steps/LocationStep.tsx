@@ -6,6 +6,7 @@ import {
   SelectLocation,
 } from 'components'
 import { Controller, FormProvider } from 'react-hook-form'
+import { getErrorMessage } from 'utils/helpers'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 
@@ -16,7 +17,7 @@ export const LocationStep = ({
 }: {
   methods: MethodsShapes['location']
 }) => {
-  const { watch, register, control } = methods
+  const { watch, register, control, formState } = methods
 
   return (
     <FormProvider {...methods}>
@@ -35,14 +36,17 @@ export const LocationStep = ({
               </FormInputError>
             </InlineSection>
           ) : (
-            <FormInputError>
-              <Controller
-                name="location"
-                control={control}
-                rules={{ required }}
-                render={({ field }) => <SelectLocation {...field} />}
-              />
-            </FormInputError>
+            <Controller
+              name="location"
+              control={control}
+              rules={{ required }}
+              render={({ field }) => (
+                <SelectLocation
+                  {...field}
+                  errorMessage={getErrorMessage(formState.errors, 'location')}
+                />
+              )}
+            />
           )}
         </FormSection>
       </FormSectionGroup>

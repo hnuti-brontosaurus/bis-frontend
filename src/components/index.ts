@@ -9,7 +9,10 @@ export { DataView } from './DataView/DataView'
 export { Error } from './Error/Error'
 export { ErrorBox } from './ErrorBox/ErrorBox'
 export type { ObjectWithStrings } from './ErrorBox/ErrorBox'
-export { FormInputError } from './FormInputError/FormInputError'
+export {
+  FormInputError,
+  FormInputErrorSimple,
+} from './FormInputError/FormInputError'
 export {
   Actions,
   FormHeader,
