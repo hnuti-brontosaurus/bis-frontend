@@ -26,9 +26,12 @@ export const ImportExcelButton = <T extends {}>({
       reader.onload = () => {
         const wb = xlsx.read(reader.result, { type: 'binary' })
         const json = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-        const normalizedJson = json.map(entry =>
-          normalizeKeys<T>(entry as { [key: string]: string }, keyMap),
-        )
+        const normalizedJson = json
+          .map(entry =>
+            normalizeKeys<T>(entry as { [key: string]: string }, keyMap),
+          )
+          // ignore rows that imported nothing
+          .filter(row => Object.keys(keyMap).some(key => row[key as keyof T]))
         onUpload(normalizedJson)
       }
     }

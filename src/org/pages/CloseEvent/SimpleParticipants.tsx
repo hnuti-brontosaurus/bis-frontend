@@ -1,15 +1,26 @@
 import type { EventContact } from 'app/services/bisTypes'
+import spreadsheetTemplate from 'assets/templates/simple-contact-list-template.xlsx'
 import classNames from 'classnames'
 import {
   Button,
   FormInputError,
   ImportExcelButton,
+  InlineSection,
   StyledModal,
 } from 'components'
+import { get } from 'lodash'
 import tableStyles from 'org/components/EventForm/steps/ParticipantsStep.module.scss'
-import { FormHTMLAttributes, useEffect, useState } from 'react'
+import {
+  FormHTMLAttributes,
+  TdHTMLAttributes,
+  useEffect,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 import {
+  FieldErrors,
+  FieldPath,
+  FieldValues,
   FormProvider,
   useFieldArray,
   useForm,
@@ -28,7 +39,12 @@ const importMap = {
 }
 
 export const SimpleParticipants = () => {
-  const { control } = useFormContext<ParticipantsStepFormShape>()
+  const {
+    control,
+    register,
+    trigger,
+    formState: { errors, isSubmitted },
+  } = useFormContext<ParticipantsStepFormShape>()
   const peopleFields = useFieldArray({ control, name: 'record.contacts' })
 
   const [open, setOpen] = useState(false)
@@ -58,6 +74,15 @@ export const SimpleParticipants = () => {
 
     return promise
   }
+
+  // register array of contacts
+  useEffect(() => {
+    register('record.contacts')
+  }, [register])
+
+  useEffect(() => {
+    if (isSubmitted) trigger('record.contacts')
+  }, [isSubmitted, trigger, peopleFields.fields])
 
   const handleEdit = async (data: EventContact, i: number) => {
     setOpen(true)
@@ -89,17 +114,17 @@ export const SimpleParticipants = () => {
       <header>Jednoduchý seznam účastníků</header>
       <ImportExcelButton<EventContact>
         keyMap={importMap}
-        onUpload={data => {
-          peopleFields.append(data)
-        }}
+        onUpload={data => peopleFields.append(data)}
       >
         Importovat seznam účastníků z excelu
-      </ImportExcelButton>
+      </ImportExcelButton>{' '}
+      <a href={spreadsheetTemplate}>(vzor)</a>
       <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
-      <table className={classNames(tableStyles.table, styles.phoneTable)}>
+      <table className={classNames(tableStyles.table, styles.contactTable)}>
         <thead>
           <tr>
             <th>Jméno</th>
+            <th>Příjmení</th>
             <th>E-mail</th>
             <th>Telefon</th>
             <th></th>
@@ -114,9 +139,18 @@ export const SimpleParticipants = () => {
                 item.email || '—'
               }, ${item.phone || '—'}`}
             >
-              <td>{item.first_name + ' ' + item.last_name}</td>
-              <td>{item.email}</td>
-              <td>{item.phone}</td>
+              <TdErr name={`record.contacts.${i}.first_name`} errors={errors}>
+                {item.first_name}
+              </TdErr>
+              <TdErr name={`record.contacts.${i}.last_name`} errors={errors}>
+                {item.last_name}
+              </TdErr>
+              <TdErr name={`record.contacts.${i}.email`} errors={errors}>
+                {item.email}
+              </TdErr>
+              <TdErr name={`record.contacts.${i}.phone`} errors={errors}>
+                {item.phone}
+              </TdErr>
               <td>
                 <Button type="button" onClick={() => handleEdit(item, i)}>
                   <FaPencilAlt />
@@ -134,6 +168,24 @@ export const SimpleParticipants = () => {
     </div>
   )
 }
+/**
+ * table cell capable of displaying error
+ */
+const TdErr = <T extends FieldValues>({
+  name,
+  errors,
+  ...props
+}: TdHTMLAttributes<HTMLTableCellElement> & {
+  errors: FieldErrors<T>
+  name: FieldPath<T>
+}) => (
+  <td className={classNames(get(errors, name) ? styles.error : undefined)}>
+    {props.children}
+    <div className={styles.errorMessage}>
+      {get(errors, name)?.message as string}
+    </div>
+  </td>
+)
 
 const SimpleParticipantInput = ({
   formId = 'simple-participant-form',
@@ -164,45 +216,47 @@ const SimpleParticipantInput = ({
     <div>
       <FormProvider {...methods}>
         <OutsideForm id={formId} onSubmit={handleFormSubmit} />
-        <FormInputError>
-          <input
-            form={formId}
-            type="text"
-            placeholder="Jméno*"
-            {...register('first_name', {
-              required: validationMessages.required,
-            })}
-          />
-        </FormInputError>
-        <FormInputError>
-          <input
-            form={formId}
-            type="text"
-            placeholder="Příjmení*"
-            {...register('last_name' as const, {
-              required: validationMessages.required,
-            })}
-          />
-        </FormInputError>
-        <FormInputError>
-          <input
-            form={formId}
-            type="email"
-            placeholder="E-mail"
-            {...register('email' as const)}
-          />
-        </FormInputError>
-        <FormInputError>
-          <input
-            form={formId}
-            type="tel"
-            placeholder="Telefon"
-            {...register('phone' as const)}
-          />
-        </FormInputError>
-        <Button primary type="submit" form={formId}>
-          <FaCheck />
-        </Button>
+        <InlineSection>
+          <FormInputError>
+            <input
+              form={formId}
+              type="text"
+              placeholder="Jméno*"
+              {...register('first_name', {
+                required: validationMessages.required,
+              })}
+            />
+          </FormInputError>
+          <FormInputError>
+            <input
+              form={formId}
+              type="text"
+              placeholder="Příjmení*"
+              {...register('last_name' as const, {
+                required: validationMessages.required,
+              })}
+            />
+          </FormInputError>
+          <FormInputError>
+            <input
+              form={formId}
+              type="email"
+              placeholder="E-mail"
+              {...register('email' as const)}
+            />
+          </FormInputError>
+          <FormInputError>
+            <input
+              form={formId}
+              type="tel"
+              placeholder="Telefon"
+              {...register('phone' as const)}
+            />
+          </FormInputError>
+          <Button primary type="submit" form={formId}>
+            <FaCheck />
+          </Button>
+        </InlineSection>
       </FormProvider>
     </div>
   )
