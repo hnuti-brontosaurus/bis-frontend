@@ -1,18 +1,25 @@
-import { createSlice, isAnyOf } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { api } from 'app/services/bis'
-import { User } from 'app/services/bisTypes'
 import { RootState } from 'app/store'
+import type { RoleSlug } from 'utils/helpers'
 
 type AuthState = {
-  user: User | null
+  role: RoleSlug | null
   token: string | null
   isLoggingOut: boolean
 }
 
 const slice = createSlice({
   name: 'auth',
-  initialState: { user: null, token: null, isLoggingOut: false } as AuthState,
-  reducers: {},
+  initialState: { role: null, token: null, isLoggingOut: false } as AuthState,
+  reducers: {
+    setRole: (state, { payload }: PayloadAction<RoleSlug>) => {
+      state.role = payload
+    },
+    setInitialRole: (state, { payload }: PayloadAction<RoleSlug>) => {
+      if (!state.role) state.role = payload
+    },
+  },
   extraReducers: builder => {
     builder
       .addMatcher(
@@ -39,9 +46,11 @@ const slice = createSlice({
   },
 })
 
-export const { reducer } = slice
+export const { actions, reducer } = slice
 
 export const selectAuthenticated = (state: RootState) =>
   Boolean(state.auth.token)
 
 export const selectLoggingOut = (state: RootState) => state.auth.isLoggingOut
+
+export const selectCurrentRole = (state: RootState) => state.auth.role

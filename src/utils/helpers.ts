@@ -123,6 +123,27 @@ export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
     ),
   )
 
+const hasRole = (user: Pick<User, 'roles'>, role: string): boolean =>
+  user.roles.findIndex(r => r.slug === role) > -1
+
+export type RoleSlug = 'organizer' | 'admin' | 'user'
+
+export const availableRoles: Record<
+  RoleSlug,
+  { slug: RoleSlug; name: string; url: string }
+> = {
+  admin: { slug: 'admin', name: 'Admin', url: '/admin' },
+  organizer: { slug: 'organizer', name: 'Organizátor', url: '/org' },
+  user: { slug: 'user', name: 'Uživatel', url: '/user' },
+}
+
+export const getUserRoles = (user: Pick<User, 'roles'>): RoleSlug[] => {
+  if (hasRole(user, 'admin')) return ['admin', 'organizer', 'user']
+  else if (hasRole(user, 'organizer') || hasRole(user, 'main_organizer'))
+    return ['organizer', 'user']
+  else return ['user']
+}
+
 export const splitDateTime = (datetime: string): [string, string] => {
   const [date] = datetime.split('T')
   const d = new Date(datetime)

@@ -70,6 +70,7 @@ export const App = () => {
           </Route>
         </Route>
         <Route path="akce" element={<UserEventsLayout />}>
+          <Route index element={<Navigate to="zucastnene" />} />
           <Route path="zucastnene" element={<UserParticipatedEvents />} />
           <Route path="prihlasene" element={<UserRegisteredEvents />} />
         </Route>
