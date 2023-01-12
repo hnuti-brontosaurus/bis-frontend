@@ -265,7 +265,7 @@ export const OrganizerStep = ({
             </FormSubsection>
           </FormSection>
           <FormSection header="Kontaktní osoba" required onWeb>
-            <label>
+            <label className="checkboxLabel">
               <input
                 type="checkbox"
                 {...register('contactPersonIsMainOrganizer')}
