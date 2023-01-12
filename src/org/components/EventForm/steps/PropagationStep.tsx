@@ -2,6 +2,7 @@ import { api } from 'app/services/bis'
 import { ReactComponent as Cheese } from 'assets/cheese.svg'
 import { ReactComponent as Leaf } from 'assets/leaf.svg'
 import { ReactComponent as Piglet } from 'assets/mama-i-laura.svg'
+import classNames from 'classnames'
 import {
   FormInputError,
   FormSection,
@@ -139,7 +140,13 @@ export const PropagationStep = ({
                       {[...diets.results]
                         .reverse() // fast hack to show meaty diet last
                         .map(({ id, name }) => (
-                          <label key={id} className="labelCheckboxTag">
+                          <label
+                            key={id}
+                            className={classNames(
+                              'labelCheckboxTag',
+                              'checkboxLabel',
+                            )}
+                          >
                             <input
                               ref={field.ref}
                               key={id}

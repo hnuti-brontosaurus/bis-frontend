@@ -32,113 +32,109 @@ input[type='reset'] {
   text-align: center;
 }
 
-label {
-  &:has(input[type='radio']) {
-    font-size: 1.1rem;
-    line-height: 1.1;
-    cursor: pointer;
-    display: grid;
-    grid-template-columns: 1em auto;
-    gap: 0.7em;
-    margin-top: 1em;
+.radioLabel {
+  font-size: 1.1rem;
+  line-height: 1.1;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1em auto;
+  gap: 0.7em;
+  margin-top: 1em;
 
-    margin-right: 0.8em;
-    @include media.for-phone-only {
-      margin-right: 0;
+  margin-right: 0.8em;
+  @include media.for-phone-only {
+    margin-right: 0;
+  }
+
+  input {
+    cursor: pointer;
+    /* Add if not using autoprefixer */
+    -webkit-appearance: none;
+    appearance: none;
+    /* For iOS < 15 to remove gradient background */
+    background-color: #fff;
+    /* Not removed via appearance */
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.3em;
+    height: 1.3em;
+    border: 0.15em solid colors.$bronto-light;
+    border-radius: 50%;
+    /* optically tune the alignment of the input in relation to the label text. */
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+    &::before {
+      content: '';
+      width: 0.7em;
+      height: 0.7em;
+      border-radius: 50%;
+      transform: scale(0);
+      transition: 120ms transform ease-in-out;
+      /* used instead of bg-color, to enable printing */
+      box-shadow: inset 1em 1em colors.$bronto-300;
+      /* to work in "Windows High Contrast Mode" */
+      background-color: colors.$bronto-300;
     }
 
-    input {
-      cursor: pointer;
-      /* Add if not using autoprefixer */
-      -webkit-appearance: none;
-      appearance: none;
-      /* For iOS < 15 to remove gradient background */
-      background-color: #fff;
-      /* Not removed via appearance */
-      margin: 0;
-      font: inherit;
-      color: currentColor;
-      width: 1.3em;
-      height: 1.3em;
-      border: 0.15em solid colors.$bronto-light;
-      border-radius: 50%;
-      /* optically tune the alignment of the input in relation to the label text. */
-      transform: translateY(-0.075em);
-      display: grid;
-      place-content: center;
+    &:checked {
       &::before {
-        content: '';
-        width: 0.7em;
-        height: 0.7em;
-        border-radius: 50%;
-        transform: scale(0);
-        transition: 120ms transform ease-in-out;
-        /* used instead of bg-color, to enable printing */
-        box-shadow: inset 1em 1em colors.$bronto-300;
-        /* to work in "Windows High Contrast Mode" */
-        background-color: colors.$bronto-300;
-      }
-
-      &:checked {
-        &::before {
-          transform: scale(1);
-        }
+        transform: scale(1);
       }
     }
   }
 }
 
-label {
-  &:has(input[type='checkbox']) {
-    padding: 0.5rem 1.2rem;
-    display: grid;
-    grid-template-columns: 1em auto 2em;
-    gap: 1em;
-    align-items: center;
-    width: 100%;
-    margin: 1rem 1rem 0;
-    cursor: pointer;
+.checkboxLabel {
+  padding: 0.5rem 1.2rem;
+  display: grid;
+  grid-template-columns: 1em auto 2em;
+  gap: 1em;
+  align-items: center;
+  width: 100%;
+  margin: 1rem 1rem 0;
+  cursor: pointer;
+  @include media.for-tablet-landscape-up {
+    gap: 0.7em;
+    width: unset;
+    margin: 0;
+  }
+
+  svg {
+    width: 30px;
+    height: 30px;
     @include media.for-tablet-landscape-up {
-      gap: 0.7em;
-      width: unset;
-      margin: 0;
+      width: 50px;
+      height: 50px;
+      transform: translateX(-5px);
     }
-
-    svg {
-      width: 30px;
-      height: 30px;
-      @include media.for-tablet-landscape-up {
-        width: 50px;
-        height: 50px;
-        transform: translateX(-5px);
-      }
-      path {
-        fill: colors.$bronto;
-        stroke: colors.$bronto;
-        stroke-width: 1px;
-      }
+    path {
+      fill: colors.$bronto;
+      stroke: colors.$bronto;
+      stroke-width: 1px;
     }
+  }
 
-    input[type='checkbox'] {
-      /* Add if not using autoprefixer */
-      -webkit-appearance: none;
-      appearance: none;
-      /* For iOS < 15 to remove gradient background */
-      background-color: white;
-      /* Not removed via appearance */
-      margin: 0;
+  input[type='checkbox'] {
+    /* Add if not using autoprefixer */
+    -webkit-appearance: none;
+    appearance: none;
+    /* For iOS < 15 to remove gradient background */
+    background-color: white;
+    /* Not removed via appearance */
+    margin: 0;
 
-      font: inherit;
-      color: currentColor;
-      width: 1.15em;
-      height: 1.15em;
-      border: 0.15em solid currentColor;
-      border-radius: 0.15em;
-      transform: translateY(0.075em);
-      display: grid;
-      place-content: center;
-      cursor: pointer;
-    }
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(0.075em);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
   }
 }
 
@@ -175,7 +171,7 @@ input[type='checkbox']:disabled {
     color: white;
 
     svg {
-      // transform: scaleY(-1);
+      transform: scaleY(-1);
       path {
         fill: white;
         stroke: white;

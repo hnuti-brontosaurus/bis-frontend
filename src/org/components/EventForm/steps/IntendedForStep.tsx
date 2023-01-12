@@ -65,7 +65,7 @@ export const IntendedForStep = ({
                     <InlineSection>
                       {intendedFor &&
                         intendedFor.results!.map(({ id, name, slug }) => (
-                          <label key={id}>
+                          <label key={id} className="radioLabel">
                             <input
                               ref={field.ref}
                               key={id}
@@ -205,24 +205,29 @@ export const IntendedForStep = ({
                                 { name: 'ne', value: false },
                               ].map(({ name, value }) => (
                                 <div key={name}>
-                                  <input
-                                    ref={field.ref}
-                                    type="radio"
-                                    name={field.name}
-                                    id={name}
-                                    value={String(value)}
-                                    checked={field.value === value}
-                                    onChange={e =>
-                                      field.onChange(
-                                        e.target.value === 'true'
-                                          ? true
-                                          : e.target.value === 'false'
-                                          ? false
-                                          : undefined,
-                                      )
-                                    }
-                                  />{' '}
-                                  <label htmlFor={name}>{name}</label>
+                                  <label
+                                    htmlFor={name}
+                                    className={'radioLabel'}
+                                  >
+                                    <input
+                                      ref={field.ref}
+                                      type="radio"
+                                      name={field.name}
+                                      id={name}
+                                      value={String(value)}
+                                      checked={field.value === value}
+                                      onChange={e =>
+                                        field.onChange(
+                                          e.target.value === 'true'
+                                            ? true
+                                            : e.target.value === 'false'
+                                            ? false
+                                            : undefined,
+                                        )
+                                      }
+                                    />{' '}
+                                    {name}
+                                  </label>
                                 </div>
                               ))}
                             </InlineSection>
