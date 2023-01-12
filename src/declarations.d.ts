@@ -8,3 +8,6 @@ declare module 'react-tooltip-lite' {
     children: ReactNode
   }
 }
+
+// to be able to import excel templates
+declare module '*.xlsx'

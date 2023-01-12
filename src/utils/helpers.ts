@@ -146,7 +146,7 @@ export const joinDateTime = (date: string, time: string = ''): string => {
 // A little function which prepares react-hook-forms errors for stringifying
 // in particular, it removes circular references caused by error.ref
 export const pickErrors = (errors: FieldErrorsImpl) => {
-  if ('message' in errors && typeof errors.message === 'string') {
+  if (errors && 'message' in errors && typeof errors.message === 'string') {
     delete errors.ref
   } else {
     for (const key in errors) {

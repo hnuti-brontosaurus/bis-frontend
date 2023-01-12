@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Event,
   EventPhotoPayload,
@@ -22,6 +23,7 @@ import type { DeepPick } from 'ts-deep-pick'
 import { Optional } from 'utility-types'
 import { hasFormError, withOverwriteArray } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
+import * as yup from 'yup'
 import { EvidenceStep } from './EvidenceStep'
 import { ParticipantsStep } from './ParticipantsStep'
 
@@ -131,6 +133,21 @@ const initialData2form = (
   } else return data
 }
 
+const validationSchema: yup.ObjectSchema<{
+  record: Pick<ParticipantsStepFormShape['record'], 'contacts'>
+}> = yup.object({
+  record: yup.object({
+    contacts: yup.array(
+      yup.object({
+        first_name: yup.string().required(),
+        last_name: yup.string().required(),
+        email: yup.string().email(),
+        phone: yup.string(),
+      }),
+    ),
+  }),
+})
+
 export const CloseEventForm = ({
   event,
   initialData,
@@ -157,6 +174,7 @@ export const CloseEventForm = ({
   })
   const participantsFormMethods = useForm<ParticipantsStepFormShape>({
     defaultValues: pickParticipantsData(initialAndSavedData),
+    resolver: yupResolver(validationSchema),
   })
 
   const showMessage = useShowMessage()

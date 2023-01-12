@@ -8,4 +8,7 @@ yup.setLocale({
       `Zadejte ` + (type === 'number' ? 'číslo' : 'správný typ'),
   },
   number: {},
+  string: {
+    email: 'Zadejte platný email',
+  },
 })
