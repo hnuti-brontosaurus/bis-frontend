@@ -25,7 +25,7 @@ const next = () =>
   cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
 
 const submit = () =>
-  cy.get('[type=submit]:contains(Uložit)').first().should('be.visible').click()
+  cy.get('[type=submit]:contains(Uložit)').last().should('be.visible').click()
 
 describe('create event', () => {
   // stub api endpoints before each request
