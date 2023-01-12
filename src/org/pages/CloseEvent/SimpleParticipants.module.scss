@@ -1,10 +1,12 @@
+@use 'styles/colors';
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.phoneTable {
+.contactTable {
   overflow: hidden;
   table-layout: fixed;
   th,
@@ -18,7 +20,26 @@
     }
   }
 
-  td:last-child {
-    width: 10px;
+  td {
+    position: relative;
+    &:last-child {
+      width: 10px;
+    }
+
+    &.error {
+      box-shadow: inset 0px 0px 0px 2px colors.$error;
+    }
+    .errorMessage {
+      padding-left: 0.25rem;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: left;
+      font-size: smaller;
+      color: colors.$error;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
