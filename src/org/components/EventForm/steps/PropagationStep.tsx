@@ -112,16 +112,17 @@ export const PropagationStep = ({
             </InlineSection>
           </FormSection>
           {(isWeekendEvent || isCamp) && ( // only camp and weekend
-            <FullSizeElement>
-              <FormSection required header="Ubytování" onWeb>
-                <textarea
-                  style={{ maxWidth: '40rem' }}
-                  {...register('propagation.accommodation', {
-                    required,
-                  })}
-                />
-              </FormSection>
-            </FullSizeElement>
+            <FormSection required header="Ubytování" onWeb>
+              <FullSizeElement>
+                <FormInputError>
+                  <textarea
+                    {...register('propagation.accommodation', {
+                      required,
+                    })}
+                  />
+                </FormInputError>
+              </FullSizeElement>
+            </FormSection>
           )}
           {(isWeekendEvent || isCamp) && ( // only camp and weekend
             <FormSection
