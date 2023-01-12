@@ -25,6 +25,7 @@ import {
   Loading,
 } from 'components'
 import * as translations from 'config/static/translations'
+import dayjs from 'dayjs'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
@@ -44,7 +45,9 @@ import * as yup from 'yup'
  * https://docs.google.com/document/d/1hXfz0NhBL8XrUOEJR5VmuoDOwNADxEo3j5gA5knE1GE/edit?usp=drivesdk
  */
 
-export type UserFormShape = Omit<UserPayload, 'all_emails'>
+export type UserFormShape = Omit<UserPayload, 'all_emails'> & {
+  isChild?: boolean
+}
 
 // transform user data to initial form data
 const data2form = (user: User): UserFormShape => {
@@ -59,6 +62,9 @@ const data2form = (user: User): UserFormShape => {
       phone: '',
     },
     health_insurance_company: user.health_insurance_company?.id ?? 0,
+    isChild: user.birthday
+      ? dayjs().diff(dayjs(user.birthday), 'year') < 15
+      : undefined,
   })
 }
 
@@ -88,6 +94,7 @@ const form2payload = (data: UserFormShape): Partial<UserPayload> => {
       'contact_address',
       'health_insurance_company',
       'close_person',
+      'isChild',
     ),
     {
       sex: Number(data.sex) || null,
@@ -139,6 +146,7 @@ const addressValidationSchema: yup.ObjectSchema<UserFormShape['address']> = yup
   )
 
 const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
+  isChild: yup.boolean().defined(),
   first_name: yup.string().required(),
   last_name: yup.string().required(),
   birth_name: yup.string(),
@@ -147,7 +155,14 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
   sex: yup.number().required(), // this is optional - none is 0
   health_insurance_company: yup.number().required(), // this is optional - none is 0
   health_issues: yup.string(),
-  email: yup.string().email(),
+  email: yup
+    .string()
+    .email()
+    .when('isChild', {
+      is: true,
+      then: schema => schema.defined(),
+      otherwise: schema => schema.required(),
+    }),
   phone: yup.string(),
   address: yup
     .object()
@@ -159,31 +174,44 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
     })
     .required(),
   contact_address: addressValidationSchema,
-  close_person: yup
-    .object()
-    .shape(
-      {
-        first_name: yup.string().when(['last_name', 'email', 'phone'], {
-          is: (lastName?: string, email?: string, phone?: string) =>
-            lastName || email || phone,
-          then: schema => schema.required(),
-          otherwise: schema => schema.defined(),
-        }),
-        last_name: yup
-          .string()
-          .defined()
-          .when(['first_name', 'email', 'phone'], {
-            is: (firstName?: string, email?: string, phone?: string) =>
-              firstName || email || phone,
-            then: schema => schema.required(),
-            otherwise: schema => schema.defined(),
-          }),
-        email: yup.string().email(),
-        phone: yup.string(),
-      },
-      [['first_name', 'last_name']],
-    )
-    .defined(),
+  // close person is required when is child
+  close_person: yup.object().when('isChild', {
+    is: true,
+    then: schema =>
+      schema
+        .shape({
+          first_name: yup.string().trim().required(),
+          last_name: yup.string().trim().required(),
+          phone: yup.string().trim().required(),
+          email: yup.string().email().required(),
+        })
+        .required(),
+    otherwise: schema =>
+      schema
+        .shape(
+          {
+            first_name: yup.string().when(['last_name', 'email', 'phone'], {
+              is: (lastName?: string, email?: string, phone?: string) =>
+                lastName || email || phone,
+              then: schema => schema.required(),
+              otherwise: schema => schema.defined(),
+            }),
+            last_name: yup
+              .string()
+              .defined()
+              .when(['first_name', 'email', 'phone'], {
+                is: (firstName?: string, email?: string, phone?: string) =>
+                  firstName || email || phone,
+                then: schema => schema.required(),
+                otherwise: schema => schema.defined(),
+              }),
+            email: yup.string().email(),
+            phone: yup.string(),
+          },
+          [['first_name', 'last_name']],
+        )
+        .defined(),
+  }),
 })
 
 export const UserForm = ({
@@ -235,6 +263,7 @@ export const UserForm = ({
         if (startsWith(name, 'address')) trigger('address')
         if (startsWith(name, 'contact_address')) trigger('contact_address')
         if (startsWith(name, 'close_person')) trigger('close_person')
+        if (name === 'isChild') trigger()
       }
     })
     return subscription.unsubscribe
@@ -277,10 +306,18 @@ export const UserForm = ({
   if (!(regions && sexes && healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
 
+  const isChild = watch('isChild')
+
   return (
     <form onSubmit={handleFormSubmit} onReset={handleFormCancel}>
       <FormProvider {...methods}>
         <FormSectionGroup>
+          <InlineSection>
+            <Label>Mladší 15 let</Label>
+            <FormInputError>
+              <input type="checkbox" {...register('isChild')} />
+            </FormInputError>
+          </InlineSection>
           <FormSection header="Osobní údaje">
             <InlineSection>
               <Label required>Jméno</Label>
@@ -352,7 +389,7 @@ export const UserForm = ({
           </FormSection>
           <FormSection header="Kontaktní údaje">
             <InlineSection>
-              <Label>Email</Label>
+              <Label required={!isChild}>Email</Label>
               <FormInputError>
                 <input type="email" {...register('email')} />
               </FormInputError>
@@ -433,27 +470,27 @@ export const UserForm = ({
               </InlineSection>
             </FormSubsection>
           </FormSection>
-          <FormSection header="Blízká osoba">
+          <FormSection header="Blízká osoba" required={isChild}>
             <InlineSection>
-              <Label>Jméno</Label>
+              <Label required={isChild}>Jméno</Label>
               <FormInputError>
                 <input type="text" {...register('close_person.first_name')} />
               </FormInputError>
             </InlineSection>
             <InlineSection>
-              <Label>Příjmení</Label>
+              <Label required={isChild}>Příjmení</Label>
               <FormInputError>
                 <input type="text" {...register('close_person.last_name')} />
               </FormInputError>
             </InlineSection>
             <InlineSection>
-              <Label>Email</Label>
+              <Label required={isChild}>Email</Label>
               <FormInputError>
                 <input type="email" {...register('close_person.email')} />
               </FormInputError>
             </InlineSection>
             <InlineSection>
-              <Label>Telefon</Label>
+              <Label required={isChild}>Telefon</Label>
               <FormInputError>
                 <input type="tel" {...register('close_person.phone')} />
               </FormInputError>
