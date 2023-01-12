@@ -1,8 +1,16 @@
 import type { Event, User } from 'app/services/bisTypes'
 import { cloneDeep, findKey, mapKeys } from 'lodash'
+import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
-import { FieldErrorsImpl, FieldValues, UseFormReturn } from 'react-hook-form'
+import {
+  FieldError,
+  FieldErrors,
+  FieldErrorsImpl,
+  FieldName,
+  FieldValues,
+  UseFormReturn,
+} from 'react-hook-form'
 import { required } from './validationMessages'
 
 export function getIdBySlug<T, O extends { id: number; slug: T }>(
@@ -297,3 +305,12 @@ const normalizeString = (input: string): string => {
       .replace(/[\u0300-\u036f]/g, '')
   )
 }
+
+/**
+ * Given form errors and field name, return error message
+ * It's meant to be used with react-hook-form
+ */
+export const getErrorMessage = <T extends FieldValues>(
+  errors: FieldErrors<T>,
+  name: FieldName<T>,
+) => (get(errors, name) as FieldError | undefined)?.message

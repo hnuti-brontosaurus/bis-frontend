@@ -32,7 +32,7 @@ import merge from 'lodash/merge'
 import { FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Overwrite } from 'utility-types'
-import { getIdBySlug } from 'utils/helpers'
+import { getErrorMessage, getIdBySlug } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
 import * as validationMessages from 'utils/validationMessages'
 import { required } from 'utils/validationMessages'
@@ -253,14 +253,20 @@ export const OpportunityForm = ({
           </FormSection>
           <FormSection header="Místo konání" required>
             Lokalita
-            <FormInputError>
-              <Controller
-                name="location"
-                control={control}
-                rules={{ required }}
-                render={({ field }) => <SelectLocation {...field} />}
-              />
-            </FormInputError>
+            <Controller
+              name="location"
+              control={control}
+              rules={{ required }}
+              render={({ field }) => (
+                <SelectLocation
+                  errorMessage={getErrorMessage(
+                    methods.formState.errors,
+                    'location',
+                  )}
+                  {...field}
+                />
+              )}
+            />
           </FormSection>
           <FullSizeElement>
             <FormSection header="Popis">
