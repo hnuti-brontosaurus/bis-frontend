@@ -6,6 +6,20 @@ import { stripHtml } from 'utils/helpers'
 import styles from './RichTextEditor.module.scss'
 const ReactQuill = React.lazy(() => import('react-quill'))
 
+const config = {
+  toolbar: ['bold', { list: 'ordered' }, { list: 'bullet' }, 'link'],
+  keyboard: {
+    bindings: {
+      tab: {
+        key: 9,
+        handler: function () {
+          return true
+        },
+      },
+    },
+  },
+}
+
 export const RichTextEditor = forwardRef<
   any,
   ControllerRenderProps<any, string> & { placeholder?: string }
@@ -14,9 +28,7 @@ export const RichTextEditor = forwardRef<
     <ReactQuill
       className={styles.wrapper}
       theme="snow"
-      modules={{
-        toolbar: ['bold', { list: 'ordered' }, { list: 'bullet' }, 'link'],
-      }}
+      modules={config}
       formats={['bold', 'list', 'bullet', 'link']}
       {...props}
       id={props.name}

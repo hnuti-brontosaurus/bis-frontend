@@ -27,7 +27,7 @@ export const UncontrolledImageUpload = forwardRef<
   }
 
   return (
-    <label>
+    <label tabIndex={0}>
       <input
         ref={ref}
         style={{ display: 'none' }}
