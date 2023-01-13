@@ -1,6 +1,9 @@
 import type { HomeButtonConfig } from 'components'
 import { Home as HomeNav } from 'components'
 import { useTitle } from 'hooks/title'
+import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
+import { merge } from 'lodash'
+import { useMemo } from 'react'
 
 const buttons: HomeButtonConfig[] = [
   {
@@ -31,5 +34,11 @@ const buttons: HomeButtonConfig[] = [
 
 export const Home = () => {
   useTitle('Organizátorský přístup')
-  return <HomeNav buttons={buttons} />
+  const [canCreateEvent] = useAllowedToCreateEvent()
+  const processedButtons = useMemo(() => {
+    if (canCreateEvent) {
+      return buttons
+    } else return merge([], buttons, [{ link: '' }])
+  }, [canCreateEvent])
+  return <HomeNav buttons={processedButtons} />
 }
