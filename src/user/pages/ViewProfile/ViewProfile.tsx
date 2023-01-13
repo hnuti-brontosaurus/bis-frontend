@@ -1,5 +1,11 @@
 import { User } from 'app/services/bisTypes'
-import { Actions, ButtonLink, DataView, PageHeader } from 'components'
+import {
+  Actions,
+  Breadcrumbs,
+  ButtonLink,
+  DataView,
+  PageHeader,
+} from 'components'
 import * as combinedTranslations from 'config/static/combinedTranslations'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useTitle } from 'hooks/title'
@@ -20,53 +26,56 @@ export const ViewProfile = () => {
   useTitle(title)
 
   return (
-    <div className={styles.pageContainer}>
-      <PageHeader>{title}</PageHeader>
-      <Actions>
-        <ButtonLink primary to="upravit">
-          <FaPencilAlt /> Upravit
-        </ButtonLink>
-      </Actions>
-      <section>
-        <table className={styles.horizontalTable}>
-          <tbody>
-            <tr>
-              <th>Jméno</th>
-              <td>{user.first_name}</td>
-            </tr>
-            <tr>
-              <th>Příjmení</th>
-              <td>{user.last_name}</td>
-            </tr>
-            <tr>
-              <th>Rodné příjmení</th>
-              <td>{user.birth_name}</td>
-            </tr>
-            <tr>
-              <th>Přezdívka</th>
-              <td>{user.nickname}</td>
-            </tr>
-            <tr>
-              <th>Pohlaví</th>
-              <td>{user.sex?.name}</td>
-            </tr>
-            <tr>
-              <th>Datum narození</th>
-              <td>{user.birthday ? formatDateTime(user.birthday) : null}</td>
-            </tr>
-            <tr>
-              <th>Email</th>
-              <td>{user.email}</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-      {/* <pre className={styles.data}>{JSON.stringify(user, null, 2)}</pre> */}
-      <DataView
-        data={user}
-        translations={combinedTranslations.user}
-        genericTranslations={combinedTranslations.generic}
-      />
-    </div>
+    <>
+      <Breadcrumbs userName={user.display_name} />
+      <div className={styles.pageContainer}>
+        <PageHeader>{title}</PageHeader>
+        <Actions>
+          <ButtonLink primary to="upravit">
+            <FaPencilAlt /> Upravit
+          </ButtonLink>
+        </Actions>
+        <section>
+          <table className={styles.horizontalTable}>
+            <tbody>
+              <tr>
+                <th>Jméno</th>
+                <td>{user.first_name}</td>
+              </tr>
+              <tr>
+                <th>Příjmení</th>
+                <td>{user.last_name}</td>
+              </tr>
+              <tr>
+                <th>Rodné příjmení</th>
+                <td>{user.birth_name}</td>
+              </tr>
+              <tr>
+                <th>Přezdívka</th>
+                <td>{user.nickname}</td>
+              </tr>
+              <tr>
+                <th>Pohlaví</th>
+                <td>{user.sex?.name}</td>
+              </tr>
+              <tr>
+                <th>Datum narození</th>
+                <td>{user.birthday ? formatDateTime(user.birthday) : null}</td>
+              </tr>
+              <tr>
+                <th>Email</th>
+                <td>{user.email}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        {/* <pre className={styles.data}>{JSON.stringify(user, null, 2)}</pre> */}
+        <DataView
+          data={user}
+          translations={combinedTranslations.user}
+          genericTranslations={combinedTranslations.generic}
+        />
+      </div>
+    </>
   )
 }
