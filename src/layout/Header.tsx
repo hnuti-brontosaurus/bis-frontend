@@ -134,10 +134,10 @@ export const Header = () => {
             <MenuDivider />
 
             <MenuItem className={styles.menuItemCustom}>
-              <Link to={`/akce/zucastnene`}>Účast na akcích</Link>
+              <Link to={`/user/akce/zucastnene`}>Účast na akcích</Link>
             </MenuItem>
             <MenuItem className={styles.menuItemCustom}>
-              <Link to={`/akce/prihlasene`}>Přihlášení na akce</Link>
+              <Link to={`/user/akce/prihlasene`}>Přihlášení na akce</Link>
             </MenuItem>
             <MenuDivider />
             <MenuItem className={styles.menuItemCustom}>

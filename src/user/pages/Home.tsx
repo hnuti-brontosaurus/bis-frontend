@@ -6,7 +6,7 @@ const buttons: HomeButtonConfig[] = [
   {
     title: 'Moje akce',
     detail: '',
-    link: '/akce/zucastnene',
+    link: '/user/akce/zucastnene',
     theme: 'myEvents',
   },
   {

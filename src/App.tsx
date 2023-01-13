@@ -61,7 +61,9 @@ export const App = () => {
       </Route>
       {/* Routes for authenticated users */}
       <Route path="/" element={<AuthenticatedOutlet />}>
-        <Route path="user" element={<UserHome />} />
+        <Route index element={<Home />} />
+        {/* for now we still keep profile outside of user route
+        because we use it in both user and organizer context */}
         <Route path="profil">
           <Route index element={<ViewMyProfile />} />
           <Route path=":userId" element={<ProfileOutlet />}>
@@ -69,16 +71,18 @@ export const App = () => {
             <Route path="upravit" element={<EditProfile />} />
           </Route>
         </Route>
-        <Route path="akce" element={<UserEventsLayout />}>
-          <Route index element={<Navigate to="zucastnene" />} />
-          <Route path="zucastnene" element={<UserParticipatedEvents />} />
-          <Route path="prihlasene" element={<UserRegisteredEvents />} />
-        </Route>
-        <Route path="akce/:eventId" element={<EventOutlet />}>
-          <Route index element={<ViewEvent readonly />} />
+        <Route path="user">
+          <Route index element={<UserHome />} />
+          <Route path="akce" element={<UserEventsLayout />}>
+            <Route index element={<Navigate to="zucastnene" />} />
+            <Route path="zucastnene" element={<UserParticipatedEvents />} />
+            <Route path="prihlasene" element={<UserRegisteredEvents />} />
+          </Route>
+          <Route path="akce/:eventId" element={<EventOutlet />}>
+            <Route index element={<ViewEvent readonly />} />
+          </Route>
         </Route>
         <Route path="admin/*" element={<AdminRedirect />} />
-        <Route index element={<Home />} />
         {/* Routes for organizers */}
         <Route path="org" element={<OrganizerOutlet />}>
           <Route index element={<OrgHome />} />
