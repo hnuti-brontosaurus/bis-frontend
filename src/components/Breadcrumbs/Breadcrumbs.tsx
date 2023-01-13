@@ -7,11 +7,13 @@ export const Breadcrumbs = ({
   eventToClone,
   eventName,
   opportunityName,
+  userName,
 }: {
   title?: string
   eventToClone?: string
   eventName?: string
   opportunityName?: string
+  userName?: string
 }) => {
   // if we want the route show in breadcrumbs, we need to add it to this array
   // path: path we want to link to
@@ -66,6 +68,18 @@ export const Breadcrumbs = ({
       path: '/akce/:eventId',
       name: eventName,
     },
+    { path: '/profil', name: 'Profil' },
+    {
+      path: '/profil/:userId',
+      name: userName,
+    },
+    {
+      path: '/profil/:userId/upravit',
+      name: 'Upravit',
+    },
+    { path: '/user', name: 'Uživatel/ka' },
+    { path: '/user/akce', name: 'Akce' },
+    { path: '/user/akce/:eventId', name: eventName },
   ]
 
   const location = useLocation()

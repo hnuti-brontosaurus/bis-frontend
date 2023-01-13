@@ -33,7 +33,7 @@ export const UserEventTable: FC<{
         {events.map(event => (
           <tr key={event.id}>
             <td>
-              <Link to={`/akce/${event.id}`}>{event.name}</Link>
+              <Link to={`/user/akce/${event.id}`}>{event.name}</Link>
             </td>
             <td>{formatDateRange(event.start, event.end)}</td>
             <td>
