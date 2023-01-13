@@ -5,6 +5,7 @@ import {
   Actions,
   BirthdayInput,
   birthdayValidation,
+  Breadcrumbs,
   Button,
   FormInputError,
   FormSection,
@@ -286,201 +287,213 @@ export const EditProfile = () => {
   if (isSaving) return <Loading>Ukládáme změny</Loading>
 
   return (
-    <div>
-      <PageHeader>{title}</PageHeader>
-      <form onSubmit={handleSubmit} onReset={handleCancel}>
-        <FormProvider {...methods}>
-          <FormSectionGroup>
-            <FormSection header="Osobní údaje">
-              <InlineSection>
-                <Label required>Jméno</Label>
-                <FormInputError>
-                  <input type="text" {...register('first_name')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label required>Příjmení</Label>
-                <FormInputError>
-                  <input type="text" {...register('last_name')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Rodné příjmení</Label>
-                <FormInputError>
-                  <input type="text" {...register('birth_name')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Přezdívka</Label>
-                <FormInputError>
-                  <input type="text" {...register('nickname')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label required>Datum narození</Label>
-                <FormInputError>
-                  <Controller
-                    control={control}
-                    name="birthday"
-                    render={({ field }) => <BirthdayInput {...field} />}
-                  />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Pohlaví</Label>
-                <FormInputError>
-                  <select {...register('sex')}>
-                    <option value={0}>Neuvedeno</option>
-                    {sexes.results.map(sex => (
-                      <option key={sex.slug} value={sex.id}>
-                        {sex.name}
-                      </option>
-                    ))}
-                  </select>
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Zdravotní pojišťovna</Label>
-                <FormInputError>
-                  <select
-                    style={{ width: '100%', maxWidth: '500px' }}
-                    {...register('health_insurance_company')}
-                  >
-                    <option value={0}>&ndash;&ndash;&ndash;</option>
-                    {healthInsuranceCompanies.results.map(hic => (
-                      <option key={hic.slug} value={hic.id}>
-                        {hic.name}
-                      </option>
-                    ))}
-                  </select>
-                </FormInputError>
-              </InlineSection>
-              <FullSizeElement>
-                <Label>Alergie a zdravotní omezení</Label>
-                <textarea {...register('health_issues')} />
-              </FullSizeElement>
-            </FormSection>
-            <FormSection header="Kontaktní údaje">
-              <InlineSection>
-                <Label required>Email</Label>
-                <FormInputError>
-                  <input type="email" {...register('email')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Telefon</Label>
-                <FormInputError>
-                  <input type="tel" {...register('phone')} />
-                </FormInputError>
-              </InlineSection>
-              <FormSubsection header="Adresa" required>
+    <>
+      <Breadcrumbs userName={user.display_name} />
+      <div>
+        <PageHeader>{title}</PageHeader>
+        <form onSubmit={handleSubmit} onReset={handleCancel}>
+          <FormProvider {...methods}>
+            <FormSectionGroup>
+              <FormSection header="Osobní údaje">
                 <InlineSection>
-                  <Label>Ulice a číslo domu</Label>
+                  <Label required>Jméno</Label>
                   <FormInputError>
-                    <input type="text" {...register('address.street')} />
+                    <input type="text" {...register('first_name')} />
                   </FormInputError>
                 </InlineSection>
                 <InlineSection>
-                  <Label>Obec</Label>
+                  <Label required>Příjmení</Label>
                   <FormInputError>
-                    <input type="text" {...register('address.city')} />
+                    <input type="text" {...register('last_name')} />
                   </FormInputError>
                 </InlineSection>
                 <InlineSection>
-                  <Label>Směrovací číslo</Label>
+                  <Label>Rodné příjmení</Label>
                   <FormInputError>
-                    <input type="text" {...register('address.zip_code')} />
+                    <input type="text" {...register('birth_name')} />
                   </FormInputError>
                 </InlineSection>
                 <InlineSection>
-                  <Label>Kraj</Label>
+                  <Label>Přezdívka</Label>
                   <FormInputError>
-                    <select {...register('address.region')}>
-                      <option value={0}>&ndash;&ndash;&ndash;</option>
-                      {regions.results.map(region => (
-                        <option key={region.id} value={region.id}>
-                          {region.name}
+                    <input type="text" {...register('nickname')} />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label required>Datum narození</Label>
+                  <FormInputError>
+                    <Controller
+                      control={control}
+                      name="birthday"
+                      render={({ field }) => <BirthdayInput {...field} />}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Pohlaví</Label>
+                  <FormInputError>
+                    <select {...register('sex')}>
+                      <option value={0}>Neuvedeno</option>
+                      {sexes.results.map(sex => (
+                        <option key={sex.slug} value={sex.id}>
+                          {sex.name}
                         </option>
                       ))}
                     </select>
                   </FormInputError>
                 </InlineSection>
-              </FormSubsection>
-              <FormSubsection header="Kontaktní adresa">
                 <InlineSection>
-                  <Label>Ulice a číslo domu</Label>
+                  <Label>Zdravotní pojišťovna</Label>
                   <FormInputError>
-                    <input
-                      type="text"
-                      {...register('contact_address.street')}
-                    />
-                  </FormInputError>
-                </InlineSection>
-                <InlineSection>
-                  <Label>Obec</Label>
-                  <FormInputError>
-                    <input type="text" {...register('contact_address.city')} />
-                  </FormInputError>
-                </InlineSection>
-                <InlineSection>
-                  <Label>Směrovací číslo</Label>
-                  <FormInputError>
-                    <input
-                      type="text"
-                      {...register('contact_address.zip_code')}
-                    />
-                  </FormInputError>
-                </InlineSection>
-                <InlineSection>
-                  <Label>Kraj</Label>
-                  <FormInputError>
-                    <select {...register('contact_address.region')}>
+                    <select
+                      style={{ width: '100%', maxWidth: '500px' }}
+                      {...register('health_insurance_company')}
+                    >
                       <option value={0}>&ndash;&ndash;&ndash;</option>
-                      {regions.results.map(region => (
-                        <option key={region.id} value={region.id}>
-                          {region.name}
+                      {healthInsuranceCompanies.results.map(hic => (
+                        <option key={hic.slug} value={hic.id}>
+                          {hic.name}
                         </option>
                       ))}
                     </select>
                   </FormInputError>
                 </InlineSection>
-              </FormSubsection>
-            </FormSection>
-            <FormSection header="Blízká osoba">
-              <InlineSection>
-                <Label>Jméno</Label>
-                <FormInputError>
-                  <input type="text" {...register('close_person.first_name')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Příjmení</Label>
-                <FormInputError>
-                  <input type="text" {...register('close_person.last_name')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Email</Label>
-                <FormInputError>
-                  <input type="email" {...register('close_person.email')} />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Telefon</Label>
-                <FormInputError>
-                  <input type="tel" {...register('close_person.phone')} />
-                </FormInputError>
-              </InlineSection>
-            </FormSection>
-          </FormSectionGroup>
-          <Actions>
-            <Button type="reset">Zrušit</Button>
-            <Button primary type="submit">
-              Uložit
-            </Button>
-          </Actions>
-        </FormProvider>
-      </form>
-    </div>
+                <FullSizeElement>
+                  <Label>Alergie a zdravotní omezení</Label>
+                  <textarea {...register('health_issues')} />
+                </FullSizeElement>
+              </FormSection>
+              <FormSection header="Kontaktní údaje">
+                <InlineSection>
+                  <Label required>Email</Label>
+                  <FormInputError>
+                    <input type="email" {...register('email')} />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Telefon</Label>
+                  <FormInputError>
+                    <input type="tel" {...register('phone')} />
+                  </FormInputError>
+                </InlineSection>
+                <FormSubsection header="Adresa" required>
+                  <InlineSection>
+                    <Label>Ulice a číslo domu</Label>
+                    <FormInputError>
+                      <input type="text" {...register('address.street')} />
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label>Obec</Label>
+                    <FormInputError>
+                      <input type="text" {...register('address.city')} />
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label>Směrovací číslo</Label>
+                    <FormInputError>
+                      <input type="text" {...register('address.zip_code')} />
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label>Kraj</Label>
+                    <FormInputError>
+                      <select {...register('address.region')}>
+                        <option value={0}>&ndash;&ndash;&ndash;</option>
+                        {regions.results.map(region => (
+                          <option key={region.id} value={region.id}>
+                            {region.name}
+                          </option>
+                        ))}
+                      </select>
+                    </FormInputError>
+                  </InlineSection>
+                </FormSubsection>
+                <FormSubsection header="Kontaktní adresa">
+                  <InlineSection>
+                    <Label>Ulice a číslo domu</Label>
+                    <FormInputError>
+                      <input
+                        type="text"
+                        {...register('contact_address.street')}
+                      />
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label>Obec</Label>
+                    <FormInputError>
+                      <input
+                        type="text"
+                        {...register('contact_address.city')}
+                      />
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label>Směrovací číslo</Label>
+                    <FormInputError>
+                      <input
+                        type="text"
+                        {...register('contact_address.zip_code')}
+                      />
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label>Kraj</Label>
+                    <FormInputError>
+                      <select {...register('contact_address.region')}>
+                        <option value={0}>&ndash;&ndash;&ndash;</option>
+                        {regions.results.map(region => (
+                          <option key={region.id} value={region.id}>
+                            {region.name}
+                          </option>
+                        ))}
+                      </select>
+                    </FormInputError>
+                  </InlineSection>
+                </FormSubsection>
+              </FormSection>
+              <FormSection header="Blízká osoba">
+                <InlineSection>
+                  <Label>Jméno</Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      {...register('close_person.first_name')}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Příjmení</Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      {...register('close_person.last_name')}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Email</Label>
+                  <FormInputError>
+                    <input type="email" {...register('close_person.email')} />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label>Telefon</Label>
+                  <FormInputError>
+                    <input type="tel" {...register('close_person.phone')} />
+                  </FormInputError>
+                </InlineSection>
+              </FormSection>
+            </FormSectionGroup>
+            <Actions>
+              <Button type="reset">Zrušit</Button>
+              <Button primary type="submit">
+                Uložit
+              </Button>
+            </Actions>
+          </FormProvider>
+        </form>
+      </div>
+    </>
   )
 }

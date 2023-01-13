@@ -74,7 +74,7 @@ export const App = () => {
         <Route path="user">
           <Route index element={<UserHome />} />
           <Route path="akce" element={<UserEventsLayout />}>
-            <Route index element={<Navigate to="zucastnene" />} />
+            <Route index element={<Navigate to="zucastnene" replace />} />
             <Route path="zucastnene" element={<UserParticipatedEvents />} />
             <Route path="prihlasene" element={<UserRegisteredEvents />} />
           </Route>
@@ -95,7 +95,7 @@ export const App = () => {
             <Route path="uzavrit" element={<CloseEvent />} />
           </Route>
           <Route path="akce" element={<EventsLayout />}>
-            <Route index element={<Navigate to="vsechny" />} />
+            <Route index element={<Navigate to="vsechny" replace />} />
             <Route path="aktualni" element={<ActiveEvents />} />
             <Route path="vsechny" element={<AllEvents />} />
             <Route path="nevyplnene" element={<UnfinishedEvents />} />
