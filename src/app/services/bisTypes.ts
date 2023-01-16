@@ -132,7 +132,7 @@ export type EventApplicationPayload = Pick<
   | 'state'
 > & { answers: AnswerPayload[] }
 
-type AddressPayload = Overwrite<original.UserAddress, { region: number }>
+type AddressPayload = Omit<original.UserAddress, 'region'>
 
 type UserPayloadFields =
   | 'first_name' // required

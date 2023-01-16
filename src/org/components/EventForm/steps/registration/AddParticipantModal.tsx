@@ -55,7 +55,6 @@ const validationSchema = yup.object().shape(
       street: yup.string().required(),
       city: yup.string().required(),
       zip_code: yup.string().required().matches(zipcodeRegExp),
-      region: yup.string().required(),
     }),
   },
   [['email', 'phone']],
@@ -941,15 +940,6 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                           id="address_city"
                                           type="text"
                                           {...register('address.city')}
-                                        />
-                                      </FormInputError>
-
-                                      <Label required>Region:</Label>
-                                      <FormInputError>
-                                        <input
-                                          id="address_region"
-                                          type="text"
-                                          {...register('address.region')}
                                         />
                                       </FormInputError>
                                     </InlineSection>
