@@ -16,16 +16,15 @@
   &.isError {
     input,
     select,
-    textarea {
+    textarea,
+    // match react-select
+    // it's a bit hacky, but will do
+    [class$=-control] {
       border-color: colors.$error;
     }
-    :global .quill {
+    :global .quill,
+    :global .customInput > div {
       border-color: colors.$error;
-    }
-    :global .customInput {
-      > div {
-        border-color: colors.$error;
-      }
     }
   }
 }
