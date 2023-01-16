@@ -1,5 +1,5 @@
 import type { EventContact } from 'app/services/bisTypes'
-import spreadsheetTemplate from 'assets/templates/simple-contact-list-template.xlsx'
+import spreadsheetTemplate from 'assets/templates/vzor_import-ucastniku-z-jednoduche-prezencky.xlsx'
 import classNames from 'classnames'
 import {
   Button,
@@ -241,8 +241,10 @@ const SimpleParticipantInput = ({
             <input
               form={formId}
               type="email"
-              placeholder="E-mail"
-              {...register('email' as const)}
+              placeholder="E-mail*"
+              {...register('email' as const, {
+                required: validationMessages.required,
+              })}
             />
           </FormInputError>
           <FormInputError>
