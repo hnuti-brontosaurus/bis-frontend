@@ -48,6 +48,7 @@
 
     svg {
       fill: colors.$bronto;
+      overflow: visible;
       @include media.for-phone-only {
         width: 30px;
         height: 30px;

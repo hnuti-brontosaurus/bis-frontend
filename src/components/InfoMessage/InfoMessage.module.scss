@@ -2,7 +2,7 @@
 
 .container {
   position: relative;
-  padding: 1rem 1rem 1rem 2rem;
+  padding: 1rem 2rem 1rem 1rem;
   background-color: colors.$gray-100;
 
   display: flex;
@@ -19,6 +19,9 @@
   }
 
   .closeButton {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
     padding: 0.25rem;
     border-radius: 2rem;
 

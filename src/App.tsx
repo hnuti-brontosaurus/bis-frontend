@@ -1,4 +1,5 @@
 import { Routes } from 'config/sentry'
+import { AdminOutlet } from 'layout/AdminOutlet'
 import { AuthenticatedOutlet } from 'layout/AuthenticatedOutlet'
 import { EventOrganizerOutlet } from 'layout/EventOrganizerOutlet'
 import { MixedOutlet } from 'layout/MixedOutlet'
@@ -82,7 +83,10 @@ export const App = () => {
             <Route index element={<ViewEvent readonly />} />
           </Route>
         </Route>
-        <Route path="admin/*" element={<AdminRedirect />} />
+        <Route path="admin" element={<AdminOutlet />}>
+          <Route index element={<AdminRedirect />} />
+          <Route path="/admin/*" element={<AdminRedirect />} />
+        </Route>
         {/* Routes for organizers */}
         <Route path="org" element={<OrganizerOutlet />}>
           <Route index element={<OrgHome />} />

@@ -1,8 +1,9 @@
 import type { EventContact } from 'app/services/bisTypes'
-import spreadsheetTemplate from 'assets/templates/simple-contact-list-template.xlsx'
+import spreadsheetTemplate from 'assets/templates/vzor_import-ucastniku-z-jednoduche-prezencky.xlsx'
 import classNames from 'classnames'
 import {
   Button,
+  ExternalButtonLink,
   FormInputError,
   ImportExcelButton,
   InlineSection,
@@ -118,7 +119,9 @@ export const SimpleParticipants = () => {
       >
         Importovat seznam účastníků z excelu
       </ImportExcelButton>{' '}
-      <a href={spreadsheetTemplate}>(vzor)</a>
+      <ExternalButtonLink tertiary href={spreadsheetTemplate}>
+        (vzor)
+      </ExternalButtonLink>
       <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
       <table className={classNames(tableStyles.table, styles.contactTable)}>
         <thead>
@@ -241,8 +244,10 @@ const SimpleParticipantInput = ({
             <input
               form={formId}
               type="email"
-              placeholder="E-mail"
-              {...register('email' as const)}
+              placeholder="E-mail*"
+              {...register('email' as const, {
+                required: validationMessages.required,
+              })}
             />
           </FormInputError>
           <FormInputError>

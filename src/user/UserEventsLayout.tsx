@@ -20,7 +20,7 @@ export const UserEventsLayout = () => {
       <Layout>
         <Header>
           <ListHeader
-            header="Moje akce (uživatel)"
+            header="Moje akce (uživatel/ka)"
             tabs={[
               {
                 key: 'zucastnene',

@@ -11,3 +11,5 @@ declare module 'react-tooltip-lite' {
 
 // to be able to import excel templates
 declare module '*.xlsx'
+// to be able to import pdf
+declare module '*.pdf'

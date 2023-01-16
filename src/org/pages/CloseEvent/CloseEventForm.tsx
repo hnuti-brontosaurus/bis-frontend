@@ -141,7 +141,7 @@ const validationSchema: yup.ObjectSchema<{
       yup.object({
         first_name: yup.string().required(),
         last_name: yup.string().required(),
-        email: yup.string().email(),
+        email: yup.string().email().required(),
         phone: yup.string(),
       }),
     ),
