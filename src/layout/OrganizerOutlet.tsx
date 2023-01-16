@@ -16,7 +16,11 @@ export const OrganizerOutlet = () => {
       status={403}
       message="Nemáš dostatečná práva k organizátorskému přístupu"
     >
-      Nejsi organizátor/ka
+      Pro vstup do organizátorského přístupu Brontosauřího informačního systému
+      BIS nemáš dostatečná oprávnění. Pokud i přesto chceš zadat do BISu akci,
+      napiš na <a href="mailto:bis@brontosaurus.cz">bis@brontosaurus.cz</a>.
+      <br />
+      Hnutí Brontosaurus
     </Error>
   )
 }
