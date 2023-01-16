@@ -131,7 +131,7 @@ export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
     ),
   )
 
-const hasRole = (user: Pick<User, 'roles'>, role: string): boolean =>
+export const hasRole = (user: Pick<User, 'roles'>, role: string): boolean =>
   user.roles.findIndex(r => r.slug === role) > -1
 
 export type RoleSlug = 'organizer' | 'admin' | 'user'

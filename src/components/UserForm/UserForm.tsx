@@ -45,14 +45,14 @@ import * as yup from 'yup'
  * https://docs.google.com/document/d/1hXfz0NhBL8XrUOEJR5VmuoDOwNADxEo3j5gA5knE1GE/edit?usp=drivesdk
  */
 
-export type UserFormShape = Omit<UserPayload, 'all_emails'> & {
+export type UserFormShape = Omit<UserPayload, 'all_emails' | 'sex'> & {
   isChild?: boolean
 }
 
 // transform user data to initial form data
 const data2form = (user: User): UserFormShape => {
-  return merge({}, user, {
-    sex: user.sex?.id ?? 0,
+  return merge({}, omit(user, 'sex'), {
+    // sex: user.sex?.id ?? 0,
     address: { region: user.address?.region?.id ?? 0 },
     contact_address: { region: user.contact_address?.region?.id },
     close_person: user.close_person ?? {
@@ -90,14 +90,14 @@ const form2payload = (data: UserFormShape): Partial<UserPayload> => {
     {},
     omit(
       data,
-      'sex',
+      // 'sex',
       'contact_address',
       'health_insurance_company',
       'close_person',
       'isChild',
     ),
     {
-      sex: Number(data.sex) || null,
+      // sex: Number(data.sex) || null,
       contact_address,
       health_insurance_company: Number(data.health_insurance_company) || null,
       close_person,
@@ -152,7 +152,7 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
   birth_name: yup.string(),
   nickname: yup.string(),
   birthday: birthdayValidation.required(),
-  sex: yup.number().required(), // this is optional - none is 0
+  // sex: yup.number().required(), // this is optional - none is 0
   health_insurance_company: yup.number().required(), // this is optional - none is 0
   health_issues: yup.string(),
   email: yup
@@ -230,7 +230,7 @@ export const UserForm = ({
   const showMessage = useShowMessage()
 
   // fetch data for form
-  const { data: sexes } = api.endpoints.readSexes.useQuery({})
+  // const { data: sexes } = api.endpoints.readSexes.useQuery({})
   const { data: regions } = api.endpoints.readRegions.useQuery({
     pageSize: 100,
   })
@@ -241,7 +241,7 @@ export const UserForm = ({
 
   const methods = useForm<UserFormShape>({
     defaultValues: mergeWith(
-      { sex: 0, health_insurance_company: 0 },
+      { /*sex: 0,*/ health_insurance_company: 0 },
       initialData ? data2form(initialData) : {},
       persistedData,
       withOverwriteArray,
@@ -303,7 +303,7 @@ export const UserForm = ({
 
   const [isSaving, setIsSaving] = useState(false)
 
-  if (!(regions && sexes && healthInsuranceCompanies))
+  if (!(regions /*&& sexes*/ && healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
 
   const isChild = watch('isChild')
@@ -353,7 +353,7 @@ export const UserForm = ({
                 />
               </FormInputError>
             </InlineSection>
-            <InlineSection>
+            {/* <InlineSection>
               <Label>Pohlaví</Label>
               <FormInputError>
                 <select {...register('sex')}>
@@ -365,7 +365,7 @@ export const UserForm = ({
                   ))}
                 </select>
               </FormInputError>
-            </InlineSection>
+            </InlineSection> */}
             <InlineSection>
               <Label>Zdravotní pojišťovna</Label>
               <FormInputError>

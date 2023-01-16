@@ -101,7 +101,9 @@ export const ParticipantsStep = ({
                 (inputType === 'count' || inputType === 'simple-list') && (
                   <>
                     <InlineSection>
-                      <Label required>Počet účastníků celkem</Label>
+                      <Label required>
+                        Počet účastníků celkem (včetně organizátorů)
+                      </Label>
                       <FormInputError>
                         <Controller
                           control={control}
@@ -124,7 +126,9 @@ export const ParticipantsStep = ({
                       </FormInputError>
                     </InlineSection>
                     <InlineSection>
-                      <Label required>Z toho počet účastníků do 26 let</Label>
+                      <Label required>
+                        Z toho počet účastníků do 26 let (včetně organizátorů)
+                      </Label>
                       <FormInputError>
                         <Controller
                           control={control}

@@ -35,7 +35,7 @@ export const EventsLayout = () => {
       <Layout>
         <Header>
           <ListHeader
-            header="Moje akce"
+            header="Moje akce (organizátor/ka)"
             theme={theme}
             tabs={[
               {

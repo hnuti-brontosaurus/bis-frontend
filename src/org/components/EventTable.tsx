@@ -36,17 +36,17 @@ const appropriateActions: Record<
     icon: <FaPencilAlt className={styles.draft} />,
   },
   inProgress: {
-    title: 'evidence nedokončena (pokračovat v evidenci)',
+    title: 'akce je otevřená (nahrát povinné informace po akci)',
     link: event => `/org/akce/${event.id}/uzavrit`,
     icon: <FaRegCheckCircle className={styles.inProgress} />,
   },
   finished: {
-    title: 'evidence uzavřena (prohlédnout akci)',
+    title: 'akce je uzavřená (prohlédnout akci)',
     link: event => `/org/akce/${event.id}`,
     icon: <FaRegCheckCircle className={styles.finished} />,
   },
   closed: {
-    title: 'akce uzavřena (prohlédnout akci)',
+    title: 'akce je archivovaná (prohlédnout akci)',
     link: event => `/org/akce/${event.id}`,
     icon: <FaRegCheckCircle className={styles.closed} />,
   },
