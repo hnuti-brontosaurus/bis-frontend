@@ -3,6 +3,7 @@ import spreadsheetTemplate from 'assets/templates/vzor_import-ucastniku-z-jednod
 import classNames from 'classnames'
 import {
   Button,
+  ExternalButtonLink,
   FormInputError,
   ImportExcelButton,
   InlineSection,
@@ -118,7 +119,9 @@ export const SimpleParticipants = () => {
       >
         Importovat seznam účastníků z excelu
       </ImportExcelButton>{' '}
-      <a href={spreadsheetTemplate}>(vzor)</a>
+      <ExternalButtonLink tertiary href={spreadsheetTemplate}>
+        (vzor)
+      </ExternalButtonLink>
       <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
       <table className={classNames(tableStyles.table, styles.contactTable)}>
         <thead>
