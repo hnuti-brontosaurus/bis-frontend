@@ -25,10 +25,10 @@ describe('Close event - evidence and participants', () => {
       { method: 'GET', pathname: '/api/categories/regions/' },
       { fixture: 'regions' },
     )
-    cy.intercept(
-      { method: 'GET', pathname: '/api/categories/sex_categories/' },
-      { fixture: 'sexes' },
-    )
+    // cy.intercept(
+    //   { method: 'GET', pathname: '/api/categories/sex_categories/' },
+    //   { fixture: 'sexes' },
+    // )
     cy.intercept(
       {
         method: 'GET',
@@ -132,7 +132,7 @@ describe('Close event - evidence and participants', () => {
             last_name: 'last_name',
             nickname: '',
             birth_name: '',
-            sex: null,
+            // sex: null,
             health_insurance_company: null,
             health_issues: '',
             email: 'test@example.com',
