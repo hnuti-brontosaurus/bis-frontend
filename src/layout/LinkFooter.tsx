@@ -1,66 +1,21 @@
+import { footerLinks, footerText } from 'config/static/footer'
 import styles from './LinkFooter.module.scss'
 
 export const LinkFooter = () => {
   return (
     <div className={styles.container}>
-      <p>motivační text k darování</p>
+      <p>{footerText}</p>
       <nav className={styles.links}>
-        <a
-          href="https://eshop.brontosaurus.cz/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          E-shop
-        </a>
-        <a
-          href="https://www.darujme.cz/organizace/206"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Darujme
-        </a>
-        <a
-          href="https://darkyprirode.cz/kategorie-produktu/darky-prirode/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Dárky přírodě
-        </a>
-        <a
-          href="https://mozek.brontosaurus.cz/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Mozek
-        </a>
-        <a
-          href="https://example.com/todo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Rozcestník
-        </a>
-        <a
-          href="https://zpetna-vazba.brontosaurus.cz/login.php"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Zpětná vazba
-        </a>
-        <a
-          href="http://peceoprirodu.cz/databaze/sign/in?backlink=kgkmp"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Databáze budek
-        </a>
-        <a
-          href="https://example.com/todo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Newslettery
-        </a>
+        {footerLinks.map(({ name, url }) => (
+          <a
+            key={name + url}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {name}
+          </a>
+        ))}
       </nav>
     </div>
   )
