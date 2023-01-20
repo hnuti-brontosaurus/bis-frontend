@@ -243,7 +243,6 @@ export const SelectLocation = forwardRef<
                 }}
                 onSelect={handleSelect}
                 onChangeBounds={bounds => setBounds(bounds)}
-                isLoading={isLoading}
                 editMode={isEditing}
               />
             </Suspense>
@@ -278,7 +277,10 @@ export const SelectLocation = forwardRef<
               onFinish={handleFinish}
             />
           ) : (
-            <ViewLocation location={selectedLocation ?? undefined} />
+            <ViewLocation
+              isLoading={isLoading}
+              location={selectedLocation ?? undefined}
+            />
           )}
           {isEditing ? (
             <Button
@@ -433,7 +435,13 @@ const CreateLocation = ({
     </div>
   )
 }
-const ViewLocation = ({ location }: { location?: NewLocation | Location }) => {
+const ViewLocation = ({
+  location,
+  isLoading,
+}: {
+  location?: NewLocation | Location
+  isLoading: boolean
+}) => {
   return (
     <div
       className={classNames(
@@ -448,6 +456,10 @@ const ViewLocation = ({ location }: { location?: NewLocation | Location }) => {
           <div className={styles.fieldText}>{location?.address}</div>
           <div className={styles.fieldText}> {location?.description}</div>
         </>
+      ) : isLoading ? (
+        <div className={styles.emptyLocation}>
+          <div>Načítáme lokality</div>
+        </div>
       ) : (
         <div className={styles.emptyLocation}>
           <SelectMap width={150} height={100} />

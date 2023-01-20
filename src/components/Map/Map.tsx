@@ -137,7 +137,6 @@ export interface MapProps {
   onSelect: (id: number) => void
   onChangeBounds?: (bounds: ClearBounds) => void
   onError?: (error: Error) => void
-  isLoading: boolean
   editMode?: boolean
 }
 
@@ -149,7 +148,6 @@ export const Map = ({
   onChange,
   onSelect,
   onChangeBounds,
-  isLoading,
   editMode,
 }: MapProps) => {
   const [flyPosition, setFlyPosition] = useState<L.LatLngTuple>()
@@ -189,20 +187,14 @@ export const Map = ({
       <div className={styles.legend}>
         <div>Hledej na mapě:</div>
         <div id={styles.idSearchMap}>
-          {isLoading ? (
-            <div>
-              <small>Načítáme lokality</small>
-            </div>
-          ) : (
-            /**
-             * This can be replaced byt OSMSearch if needed
-             */
-            <MapyCzSearch
-              onSelect={handleSearch}
-              onError={handleError}
-              className={styles.searchForm}
-            />
-          )}
+          {/**
+           * This can be replaced byt OSMSearch if needed
+           */}
+          <MapyCzSearch
+            onSelect={handleSearch}
+            onError={handleError}
+            className={styles.searchForm}
+          />
         </div>
         <div className={styles.legendMenu} id={styles.idMenuLegend}>
           <div className={styles.legendItem}>

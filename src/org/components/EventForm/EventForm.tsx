@@ -467,7 +467,7 @@ export const EventForm: FC<{
       <Step name="pro koho" hasError={hasFormError(methods.intendedFor)}>
         <IntendedForStep methods={methods.intendedFor} isCamp={isCamp} />
       </Step>
-      <Step name="lokalita" hasError={hasFormError(methods.location)}>
+      <Step name="místo konání" hasError={hasFormError(methods.location)}>
         <LocationStep methods={methods.location} />
       </Step>
       <Step name="přihlášení" hasError={hasFormError(methods.registration)}>

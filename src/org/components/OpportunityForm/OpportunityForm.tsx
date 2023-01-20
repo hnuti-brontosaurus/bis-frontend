@@ -252,7 +252,6 @@ export const OpportunityForm = ({
             </InlineSection>
           </FormSection>
           <FormSection header="Místo konání" required>
-            Lokalita
             <Controller
               name="location"
               control={control}
