@@ -1,3 +1,5 @@
+@use 'styles/colors';
+
 .loginContainer {
   display: flex;
   align-items: center;
@@ -56,4 +58,9 @@
 .inlineLink {
   font-weight: bold;
   color: rgb(0, 128, 55);
+}
+
+.help {
+  font-size: 0.85rem;
+  text-align: center;
 }

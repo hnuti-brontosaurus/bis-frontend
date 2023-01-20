@@ -6,7 +6,6 @@ import {
   Button,
   ButtonLink,
   FormInputError,
-  InfoMessage,
   Loading,
   TogglePasswordInput,
 } from 'components'
@@ -48,12 +47,6 @@ export const Login = () => {
 
   return (
     <>
-      <InfoMessage id="login-help" closable>
-        <p>
-          V případě problémů s přihlášením se obracej na{' '}
-          <a href="mailto:bis@brontosaurus.cz">bis@brontosaurus.cz</a>
-        </p>
-      </InfoMessage>
       <div className={styles.loginContainer}>
         <div className={styles.formContainer}>
           <header className={styles.title}>Přihlaste se ke svému účtu</header>
@@ -97,6 +90,10 @@ export const Login = () => {
               >
                 přihlašuji se poprvé/zapomněl(a) jsem heslo
               </ButtonLink>
+              <div className={styles.help}>
+                V případě problémů s přihlášením se obracej na{' '}
+                <a href="mailto:bis@brontosaurus.cz">bis@brontosaurus.cz</a>
+              </div>
             </form>
           </FormProvider>
         </div>
