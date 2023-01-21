@@ -24,6 +24,7 @@
   gap: 8px;
   @include media.for-tablet-landscape-up {
     width: 100%;
+    flex-direction: row;
   }
   .selectLocationBox {
     display: flex;
@@ -136,6 +137,8 @@
   padding: 0.8rem;
   border-radius: 8px;
   width: 100%;
+  height: sizes.$map-height;
+  overflow: auto;
   @include media.for-tablet-landscape-up {
     width: 300px;
   }
@@ -168,11 +171,13 @@
     color: colors.$gray-400;
     svg {
       margin-top: unset;
-      @include media.for-tablet-landscape-up {
-        margin-top: -100px;
-      }
+      // @include media.for-tablet-landscape-up {
+      //   margin-top: -100px;
+      // }
+      width: 60px;
+      height: 60px;
       path {
-        fill: colors.$gray-400;
+        stroke-width: 1 !important;
       }
     }
     div {
@@ -184,6 +189,9 @@
   background-color: colors.$bronto-100;
 }
 
+.buttonNewLocalization {
+  white-space: nowrap;
+}
 .buttonSmallScreen {
   display: block;
   @include media.for-tablet-landscape-up {

@@ -2,7 +2,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { Location } from 'app/services/bisTypes'
-import { ReactComponent as SelectMap } from 'assets/select-map.svg'
 import classNames from 'classnames'
 import {
   Button,
@@ -28,6 +27,7 @@ import React, {
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { FiCheckCircle } from 'react-icons/fi'
+import { TbMap2 } from 'react-icons/tb'
 import { Overwrite } from 'utility-types'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
@@ -217,6 +217,34 @@ export const SelectLocation = forwardRef<
             </div>
           )}
         </div>
+        {isEditing ? (
+          <Button
+            secondary
+            onClick={() => {
+              setIsEditing(false)
+            }}
+            className={classNames(
+              styles.buttonBigScreen,
+              styles.buttonNewLocalization,
+            )}
+          >
+            Vyber ezgistujicy lokalizace{' '}
+          </Button>
+        ) : (
+          <Button
+            secondary
+            onClick={() => {
+              setIsEditing(true)
+              onChange(null)
+            }}
+            className={classNames(
+              styles.buttonBigScreen,
+              styles.buttonNewLocalization,
+            )}
+          >
+            Přidat novou lokalizaci
+          </Button>
+        )}
       </div>
       <div className={styles.mainContentContainerWrapper}>
         <div className={styles.mainContentContainer}>
@@ -246,13 +274,16 @@ export const SelectLocation = forwardRef<
                 editMode={isEditing}
               />
             </Suspense>
-            {isEditing ? (
+            {/* {isEditing ? (
               <Button
                 secondary
                 onClick={() => {
                   setIsEditing(false)
                 }}
-                className={styles.buttonBigScreen}
+                className={classNames(
+                  styles.buttonBigScreen,
+                  styles.buttonNewLocalization,
+                )}
               >
                 Vyber existující lokalitu{' '}
               </Button>
@@ -263,11 +294,14 @@ export const SelectLocation = forwardRef<
                   setIsEditing(true)
                   onChange(null)
                 }}
-                className={styles.buttonBigScreen}
+                className={classNames(
+                  styles.buttonBigScreen,
+                  styles.buttonNewLocalization,
+                )}
               >
-                Nenašla/nenašel jsi svoji lokalitu? Vytvoř novou!
+                Přidat novou lokalizaci{' '}
               </Button>
-            )}
+            )} */}
           </div>
           <div className={styles.mapSpacer}></div>
           {isEditing ? (
@@ -288,7 +322,10 @@ export const SelectLocation = forwardRef<
               onClick={() => {
                 setIsEditing(false)
               }}
-              className={styles.buttonSmallScreen}
+              className={classNames(
+                styles.buttonSmallScreen,
+                styles.buttonNewLocalization,
+              )}
             >
               Vyber existující lokalitu
             </Button>
@@ -298,9 +335,12 @@ export const SelectLocation = forwardRef<
               onClick={() => {
                 setIsEditing(true)
               }}
-              className={styles.buttonSmallScreen}
+              className={classNames(
+                styles.buttonSmallScreen,
+                styles.buttonNewLocalization,
+              )}
             >
-              Přidat novou lokalitu!
+              Přidat novou lokalizaci{' '}
             </Button>
           )}
         </div>
@@ -462,8 +502,9 @@ const ViewLocation = ({
         </div>
       ) : (
         <div className={styles.emptyLocation}>
-          <SelectMap width={150} height={100} />
-          <div>Vyber lokalitu podle názvu nebo na mapě</div>
+          {/* <SelectMap width={150} height={100} /> */}
+          <TbMap2 strokeWidth={1} />
+          <div>Vyber lokalitu podle názvu nebo na mapie</div>
         </div>
       )}
     </div>

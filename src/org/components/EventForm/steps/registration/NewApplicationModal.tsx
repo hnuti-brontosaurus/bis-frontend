@@ -1,6 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from 'app/services/bis'
-import { AnswerPayload, EventApplication } from 'app/services/bisTypes'
+import {
+  AnswerPayload,
+  EventApplication,
+  Question,
+} from 'app/services/bisTypes'
 import {
   BirthdayInput,
   birthdayValidation,
@@ -65,47 +69,48 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   })
   const { register, handleSubmit, reset, control } = methods
 
+  const createEventDataWithAnswers = (data: EventApplication) => {
+    let filteredAnswers: AnswerPayload[] = []
+    if (data.answers) {
+      filteredAnswers = data.answers
+        .filter(({ answer }) => Boolean(answer))
+        .map(({ answer, question }) => ({
+          answer,
+          question: question.id,
+        }))
+    }
+
+    let closePersonData = null
+    if (
+      data.close_person?.first_name ||
+      data.close_person?.last_name ||
+      data.close_person?.email ||
+      data.close_person?.phone
+    ) {
+      closePersonData = {
+        first_name: data.close_person.first_name || '',
+        last_name: data.close_person.last_name || '',
+        email: data.close_person.email || '',
+        phone: data.close_person.phone || '',
+      }
+    }
+
+    return {
+      application: {
+        ...data,
+        answers: filteredAnswers,
+        address: null,
+        close_person: closePersonData,
+        state: 'pending' as const,
+      },
+      eventId,
+    }
+  }
+
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.stopPropagation()
     handleSubmit(async data => {
-      let filteredAnswers: AnswerPayload[] = []
-      if (data.answers) {
-        filteredAnswers = data.answers
-          .filter(answer => answer.answer !== '')
-          .map(answer => ({
-            answer: answer.answer,
-            question: answer.question.id,
-          }))
-      }
-
-      // TODO: change the type of event data woith answers
-      let closePersonData = null
-
-      if (
-        data.close_person?.first_name ||
-        data.close_person?.last_name ||
-        data.close_person?.email ||
-        data.close_person?.phone
-      ) {
-        closePersonData = {
-          first_name: data.close_person.first_name || '',
-          last_name: data.close_person.last_name || '',
-          email: data.close_person.email || '',
-          phone: data.close_person.phone || '',
-        }
-      }
-
-      const eventDataWithAnswers = {
-        application: {
-          ...data,
-          answers: filteredAnswers,
-          address: null,
-          close_person: closePersonData,
-          state: 'pending' as const,
-        },
-        eventId,
-      }
-      await createEventApplication(eventDataWithAnswers)
+      await createEventApplication(createEventDataWithAnswers(data))
       onClose()
     })(e)
   }
@@ -249,7 +254,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
                 {questions && (
                   <>
                     <h3>Otázky:</h3>
-                    {questions.results.map((question: any, i) => {
+                    {questions.results.map((question: Question, i) => {
                       return (
                         <>
                           {' '}
