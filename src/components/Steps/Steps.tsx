@@ -34,7 +34,14 @@ export const Steps = <T extends Record<string, any>>({
     hidden: element.props.hidden,
   })).filter(element => !element.hidden)
 
-  useSwipe(() => console.log('swipeeee'))
+  useSwipe(direction => {
+    if (direction === 'left') {
+      setStep(step + 1)
+    }
+    if (direction === 'right') {
+      setStep(step - 1)
+    }
+  })
   return (
     <div>
       <div className={styles.navWrapper}>
