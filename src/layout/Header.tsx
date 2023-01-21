@@ -9,7 +9,12 @@ import { useLogout } from 'hooks/useLogout'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { FaRegUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
-import { availableRoles, getUserRoles, RoleSlug } from 'utils/helpers'
+import {
+  availableRoles,
+  getUserRoles,
+  hasRoleAdminAccess,
+  RoleSlug,
+} from 'utils/helpers'
 import styles from './Header.module.scss'
 
 export const Header = () => {
@@ -23,7 +28,7 @@ export const Header = () => {
   const [role, setRole] = useCurrentRole()
 
   const handleSwitchRole = (role: RoleSlug) => {
-    if (role !== 'admin') setRole(role)
+    if (!hasRoleAdminAccess(role)) setRole(role)
     navigate(availableRoles[role].url)
   }
 
