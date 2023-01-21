@@ -61,7 +61,7 @@ export const Steps = <T extends Record<string, any>>({
                 hasError && styles.isError,
               )}
               key={name}
-              onClick={() => nextStep()}
+              onClick={() => setStep(i + 1)}
             >
               {name}
             </button>
