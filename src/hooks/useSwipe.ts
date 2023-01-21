@@ -12,7 +12,7 @@ export const useSwipe = (
   const ref = useRef<HTMLDivElement>(null)
   const [xDown, setXDown] = useState<number>()
   const [yDown, setYDown] = useState<number>()
-  const { minDistance = 50, allowDiagonal = false } = options || {}
+  const { minDistance = 20, allowDiagonal = false } = options || {}
 
   const handleTouchStart = useCallback((event: TouchEvent) => {
     setXDown(event.touches[0].clientX)
@@ -31,10 +31,10 @@ export const useSwipe = (
       const xDiff = xDown - xUp
       const yDiff = yDown - yUp
 
-      if (Math.abs(xDiff) < minDistance && Math.abs(yDiff) < minDistance) {
+      if (Math.abs(xDiff) < minDistance) {
         return
       }
-      if (!allowDiagonal && Math.abs(xDiff) !== Math.abs(yDiff)) {
+      if (!allowDiagonal && 20 < Math.abs(yDiff)) {
         return
       }
 

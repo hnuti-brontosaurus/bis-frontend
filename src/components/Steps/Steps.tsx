@@ -34,16 +34,22 @@ export const Steps = <T extends Record<string, any>>({
     hidden: element.props.hidden,
   })).filter(element => !element.hidden)
 
-  useSwipe(direction => {
+  const nextStep = () => {
+    setStep(Math.min(step + 1, elementProps.length))
+  }
+  const prevStep = () => {
+    setStep(Math.max(step - 1, 1))
+  }
+  const swipeRef = useSwipe(direction => {
     if (direction === 'left') {
-      setStep(step + 1)
+      nextStep()
     }
     if (direction === 'right') {
-      setStep(step - 1)
+      prevStep()
     }
   })
   return (
-    <div>
+    <div ref={swipeRef}>
       <div className={styles.navWrapper}>
         <nav className={styles.navigation}>
           {elementProps.map(({ name, hasError }, i) => (
@@ -54,8 +60,8 @@ export const Steps = <T extends Record<string, any>>({
                 styles.stepButton,
                 hasError && styles.isError,
               )}
-              key={i}
-              onClick={() => setStep(i + 1)}
+              key={name}
+              onClick={() => nextStep()}
             >
               {name}
             </button>
@@ -71,7 +77,7 @@ export const Steps = <T extends Record<string, any>>({
             actions &&
             actions.map(({ props, name }, i) => (
               <Button
-                key={i} // TODO we should not use index as key
+                key={name} // TODO we should not use index as key
                 primary
                 type="submit"
                 onClick={() => onSubmit(props)}
@@ -92,7 +98,7 @@ export const Steps = <T extends Record<string, any>>({
           type="button"
           aria-label="Go to previous step"
           onClick={() => {
-            setStep(step - 1)
+            prevStep()
             window.scrollTo(0, 0)
           }}
           className={styles.buttonNavigationLeftBigScreen}
@@ -106,7 +112,7 @@ export const Steps = <T extends Record<string, any>>({
           type="button"
           aria-label="Go to next step"
           onClick={() => {
-            setStep(step + 1)
+            nextStep()
             window.scrollTo(0, 0)
           }}
           className={styles.buttonNavigationRightBigScreen}
@@ -121,7 +127,7 @@ export const Steps = <T extends Record<string, any>>({
             type="button"
             aria-label="Go to previous step"
             onClick={() => {
-              setStep(step - 1)
+              prevStep()
               window.scrollTo(0, 0)
             }}
           >
@@ -135,7 +141,7 @@ export const Steps = <T extends Record<string, any>>({
             type="button"
             aria-label="Go to next step"
             onClick={() => {
-              setStep(step + 1)
+              nextStep()
               window.scrollTo(0, 0)
             }}
           >
