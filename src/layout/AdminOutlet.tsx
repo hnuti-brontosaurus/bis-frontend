@@ -1,7 +1,7 @@
 import { ButtonLink, Error, Loading } from 'components'
 import { useCurrentUser } from 'hooks/currentUser'
 import { Outlet } from 'react-router-dom'
-import { hasRole } from 'utils/helpers'
+import { hasUserAdminAccess } from 'utils/helpers'
 
 export const AdminOutlet = () => {
   const { data: user, isLoading } = useCurrentUser()
@@ -9,7 +9,7 @@ export const AdminOutlet = () => {
   if (isLoading) return <Loading>Ověřujeme Tvé role</Loading>
   if (!user) return <Error message="Nejsi přihlášen/a" />
 
-  return hasRole(user, 'admin') ? (
+  return hasUserAdminAccess(user) ? (
     <Outlet />
   ) : (
     <Error
