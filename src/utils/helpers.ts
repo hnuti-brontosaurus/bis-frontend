@@ -134,23 +134,46 @@ export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
 export const hasRole = (user: Pick<User, 'roles'>, role: string): boolean =>
   user.roles.findIndex(r => r.slug === role) > -1
 
-export type RoleSlug = 'organizer' | 'admin' | 'user'
+export type RoleSlug = 'organizer' | 'admin' | 'user' | 'zc'
 
 export const availableRoles: Record<
   RoleSlug,
   { slug: RoleSlug; name: string; url: string }
 > = {
-  admin: { slug: 'admin', name: 'Admin', url: '/admin' },
-  organizer: { slug: 'organizer', name: 'Organizátor', url: '/org' },
-  user: { slug: 'user', name: 'Uživatel', url: '/user' },
+  admin: { slug: 'admin', name: 'Admin/ka', url: '/admin' },
+  organizer: { slug: 'organizer', name: 'Organizátor/ka', url: '/org' },
+  user: { slug: 'user', name: 'Uživatel/ka', url: '/user' },
+  zc: { slug: 'zc', name: 'Základní článek', url: '/admin' },
 }
 
 export const getUserRoles = (user: Pick<User, 'roles'>): RoleSlug[] => {
-  if (hasRole(user, 'admin')) return ['admin', 'organizer', 'user']
-  else if (hasRole(user, 'organizer') || hasRole(user, 'main_organizer'))
-    return ['organizer', 'user']
-  else return ['user']
+  const roles: RoleSlug[] = []
+  if (hasRole(user, 'admin')) roles.push('admin')
+
+  if (
+    ['chairman', 'vice_chairman', 'manager', 'board_member'].some(role =>
+      hasRole(user, role),
+    )
+  )
+    roles.push('zc')
+
+  if (
+    hasRole(user, 'organizer') ||
+    hasRole(user, 'main_organizer') ||
+    hasRole(user, 'admin')
+  )
+    roles.push('organizer')
+
+  roles.push('user')
+
+  return roles
 }
+
+export const hasRoleAdminAccess = (role: RoleSlug) =>
+  role === 'admin' || role === 'zc'
+
+export const hasUserAdminAccess = (user: Pick<User, 'roles'>) =>
+  getUserRoles(user).some(role => hasRoleAdminAccess(role))
 
 export const splitDateTime = (datetime: string): [string, string] => {
   const [date] = datetime.split('T')
