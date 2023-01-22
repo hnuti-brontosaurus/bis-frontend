@@ -60,6 +60,7 @@ const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
 
 export type SelectedOrNewLocation = NewLocation | Location
 
+// This is the main component that renders the map and the form for creating new locations
 export const SelectLocation = forwardRef<
   any,
   {
@@ -260,7 +261,13 @@ export const SelectLocation = forwardRef<
               }
             >
               <Map
-                className={styles.mapContainer}
+                // This classname is used by the "useSwipe" hook to ignore swipe events on this element.
+                // If removed, the main step swipe will also happen on map swipe, which is not desired behavior.
+                // Be careful when editing this classname, as it may affect the swipe functionality.
+                className={classNames(
+                  styles.mapContainer,
+                  'steps-change-swipe-ignored',
+                )}
                 markers={markers}
                 selection={selection}
                 value={isEditing ? newLocationCoordinates : undefined}
@@ -274,34 +281,6 @@ export const SelectLocation = forwardRef<
                 editMode={isEditing}
               />
             </Suspense>
-            {/* {isEditing ? (
-              <Button
-                secondary
-                onClick={() => {
-                  setIsEditing(false)
-                }}
-                className={classNames(
-                  styles.buttonBigScreen,
-                  styles.buttonNewLocalization,
-                )}
-              >
-                Vyber existující lokalitu{' '}
-              </Button>
-            ) : (
-              <Button
-                secondary
-                onClick={() => {
-                  setIsEditing(true)
-                  onChange(null)
-                }}
-                className={classNames(
-                  styles.buttonBigScreen,
-                  styles.buttonNewLocalization,
-                )}
-              >
-                Přidat novou lokalizaci{' '}
-              </Button>
-            )} */}
           </div>
           <div className={styles.mapSpacer}></div>
           {isEditing ? (

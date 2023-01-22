@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 interface SwipeOptions {
   minDistance?: number
   allowDiagonal?: boolean
+  ignoredClass?: string
 }
 
 export const useSwipe = (
@@ -12,15 +13,29 @@ export const useSwipe = (
   const ref = useRef<HTMLDivElement>(null)
   const [xDown, setXDown] = useState<number>()
   const [yDown, setYDown] = useState<number>()
-  const { minDistance = 20, allowDiagonal = false } = options || {}
+  const {
+    minDistance = 120,
+    allowDiagonal = false,
+    ignoredClass = 'is-swipe-ignored',
+  } = options || {}
 
   const handleTouchStart = useCallback((event: TouchEvent) => {
+    const target = event.target as HTMLElement
+    if (target?.classList.contains(ignoredClass)) {
+      return
+    }
     setXDown(event.touches[0].clientX)
     setYDown(event.touches[0].clientY)
   }, [])
 
   const handleTouchMove = useCallback(
     (event: TouchEvent) => {
+      const target = event.target as HTMLElement
+
+      console.log(target.classList)
+      if (target?.classList.contains(ignoredClass)) {
+        return
+      }
       if (!xDown || !yDown) {
         return
       }

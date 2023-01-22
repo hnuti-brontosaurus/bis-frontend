@@ -47,7 +47,7 @@ export const Steps = <T extends Record<string, any>>({
     if (direction === 'right') {
       prevStep()
     }
-  })
+  }, {ignoredClass: 'steps-change-swipe-ignored'})
   return (
     <div ref={swipeRef}>
       <div className={styles.navWrapper}>
