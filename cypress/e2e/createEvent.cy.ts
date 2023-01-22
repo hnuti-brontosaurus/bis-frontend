@@ -22,7 +22,11 @@ const locations: Location[] = new Array(35)
 
 // go to next step
 const next = () =>
-  cy.get('button[aria-label="Go to next step"]').should('be.visible').click()
+  cy
+    .get('button[aria-label="Go to next step"]')
+    .first()
+    .should('be.visible')
+    .click()
 
 const submit = () =>
   cy.get('[type=submit]:contains(Uložit)').last().should('be.visible').click()

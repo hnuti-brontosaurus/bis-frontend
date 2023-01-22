@@ -2,7 +2,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { Location } from 'app/services/bisTypes'
-import { ReactComponent as SelectMap } from 'assets/select-map.svg'
 import classNames from 'classnames'
 import {
   Button,
@@ -28,6 +27,7 @@ import React, {
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { FiCheckCircle } from 'react-icons/fi'
+import { TbMap2 } from 'react-icons/tb'
 import { Overwrite } from 'utility-types'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
@@ -60,6 +60,7 @@ const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
 
 export type SelectedOrNewLocation = NewLocation | Location
 
+// This is the main component that renders the map and the form for creating new locations
 export const SelectLocation = forwardRef<
   any,
   {
@@ -217,6 +218,34 @@ export const SelectLocation = forwardRef<
             </div>
           )}
         </div>
+        {isEditing ? (
+          <Button
+            secondary
+            onClick={() => {
+              setIsEditing(false)
+            }}
+            className={classNames(
+              styles.buttonBigScreen,
+              styles.buttonNewLocalization,
+            )}
+          >
+            Vyber ezgistujicy lokalizace{' '}
+          </Button>
+        ) : (
+          <Button
+            secondary
+            onClick={() => {
+              setIsEditing(true)
+              onChange(null)
+            }}
+            className={classNames(
+              styles.buttonBigScreen,
+              styles.buttonNewLocalization,
+            )}
+          >
+            Přidat novou lokalizaci
+          </Button>
+        )}
       </div>
       <div className={styles.mainContentContainerWrapper}>
         <div className={styles.mainContentContainer}>
@@ -232,7 +261,13 @@ export const SelectLocation = forwardRef<
               }
             >
               <Map
-                className={styles.mapContainer}
+                // This classname is used by the "useSwipe" hook to ignore swipe events on this element.
+                // If removed, the main step swipe will also happen on map swipe, which is not desired behavior.
+                // Be careful when editing this classname, as it may affect the swipe functionality.
+                className={classNames(
+                  styles.mapContainer,
+                  'steps-change-swipe-ignored',
+                )}
                 markers={markers}
                 selection={selection}
                 value={isEditing ? newLocationCoordinates : undefined}
@@ -246,28 +281,6 @@ export const SelectLocation = forwardRef<
                 editMode={isEditing}
               />
             </Suspense>
-            {isEditing ? (
-              <Button
-                secondary
-                onClick={() => {
-                  setIsEditing(false)
-                }}
-                className={styles.buttonBigScreen}
-              >
-                Vyber existující lokalitu{' '}
-              </Button>
-            ) : (
-              <Button
-                secondary
-                onClick={() => {
-                  setIsEditing(true)
-                  onChange(null)
-                }}
-                className={styles.buttonBigScreen}
-              >
-                Nenašla/nenašel jsi svoji lokalitu? Vytvoř novou!
-              </Button>
-            )}
           </div>
           <div className={styles.mapSpacer}></div>
           {isEditing ? (
@@ -288,7 +301,10 @@ export const SelectLocation = forwardRef<
               onClick={() => {
                 setIsEditing(false)
               }}
-              className={styles.buttonSmallScreen}
+              className={classNames(
+                styles.buttonSmallScreen,
+                styles.buttonNewLocalization,
+              )}
             >
               Vyber existující lokalitu
             </Button>
@@ -298,9 +314,12 @@ export const SelectLocation = forwardRef<
               onClick={() => {
                 setIsEditing(true)
               }}
-              className={styles.buttonSmallScreen}
+              className={classNames(
+                styles.buttonSmallScreen,
+                styles.buttonNewLocalization,
+              )}
             >
-              Přidat novou lokalitu!
+              Přidat novou lokalizaci{' '}
             </Button>
           )}
         </div>
@@ -462,8 +481,9 @@ const ViewLocation = ({
         </div>
       ) : (
         <div className={styles.emptyLocation}>
-          <SelectMap width={150} height={100} />
-          <div>Vyber lokalitu podle názvu nebo na mapě</div>
+          {/* <SelectMap width={150} height={100} /> */}
+          <TbMap2 strokeWidth={1} />
+          <div>Vyber lokalitu podle názvu nebo na mapie</div>
         </div>
       )}
     </div>

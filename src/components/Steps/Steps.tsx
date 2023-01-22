@@ -1,8 +1,9 @@
 import classNames from 'classnames'
 import { Button } from 'components'
 import { useSearchParamsState } from 'hooks/searchParamsState'
+import { useSwipe } from 'hooks/useSwipe'
 import { Children, FC, FunctionComponentElement, ReactNode } from 'react'
-import { ImArrowLeft, ImArrowRight } from 'react-icons/im'
+import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import styles from './Steps.module.scss'
 
 export const Steps = <T extends Record<string, any>>({
@@ -33,8 +34,22 @@ export const Steps = <T extends Record<string, any>>({
     hidden: element.props.hidden,
   })).filter(element => !element.hidden)
 
+  const nextStep = () => {
+    setStep(Math.min(step + 1, elementProps.length))
+  }
+  const prevStep = () => {
+    setStep(Math.max(step - 1, 1))
+  }
+  const swipeRef = useSwipe(direction => {
+    if (direction === 'left') {
+      nextStep()
+    }
+    if (direction === 'right') {
+      prevStep()
+    }
+  }, {ignoredClass: 'steps-change-swipe-ignored'})
   return (
-    <div>
+    <div ref={swipeRef}>
       <div className={styles.navWrapper}>
         <nav className={styles.navigation}>
           {elementProps.map(({ name, hasError }, i) => (
@@ -45,7 +60,7 @@ export const Steps = <T extends Record<string, any>>({
                 styles.stepButton,
                 hasError && styles.isError,
               )}
-              key={i}
+              key={name}
               onClick={() => setStep(i + 1)}
             >
               {name}
@@ -62,7 +77,7 @@ export const Steps = <T extends Record<string, any>>({
             actions &&
             actions.map(({ props, name }, i) => (
               <Button
-                key={i} // TODO we should not use index as key
+                key={name} // TODO we should not use index as key
                 primary
                 type="submit"
                 onClick={() => onSubmit(props)}
@@ -77,6 +92,34 @@ export const Steps = <T extends Record<string, any>>({
           {element}
         </div>
       ))}
+      {step > 1 && (
+        <Button
+          tertiary
+          type="button"
+          aria-label="Go to previous step"
+          onClick={() => {
+            prevStep()
+            window.scrollTo(0, 0)
+          }}
+          className={styles.buttonNavigationLeftBigScreen}
+        >
+          <FaArrowCircleLeft className={styles.floatingStepArrow} />
+        </Button>
+      )}
+      {step < elementProps.length && (
+        <Button
+          tertiary
+          type="button"
+          aria-label="Go to next step"
+          onClick={() => {
+            nextStep()
+            window.scrollTo(0, 0)
+          }}
+          className={styles.buttonNavigationRightBigScreen}
+        >
+          <FaArrowCircleRight className={styles.floatingStepArrow} />
+        </Button>
+      )}
       <nav className={styles.bottomNavigation}>
         {step > 1 && (
           <Button
@@ -84,11 +127,11 @@ export const Steps = <T extends Record<string, any>>({
             type="button"
             aria-label="Go to previous step"
             onClick={() => {
-              setStep(step - 1)
+              prevStep()
               window.scrollTo(0, 0)
             }}
           >
-            <ImArrowLeft /> Krok zpátky
+            <FaArrowCircleLeft className={styles.floatingStepArrow} />
           </Button>
         )}
         <span className={styles.spacer}></span>
@@ -98,11 +141,11 @@ export const Steps = <T extends Record<string, any>>({
             type="button"
             aria-label="Go to next step"
             onClick={() => {
-              setStep(step + 1)
+              nextStep()
               window.scrollTo(0, 0)
             }}
           >
-            Další krok <ImArrowRight />
+            <FaArrowCircleRight className={styles.floatingStepArrow} />
           </Button>
         )}
       </nav>
