@@ -40,14 +40,17 @@ export const Steps = <T extends Record<string, any>>({
   const prevStep = () => {
     setStep(Math.max(step - 1, 1))
   }
-  const swipeRef = useSwipe(direction => {
-    if (direction === 'left') {
-      nextStep()
-    }
-    if (direction === 'right') {
-      prevStep()
-    }
-  }, {ignoredClass: 'steps-change-swipe-ignored'})
+  const swipeRef = useSwipe(
+    direction => {
+      if (direction === 'left') {
+        nextStep()
+      }
+      if (direction === 'right') {
+        prevStep()
+      }
+    },
+    { ignoredClass: 'steps-change-swipe-ignored' },
+  )
   return (
     <div ref={swipeRef}>
       <div className={styles.navWrapper}>
@@ -69,7 +72,12 @@ export const Steps = <T extends Record<string, any>>({
         </nav>
         <nav className={classNames(styles.actions, styles.topActions)}>
           {onCancel && (
-            <Button secondary type="reset" onClick={() => onCancel()}>
+            <Button
+              secondary
+              type="reset"
+              onClick={() => onCancel()}
+              className={styles.topActionsButton}
+            >
               Zrušit
             </Button>
           )}
@@ -81,6 +89,7 @@ export const Steps = <T extends Record<string, any>>({
                 primary
                 type="submit"
                 onClick={() => onSubmit(props)}
+                className={styles.topActionsButton}
               >
                 {name}
               </Button>
