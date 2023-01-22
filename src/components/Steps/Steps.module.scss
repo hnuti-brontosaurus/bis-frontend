@@ -49,7 +49,9 @@ $step-button-line-height-phone: 1rem;
     color: colors.$bronto;
     border-radius: 2rem;
     height: 44px;
+    font-size: 0.95rem;
     @include media.for-big-desktop-up {
+      width: unset;
       padding: $step-button-vertical-padding $step-button-horizontal-padding;
     }
     &::first-letter {
@@ -131,10 +133,14 @@ $step-button-line-height-phone: 1rem;
 
 .topActions {
   display: none;
-}
-@include media.for-desktop-up {
-  .topActions {
+  @include media.for-desktop-up {
     display: flex;
+  }
+  .topActionsButton {
+    width: 90px;
+    @include media.for-big-desktop-up {
+      width: unset;
+    }
   }
 }
 
