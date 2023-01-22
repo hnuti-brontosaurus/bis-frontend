@@ -112,10 +112,20 @@ $step-button-line-height-phone: 1rem;
 }
 
 .bottomNavigation {
-  margin-top: 2rem;
+  position: relative;
   display: flex;
+  left: 0;
+  margin: 1rem;
+  z-index: 10000;
+  width: calc(100% - 2rem);
   .spacer {
     flex: auto;
+  }
+  button {
+    background-color: transparent;
+  }
+  @include media.for-tablet-landscape-up {
+    display: none;
   }
 }
 
@@ -125,5 +135,40 @@ $step-button-line-height-phone: 1rem;
 @include media.for-desktop-up {
   .topActions {
     display: flex;
+  }
+}
+
+.floatingStepArrow {
+  width: 60px;
+  height: 60px;
+  path {
+    fill: colors.$bronto-200;
+  }
+  &:hover {
+    path {
+      fill: colors.$bronto-200;
+    }
+  }
+}
+.buttonNavigationLeftBigScreen {
+  display: none;
+  @include media.for-tablet-landscape-up {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 1rem;
+    opacity: 60%;
+    background-color: transparent;
+  }
+}
+.buttonNavigationRightBigScreen {
+  display: none;
+  @include media.for-tablet-landscape-up {
+    display: block;
+    position: fixed;
+    top: 50%;
+    right: 1rem;
+    opacity: 60%;
+    background-color: transparent;
   }
 }
