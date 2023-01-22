@@ -23,6 +23,10 @@ select {
   }
 }
 
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 // button,
 input[type='submit'],
 input[type='reset'] {
@@ -169,9 +173,7 @@ input[type='checkbox']:disabled {
   &:has(input[type='checkbox']:checked) {
     background-color: colors.$bronto;
     color: white;
-
     svg {
-      transform: scaleY(-1);
       path {
         fill: white;
         stroke: white;
