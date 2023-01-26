@@ -1,4 +1,4 @@
-import { Button } from 'components'
+import { GuideOwl } from 'components'
 import React, { Suspense } from 'react'
 
 const QualificationGuideDownload = React.lazy(
@@ -7,17 +7,13 @@ const QualificationGuideDownload = React.lazy(
 
 export const QualificationGuide = () => {
   return (
-    <div>
-      <header>Jakou kvalifikaci musí mít hlavní organizátor/ka?</header>
-      <Suspense
-        fallback={
-          <Button secondary isLoading>
-            Číst průvodce
-          </Button>
-        }
-      >
-        <QualificationGuideDownload>Číst průvodce</QualificationGuideDownload>
-      </Suspense>
-    </div>
+    <GuideOwl>
+      Jakou kvalifikaci musí mít hlavní organizátor/ka?
+      <p>
+        <Suspense fallback={<a>Načítám</a>}>
+          <QualificationGuideDownload>Číst průvodce</QualificationGuideDownload>
+        </Suspense>
+      </p>
+    </GuideOwl>
   )
 }

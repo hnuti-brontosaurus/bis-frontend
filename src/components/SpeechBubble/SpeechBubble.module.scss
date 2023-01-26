@@ -1,0 +1,45 @@
+@use 'styles/colors';
+.bubbleRectangle {
+  width: 300px;
+  margin: 50px auto;
+  border: 4px solid colors.$gray-blue;
+  padding: 10px;
+  text-align: center;
+  font-family: arial;
+  position: relative;
+  border-radius: 12px;
+  background-color: white;
+  min-height: 40px;
+
+  &::before {
+    content: '';
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 12px solid colors.$gray-blue;
+    border-right: 12px solid transparent;
+    border-top: 12px solid colors.$gray-blue;
+    border-bottom: 12px solid transparent;
+    right: -24px;
+    top: 5px;
+    &.hideTail {
+      display: none;
+    }
+  }
+
+  &::after {
+    content: '';
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 10px solid #fff;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #fff;
+    border-bottom: 10px solid transparent;
+    right: -14px;
+    top: 10px;
+    &.hideTail {
+      display: none;
+    }
+  }
+}

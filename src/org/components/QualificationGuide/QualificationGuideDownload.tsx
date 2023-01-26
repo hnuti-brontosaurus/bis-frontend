@@ -1,5 +1,4 @@
 import qualificationGuide from 'assets/Průvodce-kvalifikacemi.pdf'
-import { ExternalButtonLink } from 'components'
 import { ReactNode } from 'react'
 
 export const QualificationGuideDownload = ({
@@ -8,14 +7,9 @@ export const QualificationGuideDownload = ({
   children: ReactNode
 }) => {
   return (
-    <ExternalButtonLink
-      secondary
-      target="_blank"
-      rel="noopener noreferrer"
-      href={qualificationGuide}
-    >
+    <a target="_blank" rel="noopener noreferrer" href={qualificationGuide}>
       {children}
-    </ExternalButtonLink>
+    </a>
   )
 }
 
