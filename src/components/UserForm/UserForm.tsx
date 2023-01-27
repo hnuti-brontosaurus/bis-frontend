@@ -155,14 +155,12 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
   // sex: yup.number().required(), // this is optional - none is 0
   health_insurance_company: yup.number().required(), // this is optional - none is 0
   health_issues: yup.string(),
-  email: yup
-    .string()
-    .email()
-    .when('isChild', {
-      is: true,
-      then: schema => schema.defined(),
-      otherwise: schema => schema.required(),
-    }),
+  email: yup.string().email(),
+  // .when('isChild', {
+  //   is: true,
+  //   then: schema => schema.defined(),
+  //   otherwise: schema => schema.required(),
+  // }),
   phone: yup.string(),
   address: yup
     .object()
@@ -313,12 +311,10 @@ export const UserForm = ({
       <FormProvider {...methods}>
         <FormSectionGroup>
           <InlineSection>
-            <Label>
-              Mladší 15 let
-              <FormInputError>
-                <input type="checkbox" {...register('isChild')} />
-              </FormInputError>
-            </Label>
+            <Label htmlFor="isChild">Mladší 15 let</Label>
+            <FormInputError>
+              <input type="checkbox" id="isChild" {...register('isChild')} />
+            </FormInputError>
           </InlineSection>
           <FormSection header="Osobní údaje">
             <InlineSection>
