@@ -41,6 +41,7 @@ REACT_APP_VAR1="something" REACT_APP_VAR2="something_else" yarn build
 - `REACT_APP_API_BASE_URL` API base url, including trailing slash (default `/api/`)
 - `REACT_APP_SENTRY_DSN` a dsn for Sentry setup (disabled when none)
 - `REACT_APP_CORS_PROXY` A proxy which adds CORS headers to images, including trailing slash (default none)
+- `REACT_APP_MAP_TILE_SERVER` [url template](https://leafletjs.com/reference.html#tilelayer-url-template) of map tiles
 
 ## Running locally with a remote proxy
 

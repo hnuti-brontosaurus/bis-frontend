@@ -483,7 +483,7 @@ const ViewLocation = ({
         <div className={styles.emptyLocation}>
           {/* <SelectMap width={150} height={100} /> */}
           <TbMap2 strokeWidth={1} />
-          <div>Vyber lokalitu podle názvu nebo na mapie</div>
+          <div>Vyber lokalitu podle názvu nebo na mapě</div>
         </div>
       )}
     </div>
