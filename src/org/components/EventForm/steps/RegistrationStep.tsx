@@ -33,7 +33,7 @@ export const RegistrationStep = ({
         <FormSectionGroup startIndex={10}>
           <FormSection
             required
-            header="Zveřejnit na brontosauřím webu"
+            header={formTexts.propagation.is_shown_on_web.name}
             help={formTexts.propagation.is_shown_on_web.help}
           >
             <FormInputError>
