@@ -313,10 +313,12 @@ export const UserForm = ({
       <FormProvider {...methods}>
         <FormSectionGroup>
           <InlineSection>
-            <Label>Mladší 15 let</Label>
-            <FormInputError>
-              <input type="checkbox" {...register('isChild')} />
-            </FormInputError>
+            <Label>
+              Mladší 15 let
+              <FormInputError>
+                <input type="checkbox" {...register('isChild')} />
+              </FormInputError>
+            </Label>
           </InlineSection>
           <FormSection header="Osobní údaje">
             <InlineSection>
@@ -470,7 +472,10 @@ export const UserForm = ({
               </InlineSection>
             </FormSubsection>
           </FormSection>
-          <FormSection header="Blízká osoba" required={isChild}>
+          <FormSection
+            header={isChild ? 'Rodič/zákonný zástupce' : 'Blízká osoba'}
+            required={isChild}
+          >
             <InlineSection>
               <Label required={isChild}>Jméno</Label>
               <FormInputError>
