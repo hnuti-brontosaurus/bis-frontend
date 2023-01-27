@@ -4,6 +4,7 @@ import {
   Breadcrumbs,
   ButtonLink,
   DataView,
+  ExternalButtonLink,
   PageHeader,
 } from 'components'
 import * as combinedTranslations from 'config/static/combinedTranslations'
@@ -34,6 +35,16 @@ export const ViewProfile = () => {
           <ButtonLink primary to="upravit">
             <FaPencilAlt /> Upravit
           </ButtonLink>
+          {user.id === currentUser?.id && (
+            <ExternalButtonLink
+              secondary
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://forms.gle/gPUL3CgSeAHtNVuu8"
+            >
+              Zažádat o EYCA/HB kartu
+            </ExternalButtonLink>
+          )}
         </Actions>
         <section>
           <table className={styles.horizontalTable}>
