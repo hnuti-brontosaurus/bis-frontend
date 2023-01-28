@@ -149,6 +149,7 @@ type UserPayloadFields =
   | 'health_insurance_company'
   | 'health_issues'
   | 'all_emails'
+  | 'subscribed_to_newsletter'
 
 export type UserPayload = Overwrite<
   Pick<original.User, UserPayloadFields>,
