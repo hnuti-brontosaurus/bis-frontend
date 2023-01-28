@@ -1,12 +1,6 @@
 /**
- * This UserForm is very similar to the form in EditProfile
- * We actually copy-pasted the code from there
- * However, this form is primarily used in participant list and modals
- * so it may need to have a different design than that one
- * So when the design is clearer, this component may or may not be used
- * for simplifying EditProfile
+ * TODO Missing pronoun field when user edits themself
  */
-
 import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from 'app/services/bis'
 import { User, UserPayload } from 'app/services/bisTypes'
@@ -37,7 +31,6 @@ import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { withOverwriteArray } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
-import { requiredSelect } from 'utils/validationMessages'
 import * as yup from 'yup'
 
 /**
@@ -51,10 +44,10 @@ export type UserFormShape = Omit<UserPayload, 'all_emails' | 'sex'> & {
 
 // transform user data to initial form data
 const data2form = (user: User): UserFormShape => {
-  return merge({}, omit(user, 'sex'), {
+  return merge({}, omit(user, 'sex', 'address', 'contact_address'), {
     // sex: user.sex?.id ?? 0,
-    address: { region: user.address?.region?.id ?? 0 },
-    contact_address: { region: user.contact_address?.region?.id },
+    address: omit(user.address, 'region'),
+    contact_address: omit(user.contact_address, 'region'),
     close_person: user.close_person ?? {
       first_name: '',
       last_name: '',
@@ -73,8 +66,7 @@ const form2payload = (data: UserFormShape): Partial<UserPayload> => {
   const contact_address =
     data.contact_address?.city &&
     data.contact_address?.street &&
-    data.contact_address?.zip_code &&
-    Number(data.contact_address?.region)
+    data.contact_address?.zip_code
       ? data.contact_address
       : null
 
@@ -110,38 +102,26 @@ const addressValidationSchema: yup.ObjectSchema<UserFormShape['address']> = yup
   .object()
   .shape(
     {
-      street: yup.string().when(['city', 'zip_code', 'region'], {
-        is: (city: string, zip: string, region: number) =>
-          city || zip || Number(region),
+      street: yup.string().when(['city', 'zip_code'], {
+        is: (city: string, zip: string) => city || zip,
         then: schema => schema.required(),
         otherwise: schema => schema.defined(),
       }),
-      city: yup.string().when(['street', 'zip_code', 'region'], {
-        is: (street: string, zip: string, region: number) =>
-          street || zip || Number(region),
+      city: yup.string().when(['street', 'zip_code'], {
+        is: (street: string, zip: string) => street || zip,
         then: schema => schema.required(),
         otherwise: schema => schema.defined(),
       }),
-      zip_code: yup.string().when(['street', 'city', 'region'], {
-        is: (street: string, city: string, region: number) =>
-          street || city || Number(region),
+      zip_code: yup.string().when(['street', 'city'], {
+        is: (street: string, city: string) => street || city,
         then: schema => schema.required(),
-        otherwise: schema => schema.defined(),
-      }),
-      region: yup.number().when(['street', 'city', 'zip_code'], {
-        is: (street: string, city: string, zip: string) =>
-          street || city || zip,
-        then: schema => schema.required(requiredSelect).min(1, requiredSelect),
         otherwise: schema => schema.defined(),
       }),
     },
     [
       ['street', 'city'],
       ['street', 'zip_code'],
-      ['street', 'region'],
       ['city', 'zip_code'],
-      ['city', 'region'],
-      ['zip_code', 'region'],
     ],
   )
 
@@ -170,7 +150,6 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
       street: yup.string().required(),
       city: yup.string().required(),
       zip_code: yup.string().required(),
-      region: yup.number().required(requiredSelect).min(1, requiredSelect),
     })
     .required(),
   contact_address: addressValidationSchema,
@@ -231,9 +210,6 @@ export const UserForm = ({
 
   // fetch data for form
   // const { data: sexes } = api.endpoints.readSexes.useQuery({})
-  const { data: regions } = api.endpoints.readRegions.useQuery({
-    pageSize: 100,
-  })
   const { data: healthInsuranceCompanies } =
     api.endpoints.readHealthInsuranceCompanies.useQuery({ pageSize: 1000 })
 
@@ -241,7 +217,11 @@ export const UserForm = ({
 
   const methods = useForm<UserFormShape>({
     defaultValues: mergeWith(
-      { /*sex: 0,*/ health_insurance_company: 0 },
+      {
+        /*sex: 0,*/ health_insurance_company: 0,
+        address: { street: '', city: '', zip_code: '' },
+        contact_address: { street: '', city: '', zip_code: '' },
+      },
       initialData ? data2form(initialData) : {},
       persistedData,
       withOverwriteArray,
@@ -303,7 +283,7 @@ export const UserForm = ({
 
   const [isSaving, setIsSaving] = useState(false)
 
-  if (!(regions /*&& sexes*/ && healthInsuranceCompanies))
+  if (!(/*sexes && */ healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
 
   const isChild = watch('isChild')
@@ -419,19 +399,6 @@ export const UserForm = ({
                   <input type="text" {...register('address.zip_code')} />
                 </FormInputError>
               </InlineSection>
-              <InlineSection>
-                <Label>Kraj</Label>
-                <FormInputError>
-                  <select {...register('address.region')}>
-                    <option value={0}>&ndash;&ndash;&ndash;</option>
-                    {regions.results.map(region => (
-                      <option key={region.id} value={region.id}>
-                        {region.name}
-                      </option>
-                    ))}
-                  </select>
-                </FormInputError>
-              </InlineSection>
             </FormSubsection>
             <FormSubsection header="Kontaktní adresa">
               <InlineSection>
@@ -453,19 +420,6 @@ export const UserForm = ({
                     type="text"
                     {...register('contact_address.zip_code')}
                   />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label>Kraj</Label>
-                <FormInputError>
-                  <select {...register('contact_address.region')}>
-                    <option value={0}>&ndash;&ndash;&ndash;</option>
-                    {regions.results.map(region => (
-                      <option key={region.id} value={region.id}>
-                        {region.name}
-                      </option>
-                    ))}
-                  </select>
                 </FormInputError>
               </InlineSection>
             </FormSubsection>
