@@ -1,6 +1,6 @@
 import { api } from 'app/services/bis'
 import type { Event, EventPayload } from 'app/services/bisTypes'
-import { Breadcrumbs, Loading } from 'components'
+import { Breadcrumbs, GuideOwl, Loading } from 'components'
 import {
   useShowApiErrorMessage,
   useShowMessage,
@@ -169,6 +169,7 @@ export const CloseEvent = () => {
   return (
     <>
       <Breadcrumbs eventName={event && event.name} />
+
       <CloseEventForm
         id={String(eventId)}
         // we have FullEvent but need just Event
@@ -178,6 +179,10 @@ export const CloseEvent = () => {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       />
+      <GuideOwl id="po-akce-guide-owl">
+        Akce musí být uzavřená (tj. mít kompletně vyplněné údaje po akci) do 20
+        dnů od skončení.
+      </GuideOwl>
     </>
   )
 }

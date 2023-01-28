@@ -5,10 +5,8 @@ import {
   FormSectionGroup,
   IconSelect,
   IconSelectGroup,
-  InfoMessage,
 } from 'components'
 import { form as formTexts } from 'config/static/event'
-import { QualificationGuide } from 'org/components'
 import { Controller, FormProvider } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
@@ -25,9 +23,6 @@ export const EventGroupStep = ({
   const { data: groups } = api.endpoints.readEventGroups.useQuery()
   return (
     <>
-      <InfoMessage id="main-organizer-qualifications-guide" closable>
-        <QualificationGuide />
-      </InfoMessage>
       <FormProvider {...methods}>
         <form>
           <FormSectionGroup startIndex={1}>

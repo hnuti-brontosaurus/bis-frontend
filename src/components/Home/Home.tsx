@@ -1,7 +1,6 @@
 import illustration from 'assets/happy-earth-TODO-replace-with-original.webp'
 import classNames from 'classnames'
-import { ExternalButtonLink } from 'components'
-import { InfoMessage } from 'components/InfoMessage/InfoMessage'
+import { GuideOwl } from 'components'
 import { ReactNode } from 'react'
 import { Link, To } from 'react-router-dom'
 import styles from './Home.module.scss'
@@ -22,16 +21,18 @@ export interface HomeButtonConfig {
 
 export const Home = ({ buttons }: { buttons: HomeButtonConfig[] }) => (
   <>
-    <InfoMessage id="guide-bis-usage" closable>
-      <ExternalButtonLink
-        secondary
+    <GuideOwl id="main-guide" left>
+      {' '}
+      Tady najdeš{' '}
+      <a
         target="_blank"
         rel="noopener noreferrer"
         href="https://podpora.brontosaurus.cz"
+        className={styles.guideLink}
       >
-        Průvodce používání BIS
-      </ExternalButtonLink>
-    </InfoMessage>
+        průvodce používání BIS
+      </a>
+    </GuideOwl>
     <div className={styles.container}>
       <nav className={styles.mainMenu}>
         {buttons.map(({ title, detail, link, theme }) => (
