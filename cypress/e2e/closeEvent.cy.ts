@@ -112,6 +112,9 @@ describe('Close event - evidence and participants', () => {
         // and to fill some data
         fillUserForm()
 
+        // close helper
+        cy.get('div[id="closeOwlGuide"]').click()
+
         // click Submit and succeed
         cy.intercept(
           { method: 'POST', pathname: '/api/frontend/users' },
@@ -177,6 +180,9 @@ describe('Close event - evidence and participants', () => {
         // and to fill some data
         fillUserForm()
 
+        // close helper
+        cy.get('div[id="closeOwlGuide"]').click()
+
         // click Submit and fail
         cy.intercept(
           { method: 'POST', pathname: '/api/frontend/users' },
@@ -220,6 +226,9 @@ describe('Close event - evidence and participants', () => {
         // and to fill some data
         fillUserForm()
 
+        // close helper
+        cy.get('div[id="closeOwlGuide"]').click()
+
         // then click cancel
         cy.get('[class^=StyledModal] [type=reset]:contains(Zrušit)').click()
         // the form should close
@@ -262,6 +271,9 @@ describe('Close event - evidence and participants', () => {
       cy.get('label:contains(Mám všechny informace)')
         .should('be.visible')
         .click()
+
+      // close helper
+      cy.get('div[id="closeOwlGuide"]').click()
 
       // click update participant
       cy.get('button[aria-label="Upravit účastníka Jana Novak"]').click()

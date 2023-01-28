@@ -108,7 +108,7 @@ export const GuideOwl = ({ children, id, left }: GuideOwlProps) => {
                 styles.close,
                 animatingOwl ? styles.animatingOwl : '',
               )}
-              id={styles.close}
+              id="closeOwlGuide"
               onClick={() => setShow(false)}
             >
               <IoMdCloseCircle size={24} />
