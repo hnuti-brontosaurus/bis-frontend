@@ -10,7 +10,7 @@ export const QualificationGuide = () => {
     <GuideOwl id="qualification-guide" left>
       Jakou kvalifikaci musí mít hlavní organizátor/ka?
       <p>
-        <Suspense fallback={<a>Načítám</a>}>
+        <Suspense fallback="Načítám">
           <QualificationGuideDownload>Číst průvodce</QualificationGuideDownload>
         </Suspense>
       </p>

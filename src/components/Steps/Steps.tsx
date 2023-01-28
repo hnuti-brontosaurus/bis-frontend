@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import { Button } from 'components'
 import { useSearchParamsState } from 'hooks/searchParamsState'
 import { useSwipe } from 'hooks/useSwipe'
-import { QualificationGuide } from 'org/components'
 import { Children, FC, FunctionComponentElement, ReactNode } from 'react'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import styles from './Steps.module.scss'
@@ -55,7 +54,6 @@ export const Steps = <T extends Record<string, any>>({
   return (
     <div ref={swipeRef}>
       <div className={styles.navWrapper}>
-
         <nav className={styles.navigation}>
           {elementProps.map(({ name, hasError }, i) => (
             <button
@@ -85,7 +83,7 @@ export const Steps = <T extends Record<string, any>>({
           )}
           {onSubmit &&
             actions &&
-            actions.map(({ props, name }, i) => (
+            actions.map(({ props, name }) => (
               <Button
                 key={name} // TODO we should not use index as key
                 primary

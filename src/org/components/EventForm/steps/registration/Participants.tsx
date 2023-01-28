@@ -9,7 +9,6 @@ import {
   SelectUnknownUser,
   StyledModal,
 } from 'components'
-import stylesTable from 'components/Table.module.scss'
 import { UserForm } from 'components/UserForm/UserForm'
 import {
   useShowApiErrorMessage,
@@ -273,9 +272,7 @@ export const Participants: FC<{
                       {participant.birthday && ', '}
                       {participant.birthday}
                     </td>
-                    <td
-                      onClick={() => {}}
-                    >
+                    <td onClick={() => {}}>
                       <button
                         type="button"
                         aria-label={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}
@@ -284,9 +281,7 @@ export const Participants: FC<{
                         <EditUser className={styles.editUserIconContainer} />
                       </button>
                     </td>
-                    <td
-                      onClick={() => {}}
-                    >
+                    <td onClick={() => {}}>
                       <button
                         type="button"
                         aria-label={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
