@@ -11,7 +11,7 @@ import { FC, ReactElement, useMemo } from 'react'
 import { AiOutlineStop } from 'react-icons/ai'
 import { FaPencilAlt, FaRegCheckCircle } from 'react-icons/fa'
 import { TbDotsVertical } from 'react-icons/tb'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   EventStatus,
   formatDateRange,
@@ -22,6 +22,7 @@ import {
 /**
  * A list of default actions for different event statuses
  */
+
 const appropriateActions: Record<
   EventStatus,
   {
@@ -60,7 +61,8 @@ const appropriateActions: Record<
 export const EventTable: FC<{
   data: Event[]
   action?: 'view' | 'edit' | 'finish'
-}> = ({ data: events, action = 'view' }) => {
+  columnsToHideOnMobile?: number[]
+}> = ({ data: events, action = 'view', columnsToHideOnMobile }) => {
   const locationRequests = useQueries(
     api.endpoints.readLocation,
     useMemo(
@@ -77,16 +79,47 @@ export const EventTable: FC<{
   const [restoreCanceledEvent, { isLoading: isEventRestoring }] =
     useRestoreCanceledEvent()
   const [canAddEvent] = useAllowedToCreateEvent()
+  const navigate = useNavigate()
 
   return (
-    <table className={classNames(styles.table, styles.verticalLine1)}>
+    <table
+      className={classNames(styles.table, styles.verticalLine1, 'tableEvents')}
+    >
       <thead>
         <tr>
-          <th>Status</th>
-          <th>Název</th>
-          <th>Termín</th>
-          <th>Lokalita</th>
-          <th></th>
+          <th
+            className={classNames(
+              columnsToHideOnMobile?.includes(1) && 'mobileHiddenCell',
+            )}
+          >
+            Status
+          </th>
+          <th
+            className={classNames(
+              columnsToHideOnMobile?.includes(2) && 'mobileHiddenCell',
+            )}
+          >
+            Název
+          </th>
+          <th
+            className={classNames(
+              columnsToHideOnMobile?.includes(3) && 'mobileHiddenCell',
+            )}
+          >
+            Termín
+          </th>
+          <th
+            className={classNames(
+              columnsToHideOnMobile?.includes(4) && 'mobileHiddenCell',
+            )}
+          >
+            Lokalita
+          </th>
+          <th
+            className={classNames(
+              columnsToHideOnMobile?.includes(5) && 'mobileHiddenCell',
+            )}
+          ></th>
         </tr>
       </thead>
       <tbody>
@@ -94,7 +127,12 @@ export const EventTable: FC<{
           const status = getEventStatus(event)
           return (
             <tr key={event.id}>
-              <td className={styles.cellWithButton}>
+              <td
+                className={classNames(
+                  'cellWithButton',
+                  columnsToHideOnMobile?.includes(1) && 'mobileHiddenCell',
+                )}
+              >
                 <Link
                   title={appropriateActions[status].title}
                   to={appropriateActions[status].link(event)}
@@ -102,29 +140,61 @@ export const EventTable: FC<{
                   {appropriateActions[status].icon}
                 </Link>
               </td>
-              <td>
-                <Link
-                  to={
+              <td
+                onClick={() => {
+                  navigate(
                     `/org/akce/${event.id}` +
-                    (action === 'finish' ? '/uzavrit' : '')
-                  }
-                >
-                  {event.name}
-                </Link>
+                      (action === 'finish' ? '/uzavrit' : ''),
+                  )
+                }}
+                className={classNames(
+                  columnsToHideOnMobile?.includes(2) && 'mobileHiddenCell',
+                )}
+              >
+                {event.name}
               </td>
-              <td>{formatDateRange(event.start, event.end)}</td>
-              <td>
+              <td
+                onClick={() => {
+                  navigate(
+                    `/org/akce/${event.id}` +
+                      (action === 'finish' ? '/uzavrit' : ''),
+                  )
+                }}
+                className={classNames(
+                  columnsToHideOnMobile?.includes(3) && 'mobileHiddenCell',
+                )}
+              >
+                {formatDateRange(event.start, event.end)}
+              </td>
+              <td
+                onClick={() => {
+                  navigate(
+                    `/org/akce/${event.id}` +
+                      (action === 'finish' ? '/uzavrit' : ''),
+                  )
+                }}
+                className={classNames(
+                  columnsToHideOnMobile?.includes(4) && 'mobileHiddenCell',
+                )}
+              >
                 {
                   locationRequests.find(
                     request => request.data?.id === event?.location,
                   )?.data?.name
                 }
               </td>
-              <td className={styles.cellWithButton}>
+              <td
+                className={classNames(
+                  'cellWithButton',
+                  columnsToHideOnMobile?.includes(1) && 'mobileHiddenCell',
+                )}
+              >
                 <Menu
                   menuButton={
                     <MenuButton>
-                      <TbDotsVertical />
+                      <div className={'cellWithButtonMenuIcon'}>
+                        <TbDotsVertical />
+                      </div>
                     </MenuButton>
                   }
                   className={styles.buttonInsideCell}

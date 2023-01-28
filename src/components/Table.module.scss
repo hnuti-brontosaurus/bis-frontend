@@ -1,7 +1,8 @@
 @use 'styles/colors';
+@use 'styles/media';
 
 .table {
-  table-layout: auto;
+  table-layout: fixed;
   width: 100%;
   th,
   td {
@@ -40,22 +41,56 @@
   color: colors.$error;
 }
 
-.cellWithButton {
-  padding: 0 !important;
-  position: relative;
-
-  & > *:first-child {
-    display: block;
-    margin: auto;
+:global .tableEvents {
+  tr {
+    cursor: pointer;
+    &:hover {
+      background-color: colors.$gray-100;
+    }
   }
 
-  & > button:first-child {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
+  thead {
+    tr {
+      &:hover {
+        cursor: auto;
+        background-color: white;
+      }
+    }
+  }
+
+  tr {
+    td,
+    th {
+      &:first-of-type {
+        width: 80px;
+      }
+      &:last-of-type {
+        width: 80px;
+      }
+    }
+  }
+
+  .cellWithButton {
+    svg {
+      display: block;
+      margin: auto !important;
+    }
+  }
+}
+
+:global .cellWithButtonMenuIcon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  &:hover {
+    background-color: colors.$gray-200;
+    border-radius: 50%;
+  }
+}
+
+:global .mobileHiddenCell {
+  display: none;
+  @include media.for-tablet-landscape-up {
+    display: table-cell;
   }
 }

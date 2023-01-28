@@ -4,7 +4,7 @@ import { ReactComponent as Owl } from 'assets/owl.svg'
 import classNames from 'classnames'
 import { SpeechBubble } from 'components/SpeechBubble/SpeechBubble'
 import { actions, selectInfoMessageVisibility } from 'features/ui/uiSlice'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { IoMdCloseCircle } from 'react-icons/io'
 import styles from './GuideOwl.module.scss'
 
@@ -31,8 +31,10 @@ export const GuideOwl = ({ children, id, left }: GuideOwlProps) => {
   const show = useAppSelector(state => selectInfoMessageVisibility(state, id))
 
   const dispatch = useAppDispatch()
-  const setShow = (show: boolean) =>
-    dispatch(actions.toggleInfoMessage({ show, id }))
+  const setShow = useCallback(
+    (show: boolean) => dispatch(actions.toggleInfoMessage({ show, id })),
+    [dispatch, id],
+  )
 
   // This effect is used to delay the appearance of the speech bubble after the owl animation is complete,
   // that gives an owl a liitle time to bounce
@@ -46,7 +48,7 @@ export const GuideOwl = ({ children, id, left }: GuideOwlProps) => {
     }, 800)
 
     return () => clearTimeout(timeout)
-  }, [animating])
+  }, [animating, setShow])
 
   // This effect is used to delay the appearance of the speech bubble after the owl animation is complete,
   // so it starts after the buncing owl animation is finished
@@ -59,7 +61,7 @@ export const GuideOwl = ({ children, id, left }: GuideOwlProps) => {
     }, 1800)
 
     return () => clearTimeout(timeout)
-  }, [animatingOwl])
+  }, [animatingOwl, animating])
   return (
     <>
       <div

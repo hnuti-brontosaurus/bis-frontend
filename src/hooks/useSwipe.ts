@@ -19,20 +19,22 @@ export const useSwipe = (
     ignoredClass = 'is-swipe-ignored',
   } = options || {}
 
-  const handleTouchStart = useCallback((event: TouchEvent) => {
-    const target = event.target as HTMLElement
-    if (target?.classList.contains(ignoredClass)) {
-      return
-    }
-    setXDown(event.touches[0].clientX)
-    setYDown(event.touches[0].clientY)
-  }, [])
+  const handleTouchStart = useCallback(
+    (event: TouchEvent) => {
+      const target = event.target as HTMLElement
+      if (target?.classList.contains(ignoredClass)) {
+        return
+      }
+      setXDown(event.touches[0].clientX)
+      setYDown(event.touches[0].clientY)
+    },
+    [ignoredClass],
+  )
 
   const handleTouchMove = useCallback(
     (event: TouchEvent) => {
       const target = event.target as HTMLElement
 
-      console.log(target.classList)
       if (target?.classList.contains(ignoredClass)) {
         return
       }
@@ -75,7 +77,7 @@ export const useSwipe = (
       setXDown(undefined)
       setYDown(undefined)
     },
-    [onSwipe, minDistance, allowDiagonal, xDown, yDown],
+    [onSwipe, minDistance, allowDiagonal, xDown, yDown, ignoredClass],
   )
 
   useEffect(() => {

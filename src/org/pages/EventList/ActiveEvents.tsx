@@ -14,5 +14,11 @@ export const ActiveEvents = () => {
     event => getEventStatus(event) !== 'closed',
   )
 
-  return <UnscalablePaginatedList table={EventTable} data={inputEvents} />
+  return (
+    <UnscalablePaginatedList
+      table={EventTable}
+      data={inputEvents}
+      columnsToHideOnMobile={[3, 4]}
+    />
+  )
 }
