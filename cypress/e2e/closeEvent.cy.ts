@@ -21,10 +21,6 @@ describe('Close event - evidence and participants', () => {
       { results: [] },
     )
     // intercept also categories needed for UserForm
-    cy.intercept(
-      { method: 'GET', pathname: '/api/categories/regions/' },
-      { fixture: 'regions' },
-    )
     // cy.intercept(
     //   { method: 'GET', pathname: '/api/categories/sex_categories/' },
     //   { fixture: 'sexes' },
@@ -96,7 +92,6 @@ describe('Close event - evidence and participants', () => {
         cy.get('[name=address\\.street]').type('abc')
         cy.get('[name=address\\.city]').type('de')
         cy.get('[name=address\\.zip_code]').type('10000')
-        cy.get('[name=address\\.region]').select(3)
 
         // give form a chance to persist
         cy.wait(1000)
@@ -141,7 +136,6 @@ describe('Close event - evidence and participants', () => {
               street: 'abc',
               city: 'de',
               zip_code: '10000',
-              region: 3,
             },
             contact_address: null,
             close_person: null,
@@ -285,7 +279,6 @@ describe('Close event - evidence and participants', () => {
       cy.get('[name=address\\.street]').clear().type('NewStreetName 42')
       cy.get('[name=address\\.city]').clear().type('NewTown')
       cy.get('[name=address\\.zip_code]').clear().type('12345')
-      cy.get('[name=address\\.region]').select(5)
       cy.get('[name=health_insurance_company]').select(4)
 
       // intercept the updates of user
@@ -304,7 +297,6 @@ describe('Close event - evidence and participants', () => {
             street: 'NewStreetName 42',
             city: 'NewTown',
             zip_code: '12345',
-            region: 5,
           },
           health_insurance_company: 4,
         })
