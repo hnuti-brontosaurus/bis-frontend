@@ -26,6 +26,7 @@ export {
   InlineSection,
   Label,
 } from './FormLayout/FormLayout'
+export { GuideOwl } from './GuideOwl/GuideOwl'
 export { Help } from './Help/Help'
 export { Home } from './Home/Home'
 export type { HomeButtonConfig } from './Home/Home'

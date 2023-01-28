@@ -14,8 +14,7 @@ import { useReadFullEvent } from 'hooks/readFullEvent'
 import { useTitle } from 'hooks/title'
 import { omit, startsWith } from 'lodash'
 import merge from 'lodash/merge'
-import type { EventSubmitShape } from 'org/components'
-import { EventForm } from 'org/components'
+import { EventForm, EventSubmitShape, QualificationGuide } from 'org/components'
 import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { toDataURL } from 'utils/helpers'
@@ -180,6 +179,7 @@ export const CreateEvent = () => {
         initialData={initialData}
         eventToEdit={false}
       />
+      <QualificationGuide />
     </>
   )
 }
