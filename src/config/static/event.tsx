@@ -46,6 +46,7 @@ export const form = {
   },
   propagation: {
     is_shown_on_web: {
+      name: 'Zveřejnit na www.brontosaurus.cz',
       help: 'Pokud zaškrtnete ano, akce se zobrazí na webu www.brontosaurus.cz. Volbu ne zaškrtněte pouze jedná-li se o interní akci HB nebo interní akci Brďa.',
     },
     invitation_text_introduction: {

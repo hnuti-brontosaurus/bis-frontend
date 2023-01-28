@@ -226,7 +226,12 @@ export const Map = ({
           center={[49.82381, 15.46875]}
           zoom={6}
         >
-          <TileLayer url="https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
+          <TileLayer
+            url={
+              process.env.REACT_APP_MAP_TILE_SERVER ??
+              'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
+            }
+          />
           <MapEvents
             onClick={({ lat, lng }) => onChange([lat, lng])}
             onMoveEnd={onChangeBounds}
