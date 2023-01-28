@@ -42,7 +42,9 @@ export const DataView = <T extends Data>({
   if (typeof data === 'boolean') return data ? <>Ano</> : <>Ne</>
   if (typeof data === 'number') return <>{data}</>
   if (typeof data === 'string') {
+    // display date
     if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(data)) return <>{formatDateTime(data)}</>
+    // display html
     if (/<\/?[a-z][\s\S]*>/i.test(data))
       return (
         <div
@@ -74,14 +76,12 @@ export const DataView = <T extends Data>({
     )
 
   // special treatment of categories
-  if (typeof data === 'object' && 'slug' in data && 'name' in data) {
+  if (typeof data === 'object' && 'slug' in data && 'name' in data)
     return <DataView data={data.name} />
-  }
 
   // special treatment of anything with id and name
-  if (depth > 0 && typeof data === 'object' && 'id' in data && 'name' in data) {
+  if (depth > 0 && typeof data === 'object' && 'id' in data && 'name' in data)
     return <DataView data={data.name} />
-  }
 
   // special treatment of humans (just show display_name)
   if (
@@ -89,13 +89,12 @@ export const DataView = <T extends Data>({
     typeof data === 'object' &&
     'id' in data &&
     'display_name' in data
-  ) {
+  )
     return (
       <Link to={`/profil/${data.id}`}>
         <DataView data={data.display_name} />
       </Link>
     )
-  }
 
   // special treatment of images
   if (
@@ -130,7 +129,7 @@ export const DataView = <T extends Data>({
               {createElement(
                 `h${depth + 2}`,
                 {},
-                translateKey(key, translations, genericTranslations),
+                translateKey(key, translations, genericTranslations) + ':',
               )}
               <DataView
                 data={value}

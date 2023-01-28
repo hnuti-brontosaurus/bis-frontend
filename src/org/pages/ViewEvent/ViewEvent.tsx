@@ -1,3 +1,5 @@
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { api } from 'app/services/bis'
 import {
   Actions,
   Breadcrumbs,
@@ -14,6 +16,7 @@ import { useRemoveEvent } from 'hooks/removeEvent'
 import { useTitle } from 'hooks/title'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
+import { mergeWith } from 'lodash'
 import { getRegistrationMethod } from 'org/components/EventForm/EventForm'
 import { AiOutlineStop } from 'react-icons/ai'
 import {
@@ -32,6 +35,7 @@ import {
   formatDateTime,
   isEventClosed,
   sortOrder,
+  withOverwriteArray,
 } from 'utils/helpers'
 import styles from './ViewEvent.module.scss'
 
@@ -42,6 +46,15 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   const [canAddEvent] = useAllowedToCreateEvent()
 
   useTitle(`Akce ${event?.name ?? ''}`)
+
+  const { data: administrationUnits } =
+    api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
+
+  const { data: participants } = api.endpoints.readUsers.useQuery(
+    event.record?.participants && event.record.participants.length > 0
+      ? { id: event.record.participants }
+      : skipToken,
+  )
 
   const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
 
@@ -56,6 +69,20 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
   if (isEventRestoring) return <Loading>Obnovujeme akci</Loading>
 
   const [mainImage, ...otherImages] = [...event.images].sort(sortOrder)
+
+  const eventAdministrationUnits = event.administration_units.map(
+    uid => administrationUnits?.results.find(au => au.id === uid)?.name ?? uid,
+  )
+
+  const formattedEvent = mergeWith(
+    {},
+    event,
+    { administration_units: eventAdministrationUnits },
+    participants?.results
+      ? { record: { participants: participants.results } }
+      : {},
+    withOverwriteArray,
+  )
 
   return (
     <>
@@ -240,7 +267,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
         {/* <pre className={styles.data}>{JSON.stringify(event, null, 2)}</pre> */}
         <h2>Data</h2>
         <DataView
-          data={event}
+          data={formattedEvent}
           translations={combinedTranslations.event}
           genericTranslations={combinedTranslations.generic}
         />
