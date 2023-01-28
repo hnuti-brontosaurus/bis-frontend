@@ -6,18 +6,28 @@ interface SpeechBubbleProps {
   hideTail?: boolean
   className?: string
   children?: ReactNode
+  id?: string
+  left?: boolean
 }
 
-export const SpeechBubble = (props: SpeechBubbleProps) => {
+export const SpeechBubble = ({
+  hideTail,
+  className,
+  children,
+  id,
+  left,
+}: SpeechBubbleProps) => {
   return (
     <div
       className={classNames(
         styles.bubbleRectangle,
-        props.hideTail && styles.hideTail,
-        props.className,
+        hideTail && styles.hideTail,
+        className,
+        left && styles.left,
       )}
+      id={id}
     >
-      {props.children}
+      {children}
     </div>
   )
 }

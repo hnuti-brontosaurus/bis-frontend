@@ -7,6 +7,26 @@
   display: flex;
   align-items: center;
   z-index: 10000;
+  &.left {
+    .close {
+      right: unset;
+      left: 0;
+    }
+    #owlGuideIcon {
+      order: 1;
+      transform: scaleX(-1);
+      display: flex;
+    }
+    #desktopBubbleOwlGuide {
+      order: 2;
+    }
+    right: unset;
+    left: 0.5rem;
+    .bubble {
+      margin-right: unset;
+      margin-left: 0rem;
+    }
+  }
 
   .bubble {
     margin-right: 0rem;
@@ -48,6 +68,17 @@
   right: 40px;
   z-index: 10000;
   transform: rotate(-90deg);
+
+  &.left {
+    right: unset;
+    left: 40px;
+
+    .hiddenOwl {
+      transform: scaleY(-1);
+      top: unset;
+      bottom: -25px;
+    }
+  }
   .hiddenOwl {
     width: 200px;
     height: 200px;

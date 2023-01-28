@@ -41,4 +41,18 @@
       display: none;
     }
   }
+
+  &.left {
+    &::before {
+      border-left: 12px solid transparent;
+      border-right: 12px solid colors.$gray-blue;
+      left: -24px;
+    }
+
+    &::after {
+      border-left: 10px solid transparent;
+      border-right: 10px solid #fff;
+      left: -14px;
+    }
+  }
 }

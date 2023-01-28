@@ -21,7 +21,7 @@ export interface HomeButtonConfig {
 
 export const Home = ({ buttons }: { buttons: HomeButtonConfig[] }) => (
   <>
-    <GuideOwl id="main-guide">
+    <GuideOwl id="main-guide" left>
       {' '}
       Tady najdeš{' '}
       <a

@@ -20,6 +20,12 @@
     @content;
   }
 }
+
+@mixin for-middle-desktop-up {
+  @media (min-width: 1455px) {
+    @content;
+  }
+}
 @mixin for-big-desktop-up {
   @media (min-width: 1800px) {
     @content;
