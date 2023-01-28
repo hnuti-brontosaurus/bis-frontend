@@ -10,7 +10,6 @@ export const event = merge(
     registration: translations.eventRegistration,
     record: translations.eventRecord,
     finance: translations.eventFinance,
-    participantInputType: 'Způsob zadání účastníků',
     images: translations.eventPropagationImage,
     questions: translations.question,
   },
@@ -21,6 +20,7 @@ export const event = merge(
     registration: {
       questionnaire: translations.questionnaire,
     },
+    record: { participantInputType: 'Způsob zadání účastníků' },
   },
   { 'main_image.image': 'Hlavní foto' },
 )

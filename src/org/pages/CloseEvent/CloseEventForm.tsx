@@ -15,12 +15,12 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from 'hooks/persistForm'
-import { cloneDeep, mergeWith } from 'lodash'
+import { cloneDeep, mergeWith, omit } from 'lodash'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
 import { FieldErrorsImpl, useForm } from 'react-hook-form'
 import type { DeepPick } from 'ts-deep-pick'
-import { Optional } from 'utility-types'
+import { Assign, Optional } from 'utility-types'
 import { hasFormError, withOverwriteArray } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
 import * as yup from 'yup'
@@ -55,11 +55,24 @@ export type ParticipantsStepFormShape = {
     | 'number_of_participants_under_26'
     | 'contacts'
   >
-  participantInputType: 'count' | 'simple-list' | 'full-list'
 }
 
-export type CloseEventFormShape = EvidenceStepFormShape &
+export type ParticipantInputType = 'count' | 'simple-list' | 'full-list'
+
+export type ParticipantsStepFormInnerShape = Assign<
+  ParticipantsStepFormShape,
+  {
+    record: ParticipantsStepFormShape['record'] & {
+      participantInputType: ParticipantInputType
+    }
+  }
+>
+
+export type CloseEventFormData = EvidenceStepFormShape &
   ParticipantsStepFormShape
+
+export type CloseEventFormShape = EvidenceStepFormShape &
+  ParticipantsStepFormInnerShape
 
 const pickEvidenceData = (data: Partial<CloseEventFormShape>) =>
   pick(
@@ -78,16 +91,16 @@ const pickParticipantsData = (data: Partial<CloseEventFormShape>) =>
     //'record.participants',
     'record.number_of_participants',
     'record.number_of_participants_under_26',
-    'participantInputType',
+    'record.participantInputType',
     'record.contacts',
   )
 
 const formData2payload = ({
-  participantInputType,
   is_complete,
   ...data
 }: CloseEventFormShape & { is_complete: boolean }): CloseEventPayload => {
-  const payload = cloneDeep(data)
+  const { participantInputType } = data.record
+  const payload = cloneDeep(omit(data, 'record.participantInputType'))
 
   if (participantInputType === 'full-list') {
     payload.record.number_of_participants = null
@@ -107,12 +120,10 @@ const formData2payload = ({
 }
 
 const initialData2form = (
-  data: Partial<CloseEventFormShape>,
+  data: Partial<CloseEventFormData>,
   event: Event,
 ): Partial<CloseEventFormShape> => {
-  let participantInputType:
-    | ParticipantsStepFormShape['participantInputType']
-    | undefined = undefined
+  let participantInputType: ParticipantInputType | undefined = undefined
 
   if (event.group.slug === 'other') {
     if (event.record?.participants?.length) {
@@ -126,27 +137,58 @@ const initialData2form = (
     } else if (typeof event.record?.number_of_participants === 'number') {
       participantInputType = 'count'
     }
+  } else {
+    participantInputType = 'full-list'
   }
 
   if (participantInputType) {
-    return { participantInputType, ...data }
-  } else return data
+    return merge({}, data, { record: { participantInputType } })
+  } else return data as Partial<CloseEventFormShape>
 }
 
-const validationSchema: yup.ObjectSchema<{
-  record: Pick<ParticipantsStepFormShape['record'], 'contacts'>
-}> = yup.object({
-  record: yup.object({
-    contacts: yup.array(
-      yup.object({
-        first_name: yup.string().required(),
-        last_name: yup.string().required(),
-        email: yup.string().email().required(),
-        phone: yup.string(),
-      }),
-    ),
-  }),
-})
+const validationSchema: yup.ObjectSchema<ParticipantsStepFormInnerShape> =
+  yup.object({
+    record: yup.object({
+      contacts: yup.array(
+        yup.object({
+          first_name: yup.string().required(),
+          last_name: yup.string().required(),
+          email: yup.string().email().required(),
+          phone: yup.string(),
+        }),
+      ),
+      participantInputType: yup
+        .string()
+        .oneOf(['full-list', 'simple-list', 'count'])
+        .required('Vyberte, prosím, jednu z možností'),
+      number_of_participants: yup
+        .number()
+        .min(0, 'Hodnota musí být větší nebo rovna 0')
+        .when('participantInputType', {
+          is: (inputType: ParticipantInputType) =>
+            inputType === 'simple-list' || inputType === 'count',
+          then: schema => schema.required(),
+          otherwise: schema => schema.nullable(),
+        }),
+      number_of_participants_under_26: yup
+        .number()
+        .min(0, 'Hodnota musí být větší nebo rovna 0')
+        .when(
+          ['number_of_participants'],
+          ([nop]: number[], schema: yup.NumberSchema) =>
+            schema.max(
+              nop,
+              'Hodnota nesmí být větší než počet účastníků celkem',
+            ),
+        )
+        .when('participantInputType', {
+          is: (inputType: ParticipantInputType) =>
+            inputType === 'simple-list' || inputType === 'count',
+          then: schema => schema.required(),
+          otherwise: schema => schema.nullable(),
+        }),
+    }),
+  })
 
 export const CloseEventForm = ({
   event,
@@ -156,7 +198,7 @@ export const CloseEventForm = ({
   id,
 }: {
   event: Event
-  initialData: Partial<CloseEventFormShape>
+  initialData: Partial<CloseEventFormData>
   onSubmit: (data: CloseEventPayload) => void
   onCancel: () => void
   id: string
@@ -172,7 +214,7 @@ export const CloseEventForm = ({
   const evidenceFormMethods = useForm<EvidenceStepFormShape>({
     defaultValues: pickEvidenceData(initialAndSavedData),
   })
-  const participantsFormMethods = useForm<ParticipantsStepFormShape>({
+  const participantsFormMethods = useForm<ParticipantsStepFormInnerShape>({
     defaultValues: pickParticipantsData(initialAndSavedData),
     resolver: yupResolver(validationSchema),
   })
@@ -201,11 +243,11 @@ export const CloseEventForm = ({
     // then let's clear the redux persistent state
     // then redirect to the event page, or event record page, or whatever
     let evidence: EvidenceStepFormShape = {} as EvidenceStepFormShape
-    let participants: ParticipantsStepFormShape =
-      {} as ParticipantsStepFormShape
+    let participants: ParticipantsStepFormInnerShape =
+      {} as ParticipantsStepFormInnerShape
     let isValid = true
     let evidenceErrors: FieldErrorsImpl<EvidenceStepFormShape> = {}
-    let participantsErrors: FieldErrorsImpl<ParticipantsStepFormShape> = {}
+    let participantsErrors: FieldErrorsImpl<ParticipantsStepFormInnerShape> = {}
     await Promise.all([
       evidenceFormMethods.handleSubmit(
         data => {
