@@ -86,6 +86,7 @@
     top: -25px;
     right: -25px;
     z-index: 1;
+    cursor: pointer;
     /* Add this to hide half of the owl behind the viewport */
     clip-path: inset(0 0 25% 0);
   }

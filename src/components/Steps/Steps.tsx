@@ -55,7 +55,6 @@ export const Steps = <T extends Record<string, any>>({
   return (
     <div ref={swipeRef}>
       <div className={styles.navWrapper}>
-        <QualificationGuide />
 
         <nav className={styles.navigation}>
           {elementProps.map(({ name, hasError }, i) => (
