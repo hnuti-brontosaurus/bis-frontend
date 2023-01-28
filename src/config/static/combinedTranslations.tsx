@@ -30,4 +30,5 @@ export const user = merge({}, translations.user, {
   memberships: translations.membership,
   address: translations.userAddress,
   contact_address: translations.userContactAddress,
+  all_emails: 'Všechny e-maily',
 })
