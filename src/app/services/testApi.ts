@@ -2776,7 +2776,7 @@ export type Donor = {
   date_joined: string
   regional_center_support?: number | null
   basic_section_support?: number | null
-  variable_symbols: string[]
+  variable_symbols: number[]
   donations: Donation[]
 }
 export type OfferedHelp = {
@@ -2829,6 +2829,7 @@ export type User = {
   all_emails: string[]
   birthday: string
   close_person: ClosePerson | null
+  subscribed_to_newsletter?: boolean
   health_insurance_company: HealthInsuranceCompany
   health_issues?: string
   sex: SexCategory
@@ -3075,6 +3076,7 @@ export type PatchedUser = {
   all_emails?: string[]
   birthday?: string
   close_person?: ClosePerson | null
+  subscribed_to_newsletter?: boolean
   health_insurance_company?: number | null
   health_issues?: string
   sex?: number | null

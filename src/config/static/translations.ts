@@ -24,6 +24,7 @@ export const location = {
   address: 'Adresa',
   web: 'Web',
   gps_location: 'GPS lokace',
+  is_fully_specified: 'Plnohodnotná lokalita?',
 } as const
 
 export const locationPhoto = {
@@ -51,6 +52,7 @@ export const user = {
   health_insurance_company: 'Pojišťovna',
   roles: 'Role',
   internal_note: 'Poznámka kanclu',
+  subscribed_to_newsletter: 'Odebírá novinky?',
 } as const
 
 export const userClosePerson = {
@@ -339,6 +341,7 @@ export const question = {
   _name: 'Otázka dotazníku',
   _name_plural: 'Otázka dotazníku',
   question: 'Otázka',
+  data: 'Data',
   is_required: 'Nutno vyplnit?',
   questionnaire: 'Dotazník',
 } as const
@@ -349,6 +352,7 @@ export const answer = {
   question: 'Otázka',
   application: 'Přihláška na akci',
   answer: 'Odpověď',
+  data: 'Data',
 } as const
 
 export const grantCategory = {
@@ -601,7 +605,7 @@ export const event_categories = {
   public__only_experiential: 'Čistě zážitková',
   public__educational: 'Vzdělávací',
   public__educational__lecture: 'Přednáška',
-  public__educational__course: 'Kurz, školení',
+  public__educational__course: 'Kurz, školení, exkurze',
   public__educational__ohb: 'OHB',
   public__educational__educational: 'Výukový program',
   public__educational__educational_with_stay: 'Pobytový výukový program',

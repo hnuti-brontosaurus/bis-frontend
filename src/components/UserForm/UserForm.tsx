@@ -142,6 +142,7 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
   //   otherwise: schema => schema.required(),
   // }),
   phone: yup.string(),
+  subscribed_to_newsletter: yup.boolean().required(),
   address: yup
     .object()
     .shape({
@@ -219,6 +220,7 @@ export const UserForm = ({
         /*sex: 0,*/ health_insurance_company: 0,
         address: { street: '', city: '', zip_code: '' },
         contact_address: { street: '', city: '', zip_code: '' },
+        subscribed_to_newsletter: true,
       },
       initialData ? data2form(initialData) : {},
       persistedData,
@@ -376,6 +378,18 @@ export const UserForm = ({
               <Label>Telefon</Label>
               <FormInputError>
                 <input type="tel" {...register('phone')} />
+              </FormInputError>
+            </InlineSection>
+            <InlineSection>
+              <Label htmlFor="subscribed_to_newsletter">
+                Posílat newsletter?
+              </Label>
+              <FormInputError>
+                <input
+                  type="checkbox"
+                  id="subscribed_to_newsletter"
+                  {...register('subscribed_to_newsletter')}
+                />
               </FormInputError>
             </InlineSection>
             <FormSubsection header="Adresa" required>

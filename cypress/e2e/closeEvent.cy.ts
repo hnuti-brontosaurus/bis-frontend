@@ -131,6 +131,7 @@ describe('Close event - evidence and participants', () => {
             nickname: '',
             birth_name: '',
             // sex: null,
+            subscribed_to_newsletter: true,
             health_insurance_company: null,
             health_issues: '',
             email: 'test@example.com',
