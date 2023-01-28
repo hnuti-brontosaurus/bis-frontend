@@ -23,6 +23,7 @@ export const UnfinishedEvents = () => {
       table={EventTable}
       data={inputEvents}
       action="finish"
+      columnsToHideOnMobile={[3, 4]}
     />
   )
 }

@@ -14,12 +14,14 @@ export const UnscalablePaginatedList = <T, C extends {} = {}>({
   table,
   className,
   pageSize = 10,
+  columnsToHideOnMobile,
   ...rest
 }: {
   data: T[]
   table: FC<{ data: T[] } & C>
   className?: string
   pageSize?: number
+  columnsToHideOnMobile?: number[]
 } & C) => {
   const [page, setPage] = useSearchParamsState('s', 1, Number)
   const Table = table
@@ -28,7 +30,11 @@ export const UnscalablePaginatedList = <T, C extends {} = {}>({
 
   return (
     <div className={classNames(className)}>
-      <Table data={tableData} {...(rest as unknown as C)} />
+      <Table
+        data={tableData}
+        {...(rest as unknown as C)}
+        columnsToHideOnMobile={columnsToHideOnMobile}
+      />
       <Pagination
         page={page}
         pages={Math.max(1, Math.ceil((data.length as number) / pageSize))}

@@ -57,9 +57,5 @@ body {
       margin-right: -70px;
     }
 
-    @include media.for-phone-only {
-      margin-left: -35px;
-      margin-right: -35px;
-    }
   }
 }

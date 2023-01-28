@@ -10,6 +10,10 @@ export const AllEvents = () => {
   const events = useOutletContext<PaginatedList<Event>>()
 
   return (
-    <UnscalablePaginatedList table={EventTable} data={events.results ?? []} />
+    <UnscalablePaginatedList
+      table={EventTable}
+      data={events.results ?? []}
+      columnsToHideOnMobile={[3, 4]}
+    />
   )
 }
