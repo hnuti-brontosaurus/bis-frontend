@@ -7,7 +7,7 @@ const QualificationGuideDownload = React.lazy(
 
 export const QualificationGuide = () => {
   return (
-    <GuideOwl>
+    <GuideOwl id="qualification-guide">
       Jakou kvalifikaci musí mít hlavní organizátor/ka?
       <p>
         <Suspense fallback={<a>Načítám</a>}>

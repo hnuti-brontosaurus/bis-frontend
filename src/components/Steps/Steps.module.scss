@@ -133,7 +133,10 @@ $step-button-line-height-phone: 1rem;
 
 .topActions {
   display: none;
-  @include media.for-desktop-up {
+}
+// TODO: fix that
+@include media.for-big-desktop-up {
+  .topActions {
     display: flex;
   }
   .topActionsButton {

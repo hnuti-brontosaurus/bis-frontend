@@ -1,5 +1,6 @@
 import qualificationGuide from 'assets/Průvodce-kvalifikacemi.pdf'
 import { ReactNode } from 'react'
+import styles from './QualificationGuide.module.scss'
 
 export const QualificationGuideDownload = ({
   children,
@@ -7,7 +8,12 @@ export const QualificationGuideDownload = ({
   children: ReactNode
 }) => {
   return (
-    <a target="_blank" rel="noopener noreferrer" href={qualificationGuide}>
+    <a
+      className={styles.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      href={qualificationGuide}
+    >
       {children}
     </a>
   )

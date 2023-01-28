@@ -1,19 +1,27 @@
+import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { ReactComponent as HiddenOwl } from 'assets/hiddenOwl.svg'
 import { ReactComponent as Owl } from 'assets/owl.svg'
 import classNames from 'classnames'
 import { SpeechBubble } from 'components/SpeechBubble/SpeechBubble'
-import React, { useEffect, useState } from 'react'
+import { actions, selectInfoMessageVisibility } from 'features/ui/uiSlice'
+import { ReactNode, useEffect, useState } from 'react'
 import { IoMdCloseCircle } from 'react-icons/io'
 import styles from './GuideOwl.module.scss'
 
 interface GuideOwlProps {
-  children: React.ReactNode
+  children: ReactNode
+  id: string
 }
 
-export const GuideOwl: React.FC<GuideOwlProps> = ({ children }) => {
-  const [show, setShow] = useState(true)
+export const GuideOwl = ({ children, id }: GuideOwlProps) => {
   const [animating, setAnimating] = useState(false)
   const [animatingOwl, setAnimatingOwl] = useState(false)
+
+  const show = useAppSelector(state => selectInfoMessageVisibility(state, id))
+
+  const dispatch = useAppDispatch()
+  const setShow = (show: boolean) =>
+    dispatch(actions.toggleInfoMessage({ show, id }))
 
   useEffect(() => {
     if (!animating) {

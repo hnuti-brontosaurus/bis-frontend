@@ -21,23 +21,14 @@ export interface HomeButtonConfig {
 
 export const Home = ({ buttons }: { buttons: HomeButtonConfig[] }) => (
   <>
-    {/* <InfoMessage id="guide-bis-usage" closable>
-      <ExternalButtonLink
-        secondary
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://podpora.brontosaurus.cz"
-      >
-        Průvodce používání BIS
-      </ExternalButtonLink>
-    </InfoMessage> */}
-    <GuideOwl>
+    <GuideOwl id="main-guide">
       {' '}
       Tady najdeš{' '}
       <a
         target="_blank"
         rel="noopener noreferrer"
         href="https://podpora.brontosaurus.cz"
+        className={styles.guideLink}
       >
         průvodce používání BIS
       </a>

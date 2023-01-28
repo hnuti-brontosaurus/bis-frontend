@@ -20,6 +20,12 @@ const slice = createSlice({
     hideInfoMessage: (state, { payload: id }: PayloadAction<string>) => {
       state.infoSections[id] = { hidden: true }
     },
+    toggleInfoMessage: (
+      state,
+      { payload: { show, id } }: PayloadAction<{ show: boolean; id: string }>,
+    ) => {
+      state.infoSections[id] = { hidden: !show }
+    },
   },
 })
 
