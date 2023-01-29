@@ -19,7 +19,7 @@ export type FullEvent = Assign<
     {
       main_organizer: User // in older events, main_organizer may be missing
       other_organizers: User[]
-      propagation: Overwrite<Propagation, { contact_person: User }> // in older events, contact_person may be missing
+      propagation: Overwrite<Propagation, { contact_person: User }> | null // in older events, contact_person may be missing
       location: Location | undefined
     }
   >,
@@ -96,12 +96,14 @@ export const useReadFullEvent = (
             ...eventQuery.data,
             main_organizer: mainOrganizerQuery.data as User, // in some old events this might be missing
             other_organizers: otherOrganizersQuery.data.results,
-            propagation: mergeWith(
-              {},
-              eventQuery.data.propagation,
-              { contact_person: contactPersonQuery.data },
-              withOverwriteArray,
-            ),
+            propagation:
+              eventQuery.data.propagation &&
+              mergeWith(
+                {},
+                eventQuery.data.propagation,
+                { contact_person: contactPersonQuery.data },
+                withOverwriteArray,
+              ),
             images: imagesQuery.data.results,
             questions: questionsQuery.data.results,
             location:

@@ -193,6 +193,12 @@ const initialData2form = (
 
   returnData.online = data?.location?.id === 1 ? true : false
 
+  if (data?.propagation === null) {
+    returnData.propagation = {
+      is_shown_on_web: false,
+    } as EventFormShape['propagation']
+  }
+
   return returnData
 }
 
@@ -215,7 +221,7 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
       propagation: merge({}, data.propagation, {
         contact_person: data.contactPersonIsMainOrganizer
           ? data.main_organizer.id
-          : data.propagation!.contact_person.id,
+          : data.propagation?.contact_person?.id,
       }),
     },
   )
@@ -278,6 +284,12 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
 
   if (!data.start_time) {
     finalData.start_time = null
+  }
+
+  // data when not shown on web
+  if (!data.propagation?.is_shown_on_web) {
+    finalData.registration = null
+    finalData.propagation = null
   }
 
   return finalData
@@ -447,6 +459,9 @@ export const EventForm: FC<{
     ),
   }
 
+  const isNotOnWeb =
+    methods.registration.watch('propagation.is_shown_on_web') === false
+
   return (
     <Steps
       onSubmit={handleFormSubmit}
@@ -475,6 +490,7 @@ export const EventForm: FC<{
       </Step>
       <Step
         name="info pro účastníky"
+        hidden={isNotOnWeb}
         hasError={hasFormError(methods.propagation)}
       >
         <PropagationStep
@@ -484,7 +500,11 @@ export const EventForm: FC<{
           isCamp={isCamp}
         />
       </Step>
-      <Step name="pozvánka" hasError={hasFormError(methods.invitation)}>
+      <Step
+        name="pozvánka"
+        hidden={isNotOnWeb}
+        hasError={hasFormError(methods.invitation)}
+      >
         <InvitationStep
           isVolunteering={isVolunteering}
           methods={methods.invitation}
@@ -497,6 +517,7 @@ export const EventForm: FC<{
         <OrganizerStep
           methods={methods.organizers}
           mainOrganizerDependencies={mainOrganizerDependencies}
+          isNotOnWeb={isNotOnWeb}
         />
       </Step>
       <Step name="přihlášky" hidden={!initialData?.id}>

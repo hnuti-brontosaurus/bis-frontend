@@ -36,6 +36,7 @@ import {
 export const OrganizerStep = ({
   methods,
   mainOrganizerDependencies,
+  isNotOnWeb,
 }: {
   methods: MethodsShapes['organizers']
   mainOrganizerDependencies: {
@@ -43,6 +44,7 @@ export const OrganizerStep = ({
     group?: EventGroupCategory
     category?: EventCategory
   }
+  isNotOnWeb: boolean
 }) => {
   const { control, watch, trigger, register, setValue, getValues } = methods
   const { data: allQualifications } = api.endpoints.readQualifications.useQuery(
@@ -95,6 +97,7 @@ export const OrganizerStep = ({
   )
   /**
    * Automatically fill organizer team
+   * and revalidate
    */
   useEffect(() => {
     const subscription = watch((data, { name }) => {
@@ -121,8 +124,11 @@ export const OrganizerStep = ({
   // to check whether current user is in the team
   useEffect(() => {
     const subscription = watch((data, { name }) => {
-      if (name === 'main_organizer' && methods.formState.isSubmitted)
-        trigger('other_organizers')
+      if (methods.formState.isSubmitted) {
+        if (name === 'main_organizer') trigger('other_organizers')
+        if (name === 'main_organizer' || name === 'other_organizers')
+          trigger('propagation.organizers')
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -144,7 +150,7 @@ export const OrganizerStep = ({
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSectionGroup startIndex={20}>
+        <FormSectionGroup startIndex={isNotOnWeb ? 11 : 20}>
           <FormSection
             header="Hlavní organizátor/ka"
             required
@@ -251,100 +257,109 @@ export const OrganizerStep = ({
                 />
               </FormInputError>
             </FullSizeElement>
-            <FormSubsection
-              header="Těší se na Tebe..."
-              onWeb
-              required
-              help="Takto se organizační tým zobrazí na webu. Pole můžeš nechat vyplněno automaticky, nebo změnit podle potřeby."
-            >
-              <FullSizeElement>
-                <FormInputError>
-                  <input type="text" {...register('propagation.organizers')} />
-                </FormInputError>
-              </FullSizeElement>
-            </FormSubsection>
+            {!isNotOnWeb && (
+              <FormSubsection
+                header="Těší se na Tebe..."
+                onWeb
+                required
+                help="Takto se organizační tým zobrazí na webu. Pole můžeš nechat vyplněno automaticky, nebo změnit podle potřeby."
+              >
+                <FullSizeElement>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      {...register('propagation.organizers', { required })}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+              </FormSubsection>
+            )}
           </FormSection>
-          <FormSection header="Kontaktní osoba" required onWeb>
-            <label className="checkboxLabel">
-              <input
-                type="checkbox"
-                {...register('contactPersonIsMainOrganizer')}
-              />{' '}
-              stejná jako hlavní organizátor
-            </label>
-            {!watch('contactPersonIsMainOrganizer') && (
-              <FullSizeElement>
-                <FormInputError>
-                  <Controller
-                    name="propagation.contact_person"
-                    control={control}
-                    rules={{ required }}
-                    render={({ field }) => (
-                      <SelectUnknownUser
-                        {...field}
-                        onBirthdayError={message =>
-                          showMessage({
-                            type: 'error',
-                            message: 'Nepodařilo se přidat uživatele',
-                            detail: message,
-                          })
+          {!isNotOnWeb && (
+            <>
+              <FormSection header="Kontaktní osoba" required onWeb>
+                <label className="checkboxLabel">
+                  <input
+                    type="checkbox"
+                    {...register('contactPersonIsMainOrganizer')}
+                  />{' '}
+                  stejná jako hlavní organizátor
+                </label>
+                {!watch('contactPersonIsMainOrganizer') && (
+                  <FullSizeElement>
+                    <FormInputError>
+                      <Controller
+                        name="propagation.contact_person"
+                        control={control}
+                        rules={{ required }}
+                        render={({ field }) => (
+                          <SelectUnknownUser
+                            {...field}
+                            onBirthdayError={message =>
+                              showMessage({
+                                type: 'error',
+                                message: 'Nepodařilo se přidat uživatele',
+                                detail: message,
+                              })
+                            }
+                          />
+                        )}
+                      />
+                    </FormInputError>
+                  </FullSizeElement>
+                )}
+                <FormSubsection
+                  header="Kontaktní údaje"
+                  help="Pokud necháš kontaktní údaje prázdné, použije se jméno/email/telefon kontaktní osoby."
+                >
+                  <InlineSection>
+                    <Label htmlFor="propagation.contact_name">
+                      Jméno kontaktní osoby
+                    </Label>
+                    <FormInputError>
+                      <input
+                        type="text"
+                        id="propagation.contact_name"
+                        {...register('propagation.contact_name')}
+                        placeholder={
+                          contactPerson &&
+                          (contactPerson.nickname
+                            ? `${contactPerson.nickname} (${contactPerson.first_name} ${contactPerson.last_name})`
+                            : `${contactPerson.first_name} ${contactPerson.last_name}`)
                         }
                       />
-                    )}
-                  />
-                </FormInputError>
-              </FullSizeElement>
-            )}
-            <FormSubsection
-              header="Kontaktní údaje"
-              help="Pokud necháš kontaktní údaje prázdné, použije se jméno/email/telefon kontaktní osoby."
-            >
-              <InlineSection>
-                <Label htmlFor="propagation.contact_name">
-                  Jméno kontaktní osoby
-                </Label>
-                <FormInputError>
-                  <input
-                    type="text"
-                    id="propagation.contact_name"
-                    {...register('propagation.contact_name')}
-                    placeholder={
-                      contactPerson &&
-                      (contactPerson.nickname
-                        ? `${contactPerson.nickname} (${contactPerson.first_name} ${contactPerson.last_name})`
-                        : `${contactPerson.first_name} ${contactPerson.last_name}`)
-                    }
-                  />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label htmlFor="propagation.contact_email">
-                  Kontaktní email
-                </Label>
-                <FormInputError>
-                  <input
-                    id="propagation.contact_email"
-                    type="email"
-                    {...register('propagation.contact_email')}
-                    placeholder={contactPerson?.email ?? undefined}
-                  />
-                </FormInputError>
-              </InlineSection>
-              <InlineSection>
-                <Label htmlFor="propagation.contact_phone">
-                  Kontaktní telefon
-                </Label>
-                <FormInputError>
-                  <input
-                    id="propagation.contact_phone"
-                    type="tel"
-                    {...register('propagation.contact_phone')}
-                    placeholder={contactPerson?.phone}
-                  />
-                </FormInputError>
-              </InlineSection>
-            </FormSubsection>
-          </FormSection>
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label htmlFor="propagation.contact_email">
+                      Kontaktní email
+                    </Label>
+                    <FormInputError>
+                      <input
+                        id="propagation.contact_email"
+                        type="email"
+                        {...register('propagation.contact_email')}
+                        placeholder={contactPerson?.email ?? undefined}
+                      />
+                    </FormInputError>
+                  </InlineSection>
+                  <InlineSection>
+                    <Label htmlFor="propagation.contact_phone">
+                      Kontaktní telefon
+                    </Label>
+                    <FormInputError>
+                      <input
+                        id="propagation.contact_phone"
+                        type="tel"
+                        {...register('propagation.contact_phone')}
+                        placeholder={contactPerson?.phone}
+                      />
+                    </FormInputError>
+                  </InlineSection>
+                </FormSubsection>
+              </FormSection>
+            </>
+          )}
         </FormSectionGroup>
       </form>
     </FormProvider>

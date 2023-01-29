@@ -48,7 +48,7 @@
     "budget": null
   },
   "propagation": {
-    "is_shown_on_web": false,
+    "is_shown_on_web": true,
     "minimum_age": 20,
     "maximum_age": 21,
     "cost": "10000",
