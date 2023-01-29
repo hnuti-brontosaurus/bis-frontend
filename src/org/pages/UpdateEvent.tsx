@@ -11,12 +11,13 @@ import {
 } from 'features/systemMessage/useSystemMessage'
 import { FullEvent } from 'hooks/readFullEvent'
 import { useTitle } from 'hooks/title'
+import { cloneDeep, mergeWith } from 'lodash'
 import merge from 'lodash/merge'
 import { EventForm, InitialEventData } from 'org/components'
 import { useState } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
-import { isEventClosed, sortOrder } from 'utils/helpers'
+import { isEventClosed, sortOrder, withOverwriteArray } from 'utils/helpers'
 
 export const UpdateEvent = () => {
   const params = useParams()
@@ -282,20 +283,20 @@ export const event2payload = (
     }))
     .sort(sortOrder)
 
-  return (
-    event && {
-      ...event,
+  return mergeWith(
+    cloneDeep(event),
+    {
       group: event?.group?.id,
       category: event?.category?.id,
       program: event?.program?.id,
       intended_for: event?.intended_for?.id,
       propagation: event.propagation && {
-        ...event.propagation,
         diets: event.propagation.diets.map(diet => diet.id),
       },
       main_image,
       images: otherImages,
       questions: [...event.questions].sort(sortOrder),
-    }
+    },
+    withOverwriteArray,
   )
 }

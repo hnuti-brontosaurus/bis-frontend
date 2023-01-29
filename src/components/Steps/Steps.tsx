@@ -85,7 +85,7 @@ export const Steps = <T extends Record<string, any>>({
             actions &&
             actions.map(({ props, name }) => (
               <Button
-                key={name} // TODO we should not use index as key
+                key={name}
                 primary
                 type="submit"
                 onClick={() => onSubmit(props)}
@@ -96,11 +96,16 @@ export const Steps = <T extends Record<string, any>>({
             ))}
         </nav>
       </div>
-      {Children.map(children, (element, i) => (
-        <div className={classNames(i !== step - 1 && styles.isHidden)}>
-          {element}
-        </div>
-      ))}
+      {Children.map(children, element => element)
+        .filter(element => !element.props.hidden)
+        .map((element, i) => (
+          <div
+            key={element.props.name}
+            className={classNames(i !== step - 1 && styles.isHidden)}
+          >
+            {element}
+          </div>
+        ))}
       {step > 1 && (
         <Button
           tertiary

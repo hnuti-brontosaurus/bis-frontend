@@ -46,7 +46,7 @@ export const UncontrolledImageUpload = forwardRef<
       ) : (
         <div className={styles.addButton}>
           <MdPhotoCamera size={60} />
-          Pridaj fotku
+          Přidej fotku
         </div>
       )}
     </label>
