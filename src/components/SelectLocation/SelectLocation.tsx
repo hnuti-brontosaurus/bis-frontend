@@ -184,7 +184,7 @@ export const SelectLocation = forwardRef<
             </div>
           ) : (
             <div className={styles.selectLocationItem}>
-              <span>Vyber lokalitu podle názvu</span>
+              <span>Vyber místo konání podle názvu</span>
               <FormInputErrorSimple
                 className={styles.selectLocationErrorWrapper}
                 errorMessage={errorMessage}
@@ -483,7 +483,7 @@ const ViewLocation = ({
         <div className={styles.emptyLocation}>
           {/* <SelectMap width={150} height={100} /> */}
           <TbMap2 strokeWidth={1} />
-          <div>Vyber lokalitu podle názvu nebo na mapě</div>
+          <div>Vyber místo konání podle názvu nebo na mapě</div>
         </div>
       )}
     </div>

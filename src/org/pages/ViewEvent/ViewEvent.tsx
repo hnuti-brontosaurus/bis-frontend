@@ -163,7 +163,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             ) : (
               <div className={styles.imageMissing}>
                 Obrázek chybí
-                {readonly ? null : (
+                {readonly || !event.propagation?.is_shown_on_web ? null : (
                   <ButtonLink to="upravit?krok=7">Přidat</ButtonLink>
                 )}
               </div>

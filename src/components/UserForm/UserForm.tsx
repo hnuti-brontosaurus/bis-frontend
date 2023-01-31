@@ -79,7 +79,7 @@ const form2payload = (data: UserFormShape): Partial<UserPayload> => {
       : null
 
   return merge(
-    {},
+    { eyca_card: null },
     omit(
       data,
       // 'sex',
