@@ -5,14 +5,22 @@
 // You can generate it again with `yarn generate-translations` or `yarn gt` for short.
 // The script is defined in `bin/generateTranslations.ts`
 
+export const baseAddress = { _name: 'Adresa', _name_plural: 'Adresa' } as const
+
+export const baseContact = {
+  _name: 'Kontakt',
+  _name_plural: 'Kontakt',
+} as const
+
 export const location = {
   _name: 'Lokalita',
   _name_plural: 'Lokalita',
+  name: 'Název lokality',
   patron: 'Kontakt v hnutí',
   contact_person: 'Kontakt na lokalitě',
   for_beginners: 'Vhodné pro začínající organizátory?',
   is_full: 'Je lokalita plně vytížená?',
-  is_unexplored: 'Nová lokalita',
+  is_unexplored: 'Je lokalita nová/nevyužívaná?',
   program: 'Program lokality',
   accessibility_from_prague: 'Dostupnost z Prahy',
   accessibility_from_brno: 'Dostupnost z Brna',
@@ -65,6 +73,16 @@ export const userAddress = {
   _name_plural: 'Adresa uživatele',
 } as const
 
+export const eYCACard = {
+  _name: 'EYCA karta',
+  _name_plural: 'EYCA karta',
+  photo: 'Fotka',
+  number: 'Číslo kartičky',
+  submitted_for_creation: 'Předáno k výrobě',
+  sent_to_user: 'Odesláno uživateli',
+  valid_till: 'Platnost do',
+} as const
+
 export const userContactAddress = {
   _name: 'Kontaktní adresa uživatele',
   _name_plural: 'Kontaktní adresa uživatele',
@@ -83,11 +101,15 @@ export const duplicateUser = {
 } as const
 
 export const administrationUnit = {
-  _name: 'Organizující jednotka',
-  _name_plural: 'Organizující jednotka',
-  abbreviation: 'Zkratka',
+  _name: 'Organizační jednotka',
+  _name_plural: 'Organizační jednotka',
+  name: ['Oficiální název', 'Název z rejstříku, např. ZČ HB Zvonek'],
+  abbreviation: [
+    'Zkrácený název',
+    'Běžně užívaný název, např. Zvonek, Orchis...',
+  ],
   phone: 'Telefon',
-  category: 'Typ',
+  category: 'Typ jednotky',
   board_members: 'Členové představenstva',
   bank_account_number: 'Číslo účtu',
   chairman: 'Předseda',
@@ -95,55 +117,59 @@ export const administrationUnit = {
   existed_since: 'Datum vzniku',
   existed_till: 'Datum zániku',
   ic: 'IČO',
-  is_for_kids: 'BRĎO?',
+  is_for_kids: 'Jedná se o BRĎO oddíl?',
   manager: 'Hospodář',
   www: 'Webové stránky',
   custom_statues: 'Vlastní stanovy',
   data_box: 'Datová schránka',
   facebook: 'Facebook',
   instagram: 'Instagram',
+  gps_location: 'GPS lokace',
 } as const
 
 export const administrationUnitAddress = {
   _name: 'Adresa',
   _name_plural: 'Adresa',
-  administration_unit: 'Organizující jednotka',
+  administration_unit: 'Organizační jednotka',
 } as const
 
 export const administrationUnitContactAddress = {
   _name: 'Kontaktní adresa',
   _name_plural: 'Kontaktní adresa',
-  administration_unit: 'Organizující jednotka',
+  administration_unit: 'Organizační jednotka',
 } as const
 
 export const generalMeeting = {
   _name: 'Valná hromada',
   _name_plural: 'Valná hromada',
-  administration_unit: 'Organizující jednotka',
+  administration_unit: 'Organizační jednotka',
 } as const
 
 export const brontosaurusMovement = {
-  _name: 'Hnutí Brontosaurus',
-  _name_plural: 'Hnutí Brontosaurus',
-  director: ['Ředitel', 'Má veškerá oprávnění'],
+  _name: 'Přístupy',
+  _name_plural: 'Přístupy',
+  director: ['Programový ředitel', 'Má veškerá oprávnění'],
   finance_director: ['Finanční ředitel', 'Má veškerá oprávnění'],
   bis_administrators: ['Správci BISu', 'Mají veškeré oprávnění'],
-  office_workers: ['Kancl', 'Mohou měnit vše kromě základních oprávnění'],
+  office_workers: [
+    'Pracovníci kanceláře',
+    'Mohou měnit vše kromě základních oprávnění',
+  ],
   audit_committee: [
     'KRK - Kontrolní a revizní komise',
     'Vidí vše, nemohou editovat',
   ],
   executive_committee: ['VV - Výkonný výbor', 'Vidí vše, nemohou editovat'],
   education_members: [
-    'EDU',
-    'Vidí pouze uživatele a mohou je editovat pouze kvalifikaci',
+    'EDU - konzultanti a instruktoři',
+    'Vidí pouze uživatele a mohou editovat pouze jejich kvalifikaci',
   ],
 } as const
 
 export const membership = {
   _name: 'Členství',
   _name_plural: 'Členství',
-  administration_unit: 'Administrativní jednotka',
+  administration_unit: 'Organizační jednotka',
   year: 'Členství v roce',
   category: 'Typ',
 } as const
@@ -158,8 +184,8 @@ export const qualification = {
 } as const
 
 export const event = {
-  _name: 'Událost',
-  _name_plural: 'Událost',
+  _name: 'Akce',
+  _name_plural: 'Akce',
   group: 'Druh',
   category: 'Typ',
   internal_note: 'Privátní poznámka',
@@ -175,18 +201,18 @@ export const event = {
   duration: 'Délka trvání akce',
   online_link: [
     'Webová adresa pro připojení',
-    'Vyplňte, pokud se událost koná online',
+    'Vyplňte, pokud se akce koná online',
   ],
   number_of_sub_events: 'Počet akcí v uvedeném období',
-  administration_units: 'Administrativní jednotky',
+  administration_units: 'Organizační jednotky',
   main_organizer: 'Hlavní organizátor',
   other_organizers: 'Všichni organizátoři',
   is_attendance_list_required: 'Je prezenční listina vyžadována?',
 } as const
 
 export const eventFinance = {
-  _name: 'Finance události',
-  _name_plural: 'Finance události',
+  _name: 'Finance akce',
+  _name_plural: 'Finance akce',
   category: 'Kategorie dle financí',
   grant_category: 'Typ grantu',
   grant_amount: 'Přidělené dotace',
@@ -198,13 +224,13 @@ export const eventFinance = {
 export const eventFinanceReceipt = {
   _name: 'Účtenka',
   _name_plural: 'Účtenka',
-  finance: 'Finance události',
+  finance: 'Finance akce',
   receipt: 'Účtenky',
 } as const
 
 export const eventPropagation = {
-  _name: 'Propagace události',
-  _name_plural: 'Propagace události',
+  _name: 'Propagace akce',
+  _name_plural: 'Propagace akce',
   is_shown_on_web: 'Je akce zobrazena na webu?',
   vip_propagation: 'Je akce propagována v rámci VIP propagace?',
   minimum_age: 'Minimální věk',
@@ -246,8 +272,8 @@ export const eventPropagation = {
 } as const
 
 export const vIPEventPropagation = {
-  _name: 'VIP propagace události',
-  _name_plural: 'VIP propagace události',
+  _name: 'VIP propagace akce',
+  _name_plural: 'VIP propagace akce',
   event_propagation: 'Propagace',
   goals_of_event: [
     'Cíle akce a přínos pro prvoúčastníky',
@@ -277,8 +303,8 @@ export const eventRegistration = {
 } as const
 
 export const eventRecord = {
-  _name: 'Záznam z události',
-  _name_plural: 'Záznam z události',
+  _name: 'Záznam z akce',
+  _name_plural: 'Záznam z akce',
   total_hours_worked: 'Odpracováno člověkohodin',
   comment_on_work_done: 'Okomentování vykonané práce',
   attendance_list: 'Prezenční listina',
@@ -297,25 +323,25 @@ export const eventRecord = {
 export const eventContact = {
   _name: 'Kontakt z akce',
   _name_plural: 'Kontakt z akce',
-  record: 'Záznam z události',
+  record: 'Záznam z akce',
 } as const
 
 export const eventPropagationImage = {
   _name: 'Obrázek k propagaci',
   _name_plural: 'Obrázek k propagaci',
-  propagation: 'Propagace události',
+  propagation: 'Propagace akce',
 } as const
 
 export const eventPhoto = {
   _name: 'Fotka z akce',
   _name_plural: 'Fotka z akce',
-  record: 'Záznam události',
+  record: 'Záznam z akce',
 } as const
 
 export const eventApplication = {
   _name: 'Přihláška na akci',
   _name_plural: 'Přihláška na akci',
-  event_registration: 'Registrace k události',
+  event_registration: 'Registrace k akci',
   state: 'Stav',
 } as const
 
@@ -332,7 +358,7 @@ export const eventApplicationAddress = {
 export const questionnaire = {
   _name: 'Dotazník',
   _name_plural: 'Dotazník',
-  event_registration: 'Registrace k události',
+  event_registration: 'Registrace k akci',
   introduction: 'Úvodní text dotazníku',
   after_submit_text: 'Text po zodpovězení dotazníku',
 } as const
@@ -377,8 +403,8 @@ export const qualificationCategory = {
 } as const
 
 export const administrationUnitCategory = {
-  _name: 'Typ organizující jednotky',
-  _name_plural: 'Typ organizující jednotky',
+  _name: 'Typ organizační jednotky',
+  _name_plural: 'Typ organizační jednotky',
 } as const
 
 export const membershipCategory = {
@@ -549,6 +575,7 @@ export const feedback = {
   _name: 'Zpětná vazba',
   _name_plural: 'Zpětná vazba',
   feedback: 'Zpětná vazba',
+  is_resolved: 'Zpracována?',
 } as const
 
 export const dashboardItem = {
@@ -578,7 +605,7 @@ export const generic = {
   birthday: 'Datum narození',
   order: 'Pořadí',
   sex: 'Pohlaví',
-  event: 'Událost',
+  event: 'Akce',
   image: 'Obrázek',
   health_issues: 'Alergie a zdravotní omezení',
   application: 'Přihláška',
@@ -586,6 +613,11 @@ export const generic = {
   date: 'Datum',
   place: 'Místo',
   note: 'Poznámka',
+} as const
+
+export const admin = {
+  header: 'BIS - Brontosauří informační systém',
+  subheader: 'Administrátorský přístup pro organizační jednotky a kancleář',
 } as const
 
 export const login = {

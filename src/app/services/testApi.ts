@@ -1326,7 +1326,7 @@ export type CategoriesAdministrationUnitCategoriesListApiArg = {
 export type CategoriesAdministrationUnitCategoriesRetrieveApiResponse =
   /** status 200  */ AdministrationUnitCategory
 export type CategoriesAdministrationUnitCategoriesRetrieveApiArg = {
-  /** A unique integer value identifying this Typ organizující jednotky. */
+  /** A unique integer value identifying this Typ organizační jednotky. */
   id: number
 }
 export type CategoriesDietCategoriesListApiResponse =
@@ -1985,24 +1985,24 @@ export type FrontendEventsRegistrationQuestionnaireQuestionsDestroyApiArg = {
 }
 export type FrontendEventsRetrieveApiResponse = /** status 200  */ Event
 export type FrontendEventsRetrieveApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
 }
 export type FrontendEventsUpdateApiResponse = /** status 200  */ Event
 export type FrontendEventsUpdateApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
   event: Event
 }
 export type FrontendEventsPartialUpdateApiResponse = /** status 200  */ Event
 export type FrontendEventsPartialUpdateApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
   patchedEvent: PatchedEvent
 }
 export type FrontendEventsDestroyApiResponse = unknown
 export type FrontendEventsDestroyApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
 }
 export type FrontendGetUnknownUserRetrieveApiResponse = /** status 200  */ User
@@ -2115,7 +2115,7 @@ export type FrontendUsersEventsWhereWasOrganizerListApiArg = {
 export type FrontendUsersEventsWhereWasOrganizerRetrieveApiResponse =
   /** status 200  */ Event
 export type FrontendUsersEventsWhereWasOrganizerRetrieveApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
   userId: string
 }
@@ -2181,7 +2181,7 @@ export type FrontendUsersParticipatedInEventsListApiArg = {
 export type FrontendUsersParticipatedInEventsRetrieveApiResponse =
   /** status 200  */ Event
 export type FrontendUsersParticipatedInEventsRetrieveApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
   userId: string
 }
@@ -2201,7 +2201,7 @@ export type FrontendUsersRegisteredInEventsListApiArg = {
 export type FrontendUsersRegisteredInEventsRetrieveApiResponse =
   /** status 200  */ Event
 export type FrontendUsersRegisteredInEventsRetrieveApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
   userId: string
 }
@@ -2220,7 +2220,7 @@ export type WebAdministrationUnitsListApiArg = {
 export type WebAdministrationUnitsRetrieveApiResponse =
   /** status 200  */ AdministrationUnit
 export type WebAdministrationUnitsRetrieveApiArg = {
-  /** A unique integer value identifying this Organizující jednotka. */
+  /** A unique integer value identifying this Organizační jednotka. */
   id: number
 }
 export type WebEventsListApiResponse = /** status 200  */ PaginatedEventList
@@ -2374,7 +2374,7 @@ export type WebEventsListApiArg = {
 }
 export type WebEventsRetrieveApiResponse = /** status 200  */ Event
 export type WebEventsRetrieveApiArg = {
-  /** A unique integer value identifying this Událost. */
+  /** A unique integer value identifying this Akce. */
   id: number
 }
 export type WebOpportunitiesListApiResponse =
@@ -2799,6 +2799,13 @@ export type UserContactAddress = {
   zip_code: string
   region: Region
 }
+export type EycaCard = {
+  photo: string
+  number: string
+  submitted_for_creation: boolean
+  sent_to_user: boolean
+  valid_till: string
+}
 export type Membership = {
   category: MembershipCategory
   administration_unit: number
@@ -2840,6 +2847,7 @@ export type User = {
   offers: OfferedHelp | null
   address: UserAddress
   contact_address: UserContactAddress | null
+  eyca_card: EycaCard | null
   memberships: Membership[]
   qualifications: Qualification[]
 }
@@ -2895,12 +2903,18 @@ export type EventApplicationAddress = {
 export type Question = {
   id: number
   question: string
+  data?: {
+    [key: string]: any
+  }
   is_required?: boolean
   order?: number
 }
 export type Answer = {
   question: Question
   answer: string
+  data?: {
+    [key: string]: any
+  }
 }
 export type EventApplication = {
   id: number
@@ -2953,6 +2967,9 @@ export type PaginatedQuestionList = {
 export type PatchedQuestion = {
   id?: number
   question?: string
+  data?: {
+    [key: string]: any
+  }
   is_required?: boolean
   order?: number
 }
@@ -3001,6 +3018,7 @@ export type Location = {
   description?: string
   patron: LocationPatron | null
   contact_person: LocationContactPerson | null
+  is_fully_specified?: boolean
   for_beginners?: boolean
   is_full?: boolean
   is_unexplored?: boolean
@@ -3032,6 +3050,7 @@ export type PatchedLocation = {
   description?: string
   patron?: LocationPatron | null
   contact_person?: LocationContactPerson | null
+  is_fully_specified?: boolean
   for_beginners?: boolean
   is_full?: boolean
   is_unexplored?: boolean
@@ -3087,6 +3106,7 @@ export type PatchedUser = {
   offers?: OfferedHelp | null
   address?: UserAddress
   contact_address?: UserContactAddress | null
+  eyca_card?: EycaCard | null
   memberships?: Membership[]
   qualifications?: Qualification[]
 }
@@ -3148,6 +3168,10 @@ export type AdministrationUnit = {
   bank_account_number?: string
   existed_since?: string | null
   existed_till?: string | null
+  gps_location?: {
+    type?: 'Point'
+    coordinates?: number[]
+  } | null
   category: AdministrationUnitCategory
   chairman: User
   vice_chairman: User

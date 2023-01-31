@@ -146,6 +146,7 @@ describe('Close event - evidence and participants', () => {
             donor: null,
             offers: null,
             phone: '',
+            eyca_card: null,
           })
 
         // and we should call update event with proper data
