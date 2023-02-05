@@ -10,9 +10,11 @@ import {
   Loading,
   NumberInput,
 } from 'components'
+import dayjs from 'dayjs'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
+import { getEventCannotBeOlderThan } from 'utils/helpers'
 import * as validationMessages from 'utils/validationMessages'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
@@ -46,6 +48,12 @@ export const BasicInfoStep = ({
   if (!(administrationUnits && categories && programs))
     return <Loading>Připravujeme formulář</Loading>
 
+  const mustEndAfter =
+    watch('start') &&
+    dayjs(
+      Math.max(new Date(watch('start')).getTime(), getEventCannotBeOlderThan()),
+    ).format('YYYY-MM-DD')
+
   return (
     <FormProvider {...methods}>
       <form>
@@ -64,7 +72,6 @@ export const BasicInfoStep = ({
             <InlineSection>
               <InlineSection>
                 <Label htmlFor="start" required>
-                  {/* TODO add required star to these fields */}
                   Od
                 </Label>
                 <FormInputError>
@@ -97,8 +104,11 @@ export const BasicInfoStep = ({
                     {...register('end', {
                       required,
                       min: {
-                        value: watch('start'),
-                        message: validationMessages.endAfterStart,
+                        value: mustEndAfter,
+                        message:
+                          mustEndAfter === watch('start')
+                            ? validationMessages.endAfterStart
+                            : validationMessages.oldEvent,
                       },
                     })}
                   />

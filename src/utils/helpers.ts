@@ -118,6 +118,15 @@ const shouldBeFinishedUntil = (event: { end: string }): number => {
   return finishUntil.getTime()
 }
 
+export const getEventCannotBeOlderThan = (): number => {
+  // events can be saved until 03/01 next year
+  // if today is march
+  const now = new Date()
+  const isBeforeMarch = now.getMonth() < 2
+  const allowedYear = isBeforeMarch ? now.getFullYear() - 1 : now.getFullYear()
+  return new Date(`${allowedYear}-01-01`).getTime()
+}
+
 /**
  * Find out whether event is so old that it can't be edited anymore
  */
