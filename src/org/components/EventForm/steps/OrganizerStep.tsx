@@ -25,7 +25,7 @@ import { useCurrentUser } from 'hooks/currentUser'
 import { get, uniqBy } from 'lodash'
 import { Fragment, useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
-import { joinAnd } from 'utils/helpers'
+import { getUserRoles, joinAnd } from 'utils/helpers'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 import {
@@ -246,8 +246,14 @@ export const OrganizerStep = ({
                         organizers.findIndex(
                           org => org.id === currentUser.id,
                         ) >= 0
+                      // people with zc access can save without being in team
+                      // this will be really painful though
+                      // they can save event which they won't be allowed to read :(
+                      // but it is a requirement
+                      const isZC = getUserRoles(currentUser).includes('zc')
 
                       return (
+                        isZC ||
                         isMainOrganizer ||
                         isOrganizer ||
                         'Musíš být v organizátorském týmu.'
