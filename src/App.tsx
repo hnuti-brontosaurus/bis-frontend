@@ -10,6 +10,7 @@ import { OpportunityOutlet } from 'org/OpportunityOutlet'
 import { CloseEvent } from 'org/pages/CloseEvent'
 import { CreateEvent } from 'org/pages/CreateEvent'
 import { CreateOpportunity } from 'org/pages/CreateOpportunity'
+import { EventApplications } from 'org/pages/EventApplications'
 import {
   ActiveEvents,
   AllEvents,
@@ -95,6 +96,7 @@ export const App = () => {
           </Route>
           <Route path="akce/:eventId" element={<EventOutlet />}>
             <Route index element={<ViewEvent />} />
+            <Route path="prihlasky" element={<EventApplications />} />
             <Route path="upravit" element={<UpdateEvent />} />
             <Route path="uzavrit" element={<CloseEvent />} />
           </Route>
