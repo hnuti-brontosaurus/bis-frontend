@@ -26,7 +26,9 @@ import {
   FaRegCalendarAlt,
   FaRegCheckCircle,
   FaRegCopy,
+  FaRegEye,
   FaTrashAlt,
+  FaUsers,
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
 import { useOutletContext, useParams } from 'react-router-dom'
@@ -121,8 +123,13 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             {!isEventClosed(event) ? (
               <>
                 {getRegistrationMethod(event) === 'standard' && (
+                  <ButtonLink to="prihlasky" secondary>
+                    <FaUsers /> přihlášky
+                  </ButtonLink>
+                )}
+                {getRegistrationMethod(event) === 'standard' && (
                   <ButtonLink secondary to={`/akce/${eventId}/prihlasit`}>
-                    přihláška
+                    <FaRegEye /> přihláška
                   </ButtonLink>
                 )}
                 {getRegistrationMethod(event) === 'other' && (
@@ -132,7 +139,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
                     rel="noopener noreferrer"
                     href={event.registration!.alternative_registration_link}
                   >
-                    přihláška <FaExternalLinkAlt />
+                    <FaRegEye /> přihláška <FaExternalLinkAlt />
                   </ExternalButtonLink>
                 )}
                 {event.is_canceled ? (
