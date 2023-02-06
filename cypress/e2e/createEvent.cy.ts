@@ -438,4 +438,148 @@ describe('create event', () => {
         .should('have.value', 'https://example.com/registration')
     })
   })
+
+  describe('organizer team and creator', () => {
+    it('user should be pre-filled in team', () => {
+      fillForm()
+      cy.get('[name=other_organizers]')
+        .parents('[class^=FormInputError_inputWrapper]')
+        .contains('Nickname (FirstName LastName)')
+    })
+
+    context('user is organizer', () => {
+      it('should show validation error when they are not part of team', () => {
+        fillForm()
+        // remove pre-filled organizer (self)
+        cy.get('[name=other_organizers]')
+          .parents('[class^=FormInputError_inputWrapper]')
+          .get('[aria-label^=Remove][role=button]')
+          .last()
+          .click()
+
+        submit()
+
+        cy.get('[class^=SystemMessage_header]')
+          .should('be.visible')
+          .contains('chyby ve validaci')
+        cy.get('[class^=SystemMessage_detail]')
+          .should('be.visible')
+          .contains('Musíš být v organizátorském týmu.')
+      })
+
+      it('should save event when user is part of organization team', () => {
+        fillForm()
+        // ok, user is pre-filled
+        cy.get('[name=other_organizers]')
+          .parents('[class^=FormInputError_inputWrapper]')
+          .contains('Nickname (FirstName LastName)')
+
+        // check that it's possible to submit
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/events' },
+          { id: 1000 },
+        ).as('createEvent')
+
+        submit()
+
+        cy.wait('@createEvent')
+      })
+    })
+
+    context('user is administration unit', () => {
+      beforeEach(() => {
+        cy.visit('/logout')
+        cy.interceptLogin('chairman')
+        cy.login('a@bb.ccc', 'asdf')
+      })
+
+      it('should save even when they are not in team', () => {
+        fillForm()
+
+        // remove pre-filled organizer (self)
+        cy.get('[name=other_organizers]')
+          .parents('[class^=FormInputError_inputWrapper]')
+          .get('[aria-label^=Remove][role=button]')
+          .last()
+          .click()
+
+        // still succeed saving the event
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/events' },
+          { id: 1000 },
+        ).as('createEvent')
+
+        submit()
+
+        cy.wait('@createEvent')
+      })
+    })
+  })
 })
+
+// open create-event page, pre-fill fields and move to "team" tab
+const fillForm = () => {
+  cy.visit('/org/akce/vytvorit')
+  cy.location('pathname').should('equal', '/org/akce/vytvorit')
+  // first page
+  cy.get('label[for=other]').should('be.visible').click()
+
+  next()
+
+  cy.get('input[name=name]').should('be.visible').type('Event Name III')
+  cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+  cy.get('input[name=start_time]').should('be.visible').type('15:31')
+  cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+  cy.get('[name=category]').should('be.visible').select(2)
+  cy.get('[name=program]').should('be.visible').select('bb')
+  cy.get('#react-select-3-input')
+    .should('be.visible')
+    .click()
+    .type('{downArrow}{enter}')
+
+  next()
+
+  cy.get('input[name=intended_for]').should('be.visible').check('3')
+
+  next()
+
+  cy.get('#react-select-5-input')
+    .should('be.visible')
+    .click()
+    .type('Location 3')
+    .wait(2000)
+    .type('{downArrow}{downArrow}{enter}')
+
+  next()
+
+  cy.get('[name="propagation.is_shown_on_web"]')
+    .should('be.visible')
+    .check('false')
+
+  next()
+
+  cy.get('#react-select-7-input')
+    .should('be.visible')
+    .click()
+    .type('displayname2')
+    .wait(2000)
+    .type('{downArrow}{downArrow}{downArrow}{enter}')
+
+  cy.get('[placeholder=DD]').should('be.visible').type('29')
+  cy.get('[placeholder=MM]').should('be.visible').type('02')
+  cy.get('[placeholder=RRRR]').should('be.visible').type('2000')
+  cy.intercept(
+    { method: 'GET', pathname: '/api/frontend/get_unknown_user/' },
+    {
+      id: '1345',
+      first_name: 'FirstName',
+      last_name: 'LastName',
+      nickname: 'Nickname',
+      _search_id: '27',
+      display_name: 'Found User',
+      birthday: '2000-01-01',
+      qualifications: [],
+    },
+  )
+  cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()
+}

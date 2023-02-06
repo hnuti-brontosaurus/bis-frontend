@@ -113,7 +113,7 @@ Cypress.Commands.add('interceptFullEvent', () => {
   )
 })
 
-Cypress.Commands.add('interceptLogin', () => {
+Cypress.Commands.add('interceptLogin', (fixture?: string) => {
   cy.intercept('POST', '/api/auth/login/', { token: '1234567890abcdef' })
   cy.intercept('GET', '/api/auth/whoami/', {
     id: '0419781d-06ba-432b-8617-797ea14cf848',
@@ -123,7 +123,7 @@ Cypress.Commands.add('interceptLogin', () => {
       method: 'GET',
       pathname: '/api/frontend/users/0419781d-06ba-432b-8617-797ea14cf848/',
     },
-    { fixture: 'organizer' },
+    { fixture: fixture ?? 'organizer' },
   )
 })
 
