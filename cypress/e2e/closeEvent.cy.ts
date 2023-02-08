@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import * as participantsExample from '../fixtures/eventParticipants.json'
 import * as newUserExample from '../fixtures/newUser.json'
 
@@ -376,6 +377,66 @@ describe('Close event - evidence and participants', () => {
           '/api/frontend/users/00000000-1111-2222-3333-444444444444',
         )
         expect(a.request.method).to.equal('PATCH')
+      })
+    })
+
+    describe.only('Import full participants from excel', () => {
+      it('[existent users] should import data, save the users as participants and show in table', () => {
+        cy.visit('/org/akce/1000/uzavrit')
+
+        cy.get('label:contains(Mám všechny informace)')
+          .should('be.visible')
+          .click()
+
+        // at the beginning, the table has 4 rows
+        cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
+          'have.length',
+          4,
+        )
+
+        cy.intercept(
+          {
+            method: 'GET',
+            path: '/api/frontend/get_unknown_user/?birthday=1993-03-01&first_name=Jana&last_name=Nov%C3%A1kov%C3%A1',
+          },
+          { fixture: 'user1' },
+        )
+
+        cy.intercept(
+          {
+            method: 'GET',
+            path: '/api/frontend/get_unknown_user/?birthday=1995-05-12&first_name=Dan&last_name=Nov%C3%A1k',
+          },
+          { fixture: 'user2' },
+        )
+
+        cy.fixture('eventParticipants').then(participants => {
+          cy.fixture('user1').then(user1 => {
+            cy.fixture('user2').then(user2 => {
+              cy.intercept(
+                {
+                  method: 'GET',
+                  pathname: '/api/frontend/events/1000/record/participants/',
+                },
+                {
+                  body: merge(participants, {
+                    results: [...participants.results, user1, user2],
+                  }),
+                },
+              )
+            })
+          })
+        })
+
+        cy.get('label:contains(Importovat z excelu)')
+          .should('be.visible')
+          .selectFile('cypress/e2e/full-participants.xlsx')
+
+        // check that the users appear in the table
+        cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
+          'have.length',
+          6,
+        )
       })
     })
   })

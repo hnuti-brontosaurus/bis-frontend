@@ -6,6 +6,7 @@ import {
   Actions,
   Button,
   EmptyListPlaceholder,
+  ImportExcelButton,
   Loading,
   SelectUnknownUser,
   StyledModal,
@@ -23,6 +24,8 @@ import colors from 'styles/colors.module.scss'
 import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
+
+type UserImport = Omit<UserPayload, 'sex' | 'all_emails'>
 
 export const Participants: FC<{
   eventId: number
@@ -63,6 +66,9 @@ export const Participants: FC<{
   const [createUser, createUserStatus] = api.endpoints.createUser.useMutation()
   const [updateUser, updateUserStatus] = api.endpoints.updateUser.useMutation()
   const [highLightedRow, setHighlightedRow] = useState<string>()
+
+  const [readUnknownUser, readUnknownUserStatus] =
+    api.endpoints.readUserByBirthdate.useLazyQuery()
 
   useShowApiErrorMessage(createUserStatus.error)
   useShowApiErrorMessage(updateUserStatus.error)
@@ -205,6 +211,19 @@ export const Participants: FC<{
     }
   }
 
+  const handleImportParticipants = async (data: UserImport[]) => {
+    console.log(data)
+    for (const { first_name, last_name, birthday } of data) {
+      const foundUser = await readUnknownUser({
+        first_name,
+        last_name,
+        birthday,
+      }).unwrap()
+
+      await addParticipant(foundUser.id)
+    }
+  }
+
   const removeModalTitle = removeModalData
     ? `Opravdu chcete smazat účastnici/účastníka ${removeModalData.first_name} ${removeModalData.last_name} z akce ${eventName}?`
     : undefined
@@ -233,7 +252,34 @@ export const Participants: FC<{
           onCancel={handleCancelRemoveParticipant}
         />
       </StyledModal>
-      <h2>Účastníci</h2>
+      <h2>
+        Účastníci{' '}
+        <ImportExcelButton<UserImport>
+          keyMap={{
+            first_name: 0,
+            last_name: 1,
+            birthday: 2,
+            email: 3,
+            phone: 4,
+            address: 5,
+            contact_address: 6,
+            health_insurance_company: 7,
+            health_issues: 8,
+            close_person: {
+              first_name: 9,
+              last_name: 10,
+              email: 11,
+              phone: 12,
+            },
+            birth_name: 13,
+            nickname: 14,
+          }}
+          headerRows={2}
+          onUpload={handleImportParticipants}
+        >
+          Importovat z excelu
+        </ImportExcelButton>
+      </h2>
       {!isReadParticipantsLoading ? (
         <div>
           <div>Přidat účastníka:</div>

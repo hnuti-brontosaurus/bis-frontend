@@ -1,5 +1,8 @@
 /**
  * This button imports data from excel
+ *
+ * Never import it directly, but only from components!
+ * Because it's lazily loaded and in fact you're exporting LazyImportExcelButton
  */
 import { ChangeEventHandler, ReactNode } from 'react'
 import { Schema } from 'type-fest'
