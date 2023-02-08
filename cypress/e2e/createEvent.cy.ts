@@ -134,9 +134,9 @@ describe('create event', () => {
     next()
 
     cy.get('input[name=name]').should('be.visible').type('Event Name III')
-    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
+    cy.get('input[name=start]').should('be.visible').type('2123-01-15')
     cy.get('input[name=start_time]').should('be.visible').type('15:31')
-    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+    cy.get('input[name=end]').should('be.visible').type('2123-01-17')
     cy.get('[name=category]').should('be.visible').select(2)
     cy.get('[name=program]').should('be.visible').select('bb')
     cy.get('#react-select-3-input')
@@ -262,8 +262,8 @@ describe('create event', () => {
 
     // fill start and end date
     next()
-    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
-    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+    cy.get('input[name=start]').should('be.visible').type('2123-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2123-01-17')
     // and submit
     cy.intercept(
       { method: 'POST', pathname: '/api/frontend/events/' },
@@ -291,8 +291,8 @@ describe('create event', () => {
     cy.visit('/org/akce/vytvorit?klonovat=1000')
     next()
 
-    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
-    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+    cy.get('input[name=start]').should('be.visible').type('2123-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2123-01-17')
 
     // submit and get error
     cy.intercept(
@@ -318,8 +318,8 @@ describe('create event', () => {
     cy.wait(5000)
 
     // for some buggy reason we need to fill the fields again
-    cy.get('input[name=start]').should('be.visible').type('2023-01-15')
-    cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+    cy.get('input[name=start]').should('be.visible').type('2123-01-15')
+    cy.get('input[name=end]').should('be.visible').type('2123-01-17')
 
     cy.intercept(
       { method: 'POST', pathname: '/api/frontend/events/' },
@@ -345,8 +345,8 @@ describe('create event', () => {
       cy.visit('/org/akce/vytvorit?klonovat=1000')
       next()
 
-      cy.get('input[name=start]').should('be.visible').type('2023-01-15')
-      cy.get('input[name=end]').should('be.visible').type('2023-01-17')
+      cy.get('input[name=start]').should('be.visible').type('2123-01-15')
+      cy.get('input[name=end]').should('be.visible').type('2123-01-17')
 
       cy.get('button:contains(přihlášení)').should('be.visible').click()
     })
@@ -513,6 +513,119 @@ describe('create event', () => {
 
         cy.wait('@createEvent')
       })
+    })
+  })
+
+  const setClock = (date: string) => {
+    cy.clock().then(clock => {
+      clock.restore()
+      cy.clock(new Date(date), ['Date'])
+    })
+  }
+
+  describe('saving past event', () => {
+    beforeEach(() => {
+      // clone event
+      cy.interceptFullEvent()
+    })
+
+    afterEach(() => {
+      cy.clock().then(clock => {
+        clock.restore()
+      })
+    })
+
+    it('allow saving an event in the future', () => {
+      setClock('2023-01-05')
+      cy.visit('/org/akce/vytvorit?klonovat=1000')
+      next()
+
+      cy.get('[name=start]').type('2023-02-10')
+      cy.get('[name=end]').type('2023-02-12')
+
+      cy.intercept(
+        { method: 'POST', pathname: '/api/frontend/events' },
+        { id: 1000 },
+      ).as('createEvent')
+
+      cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
+      cy.intercept(
+        'POST',
+        '/api/frontend/events/1000/questionnaire/questions/',
+        {},
+      )
+
+      submit()
+
+      cy.wait('@createEvent')
+    })
+
+    it('after 03/01 forbid saving event from past year', () => {
+      setClock('2023-03-01')
+      cy.visit('/org/akce/vytvorit?klonovat=1000')
+      next()
+
+      cy.get('[name=start]').type('2022-12-29')
+      cy.get('[name=end]').type('2022-12-31')
+
+      submit()
+
+      cy.get('[class^=SystemMessage_header]')
+        .should('be.visible')
+        .contains('chyby ve validaci')
+      cy.get('[class^=SystemMessage_detail]')
+        .should('be.visible')
+        .contains('Akci z minulého roku musíte uložit před koncem února')
+    })
+
+    it('before 03/01 allow saving event from past year', () => {
+      setClock('2023-02-28')
+      cy.visit('/org/akce/vytvorit?klonovat=1000')
+      next()
+
+      cy.get('[name=start]').type('2022-12-29')
+      cy.get('[name=end]').type('2022-12-31')
+
+      cy.intercept(
+        { method: 'POST', pathname: '/api/frontend/events' },
+        { id: 1000 },
+      ).as('createEvent')
+
+      cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
+      cy.intercept(
+        'POST',
+        '/api/frontend/events/1000/questionnaire/questions/',
+        {},
+      )
+
+      submit()
+
+      cy.wait('@createEvent')
+    })
+
+    it('before 03/01 forbid saving event from two years ago', () => {
+      setClock('2023-02-28')
+      cy.visit('/org/akce/vytvorit?klonovat=1000')
+      next()
+
+      cy.get('[name=start]').type('2022-12-29')
+      cy.get('[name=end]').type('2022-12-31')
+
+      cy.intercept(
+        { method: 'POST', pathname: '/api/frontend/events' },
+        { id: 1000 },
+      ).as('createEvent')
+
+      cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
+      cy.intercept(
+        'POST',
+        '/api/frontend/events/1000/questionnaire/questions/',
+        {},
+      )
+
+      submit()
+
+      cy.wait('@createEvent')
     })
   })
 })

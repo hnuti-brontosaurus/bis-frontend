@@ -13,6 +13,7 @@ import {
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
+import { getEventCannotBeOlderThan } from 'utils/helpers'
 import * as validationMessages from 'utils/validationMessages'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
@@ -64,7 +65,6 @@ export const BasicInfoStep = ({
             <InlineSection>
               <InlineSection>
                 <Label htmlFor="start" required>
-                  {/* TODO add required star to these fields */}
                   Od
                 </Label>
                 <FormInputError>
@@ -77,6 +77,10 @@ export const BasicInfoStep = ({
                       max: {
                         value: watch('end'),
                         message: validationMessages.startBeforeEnd,
+                      },
+                      min: {
+                        value: getEventCannotBeOlderThan(),
+                        message: validationMessages.oldEvent,
                       },
                     })}
                   />
