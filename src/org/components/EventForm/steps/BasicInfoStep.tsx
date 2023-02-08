@@ -10,7 +10,6 @@ import {
   Loading,
   NumberInput,
 } from 'components'
-import dayjs from 'dayjs'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
@@ -48,12 +47,6 @@ export const BasicInfoStep = ({
   if (!(administrationUnits && categories && programs))
     return <Loading>Připravujeme formulář</Loading>
 
-  const mustEndAfter =
-    watch('start') &&
-    dayjs(
-      Math.max(new Date(watch('start')).getTime(), getEventCannotBeOlderThan()),
-    ).format('YYYY-MM-DD')
-
   return (
     <FormProvider {...methods}>
       <form>
@@ -85,6 +78,10 @@ export const BasicInfoStep = ({
                         value: watch('end'),
                         message: validationMessages.startBeforeEnd,
                       },
+                      min: {
+                        value: getEventCannotBeOlderThan(),
+                        message: validationMessages.oldEvent,
+                      },
                     })}
                   />
                 </FormInputError>
@@ -104,11 +101,8 @@ export const BasicInfoStep = ({
                     {...register('end', {
                       required,
                       min: {
-                        value: mustEndAfter,
-                        message:
-                          mustEndAfter === watch('start')
-                            ? validationMessages.endAfterStart
-                            : validationMessages.oldEvent,
+                        value: watch('start'),
+                        message: validationMessages.endAfterStart,
                       },
                     })}
                   />
