@@ -18,6 +18,10 @@ import {
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
 import { merge } from 'lodash'
+import {
+  ConfirmedUser,
+  ImportParticipantsList,
+} from 'org/components/ImportParticipantsList/ImportParticipantsList'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
@@ -25,7 +29,7 @@ import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
-type UserImport = Omit<UserPayload, 'sex' | 'all_emails'>
+type UserImport = Omit<UserPayload, 'pronoun' | 'all_emails'>
 
 export const Participants: FC<{
   eventId: number
@@ -67,9 +71,6 @@ export const Participants: FC<{
   const [updateUser, updateUserStatus] = api.endpoints.updateUser.useMutation()
   const [highLightedRow, setHighlightedRow] = useState<string>()
 
-  const [readUnknownUser, readUnknownUserStatus] =
-    api.endpoints.readUserByBirthdate.useLazyQuery()
-
   useShowApiErrorMessage(createUserStatus.error)
   useShowApiErrorMessage(updateUserStatus.error)
   useShowApiErrorMessage(patchEventStatus.error)
@@ -99,6 +100,32 @@ export const Participants: FC<{
   }
 
   const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
+
+  const addParticipants = async (newParticipantIds: string[]) => {
+    const allParticipants: string[] = []
+
+    if (participants) {
+      allParticipants.push(...participants.results.map(p => p.id))
+    }
+    allParticipants.push(...newParticipantIds)
+
+    await patchEvent({
+      id: eventId,
+      event: {
+        record: {
+          participants: allParticipants,
+          contacts: [],
+          number_of_participants: null,
+          number_of_participants_under_26: null,
+        },
+      },
+    }).unwrap()
+
+    newParticipantIds.forEach(id => {
+      setLastAddedId(id)
+      setTimeOfLastAddition(Date.now())
+    })
+  }
 
   /**
    * Handle adding a new participant and updating a participant
@@ -211,17 +238,26 @@ export const Participants: FC<{
     }
   }
 
-  const handleImportParticipants = async (data: UserImport[]) => {
-    console.log(data)
-    for (const { first_name, last_name, birthday } of data) {
-      const foundUser = await readUnknownUser({
-        first_name,
-        last_name,
-        birthday,
-      }).unwrap()
+  const [importParticipantsModalOpen, setImportParticipantsModalOpen] =
+    useState(false)
+  const [importParticipantsData, setImportParticipantsData] =
+    useState<UserPayload[]>()
 
-      await addParticipant(foundUser.id)
-    }
+  const handleCancelImportParticipants = () => {
+    setImportParticipantsModalOpen(false)
+    setImportParticipantsData(undefined)
+  }
+  const handleImportParticipants = async (data: UserImport[]) => {
+    setImportParticipantsData(data as UserPayload[])
+    setImportParticipantsModalOpen(true)
+  }
+
+  const handleSaveImportedParticipants = async (data: ConfirmedUser[]) => {
+    setImportParticipantsModalOpen(false)
+    const existingParticipants = data.filter(
+      datum => 'id' in datum && datum.id,
+    ) as ({ id: string } & Partial<UserPayload>)[]
+    await addParticipants(existingParticipants.map(p => p.id))
   }
 
   const removeModalTitle = removeModalData
@@ -250,6 +286,17 @@ export const Participants: FC<{
         <RemoveParticipantConfirmDialog
           onConfirm={handleConfirmRemoveParticipant}
           onCancel={handleCancelRemoveParticipant}
+        />
+      </StyledModal>
+      <StyledModal
+        title="Import účastnic a účastníků"
+        open={importParticipantsModalOpen}
+        onClose={handleCancelImportParticipants}
+      >
+        <ImportParticipantsList
+          data={importParticipantsData ?? []}
+          onConfirm={handleSaveImportedParticipants}
+          onCancel={handleCancelImportParticipants}
         />
       </StyledModal>
       <h2>

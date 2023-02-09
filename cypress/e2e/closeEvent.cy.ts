@@ -432,6 +432,19 @@ describe('Close event - evidence and participants', () => {
           .should('be.visible')
           .selectFile('cypress/e2e/full-participants.xlsx')
 
+        // a table with imported users should appear
+        // and after a while, indicate that users exist already
+        cy.get('[class^=ImportParticipantsList_container] table tbody tr')
+          .should('have.length', 2)
+          .find('[title="Uživatel/ka existuje"]')
+          .should('have.length', 2)
+
+        // now, save button is shown, we click it and users show up in the main table
+        cy.get('[class^=ImportParticipantsList_container]')
+          .find('button')
+          .contains('Pokračovat')
+          .click()
+
         // check that the users appear in the table
         cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
           'have.length',
