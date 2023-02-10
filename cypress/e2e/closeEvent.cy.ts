@@ -37,7 +37,11 @@ describe('Close event - evidence and participants', () => {
   describe('import of simple participants list from xls', () => {
     it('should load xls data to participants list form', () => {
       cy.visit('/org/akce/1000/uzavrit')
-
+      if (cy.get('button:contains(změň způsob registrace účastníků)')) {
+        cy.get('button:contains(změň způsob registrace účastníků)')
+          .should('be.visible')
+          .click()
+      }
       cy.get('label:contains(Mám jen jméno + příjmení + email)')
         .should('be.visible')
         .click()
@@ -69,6 +73,12 @@ describe('Close event - evidence and participants', () => {
       // do the initial visiting and clicking to open user form modal
       const visitPage = () => {
         cy.visit('/org/akce/1000/uzavrit')
+
+        if (cy.get('button:contains(změň způsob registrace účastníků)')) {
+          cy.get('button:contains(změň způsob registrace účastníků)')
+            .should('be.visible')
+            .click()
+        }
         cy.get('label:contains(Mám všechny informace)')
           .should('be.visible')
           .click()
@@ -245,6 +255,12 @@ describe('Close event - evidence and participants', () => {
     it('[when clicking remove] should ask for confirmation and remove participant', () => {
       // go to participants page
       cy.visit('/org/akce/1000/uzavrit')
+
+      if (cy.get('button:contains(změň způsob registrace účastníků)')) {
+        cy.get('button:contains(změň způsob registrace účastníků)')
+          .should('be.visible')
+          .click()
+      }
       cy.get('label:contains(Mám všechny informace)')
         .should('be.visible')
         .click()
@@ -270,6 +286,12 @@ describe('Close event - evidence and participants', () => {
     it('[when clicking update] should open user edit form, and save after editing', () => {
       // go to participants page
       cy.visit('/org/akce/1000/uzavrit')
+
+      if (cy.get('button:contains(změň způsob registrace účastníků)')) {
+        cy.get('button:contains(změň způsob registrace účastníků)')
+          .should('be.visible')
+          .click()
+      }
       cy.get('label:contains(Mám všechny informace)')
         .should('be.visible')
         .click()

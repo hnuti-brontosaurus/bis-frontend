@@ -1,4 +1,5 @@
 @use 'styles/colors';
+@use 'styles/media';
 @use 'components/Button/Button.module' as button;
 
 .inputTypeOptions {
@@ -18,12 +19,38 @@
 
 .changeEvedenceNavigation {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 16px;
   justify-content: baseline;
-  .customEvidenceHeader {
-    font-size: 2rem;
+
+  @include media.for-tablet-landscape-up {
+    flex-direction: row;
   }
+  .textPart {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    .icon {
+      width: 50px;
+    }
+
+    .customEvidenceHeader {
+      font-size: 1rem;
+      @include media.for-tablet-landscape-up {
+        font-size: 1.2rem;
+      }
+      @include media.for-desktop-up {
+        font-size: 1.5rem;
+      }
+      @include media.for-middle-desktop-up {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
   .button {
     @include button.tertiary-button();
     height: unset;

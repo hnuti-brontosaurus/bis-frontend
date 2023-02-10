@@ -18,13 +18,26 @@ interface IconSelectProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const IconSelect = forwardRef(
   (
-    { text, detail, help, icon, id, smallIcon, ...rest }: IconSelectProps,
+    {
+      text,
+      detail,
+      help,
+      icon,
+      id,
+      smallIcon,
+      className,
+      ...rest
+    }: IconSelectProps,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const Icon = icon
     return (
       <div
-        className={classNames(styles.iconItem, smallIcon && styles.smallIcon)}
+        className={classNames(
+          styles.iconItem,
+          smallIcon && styles.smallIcon,
+          className,
+        )}
       >
         <input
           type="radio"

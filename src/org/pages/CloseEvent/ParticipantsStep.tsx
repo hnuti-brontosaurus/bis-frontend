@@ -131,28 +131,32 @@ export const ParticipantsStep = ({
               </FormInputError>
             ) : (
               <div className={classNames(styles.changeEvedenceNavigation)}>
-                <IconSelect
-                  icon={optionButtonConfig[inputType].icon}
-                  id={inputType}
-                  text=""
-                  smallIcon
-                  checked
-                />
-                {inputType && inputType === 'count' && (
-                  <FormHeader className={styles.customEvidenceHeader}>
-                    {optionButtonConfig['count'].text}
-                  </FormHeader>
-                )}
-                {inputType && inputType === 'simple-list' && (
-                  <FormHeader className={styles.customEvidenceHeader}>
-                    {optionButtonConfig['simple-list'].text}
-                  </FormHeader>
-                )}
-                {inputType && inputType === 'full-list' && (
-                  <FormHeader className={styles.customEvidenceHeader}>
-                    {optionButtonConfig['full-list'].text}
-                  </FormHeader>
-                )}
+                <div className={styles.textPart}>
+                  <IconSelect
+                    icon={optionButtonConfig[inputType].icon}
+                    id={inputType}
+                    text=""
+                    smallIcon
+                    checked
+                    className={styles.icon}
+                  />
+                  {inputType && inputType === 'count' && (
+                    <FormHeader className={styles.customEvidenceHeader}>
+                      {optionButtonConfig['count'].text}
+                    </FormHeader>
+                  )}
+                  {inputType && inputType === 'simple-list' && (
+                    <FormHeader className={styles.customEvidenceHeader}>
+                      {optionButtonConfig['simple-list'].text}
+                    </FormHeader>
+                  )}
+                  {inputType && inputType === 'full-list' && (
+                    <FormHeader className={styles.customEvidenceHeader}>
+                      {optionButtonConfig['full-list'].text}
+                    </FormHeader>
+                  )}
+                </div>
+
                 <Button
                   tertiary
                   name="record.participantInputType"
