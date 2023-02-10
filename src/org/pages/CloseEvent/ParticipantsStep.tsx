@@ -16,7 +16,7 @@ import {
   NumberInput,
 } from 'components'
 import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import type {
@@ -66,15 +66,13 @@ export const ParticipantsStep = ({
   areParticipantsRequired: boolean
   methods: UseFormReturn<ParticipantsStepFormInnerShape>
 }) => {
-  const { watch, register, control, trigger, formState, reset } = methods
+  const { watch, control, trigger, formState, reset } = methods
 
   // list of participants is shown when it's required
   // or when organizers prefer it rather than filling just numbers
 
   const inputType = watch('record.participantInputType')
 
-  const [show, setShow] = useState(true)
-  const [showForm, setShowForm] = useState(false)
   useEffect(() => {
     const subscription = watch((values, { name }) => {
       if (formState.isSubmitted && name === 'record.number_of_participants')
@@ -122,8 +120,6 @@ export const ParticipantsStep = ({
                               checked={id === field.value}
                               onChange={e => {
                                 field.onChange(e.target.value)
-                                setShow(false)
-                                setShowForm(true)
                               }}
                             />
                           )
@@ -165,8 +161,6 @@ export const ParticipantsStep = ({
                     e.stopPropagation()
                     e.preventDefault()
                     handleReset()
-                    setShow(true)
-                    setShowForm(false)
                   }}
                 >
                   změň způsob registrace účastníků

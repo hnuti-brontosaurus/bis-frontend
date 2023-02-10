@@ -23,7 +23,9 @@ export const IconSelect = forwardRef(
   ) => {
     const Icon = icon
     return (
-      <div className={classNames(styles.iconItem, smallIcon && styles.smallIcon)}>
+      <div
+        className={classNames(styles.iconItem, smallIcon && styles.smallIcon)}
+      >
         <input
           type="radio"
           id={id}
