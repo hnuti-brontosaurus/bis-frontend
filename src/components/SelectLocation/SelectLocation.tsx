@@ -179,7 +179,7 @@ export const SelectLocation = forwardRef<
         <div className={styles.selectLocationBox}>
           {isEditing ? (
             <div className={styles.editingLocation}>
-              <h3>Přidávání nové lokality</h3>
+              <h3>Přidávání nového místa konání</h3>
               <AiOutlineEdit size={36} className={styles.editStatePending} />
             </div>
           ) : (
@@ -229,7 +229,7 @@ export const SelectLocation = forwardRef<
               styles.buttonNewLocalization,
             )}
           >
-            Vyber ezgistujicy lokalizace{' '}
+            Vyber existující místo konání
           </Button>
         ) : (
           <Button
@@ -243,7 +243,7 @@ export const SelectLocation = forwardRef<
               styles.buttonNewLocalization,
             )}
           >
-            Přidat novou lokalizaci
+            Přidat nové místo konání
           </Button>
         )}
       </div>
@@ -306,7 +306,7 @@ export const SelectLocation = forwardRef<
                 styles.buttonNewLocalization,
               )}
             >
-              Vyber existující lokalitu
+              Vyber existující místo konání
             </Button>
           ) : (
             <Button
@@ -319,7 +319,7 @@ export const SelectLocation = forwardRef<
                 styles.buttonNewLocalization,
               )}
             >
-              Přidat novou lokalizaci{' '}
+              Přidat nové místo konání
             </Button>
           )}
         </div>
@@ -447,7 +447,7 @@ const CreateLocation = ({
             Zrušit
           </Button>
           <Button primary type="submit" form={formId} onClick={handleConfirm}>
-            Potvrdit lokalitu
+            Potvrdit místo konání
           </Button>
         </div>
       </FormProvider>
