@@ -29,11 +29,11 @@ export type {
   Record,
   Region,
   Registration,
+  StateEnum,
   TokenResponse,
   User,
   UserAddress as Address,
   UserSearch,
-  StateEnum,
 } from './testApi'
 
 export type OpportunityCategory = Overwrite<
@@ -132,7 +132,7 @@ export type EventApplicationPayload = Pick<
   | 'state'
 > & { answers: AnswerPayload[] }
 
-type AddressPayload = Omit<original.UserAddress, 'region'>
+export type AddressPayload = Omit<original.UserAddress, 'region'>
 
 type UserPayloadFields =
   | 'first_name' // required
@@ -151,14 +151,17 @@ type UserPayloadFields =
   | 'all_emails'
   | 'subscribed_to_newsletter'
 
-export type UserPayload = Overwrite<
-  Pick<original.User, UserPayloadFields>,
-  {
-    pronoun: number | null
-    address: AddressPayload
-    contact_address: AddressPayload | null
-    health_insurance_company: number | null
-  }
+export type UserPayload = Optional<
+  Overwrite<
+    Pick<original.User, UserPayloadFields>,
+    {
+      pronoun: number | null
+      address: AddressPayload
+      contact_address: AddressPayload | null
+      health_insurance_company: number | null
+    }
+  >,
+  'all_emails'
 >
 
 export type QuestionType = 'text' | 'checkbox' | 'radio'

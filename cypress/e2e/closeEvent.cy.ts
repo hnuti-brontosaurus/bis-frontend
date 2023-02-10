@@ -1,4 +1,5 @@
-import { merge } from 'lodash'
+import { Interception } from 'cypress/types/net-stubbing'
+import { isEqual, merge } from 'lodash'
 import * as participantsExample from '../fixtures/eventParticipants.json'
 import * as newUserExample from '../fixtures/newUser.json'
 
@@ -380,7 +381,7 @@ describe('Close event - evidence and participants', () => {
       })
     })
 
-    describe.only('Import full participants from excel', () => {
+    describe('Import full participants from excel', () => {
       it('[existent users] should import data, save the users as participants and show in table', () => {
         cy.visit('/org/akce/1000/uzavrit')
 
@@ -410,6 +411,18 @@ describe('Close event - evidence and participants', () => {
           { fixture: 'user2' },
         )
 
+        cy.get('label:contains(Importovat z excelu)')
+          .should('be.visible')
+          .selectFile('cypress/e2e/full-participants.xlsx')
+
+        // a table with imported users should appear
+        // and after a while, indicate that users exist already
+        cy.get('[class^=ImportParticipantsList_container] table tbody tr')
+          .should('have.length', 2)
+          .find('[title="Uživatel/ka existuje"]')
+          .should('have.length', 2)
+
+        // now, save button is shown, we click it and users show up in the main table
         cy.fixture('eventParticipants').then(participants => {
           cy.fixture('user1').then(user1 => {
             cy.fixture('user2').then(user2 => {
@@ -428,22 +441,175 @@ describe('Close event - evidence and participants', () => {
           })
         })
 
+        cy.get('[class^=ImportParticipantsList_container]')
+          .find('button')
+          .contains('Potvrdit')
+          .click()
+
+        // check that the users appear in the table
+        cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
+          'have.length',
+          6,
+        )
+      })
+
+      it('[non-existent users] should import data, create users and save them as participants', () => {
+        cy.visit('/org/akce/1000/uzavrit')
+
+        cy.get('label:contains(Mám všechny informace)')
+          .should('be.visible')
+          .click()
+
+        // at the beginning, the table has 4 rows
+        cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
+          'have.length',
+          4,
+        )
+
+        // click import button and select spreadsheet file
+        cy.intercept(
+          {
+            method: 'GET',
+            path: '/api/frontend/get_unknown_user/?birthday=1993-03-01&first_name=Jana&last_name=Nov%C3%A1kov%C3%A1',
+          },
+          { statusCode: 404 },
+        )
+
+        cy.intercept(
+          {
+            method: 'GET',
+            path: '/api/frontend/get_unknown_user/?birthday=1995-05-12&first_name=Dan&last_name=Nov%C3%A1k',
+          },
+          { statusCode: 404 },
+        )
+
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/users', times: 1 },
+          { fixture: 'user2' },
+        ).as('createUser')
+
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/users', times: 1 },
+          { fixture: 'user1' },
+        ).as('createUser')
+
         cy.get('label:contains(Importovat z excelu)')
           .should('be.visible')
           .selectFile('cypress/e2e/full-participants.xlsx')
 
         // a table with imported users should appear
-        // and after a while, indicate that users exist already
+        // and after a while, indicate that users don't exist yet
         cy.get('[class^=ImportParticipantsList_container] table tbody tr')
           .should('have.length', 2)
-          .find('[title="Uživatel/ka existuje"]')
+          .find('[title="Uživatel/ka bude vytvořen/a"]')
           .should('have.length', 2)
 
         // now, save button is shown, we click it and users show up in the main table
+        cy.fixture('eventParticipants').then(participants => {
+          cy.fixture('user1').then(user1 => {
+            cy.fixture('user2').then(user2 => {
+              cy.intercept(
+                {
+                  method: 'GET',
+                  pathname: '/api/frontend/events/1000/record/participants/',
+                },
+                {
+                  body: merge(participants, {
+                    results: [...participants.results, user1, user2],
+                  }),
+                },
+              ).as('fetchParticipants')
+            })
+          })
+        })
+
         cy.get('[class^=ImportParticipantsList_container]')
           .find('button')
-          .contains('Pokračovat')
+          .contains('Potvrdit')
           .click()
+
+        // these data should match those provided in stylesheet (after transformation)
+        // cypress/e2e/full-participants.xlsx
+        const expectations = [
+          {
+            first_name: 'Dan',
+            last_name: 'Novák',
+            nickname: '',
+            birth_name: '',
+            pronoun: null,
+            subscribed_to_newsletter: true,
+            health_insurance_company: null,
+            health_issues: '',
+            email: 'dan.novak@example.com',
+            phone: '',
+            birthday: '1995-05-12',
+            address: {
+              street: 'Hlavní 5',
+              city: 'Brno - střed',
+              zip_code: '10100',
+            },
+            contact_address: null,
+            close_person: null,
+            donor: null,
+            offers: null,
+            eyca_card: null,
+          },
+          {
+            first_name: 'Jana',
+            last_name: 'Nováková',
+            nickname: 'Julie',
+            birth_name: 'Nová',
+            pronoun: null,
+            subscribed_to_newsletter: true,
+            health_insurance_company: 3,
+            health_issues: 'Jahody',
+            email: 'jana.novakova@example.com',
+            phone: '601001002',
+            birthday: '1993-03-01',
+            address: {
+              street: 'Horní 50',
+              city: 'Praha 6',
+              zip_code: '16000',
+            },
+            contact_address: {
+              street: 'Dolní 40',
+              city: 'Praha 5',
+              zip_code: '15000',
+            },
+            close_person: {
+              first_name: 'Dana',
+              last_name: 'Nováková',
+              email: 'dana@example.com',
+              phone: '602002003',
+            },
+            donor: null,
+            offers: null,
+            eyca_card: null,
+          },
+        ]
+
+        cy.wait(['@createUser', '@createUser']).then(intercepts => {
+          expect(intercepts).to.satisfy((intercepts: Interception[]) =>
+            // test that the two users got saved with the data above
+            // but we don't know the order for sure, that's why this function is so complicated
+            expectations.every(expectation =>
+              intercepts.some(obj => isEqual(obj.request.body, expectation)),
+            ),
+          )
+        })
+
+        cy.wait('@updateEvent')
+          .its('request.body.record.participants')
+          .should('deep.equal', [
+            '22222222-2d92-4645-9858-c89372669217',
+            '00000000-1111-2222-3333-444444444444',
+            'dddddddd-dddd-dddd-dddd-dddddddddddd',
+            '11111111-1111-1111-1111-111111111111',
+            '11111111-1111-1111-1111-1111111111ab',
+            '22222222-2222-2222-2222-2222222222ab',
+          ])
+
+        cy.wait('@fetchParticipants')
 
         // check that the users appear in the table
         cy.get('table[class^=ParticipantsStep_table] tbody tr').should(

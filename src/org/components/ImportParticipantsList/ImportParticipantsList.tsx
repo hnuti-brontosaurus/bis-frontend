@@ -2,8 +2,11 @@ import { api } from 'app/services/bis'
 import { UserPayload } from 'app/services/bisTypes'
 import { Actions, Button, LoadingIcon } from 'components'
 import { useQueries } from 'hooks/queries'
+import { useMemo } from 'react'
 import { FaTimesCircle, FaUserCheck, FaUserPlus } from 'react-icons/fa'
 import type { ValuesType } from 'utility-types'
+import { UserImport } from '../EventForm/steps/registration/Participants'
+import { import2payload } from './helpers'
 import styles from './ImportParticipantsList.module.scss'
 
 const getRequestStatus = (
@@ -31,7 +34,7 @@ const statusIcons = {
 const statusTitles = {
   pending: '',
   found: 'Uživatel/ka existuje',
-  notFound: '',
+  notFound: 'Uživatel/ka bude vytvořen/a',
   error: 'Chyba',
 }
 
@@ -44,15 +47,31 @@ export const ImportParticipantsList = ({
   onConfirm,
   onCancel,
 }: {
-  data: UserPayload[]
+  data: UserImport[]
   onConfirm: (data: ConfirmedUser[]) => void
   onCancel: () => void
 }) => {
   // find out which users exist and which ones don't
   const userRequests = useQueries(api.endpoints.readUserByBirthdate, data)
 
+  const { data: healthInsuranceCompanies } =
+    api.endpoints.readHealthInsuranceCompanies.useQuery({})
+
+  const payloads = useMemo(() => {
+    return data.map(datum =>
+      import2payload(datum, {
+        healthInsuranceCompanies: healthInsuranceCompanies?.results ?? [],
+      }),
+    )
+  }, [data, healthInsuranceCompanies])
+
   const handleConfirm = () => {
-    onConfirm(userRequests.map(req => ({ id: req.data!.id })))
+    onConfirm(
+      userRequests.map((req, i) => {
+        if (req.data?.id) return { id: req.data!.id }
+        return payloads[i]
+      }),
+    )
   }
 
   return (
@@ -100,7 +119,7 @@ export const ImportParticipantsList = ({
           Zrušit
         </Button>
         <Button primary onClick={handleConfirm}>
-          Pokračovat
+          Potvrdit
         </Button>
       </Actions>
     </div>

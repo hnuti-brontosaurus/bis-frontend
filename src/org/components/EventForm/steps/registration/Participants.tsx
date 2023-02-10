@@ -1,11 +1,13 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { User, UserPayload } from 'app/services/bisTypes'
-import { default as classnames, default as classNames } from 'classnames'
+import spreadsheetTemplate from 'assets/templates/Vzor_import účastníků.xlsx'
+import classNames from 'classnames'
 import {
   Actions,
   Button,
   EmptyListPlaceholder,
+  ExternalButtonLink,
   ImportExcelButton,
   Loading,
   SelectUnknownUser,
@@ -25,11 +27,17 @@ import {
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
+import { Overwrite } from 'utility-types'
 import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
-type UserImport = Omit<UserPayload, 'pronoun' | 'all_emails'>
+// type UserImport = Omit<UserPayload, 'pronoun' | 'all_emails'>
+
+export type UserImport = Overwrite<
+  Omit<UserPayload, 'pronoun' | 'subscribed_to_newsletter' | 'all_emails'>,
+  { health_insurance_company: string; address: string; contact_address: string }
+>
 
 export const Participants: FC<{
   eventId: number
@@ -241,23 +249,33 @@ export const Participants: FC<{
   const [importParticipantsModalOpen, setImportParticipantsModalOpen] =
     useState(false)
   const [importParticipantsData, setImportParticipantsData] =
-    useState<UserPayload[]>()
+    useState<UserImport[]>()
 
   const handleCancelImportParticipants = () => {
     setImportParticipantsModalOpen(false)
     setImportParticipantsData(undefined)
   }
   const handleImportParticipants = async (data: UserImport[]) => {
-    setImportParticipantsData(data as UserPayload[])
+    setImportParticipantsData(data)
     setImportParticipantsModalOpen(true)
   }
 
   const handleSaveImportedParticipants = async (data: ConfirmedUser[]) => {
-    setImportParticipantsModalOpen(false)
     const existingParticipants = data.filter(
       datum => 'id' in datum && datum.id,
     ) as ({ id: string } & Partial<UserPayload>)[]
-    await addParticipants(existingParticipants.map(p => p.id))
+    const newParticipantsData = data.filter(
+      datum => !('id' in datum),
+    ) as UserPayload[]
+    const newParticipants = await Promise.all(
+      newParticipantsData.map(datum => createUser(datum).unwrap()),
+    )
+    await addParticipants(
+      existingParticipants
+        .map(p => p.id)
+        .concat(newParticipants.map(p => p.id)),
+    )
+    setImportParticipantsModalOpen(false)
   }
 
   const removeModalTitle = removeModalData
@@ -326,6 +344,9 @@ export const Participants: FC<{
         >
           Importovat z excelu
         </ImportExcelButton>
+        <ExternalButtonLink tertiary href={spreadsheetTemplate}>
+          (vzor)
+        </ExternalButtonLink>
       </h2>
       {!isReadParticipantsLoading ? (
         <div>
@@ -358,10 +379,10 @@ export const Participants: FC<{
                   <th>příjmení</th>
                   <th>datum narození</th>
                   <th>
-                    <EditUser className={classnames(styles.iconHead)} />
+                    <EditUser className={classNames(styles.iconHead)} />
                   </th>
                   <th>
-                    <Bin className={classnames(styles.iconHead)}></Bin>
+                    <Bin className={classNames(styles.iconHead)}></Bin>
                   </th>
                 </tr>
               </thead>

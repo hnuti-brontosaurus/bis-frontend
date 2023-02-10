@@ -328,15 +328,15 @@ export const array2object = <T extends { [key: string]: unknown }>(
 /**
  * Transform string to lowercase without diacritics, for more graceful comparison
  */
-// const normalizeString = (input: string): string => {
-//   return (
-//     input
-//       .toLowerCase()
-//       // remove diacritics https://stackoverflow.com/a/37511463/4551707
-//       .normalize('NFD')
-//       .replace(/[\u0300-\u036f]/g, '')
-//   )
-// }
+export const normalizeString = (input: string): string => {
+  return (
+    input
+      .toLowerCase()
+      // remove diacritics https://stackoverflow.com/a/37511463/4551707
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+  )
+}
 
 /**
  * Given form errors and field name, return error message
