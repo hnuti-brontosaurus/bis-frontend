@@ -1,4 +1,5 @@
 @use 'styles/colors';
+@use 'components/Button/Button.module' as button;
 
 .inputTypeOptions {
   margin: 0;
@@ -13,4 +14,28 @@
   border-top: none;
   width: 100%;
   margin-top: -4px;
+}
+
+.changeEvedenceNavigation {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: baseline;
+  .customEvidenceHeader {
+    font-size: 2rem;
+  }
+  .button {
+    @include button.tertiary-button();
+    height: unset;
+    padding: 0;
+  }
+}
+
+.smallIcon {
+  background-color: colors.$bronto;
+  svg {
+    path {
+      fill: white;
+    }
+  }
 }

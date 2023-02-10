@@ -8,6 +8,7 @@ interface HeaderProps {
   required?: boolean
   help?: ReactNode
   onWeb?: boolean
+  className?: string
 }
 
 export const FormHeader = ({
@@ -16,11 +17,14 @@ export const FormHeader = ({
   help,
   onWeb,
   numbered,
+  className,
 }: HeaderProps & {
   numbered?: boolean
 }) => {
   return (
-    <header className={classNames(numbered && styles.numberedHeader)}>
+    <header
+      className={classNames(numbered && styles.numberedHeader, className)}
+    >
       {help && <Help>{help}</Help>}{' '}
       <span className={classNames(required && styles.required)}>
         {children}

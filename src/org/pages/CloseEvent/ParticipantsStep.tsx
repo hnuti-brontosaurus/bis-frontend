@@ -2,20 +2,23 @@ import { Event } from 'app/services/bisTypes'
 import { ReactComponent as Counted } from 'assets/counting.svg'
 import { ReactComponent as EmailList } from 'assets/email-list.svg'
 import { ReactComponent as FullList } from 'assets/full-list.svg'
+import classNames from 'classnames'
 import {
-  ButtonSelect,
+  Button,
+  FormHeader,
   FormInputError,
   FormSection,
   FormSectionGroup,
+  IconSelect,
+  IconSelectGroup,
   InlineSection,
   Label,
   NumberInput,
 } from 'components'
-import { ButtonSelectGroup } from 'components/ButtonSelect/ButtonSelect'
 import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
-import { ReactElement, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
-import { Entries } from 'type-fest'
+import { required } from 'utils/validationMessages'
 import type {
   CloseEventFormShape,
   ParticipantsStepFormInnerShape,
@@ -26,17 +29,33 @@ import { SimpleParticipants } from './SimpleParticipants'
 type ParticipantInputType =
   CloseEventFormShape['record']['participantInputType']
 
-const optionButtonConfig: Record<
-  ParticipantInputType,
-  { label: string; icon: ReactElement<any, any> }
-> = {
-  count: { label: 'Mám jen počet účastníků', icon: <Counted /> },
-  'simple-list': {
-    label: 'Mám jen jméno + příjmení + email',
-    icon: <EmailList />,
+const optionButtonConfig: {
+  [key: string]: {
+    id: ParticipantInputType
+    help: string
+    text: string
+    icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
+  }
+} = {
+  count: {
+    id: 'count',
+    help: 'help1',
+    text: 'Mám jen počet účastníků',
+    icon: Counted,
   },
-  'full-list': { label: 'Mám všechny informace', icon: <FullList /> },
-} as const
+  'simple-list': {
+    id: 'simple-list',
+    help: 'help2',
+    text: 'Mám jen jméno + příjmení + email',
+    icon: EmailList,
+  },
+  'full-list': {
+    id: 'full-list',
+    help: 'help3',
+    text: 'Mám všechny informace',
+    icon: FullList,
+  },
+}
 
 export const ParticipantsStep = ({
   event,
@@ -47,13 +66,15 @@ export const ParticipantsStep = ({
   areParticipantsRequired: boolean
   methods: UseFormReturn<ParticipantsStepFormInnerShape>
 }) => {
-  const { register, watch, trigger, formState } = methods
+  const { watch, register, control, trigger, formState, reset } = methods
 
   // list of participants is shown when it's required
   // or when organizers prefer it rather than filling just numbers
 
   const inputType = watch('record.participantInputType')
 
+  const [show, setShow] = useState(true)
+  const [showForm, setShowForm] = useState(false)
   useEffect(() => {
     const subscription = watch((values, { name }) => {
       if (formState.isSubmitted && name === 'record.number_of_participants')
@@ -64,7 +85,12 @@ export const ParticipantsStep = ({
     return () => subscription.unsubscribe()
   }, [formState.isSubmitted, trigger, watch])
 
-  const { control } = methods
+  const handleReset = () => {
+    reset({
+      record: { participantInputType: undefined },
+    })
+  }
+
   return (
     <FormProvider {...methods}>
       <form>
@@ -72,80 +98,130 @@ export const ParticipantsStep = ({
       but when the event group is "other", it's optional, and they must fill number_of_participants instead
       */}
         <FormSectionGroup>
-          <FormSection header="Evidence účastníků">
-            {!areParticipantsRequired && (
-              <FormInputError
-                className={styles.inputTypeOptions}
-                name="participantInputType"
-              >
-                <ButtonSelectGroup>
-                  {(
-                    Object.entries(optionButtonConfig) as Entries<
-                      typeof optionButtonConfig
-                    >
-                  ).map(([value, { label, icon }]) => (
-                    <ButtonSelect
-                      key={value}
-                      id={value}
-                      label={label}
-                      {...register('record.participantInputType')}
-                      value={value}
-                      icon={icon}
-                    />
-                  ))}
-                </ButtonSelectGroup>
+          <FormSection required header="Evidence účastníků">
+            {!inputType ? (
+              <FormInputError name="participantInputType">
+                <Controller
+                  name="record.participantInputType"
+                  control={methods.control}
+                  rules={{ required }}
+                  render={({ field }) => (
+                    <IconSelectGroup>
+                      {Object.values(optionButtonConfig).map(
+                        ({ id, icon, text }) => {
+                          return (
+                            <IconSelect
+                              key={id}
+                              title={'dzik'}
+                              text={text}
+                              icon={icon}
+                              id={id.toString()}
+                              ref={field.ref}
+                              name={field.name}
+                              value={id}
+                              checked={id === field.value}
+                              onChange={e => {
+                                field.onChange(e.target.value)
+                                setShow(false)
+                                setShowForm(true)
+                              }}
+                            />
+                          )
+                        },
+                      )}
+                    </IconSelectGroup>
+                  )}
+                />
               </FormInputError>
-            )}
-            <div className={styles.tabFrame}>
-              {!areParticipantsRequired &&
-                (inputType === 'count' || inputType === 'simple-list') && (
-                  <>
-                    <InlineSection>
-                      <Label required>
-                        Počet účastníků celkem (včetně organizátorů)
-                      </Label>
-                      <FormInputError>
-                        <Controller
-                          control={control}
-                          name="record.number_of_participants"
-                          render={({ field }) => (
-                            <NumberInput
-                              {...field}
-                              min={0}
-                              name="record.number_of_participants"
-                            ></NumberInput>
-                          )}
-                        />
-                      </FormInputError>
-                    </InlineSection>
-                    <InlineSection>
-                      <Label required>
-                        Z toho počet účastníků do 26 let (včetně organizátorů)
-                      </Label>
-                      <FormInputError>
-                        <Controller
-                          control={control}
-                          name="record.number_of_participants_under_26"
-                          render={({ field }) => (
-                            <NumberInput
-                              {...field}
-                              min={0}
-                              name="record.number_of_participants_under_26"
-                            ></NumberInput>
-                          )}
-                        />
-                      </FormInputError>
-                    </InlineSection>
-                  </>
+            ) : (
+              <div className={classNames(styles.changeEvedenceNavigation)}>
+                <IconSelect
+                  icon={optionButtonConfig[inputType].icon}
+                  id={inputType}
+                  text=""
+                  smallIcon
+                  checked
+                />
+                {inputType && inputType === 'count' && (
+                  <FormHeader className={styles.customEvidenceHeader}>
+                    {optionButtonConfig['count'].text}
+                  </FormHeader>
                 )}
-              {!areParticipantsRequired && inputType === 'simple-list' && (
-                <SimpleParticipants />
-              )}
-              {(areParticipantsRequired || inputType === 'full-list') && (
-                <ParticipantsList eventId={event.id} eventName={event.name} />
-              )}
-            </div>
+                {inputType && inputType === 'simple-list' && (
+                  <FormHeader className={styles.customEvidenceHeader}>
+                    {optionButtonConfig['simple-list'].text}
+                  </FormHeader>
+                )}
+                {inputType && inputType === 'full-list' && (
+                  <FormHeader className={styles.customEvidenceHeader}>
+                    {optionButtonConfig['full-list'].text}
+                  </FormHeader>
+                )}
+                <Button
+                  tertiary
+                  name="record.participantInputType"
+                  className={styles.button}
+                  onClick={e => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    handleReset()
+                    setShow(true)
+                    setShowForm(false)
+                  }}
+                >
+                  změň způsob registrace účastníků
+                </Button>
+              </div>
+            )}
           </FormSection>
+
+          {!areParticipantsRequired &&
+            (inputType === 'count' || inputType === 'simple-list') && (
+              <div>
+                <InlineSection>
+                  <Label required>
+                    Počet účastníků celkem (včetně organizátorů)
+                  </Label>
+                  <FormInputError>
+                    <Controller
+                      control={control}
+                      name="record.number_of_participants"
+                      render={({ field }) => (
+                        <NumberInput
+                          {...field}
+                          min={0}
+                          name="record.number_of_participants"
+                        ></NumberInput>
+                      )}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label required>
+                    Z toho počet účastníků do 26 let (včetně organizátorů)
+                  </Label>
+                  <FormInputError>
+                    <Controller
+                      control={control}
+                      name="record.number_of_participants_under_26"
+                      render={({ field }) => (
+                        <NumberInput
+                          {...field}
+                          min={0}
+                          name="record.number_of_participants_under_26"
+                        ></NumberInput>
+                      )}
+                    />
+                  </FormInputError>
+                </InlineSection>
+              </div>
+            )}
+          {!areParticipantsRequired && inputType === 'simple-list' && (
+            <SimpleParticipants />
+          )}
+          {(areParticipantsRequired || inputType === 'full-list') && (
+            <ParticipantsList eventId={event.id} eventName={event.name} />
+          )}
         </FormSectionGroup>
       </form>
     </FormProvider>
