@@ -14,7 +14,7 @@
     display: flex;
     align-items: center;
 
-    button {
+    .delete {
       background-color: transparent !important;
       color: colors.$error;
       @include media.for-phone-only {
@@ -70,6 +70,38 @@
     justify-content: center;
     @include media.for-phone-only {
       margin-top: 0.5rem;
+    }
+  }
+}
+
+.options {
+  margin-left: 2rem;
+
+  .option {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    & > div {
+      flex: 1;
+    }
+
+    input {
+      width: 100%;
+    }
+
+    .delete {
+      background-color: transparent !important;
+      color: colors.$error;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      @include media.for-phone-only {
+        width: 100%;
+      }
     }
   }
 }

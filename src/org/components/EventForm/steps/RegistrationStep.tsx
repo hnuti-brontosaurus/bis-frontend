@@ -10,11 +10,19 @@ import {
 } from 'components'
 import { form as formTexts } from 'config/static/event'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
-import { FaTrashAlt } from 'react-icons/fa'
+import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { requireBoolean } from 'utils/helpers'
 import * as messages from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 import styles from './RegistrationStep.module.scss'
+
+export type QuestionType = 'text' | 'radio' | 'checkbox'
+
+const questionTypes: { type: QuestionType; name: string }[] = [
+  { type: 'text', name: 'Text' },
+  { type: 'radio', name: 'Možnosti' },
+  { type: 'checkbox', name: 'Možnosti (více)' },
+]
 
 export const RegistrationStep = ({
   methods,
@@ -165,9 +173,7 @@ export const RegistrationStep = ({
                         <textarea
                           {...register(
                             'registration.questionnaire.introduction',
-                            {
-                              required: messages.required,
-                            },
+                            { required: messages.required },
                           )}
                         />
                       </FormInputError>
@@ -198,7 +204,7 @@ export const RegistrationStep = ({
                         {questionFields.fields.map((item, index) => (
                           <li key={item.id}>
                             <div className={styles.question}>
-                              Otazka {index + 1}:
+                              Otázka {index + 1}:
                               <div className={styles.questionInputGroup}>
                                 <FormInputError
                                   className={styles.questionInput}
@@ -210,6 +216,19 @@ export const RegistrationStep = ({
                                       { required: messages.required },
                                     )}
                                   />
+                                </FormInputError>
+                                <FormInputError>
+                                  <select
+                                    {...register(`questions.${index}.type`, {
+                                      required: messages.required,
+                                    })}
+                                  >
+                                    {questionTypes.map(({ type, name }) => (
+                                      <option key={type} value={type}>
+                                        {name}
+                                      </option>
+                                    ))}
+                                  </select>
                                 </FormInputError>
                                 <label
                                   className={
@@ -234,6 +253,14 @@ export const RegistrationStep = ({
                                 </Button>
                               </div>
                             </div>
+                            {['radio', 'checkbox'].includes(
+                              watch(`questions.${index}.type`),
+                            ) && (
+                              <QuestionOptions
+                                question={index}
+                                methods={methods}
+                              />
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -244,10 +271,14 @@ export const RegistrationStep = ({
                           type="button"
                           secondary
                           onClick={() =>
-                            questionFields.append({ question: '' })
+                            questionFields.append({
+                              question: '',
+                              type: 'text',
+                              options: [{ option: '' }],
+                            })
                           }
                         >
-                          Přidat otázku
+                          <FaPlus /> Přidat otázku
                         </Button>
                       </div>
                     </div>
@@ -256,41 +287,57 @@ export const RegistrationStep = ({
               )}
             </>
           )}
-          {/*
-                <pre>
-                  {`
-Způsob přihlášení *! (help?: Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se zobrazí po kliknutí na tlačítko “chci jet”:
-standardní přihláška na brontowebu (doporučujeme!) -  Je jednotná pro celé HB. Do této přihlášky si můžete přidat 4 vlastní otázky. Vyplněné údaje se pak rovnou zobrazí v BIS, což tobě i kanceláři ulehčí práci.
-jiná elektornická přihláška -  Přesměruje zájemce na vaši přihlášku. 
-přihlášení na e-mail organizátora - Přesměruje zájemce na outlook s kontaktním emailem.
-Registrace není potřeba, stačí přijít - Zobrazí se jako text u vaší akce.
-Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaší akce.)
-
-Standardní přihláška na brontowebu
-Fce: tlačítko chci jet odkáže na: vyplnit předdefinovaný brontosauří formulář
-Jiná elektronická přihláška
-Fce: tlačítko chci jet = proklik na jinou elektronickou přihlášku
-přihlášení  na mail organizátora
-Fce: tlačítko chci jet = otevření outlook, kde je příjemce mail organizátora
-Registrace není potřeba, stačí přijít
-FCE: propíše se na web, že není třeba se hlásit
-Máme bohužel plno, zkuste jinou z našich akcí
-Fce: propíše se to na web
-
-při vybrání možnosti “Standardní příhláška na brontowebu” se objeví tyto položky 
-(help? - Zde můžeš připsat svoje doplňující otázky pro účastníky, které se zobrazí u standartní přihlášky na brontowebu)
-Otázka 1
-Otázka 2
-Otázka 3
-Otázka 4
-
-při vybrání možnosti “jiná elektronická přihláška” se zobrazí políčko
-URL tvé přihlášky
-Fce: proklik na přihlášky vytvořenou externě`}
-                </pre>
-*/}
         </FormSectionGroup>
       </form>
     </FormProvider>
+  )
+}
+
+const QuestionOptions = ({
+  question,
+  methods,
+}: {
+  question: number
+  methods: MethodsShapes['registration']
+}) => {
+  const { control, register } = methods
+  const optionFields = useFieldArray({
+    control,
+    name: `questions.${question}.options`,
+  })
+
+  return (
+    <div className={styles.options}>
+      <ul>
+        {optionFields.fields.map((item, index) => (
+          <li key={item.id} className={styles.option}>
+            Možnost {index + 1}:{' '}
+            <FormInputError>
+              <input
+                {...register(`questions.${question}.options.${index}.option`, {
+                  required: messages.required,
+                })}
+              />
+            </FormInputError>
+            <button
+              type="button"
+              onClick={() => optionFields.remove(index)}
+              className={styles.delete}
+            >
+              <FaTrashAlt /> <span>smazat</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <Button
+        secondary
+        type="button"
+        onClick={() => {
+          optionFields.append({ option: '' })
+        }}
+      >
+        <FaPlus /> Přidat možnost
+      </Button>
+    </div>
   )
 }

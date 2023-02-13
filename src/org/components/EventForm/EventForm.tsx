@@ -29,7 +29,7 @@ import { LocationStep } from './steps/LocationStep'
 import { OrganizerStep } from './steps/OrganizerStep'
 import { ParticipantsStep } from './steps/ParticipantsStep'
 import { PropagationStep } from './steps/PropagationStep'
-import { RegistrationStep } from './steps/RegistrationStep'
+import { QuestionType, RegistrationStep } from './steps/RegistrationStep'
 
 const steps = [
   'group',
@@ -67,6 +67,16 @@ export type InitialEventData = Overwrite<
   }
 >
 
+type BaseFormQuestion = Optional<Question, 'id'>
+
+type FormQuestion = Assign<
+  BaseFormQuestion,
+  {
+    type: QuestionType
+    options: { option: string }[]
+  }
+>
+
 export type EventFormShape = Assign<
   InitialEventData,
   {
@@ -79,6 +89,7 @@ export type EventFormShape = Assign<
     // contactPersonIsMainOrganizer is internal, doesn't get sent to API
     contactPersonIsMainOrganizer: boolean
     location: Location | NewLocation
+    questions: FormQuestion[]
   }
 >
 
@@ -199,6 +210,15 @@ const initialData2form = (
     } as EventFormShape['propagation']
   }
 
+  if (data?.questions) {
+    const questions = data.questions.map(({ data, ...question }) => {
+      const detail = typeof data === 'string' ? JSON.parse(data) : {}
+      return { ...detail, ...question } as FormQuestion
+    })
+
+    returnData.questions = questions
+  }
+
   return returnData
 }
 
@@ -290,6 +310,15 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
   if (!data.propagation?.is_shown_on_web) {
     finalData.registration = null
     finalData.propagation = null
+  }
+
+  if (data.questions) {
+    finalData.questions = data.questions.map(({ type, options, ...rest }) => {
+      const data: FormQuestion['data'] = { type }
+      if (type === 'radio' || type === 'checkbox')
+        data.options = options.map(({ option }) => option)
+      return { ...rest, data }
+    })
   }
 
   return finalData
