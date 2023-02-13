@@ -25,7 +25,6 @@ export type {
   Propagation,
   Qualification,
   QualificationCategory,
-  Question,
   Questionnaire,
   Record,
   Region,
@@ -159,5 +158,19 @@ export type UserPayload = Overwrite<
     address: AddressPayload
     contact_address: AddressPayload | null
     health_insurance_company: number | null
+  }
+>
+
+export type QuestionType = 'text' | 'checkbox' | 'radio'
+
+type QuestionData = {
+  type: QuestionType
+  options?: { option: string }[]
+}
+
+export type Question = Overwrite<
+  original.Question,
+  {
+    data?: QuestionData
   }
 >

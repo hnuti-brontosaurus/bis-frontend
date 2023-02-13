@@ -1,3 +1,4 @@
+import { QuestionType } from 'app/services/bisTypes'
 import {
   Button,
   FormInputError,
@@ -15,8 +16,6 @@ import { requireBoolean } from 'utils/helpers'
 import * as messages from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 import styles from './RegistrationStep.module.scss'
-
-export type QuestionType = 'text' | 'radio' | 'checkbox'
 
 const questionTypes: { type: QuestionType; name: string }[] = [
   { type: 'text', name: 'Text' },
@@ -219,9 +218,10 @@ export const RegistrationStep = ({
                                 </FormInputError>
                                 <FormInputError>
                                   <select
-                                    {...register(`questions.${index}.type`, {
-                                      required: messages.required,
-                                    })}
+                                    {...register(
+                                      `questions.${index}.data.type`,
+                                      { required: messages.required },
+                                    )}
                                   >
                                     {questionTypes.map(({ type, name }) => (
                                       <option key={type} value={type}>
@@ -254,7 +254,7 @@ export const RegistrationStep = ({
                               </div>
                             </div>
                             {['radio', 'checkbox'].includes(
-                              watch(`questions.${index}.type`),
+                              watch(`questions.${index}.data.type`),
                             ) && (
                               <QuestionOptions
                                 question={index}
@@ -273,8 +273,7 @@ export const RegistrationStep = ({
                           onClick={() =>
                             questionFields.append({
                               question: '',
-                              type: 'text',
-                              options: [{ option: '' }],
+                              data: { type: 'text', options: [{ option: '' }] },
                             })
                           }
                         >
@@ -303,7 +302,7 @@ const QuestionOptions = ({
   const { control, register } = methods
   const optionFields = useFieldArray({
     control,
-    name: `questions.${question}.options`,
+    name: `questions.${question}.data.options`,
   })
 
   return (
@@ -314,9 +313,10 @@ const QuestionOptions = ({
             Možnost {index + 1}:{' '}
             <FormInputError>
               <input
-                {...register(`questions.${question}.options.${index}.option`, {
-                  required: messages.required,
-                })}
+                {...register(
+                  `questions.${question}.data.options.${index}.option`,
+                  { required: messages.required },
+                )}
               />
             </FormInputError>
             <button

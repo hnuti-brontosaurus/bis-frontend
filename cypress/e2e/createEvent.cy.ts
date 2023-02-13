@@ -365,30 +365,36 @@ describe('create event', () => {
       // add another question, type checkbox
       cy.get('button').contains('Přidat otázku').click()
       cy.get('[name="questions.1.question"]').type('Otázka 2')
-      cy.get('[name="questions.1.type"]').select('checkbox')
+      cy.get('[name="questions.1.data.type"]').select('checkbox')
       cy.get('button')
         .contains('Přidat možnost')
         .should('have.length', 1)
         .click()
-      cy.get('[name^="questions.1.options"]').should('have.length', 2)
+      cy.get('[name^="questions.1.data.options"]').should('have.length', 2)
 
-      cy.get('[name="questions.1.options.0.option"]').type('Option 1')
-      cy.get('[name="questions.1.options.1.option"]').type('Option 2')
+      cy.get('[name="questions.1.data.options.0.option"]').type('Option 1')
+      cy.get('[name="questions.1.data.options.1.option"]').type('Option 2')
 
       // add another question, type radio
       cy.get('button').contains('Přidat otázku').click()
       cy.get('[name="questions.2.question"]').type('Otázka 3')
       cy.get('[name="questions.2.is_required"]').check()
-      cy.get('[name="questions.2.type"]').select('radio')
+      cy.get('[name="questions.2.data.type"]').select('radio')
       cy.get('button')
         .contains('Přidat možnost')
         .should('have.length', 2)
         .last()
         .click()
         .click()
-      cy.get('[name="questions.2.options.0.option"]').type('Radio option 1')
-      cy.get('[name="questions.2.options.1.option"]').type('Radio option 2')
-      cy.get('[name="questions.2.options.2.option"]').type('Radio option 3')
+      cy.get('[name="questions.2.data.options.0.option"]').type(
+        'Radio option 1',
+      )
+      cy.get('[name="questions.2.data.options.1.option"]').type(
+        'Radio option 2',
+      )
+      cy.get('[name="questions.2.data.options.2.option"]').type(
+        'Radio option 3',
+      )
 
       // submit and check that correct data are sent
       cy.intercept(
@@ -429,7 +435,10 @@ describe('create event', () => {
             },
             {
               question: 'Otázka 2',
-              data: { type: 'checkbox', options: ['Option 1', 'Option 2'] },
+              data: {
+                type: 'checkbox',
+                options: [{ option: 'Option 1' }, { option: 'Option 2' }],
+              },
               is_required: false,
               order: 1,
             },
@@ -437,7 +446,11 @@ describe('create event', () => {
               question: 'Otázka 3',
               data: {
                 type: 'radio',
-                options: ['Radio option 1', 'Radio option 2', 'Radio option 3'],
+                options: [
+                  { option: 'Radio option 1' },
+                  { option: 'Radio option 2' },
+                  { option: 'Radio option 3' },
+                ],
               },
               is_required: true,
               order: 2,
