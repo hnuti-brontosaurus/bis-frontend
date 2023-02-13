@@ -34,19 +34,25 @@ import {
   useForm,
 } from 'react-hook-form'
 import type { SetNonNullable, SetRequired } from 'type-fest'
+import { Assign, Overwrite } from 'utility-types'
 import { sortOrder, withOverwriteArray } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
 import styles from './EventRegistration.module.scss'
 
-export type RegistrationFormShape = SetRequired<
-  SetNonNullable<
-    Omit<EventApplicationPayload, 'nickname' | 'health_issues' | 'state'>,
-    'first_name' | 'last_name' | 'phone' | 'email' | 'birthday'
+type FormAnswer = Overwrite<AnswerPayload, { answer: string | string[] }>
+
+export type RegistrationFormShape = Assign<
+  SetRequired<
+    SetNonNullable<
+      Omit<EventApplicationPayload, 'nickname' | 'health_issues' | 'state'>,
+      'first_name' | 'last_name' | 'phone' | 'email' | 'birthday'
+    >,
+    'birthday'
   >,
-  'birthday'
-> & { isChild: boolean }
+  { isChild: boolean; answers: FormAnswer[] }
+>
 
 export type RegistrationFormShapeWithStep = RegistrationFormShape & {
   step: 'progress' | 'finished'
@@ -93,7 +99,10 @@ const initialData2form = (
 const form2payload = (data: RegistrationFormShape): EventApplicationPayload => {
   const answers =
     data.answers
-      .map(({ answer, question }) => ({ answer, question }))
+      .map(({ answer, question }) => ({
+        answer: Array.isArray(answer) ? answer.join(', ') : answer,
+        question,
+      }))
       .filter(({ answer }) => Boolean(answer)) ?? []
 
   const submitData = mergeWith(
@@ -151,11 +160,26 @@ const validationSchema: yup.ObjectSchema<RegistrationFormShape> = yup.object({
       yup.object({
         question: yup.number().required(),
         is_required: yup.boolean(),
-        answer: yup.string().when('is_required', {
-          is: true,
-          then: schema => schema.required(),
-          otherwise: schema => schema.defined(),
-        }),
+        answer: yup.lazy(val =>
+          Array.isArray(val)
+            ? yup
+                .array()
+                .of(yup.string().defined())
+                .defined()
+                .when('is_required', {
+                  is: true,
+                  then: schema =>
+                    schema.test({
+                      message: 'Vyberte alespoň jednu z možností',
+                      test: arr => arr.length > 0,
+                    }),
+                })
+            : yup.string().when('is_required', {
+                is: true,
+                then: schema => schema.required(),
+                otherwise: schema => schema.defined(),
+              }),
+        ),
       }),
     )
     .required(),
@@ -349,12 +373,33 @@ export const EventRegistrationForm = ({
                       header={question.question}
                       required={question.is_required}
                     >
-                      <FormInputError>
-                        <textarea
-                          {...register(`answers.${index}.answer` as const, {
-                            required: question.is_required && required,
-                          })}
-                        ></textarea>
+                      <FormInputError name={`answers.${index}.answer`}>
+                        {question.data?.type === 'checkbox' ||
+                        question.data?.type === 'radio' ? (
+                          <fieldset>
+                            <InlineSection>
+                              {question.data.options?.map(({ option }) => (
+                                <label key={option}>
+                                  <input
+                                    type={question.data!.type}
+                                    value={option}
+                                    {...register(`answers.${index}.answer`, {
+                                      required:
+                                        question.is_required && required,
+                                    })}
+                                  />{' '}
+                                  {option}
+                                </label>
+                              ))}
+                            </InlineSection>
+                          </fieldset>
+                        ) : (
+                          <textarea
+                            {...register(`answers.${index}.answer`, {
+                              required: question.is_required && required,
+                            })}
+                          ></textarea>
+                        )}
                       </FormInputError>
                     </FormSubsection>
                   )

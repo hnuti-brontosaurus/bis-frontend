@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import merge from 'lodash/merge'
-import { forwardRef, MutableRefObject, useEffect } from 'react'
+import { forwardRef, useEffect } from 'react'
 import { Noop } from 'react-hook-form'
 import * as yup from 'yup'
 
@@ -34,15 +34,14 @@ const joinBirthday = ({ year, month, day }: Birthdate): string | null => {
 }
 
 export const BirthdayInput = forwardRef<
-  any,
+  HTMLInputElement,
   {
     onChange: (value: string | null) => void
     onBlur: Noop
     value: string
     name: string
-    ref: MutableRefObject<HTMLInputElement>
   }
->(({ value, onChange }, ref) => {
+>(({ value, onChange, name }, ref) => {
   const { day, month, year } = splitBirthday(value)
 
   const handleChange = (date: Partial<Birthdate>) => {
@@ -59,6 +58,7 @@ export const BirthdayInput = forwardRef<
       <input
         ref={ref}
         type="text"
+        name={`${name}-day`}
         placeholder="DD"
         maxLength={2}
         size={2}
@@ -68,6 +68,7 @@ export const BirthdayInput = forwardRef<
       .
       <input
         type="text"
+        name={`${name}-month`}
         placeholder="MM"
         maxLength={2}
         size={2}
@@ -77,6 +78,7 @@ export const BirthdayInput = forwardRef<
       .
       <input
         type="text"
+        name={`${name}-year`}
         placeholder="RRRR"
         maxLength={4}
         size={4}
