@@ -66,7 +66,7 @@ export const ParticipantsStep = ({
   areParticipantsRequired: boolean
   methods: UseFormReturn<ParticipantsStepFormInnerShape>
 }) => {
-  const { watch, control, trigger, formState, reset } = methods
+  const { watch, control, trigger, formState, setValue } = methods
 
   // list of participants is shown when it's required
   // or when organizers prefer it rather than filling just numbers
@@ -84,9 +84,9 @@ export const ParticipantsStep = ({
   }, [formState.isSubmitted, trigger, watch])
 
   const handleReset = () => {
-    reset({
-      record: { participantInputType: undefined },
-    })
+    // we want to set the value to null here and still have it not accepted when submitting a form
+    // @ts-ignore
+    setValue('record.participantInputType', null, { clearErrors: true })
   }
 
   return (
