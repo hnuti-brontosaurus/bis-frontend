@@ -695,4 +695,8 @@ const fillForm = () => {
     },
   )
   cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()
+
+  // when we submit too fast, tests fail
+  // somehow main_organizer needs time to appear in form data
+  cy.wait(1000)
 }
