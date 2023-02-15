@@ -26,7 +26,10 @@
       background-color: colors.$bronto;
       transition: 220ms ease-in;
       svg {
-        fill: white;
+        fill: white !important;
+        path {
+          fill: white !important;
+        }
         transition: 220ms ease-in;
       }
     }
@@ -49,6 +52,9 @@
     svg {
       fill: colors.$bronto;
       overflow: visible;
+      path {
+        fill: colors.$bronto;
+      }
       @include media.for-phone-only {
         width: 30px;
         height: 30px;
@@ -102,6 +108,21 @@
     background-color: colors.$opportunities-light;
     &:hover {
       border-color: colors.$opportunities;
+    }
+  }
+}
+
+.smallIcon {
+  .icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    svg {
+      width: 32px;
+      height: 32px;
     }
   }
 }
