@@ -36,11 +36,10 @@
     max-width: 100%;
     display: flex;
     flex-direction: column;
-    background-color: colors.$bronto;
+    background-color: colors.$gray-100;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    color: white;
     > a {
       color: black;
       background-color: colors.$bronto-light;
@@ -83,8 +82,12 @@
       }
     }
 
+    .table {
+      margin: 0 auto;
+    }
+
     border-radius: 32px;
-    background-color: #f0f3f2;
+    background-color: colors.$gray-100;
     table {
       th {
         padding-right: 1rem;

@@ -112,17 +112,22 @@ export const SimpleParticipants = () => {
           }}
         />
       </StyledModal>
-      <header>Jednoduchý seznam účastníků</header>
-      <ImportExcelButton<EventContact>
-        keyMap={importMap}
-        onUpload={data => peopleFields.append(data)}
-      >
-        Importovat seznam účastníků z excelu
-      </ImportExcelButton>{' '}
-      <ExternalButtonLink tertiary href={spreadsheetTemplate}>
-        (vzor)
-      </ExternalButtonLink>
-      <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
+      <header className={styles.header}>Novy ucastnik:</header>
+
+      <div className={styles.inputLine}>
+        <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
+        <div className={styles.inportPart}>
+          <ImportExcelButton<EventContact>
+            keyMap={importMap}
+            onUpload={data => peopleFields.append(data)}
+          >
+            Importovat seznam účastníků z excelu
+          </ImportExcelButton>{' '}
+          <ExternalButtonLink tertiary href={spreadsheetTemplate}>
+            (vzor)
+          </ExternalButtonLink>
+        </div>
+      </div>
       <table className={classNames(tableStyles.table, styles.contactTable)}>
         <thead>
           <tr>

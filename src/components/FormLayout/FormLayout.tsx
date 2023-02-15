@@ -151,6 +151,10 @@ export const InlineSection = ({ children }: HTMLProps<HTMLDivElement>) => (
   <div className={styles.inline}>{children}</div>
 )
 
+export const ColumnSection = ({ children }: HTMLProps<HTMLDivElement>) => (
+  <div className={styles.column}>{children}</div>
+)
+
 export const Actions = ({ children }: HTMLProps<HTMLElement>) => (
   <nav className={styles.actions}>{children}</nav>
 )

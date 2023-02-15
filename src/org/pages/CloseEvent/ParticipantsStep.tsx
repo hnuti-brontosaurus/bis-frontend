@@ -11,10 +11,10 @@ import {
   FormSectionGroup,
   IconSelect,
   IconSelectGroup,
-  InlineSection,
   Label,
   NumberInput,
 } from 'components'
+import { ColumnSection, InlineSection } from 'components/FormLayout/FormLayout'
 import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
 import { useEffect } from 'react'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
@@ -177,40 +177,42 @@ export const ParticipantsStep = ({
             (inputType === 'count' || inputType === 'simple-list') && (
               <div>
                 <InlineSection>
-                  <Label required>
-                    Počet účastníků celkem (včetně organizátorů)
-                  </Label>
-                  <FormInputError>
-                    <Controller
-                      control={control}
-                      name="record.number_of_participants"
-                      render={({ field }) => (
-                        <NumberInput
-                          {...field}
-                          min={0}
-                          name="record.number_of_participants"
-                        ></NumberInput>
-                      )}
-                    />
-                  </FormInputError>
-                </InlineSection>
-                <InlineSection>
-                  <Label required>
-                    Z toho počet účastníků do 26 let (včetně organizátorů)
-                  </Label>
-                  <FormInputError>
-                    <Controller
-                      control={control}
-                      name="record.number_of_participants_under_26"
-                      render={({ field }) => (
-                        <NumberInput
-                          {...field}
-                          min={0}
-                          name="record.number_of_participants_under_26"
-                        ></NumberInput>
-                      )}
-                    />
-                  </FormInputError>
+                  <ColumnSection>
+                    <Label required>
+                      Počet účastníků celkem (včetně organizátorů)
+                    </Label>
+                    <FormInputError>
+                      <Controller
+                        control={control}
+                        name="record.number_of_participants"
+                        render={({ field }) => (
+                          <NumberInput
+                            {...field}
+                            min={0}
+                            name="record.number_of_participants"
+                          ></NumberInput>
+                        )}
+                      />
+                    </FormInputError>
+                  </ColumnSection>
+                  <ColumnSection>
+                    <Label required>
+                      Z toho počet účastníků do 26 let (včetně organizátorů)
+                    </Label>
+                    <FormInputError>
+                      <Controller
+                        control={control}
+                        name="record.number_of_participants_under_26"
+                        render={({ field }) => (
+                          <NumberInput
+                            {...field}
+                            min={0}
+                            name="record.number_of_participants_under_26"
+                          ></NumberInput>
+                        )}
+                      />
+                    </FormInputError>
+                  </ColumnSection>
                 </InlineSection>
               </div>
             )}
