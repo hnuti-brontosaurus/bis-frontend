@@ -133,6 +133,15 @@
   column-gap: 1rem;
 }
 
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: start;
+  row-gap: 0;
+  column-gap: 1.5rem;
+}
+
 @mixin actions {
   display: flex;
   flex-wrap: wrap;

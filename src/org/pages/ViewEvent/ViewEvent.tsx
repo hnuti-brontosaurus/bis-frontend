@@ -180,7 +180,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
               <div className={styles.tag}>{event.group.name}</div>
             </div>
           </div>
-          <table>
+          <table className={styles.table}>
             <tbody>
               <tr>
                 <th>Datum</th>

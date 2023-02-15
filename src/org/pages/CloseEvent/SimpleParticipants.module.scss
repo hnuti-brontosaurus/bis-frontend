@@ -6,6 +6,18 @@
   align-items: center;
 }
 
+.header {
+  font-size: 1.2rem;
+  text-align: left;
+  width: 100%;
+}
+.inputLine {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .contactTable {
   overflow: hidden;
   table-layout: fixed;
