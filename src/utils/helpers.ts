@@ -105,14 +105,14 @@ export const getEventStatus = (event: Event): EventStatus => {
   return 'inProgress'
 }
 
-// event should be finished until February next year
+// event should be finished before March next year
 const shouldBeFinishedUntil = (event: { end: string }): number => {
   const eventEnd = new Date(event.end)
   eventEnd.getFullYear()
 
   let finishUntil = new Date(0)
   finishUntil.setFullYear(eventEnd.getFullYear() + 1)
-  finishUntil.setMonth(1) // this means February (months are zero-based)
+  finishUntil.setMonth(2) // this means March (months are zero-based)
   finishUntil.setDate(1)
 
   return finishUntil.getTime()
