@@ -14,13 +14,18 @@
 .inputLine {
   display: flex;
   width: 100%;
+  max-width: 1000px;
   justify-content: space-between;
   align-items: center;
+  input {
+    max-width: 170px;
+  }
 }
 
 .contactTable {
   overflow: hidden;
   table-layout: fixed;
+  max-width: 1000px;
   th,
   td {
     overflow: hidden;
@@ -54,4 +59,15 @@
       text-overflow: ellipsis;
     }
   }
+}
+
+.emptyTable {
+  width: 100%;
+  padding: 10px 0;
+}
+
+
+.userAndExportLine{
+  display: flex;
+  justify-content: space-between;
 }

@@ -3,6 +3,7 @@ import spreadsheetTemplate from 'assets/templates/vzor_import-ucastniku-z-jednod
 import classNames from 'classnames'
 import {
   Button,
+  EmptyListPlaceholder,
   ExternalButtonLink,
   FormInputError,
   ImportExcelButton,
@@ -112,10 +113,9 @@ export const SimpleParticipants = () => {
           }}
         />
       </StyledModal>
-      <header className={styles.header}>Novy ucastnik:</header>
 
-      <div className={styles.inputLine}>
-        <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
+      <div className={classNames(styles.header, styles.userAndExportLine)}>
+        Novy ucastnik:{' '}
         <div className={styles.inportPart}>
           <ImportExcelButton<EventContact>
             keyMap={importMap}
@@ -127,6 +127,10 @@ export const SimpleParticipants = () => {
             (vzor)
           </ExternalButtonLink>
         </div>
+      </div>
+
+      <div className={styles.inputLine}>
+        <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
       </div>
       <table className={classNames(tableStyles.table, styles.contactTable)}>
         <thead>
@@ -173,6 +177,11 @@ export const SimpleParticipants = () => {
           ))}
         </tbody>
       </table>
+      {peopleFields.fields.length === 0 && (
+        <div className={styles.emptyTable}>
+          <EmptyListPlaceholder label="Nejsou pridani zadne ucastniky" />
+        </div>
+      )}
     </div>
   )
 }
