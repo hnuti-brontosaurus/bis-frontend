@@ -44,6 +44,8 @@ export const apiErrors2Message = (
           : JSON.stringify(errors)
       }`
     })
+  } else if (error.status === 'PARSING_ERROR' && error.originalStatus === 500) {
+    output = '500\nDošlo k chybě na serveru. Zkus to znovu nebo nám dej vědět.'
   }
   // or JSON.stringify the response body
   else {
