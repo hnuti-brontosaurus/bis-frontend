@@ -39,6 +39,12 @@ import * as yup from 'yup'
  * https://docs.google.com/document/d/1hXfz0NhBL8XrUOEJR5VmuoDOwNADxEo3j5gA5knE1GE/edit?usp=drivesdk
  */
 
+const pronouns: { [slug: string]: string } = {
+  woman: 'Ona/ji',
+  man: 'On/jeho',
+  other: 'Jiné',
+}
+
 export type UserFormShape = Omit<Optional<UserPayload, 'sex'>, 'all_emails'> & {
   isChild?: boolean
 }
@@ -354,7 +360,7 @@ export const UserForm = ({
                     <option value={0}>Neuvedeno</option>
                     {sexes.results.map(sex => (
                       <option key={sex.slug} value={sex.id}>
-                        {sex.name}
+                        {pronouns[sex.slug] ?? sex.name}
                       </option>
                     ))}
                   </select>
