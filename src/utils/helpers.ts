@@ -153,7 +153,7 @@ export const availableRoles: Record<
   RoleSlug,
   { slug: RoleSlug; name: string; url: string }
 > = {
-  admin: { slug: 'admin', name: 'Admin/ka', url: '/admin' },
+  admin: { slug: 'admin', name: 'Administrace', url: '/admin' },
   organizer: { slug: 'organizer', name: 'Organizátor/ka', url: '/org' },
   user: { slug: 'user', name: 'Uživatel/ka', url: '/user' },
   zc: { slug: 'zc', name: 'Základní článek', url: '/admin' },
@@ -161,7 +161,8 @@ export const availableRoles: Record<
 
 export const getUserRoles = (user: Pick<User, 'roles'>): RoleSlug[] => {
   const roles: RoleSlug[] = []
-  if (hasRole(user, 'admin')) roles.push('admin')
+  if (hasRole(user, 'admin') || hasRole(user, 'office_worker'))
+    roles.push('admin')
 
   if (
     ['chairman', 'vice_chairman', 'manager', 'board_member'].some(role =>

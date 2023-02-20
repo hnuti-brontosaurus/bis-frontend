@@ -22,7 +22,7 @@ import {
 } from 'components'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
-import { get, uniqBy } from 'lodash'
+import { get, intersection, uniqBy } from 'lodash'
 import { Fragment, useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { getUserRoles, joinAnd } from 'utils/helpers'
@@ -250,10 +250,12 @@ export const OrganizerStep = ({
                       // this will be really painful though
                       // they can save event which they won't be allowed to read :(
                       // but it is a requirement
-                      const isZC = getUserRoles(currentUser).includes('zc')
+                      const isAllowedWithoutOrganizing =
+                        intersection(['zc', 'admin'], getUserRoles(currentUser))
+                          .length > 0
 
                       return (
-                        isZC ||
+                        isAllowedWithoutOrganizing ||
                         isMainOrganizer ||
                         isOrganizer ||
                         'Musíš být v organizátorském týmu.'
