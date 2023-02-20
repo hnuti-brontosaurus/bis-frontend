@@ -24,5 +24,12 @@
   "last_name": "LastName",
   "nickname": "Nickname",
   "display_name": "Nickname (FirstName LastName)",
-  "birthday": "2000-01-01"
+  "birthday": "2000-01-01",
+  "memberships": [],
+  "address": {
+    "street": "Street 1",
+    "city": "Jeseník",
+    "zip_code": "79001"
+  },
+  "sex": { "id": 1 }
 }

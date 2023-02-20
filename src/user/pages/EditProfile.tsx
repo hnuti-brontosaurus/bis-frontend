@@ -16,10 +16,11 @@ export const EditProfile = () => {
   const { data: currentUser } = useCurrentUser()
   const navigate = useNavigate()
 
-  const title =
-    currentUser?.id === user.id
-      ? 'Upravit můj profil'
-      : `Upravit profil uživatele ${user.display_name}`
+  const isSelf = currentUser?.id === user.id
+
+  const title = isSelf
+    ? 'Upravit můj profil'
+    : `Upravit profil uživatele ${user.display_name}`
 
   useTitle(title)
 
@@ -58,6 +59,7 @@ export const EditProfile = () => {
         <PageHeader>{title}</PageHeader>
         <UserForm
           id={user.id}
+          isSelf={isSelf}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           initialData={user}

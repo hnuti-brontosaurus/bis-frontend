@@ -29,6 +29,7 @@ import {
 import { merge, mergeWith, omit, startsWith } from 'lodash'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { Optional } from 'utility-types'
 import { withOverwriteArray } from 'utils/helpers'
 import { validationErrors2Message } from 'utils/validationErrors'
 import * as yup from 'yup'
@@ -38,14 +39,14 @@ import * as yup from 'yup'
  * https://docs.google.com/document/d/1hXfz0NhBL8XrUOEJR5VmuoDOwNADxEo3j5gA5knE1GE/edit?usp=drivesdk
  */
 
-export type UserFormShape = Omit<UserPayload, 'all_emails' | 'sex'> & {
+export type UserFormShape = Omit<Optional<UserPayload, 'sex'>, 'all_emails'> & {
   isChild?: boolean
 }
 
 // transform user data to initial form data
 const data2form = (user: User): UserFormShape => {
   return merge({}, omit(user, 'sex', 'address', 'contact_address'), {
-    // sex: user.sex?.id ?? 0,
+    sex: user.sex?.id ?? 0,
     address: omit(user.address, 'region'),
     contact_address: omit(user.contact_address, 'region'),
     close_person: user.close_person ?? {
@@ -62,7 +63,10 @@ const data2form = (user: User): UserFormShape => {
 }
 
 // transform form data to edit user payload
-const form2payload = (data: UserFormShape): Partial<UserPayload> => {
+const form2payload = (
+  data: UserFormShape,
+  isSelf = false,
+): Partial<UserPayload> => {
   const contact_address =
     data.contact_address?.city &&
     data.contact_address?.street &&
@@ -78,23 +82,27 @@ const form2payload = (data: UserFormShape): Partial<UserPayload> => {
       ? data.close_person
       : null
 
-  return merge(
+  const finalData: Partial<UserPayload> = merge(
     { eyca_card: null },
     omit(
       data,
-      // 'sex',
+      'sex',
       'contact_address',
       'health_insurance_company',
       'close_person',
       'isChild',
     ),
     {
-      // sex: Number(data.sex) || null,
+      sex: Number(data.sex) || null,
       contact_address,
       health_insurance_company: Number(data.health_insurance_company) || null,
       close_person,
     },
   )
+
+  if (!isSelf) delete finalData.sex
+
+  return finalData
 }
 
 // form validation schemata
@@ -132,7 +140,7 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
   birth_name: yup.string(),
   nickname: yup.string(),
   birthday: birthdayValidation.required(),
-  // sex: yup.number().required(), // this is optional - none is 0
+  sex: yup.number(), // this is optional - none is 0
   health_insurance_company: yup.number().required(), // this is optional - none is 0
   health_issues: yup.string(),
   email: yup.string().email(),
@@ -194,13 +202,15 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
 
 export const UserForm = ({
   id,
+  initialData,
+  isSelf = false,
   onSubmit,
   onCancel,
-  initialData,
 }: {
   // provide id for persisting form data
   // because we don't want to overwrite contexts
   id: string
+  isSelf?: boolean
   onSubmit: (data: UserPayload, id?: string) => void
   onCancel: () => void
   initialData?: User
@@ -208,7 +218,7 @@ export const UserForm = ({
   const showMessage = useShowMessage()
 
   // fetch data for form
-  // const { data: sexes } = api.endpoints.readSexes.useQuery({})
+  const { data: sexes } = api.endpoints.readSexes.useQuery({})
   const { data: healthInsuranceCompanies } =
     api.endpoints.readHealthInsuranceCompanies.useQuery({ pageSize: 1000 })
 
@@ -217,7 +227,7 @@ export const UserForm = ({
   const methods = useForm<UserFormShape>({
     defaultValues: mergeWith(
       {
-        /*sex: 0,*/ health_insurance_company: 0,
+        health_insurance_company: 0,
         address: { street: '', city: '', zip_code: '' },
         contact_address: { street: '', city: '', zip_code: '' },
         subscribed_to_newsletter: true,
@@ -253,7 +263,10 @@ export const UserForm = ({
     async data => {
       setIsSaving(true)
       try {
-        await onSubmit(form2payload(data) as UserPayload, initialData?.id)
+        await onSubmit(
+          form2payload(data, isSelf) as UserPayload,
+          initialData?.id,
+        )
         // TODO on success clear the form
         cancelPersist()
       } catch {
@@ -283,7 +296,7 @@ export const UserForm = ({
 
   const [isSaving, setIsSaving] = useState(false)
 
-  if (!(/*sexes && */ healthInsuranceCompanies))
+  if (!(sexes && healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
 
   const isChild = watch('isChild')
@@ -333,19 +346,21 @@ export const UserForm = ({
                 />
               </FormInputError>
             </InlineSection>
-            {/* <InlineSection>
-              <Label>Pohlaví</Label>
-              <FormInputError>
-                <select {...register('sex')}>
-                  <option value={0}>Neuvedeno</option>
-                  {sexes.results.map(sex => (
-                    <option key={sex.slug} value={sex.id}>
-                      {sex.name}
-                    </option>
-                  ))}
-                </select>
-              </FormInputError>
-            </InlineSection> */}
+            {isSelf && (
+              <InlineSection>
+                <Label>Oslovení</Label>
+                <FormInputError>
+                  <select {...register('sex')}>
+                    <option value={0}>Neuvedeno</option>
+                    {sexes.results.map(sex => (
+                      <option key={sex.slug} value={sex.id}>
+                        {sex.name}
+                      </option>
+                    ))}
+                  </select>
+                </FormInputError>
+              </InlineSection>
+            )}
             <InlineSection>
               <Label>Zdravotní pojišťovna</Label>
               <FormInputError>

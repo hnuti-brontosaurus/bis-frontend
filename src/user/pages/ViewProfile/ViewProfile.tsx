@@ -24,10 +24,9 @@ export const ViewProfile = () => {
   const { data: administrationUnits } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
-  const title =
-    currentUser?.id === user.id
-      ? 'Můj profil'
-      : `Profil uživatele ${user.display_name}`
+  const isSelf = currentUser?.id === user.id
+
+  const title = isSelf ? 'Můj profil' : `Profil uživatele ${user.display_name}`
 
   useTitle(title)
 
