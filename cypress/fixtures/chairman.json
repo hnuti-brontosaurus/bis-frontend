@@ -1,5 +1,5 @@
 {
-  "id": "0419781d-06ba-432b-8617-797ea14cf848",
+  "id": "0419781d-06ba-432b-8617-797ea14cf849",
   "roles": [
     {
       "id": 1,
@@ -29,5 +29,11 @@
   "last_name": "LastName",
   "nickname": "Nickname",
   "display_name": "Nickname (FirstName LastName)",
-  "birthday": "2000-01-01"
+  "birthday": "2000-01-01",
+  "memberships": [],
+  "address": {
+    "street": "Street 1",
+    "city": "Jeseník",
+    "zip_code": "79001"
+  }
 }

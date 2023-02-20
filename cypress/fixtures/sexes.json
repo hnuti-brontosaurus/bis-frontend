@@ -3,8 +3,8 @@
   "next": null,
   "previous": null,
   "results": [
-    { "id": 1, "name": "Ženské", "slug": "female" },
-    { "id": 2, "name": "Mužské", "slug": "male" },
-    { "id": 3, "name": "Jiné", "slug": "other" }
+    { "id": 1, "name": "Ona", "slug": "female" },
+    { "id": 2, "name": "On", "slug": "male" },
+    { "id": 3, "name": "Jiné, On/a", "slug": "other" }
   ]
 }

@@ -489,7 +489,7 @@ describe('create event', () => {
     context('user is administration unit', () => {
       beforeEach(() => {
         cy.visit('/logout')
-        cy.interceptLogin('chairman')
+        cy.interceptLogin({ fixture: 'chairman' })
         cy.login('a@bb.ccc', 'asdf')
       })
 

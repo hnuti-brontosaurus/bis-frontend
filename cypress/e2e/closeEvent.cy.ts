@@ -10,6 +10,7 @@ describe('Close event - evidence and participants', () => {
 
   // stub the api calls to fetch event (it is one day event)
   beforeEach(() => {
+    cy.interceptCategories()
     cy.interceptFullEvent()
     // intercept also downloading photos and receipts
     cy.intercept(
@@ -19,18 +20,6 @@ describe('Close event - evidence and participants', () => {
     cy.intercept(
       { method: 'GET', pathname: '/api/frontend/events/*/finance/receipts/' },
       { results: [] },
-    )
-    // intercept also categories needed for UserForm
-    // cy.intercept(
-    //   { method: 'GET', pathname: '/api/categories/sex_categories/' },
-    //   { fixture: 'sexes' },
-    // )
-    cy.intercept(
-      {
-        method: 'GET',
-        pathname: '/api/categories/health_insurance_companies/',
-      },
-      { fixture: 'healthInsuranceCompanies' },
     )
   })
 

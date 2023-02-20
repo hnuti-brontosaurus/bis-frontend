@@ -1,4 +1,7 @@
 /// <reference types="cypress" />
+
+import { RouteHandler } from 'cypress/types/net-stubbing'
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -49,7 +52,8 @@ declare global {
         redirect?: string,
       ): Chainable<Element>
       interceptFullEvent(id?: number): Chainable<Element>
-      interceptLogin(): Chainable<Element>
+      interceptLogin(userResponse?: RouteHandler): Chainable<Element>
+      interceptCategories(): Chainable<Element>
     }
   }
 }
@@ -113,7 +117,7 @@ Cypress.Commands.add('interceptFullEvent', () => {
   )
 })
 
-Cypress.Commands.add('interceptLogin', (fixture?: string) => {
+Cypress.Commands.add('interceptLogin', (userResponse?: RouteHandler) => {
   cy.intercept('POST', '/api/auth/login/', { token: '1234567890abcdef' })
   cy.intercept('GET', '/api/auth/whoami/', {
     id: '0419781d-06ba-432b-8617-797ea14cf848',
@@ -123,7 +127,22 @@ Cypress.Commands.add('interceptLogin', (fixture?: string) => {
       method: 'GET',
       pathname: '/api/frontend/users/0419781d-06ba-432b-8617-797ea14cf848/',
     },
-    { fixture: fixture ?? 'organizer' },
+    userResponse ?? { fixture: 'organizer' },
+  )
+})
+
+Cypress.Commands.add('interceptCategories', () => {
+  cy.intercept(
+    { method: 'GET', pathname: '/api/categories/qualification_categories/' },
+    { fixture: 'qualificationCategories' },
+  )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/categories/health_insurance_companies/' },
+    { fixture: 'healthInsuranceCompanies' },
+  )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/categories/sex_categories/' },
+    { fixture: 'sexes' },
   )
 })
 
