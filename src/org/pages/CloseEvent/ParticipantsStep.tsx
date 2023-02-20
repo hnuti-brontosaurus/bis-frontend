@@ -81,12 +81,6 @@ export const ParticipantsStep = ({
     return () => subscription.unsubscribe()
   }, [formState.isSubmitted, trigger, watch])
 
-  const handleReset = () => {
-    // we want to set the value to null here and still have it not accepted when submitting a form
-    // @ts-ignore
-    setValue('record.participantInputType', null, { clearErrors: true })
-  }
-
   return (
     <FormProvider {...methods}>
       <form>
@@ -94,46 +88,47 @@ export const ParticipantsStep = ({
       but when the event group is "other", it's optional, and they must fill number_of_participants instead
       */}
         <FormSectionGroup>
-          {!areParticipantsRequired && <FormSection required header="Zpusob registrace ucastniku">
-            <FormInputError name="participantInputType">
-              <Controller
-                name="record.participantInputType"
-                control={methods.control}
-                rules={{ required }}
-                render={({ field }) => (
-                  <IconSelectGroup>
-                    {Object.values(optionButtonConfig).map(
-                      ({ id, icon, text }) => {
-                        return (
-                          <IconSelect
-                            key={id}
-                            title={'dzik'}
-                            text={text}
-                            icon={icon}
-                            id={id.toString()}
-                            ref={field.ref}
-                            name={field.name}
-                            value={id}
-                            checked={id === field.value}
-                            onChange={e => {
-                              field.onChange(e.target.value)
-                            }}
-                          />
-                        )
-                      },
-                    )}
-                  </IconSelectGroup>
-                )}
-              />
-            </FormInputError>
+          {!areParticipantsRequired && (
+            <FormSection required header="Zpusob registrace ucastniku">
+              <FormInputError name="participantInputType">
+                <Controller
+                  name="record.participantInputType"
+                  control={methods.control}
+                  rules={{ required }}
+                  render={({ field }) => (
+                    <IconSelectGroup>
+                      {Object.values(optionButtonConfig).map(
+                        ({ id, icon, text }) => {
+                          return (
+                            <IconSelect
+                              key={id}
+                              title={'dzik'}
+                              text={text}
+                              icon={icon}
+                              id={id.toString()}
+                              ref={field.ref}
+                              name={field.name}
+                              value={id}
+                              checked={id === field.value}
+                              onChange={e => {
+                                field.onChange(e.target.value)
+                              }}
+                            />
+                          )
+                        },
+                      )}
+                    </IconSelectGroup>
+                  )}
+                />
+              </FormInputError>
 
-            {inputType && (
-              <div className={classNames(styles.changeEvedenceNavigation)}>
-                <div className={styles.textPart}>
+              {inputType && (
+                <div className={classNames(styles.changeEvedenceNavigation)}>
+                  <div className={styles.textPart}></div>
                 </div>
-              </div>
-            )}
-          </FormSection>}
+              )}
+            </FormSection>
+          )}
 
           {!areParticipantsRequired &&
             (inputType === 'count' || inputType === 'simple-list') && (

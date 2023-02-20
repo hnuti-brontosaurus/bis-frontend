@@ -22,7 +22,7 @@ export const EvidenceStep = ({
   methods: UseFormReturn<EvidenceStepFormShape, any>
   firstIndex?: number
 }) => {
-  const { register, getValues } = methods
+  const { register } = methods
 
   return (
     <FormProvider {...methods}>
