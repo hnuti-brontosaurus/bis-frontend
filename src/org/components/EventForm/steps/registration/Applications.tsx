@@ -2,7 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { EventApplication } from 'app/services/bisTypes'
 import classnames from 'classnames'
-import { Loading } from 'components'
+import { EmptyListPlaceholder, Loading } from 'components'
 import stylesTable from 'components/Table.module.scss'
 import { useRejectApplication } from 'hooks/rejectApplication'
 import { FC, useState } from 'react'
@@ -244,14 +244,7 @@ export const Applications: FC<{
                 </tbody>
               </table>
             ) : (
-              <div className={styles.emptyListBox}>
-                <img
-                  src="https://i.ibb.co/m0GQt2K/kroliczek.png"
-                  alt=""
-                  width="200"
-                ></img>
-                <div>Ještě se nikdo nepřihlásil</div>
-              </div>
+              <EmptyListPlaceholder label="Ještě se nikdo nepřihlásil" />
             )}
           </div>
         ) : (

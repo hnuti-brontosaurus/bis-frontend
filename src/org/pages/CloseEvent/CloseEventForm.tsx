@@ -218,6 +218,21 @@ export const CloseEventForm = ({
     defaultValues: pickParticipantsData(initialAndSavedData),
     resolver: yupResolver(validationSchema),
   })
+  const { getValues: getValuesParticipants } = participantsFormMethods
+
+  const countEvidenceFirstStep = () => {
+    const listType = getValuesParticipants('record.participantInputType')
+
+    if (areParticipantsRequired) {
+      return 2
+    }
+    if (listType === 'simple-list') {
+      return 4
+    } else if (listType === 'full-list') {
+      return 3
+    }
+    return 2
+  }
 
   const showMessage = useShowMessage()
 
@@ -337,6 +352,7 @@ export const CloseEventForm = ({
         <EvidenceStep
           isVolunteering={isVolunteering}
           methods={evidenceFormMethods}
+          firstIndex={countEvidenceFirstStep()}
         />
       </Step>
     </Steps>

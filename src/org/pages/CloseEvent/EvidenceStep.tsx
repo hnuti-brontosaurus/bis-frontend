@@ -16,16 +16,18 @@ import { EvidenceStepFormShape } from './CloseEventForm'
 export const EvidenceStep = ({
   isVolunteering,
   methods,
+  firstIndex = 2,
 }: {
   isVolunteering: boolean
   methods: UseFormReturn<EvidenceStepFormShape, any>
+  firstIndex?: number
 }) => {
   const { register } = methods
 
   return (
     <FormProvider {...methods}>
       <form>
-        <FormSectionGroup startIndex={2}>
+        <FormSectionGroup startIndex={firstIndex}>
           <FormSection header="Evidence práce">
             <FormSubsection
               required={isVolunteering}

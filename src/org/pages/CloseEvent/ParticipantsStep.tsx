@@ -4,8 +4,6 @@ import { ReactComponent as EmailList } from 'assets/email-list.svg'
 import { ReactComponent as FullList } from 'assets/full-list.svg'
 import classNames from 'classnames'
 import {
-  Button,
-  FormHeader,
   FormInputError,
   FormSection,
   FormSectionGroup,
@@ -14,7 +12,7 @@ import {
   Label,
   NumberInput,
 } from 'components'
-import { ColumnSection, InlineSection } from 'components/FormLayout/FormLayout'
+import { InlineSection } from 'components/FormLayout/FormLayout'
 import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
 import { useEffect } from 'react'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
@@ -83,12 +81,6 @@ export const ParticipantsStep = ({
     return () => subscription.unsubscribe()
   }, [formState.isSubmitted, trigger, watch])
 
-  const handleReset = () => {
-    // we want to set the value to null here and still have it not accepted when submitting a form
-    // @ts-ignore
-    setValue('record.participantInputType', null, { clearErrors: true })
-  }
-
   return (
     <FormProvider {...methods}>
       <form>
@@ -96,8 +88,8 @@ export const ParticipantsStep = ({
       but when the event group is "other", it's optional, and they must fill number_of_participants instead
       */}
         <FormSectionGroup>
-          <FormSection required header="Evidence účastníků">
-            {!inputType ? (
+          {!areParticipantsRequired && (
+            <FormSection required header="Zpusob registrace ucastniku">
               <FormInputError name="participantInputType">
                 <Controller
                   name="record.participantInputType"
@@ -129,55 +121,20 @@ export const ParticipantsStep = ({
                   )}
                 />
               </FormInputError>
-            ) : (
-              <div className={classNames(styles.changeEvedenceNavigation)}>
-                <div className={styles.textPart}>
-                  <IconSelect
-                    icon={optionButtonConfig[inputType].icon}
-                    id={inputType}
-                    text=""
-                    smallIcon
-                    checked
-                    className={styles.icon}
-                  />
-                  {inputType && inputType === 'count' && (
-                    <FormHeader className={styles.customEvidenceHeader}>
-                      {optionButtonConfig['count'].text}
-                    </FormHeader>
-                  )}
-                  {inputType && inputType === 'simple-list' && (
-                    <FormHeader className={styles.customEvidenceHeader}>
-                      {optionButtonConfig['simple-list'].text}
-                    </FormHeader>
-                  )}
-                  {inputType && inputType === 'full-list' && (
-                    <FormHeader className={styles.customEvidenceHeader}>
-                      {optionButtonConfig['full-list'].text}
-                    </FormHeader>
-                  )}
-                </div>
 
-                <Button
-                  tertiary
-                  name="record.participantInputType"
-                  className={styles.button}
-                  onClick={e => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                    handleReset()
-                  }}
-                >
-                  změň způsob registrace účastníků
-                </Button>
-              </div>
-            )}
-          </FormSection>
+              {inputType && (
+                <div className={classNames(styles.changeEvedenceNavigation)}>
+                  <div className={styles.textPart}></div>
+                </div>
+              )}
+            </FormSection>
+          )}
 
           {!areParticipantsRequired &&
             (inputType === 'count' || inputType === 'simple-list') && (
               <div>
-                <InlineSection>
-                  <ColumnSection>
+                <FormSection required header="Počet účastníků">
+                  <InlineSection>
                     <Label required>
                       Počet účastníků celkem (včetně organizátorů)
                     </Label>
@@ -194,8 +151,8 @@ export const ParticipantsStep = ({
                         )}
                       />
                     </FormInputError>
-                  </ColumnSection>
-                  <ColumnSection>
+                  </InlineSection>
+                  <InlineSection>
                     <Label required>
                       Z toho počet účastníků do 26 let (včetně organizátorů)
                     </Label>
@@ -212,15 +169,20 @@ export const ParticipantsStep = ({
                         )}
                       />
                     </FormInputError>
-                  </ColumnSection>
-                </InlineSection>
+                  </InlineSection>
+                </FormSection>
               </div>
             )}
+
           {!areParticipantsRequired && inputType === 'simple-list' && (
-            <SimpleParticipants />
+            <FormSection required header="Seznam ucastniku">
+              <SimpleParticipants />
+            </FormSection>
           )}
           {(areParticipantsRequired || inputType === 'full-list') && (
-            <ParticipantsList eventId={event.id} eventName={event.name} />
+            <FormSection required header="Seznam ucastniku">
+              <ParticipantsList eventId={event.id} eventName={event.name} />
+            </FormSection>
           )}
         </FormSectionGroup>
       </form>
