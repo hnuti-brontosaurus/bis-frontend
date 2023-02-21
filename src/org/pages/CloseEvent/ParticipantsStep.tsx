@@ -13,6 +13,7 @@ import {
   NumberInput,
 } from 'components'
 import { InlineSection } from 'components/FormLayout/FormLayout'
+import { useConfirmWithModal } from 'hooks/useConfirmWithModal'
 import { ParticipantsStep as ParticipantsList } from 'org/components/EventForm/steps/ParticipantsStep'
 import { useEffect } from 'react'
 import { Controller, FormProvider, UseFormReturn } from 'react-hook-form'
@@ -81,6 +82,12 @@ export const ParticipantsStep = ({
     return () => subscription.unsubscribe()
   }, [formState.isSubmitted, trigger, watch])
 
+  const [confirmWithModal] = useConfirmWithModal({
+    title: 'Měníš způsob registrace účastníků',
+    message:
+      'Je možné vybrat pouze jeden způsob registrace. Pokud chceš změnit způsob registrace, data, která jsou zadaná v počtu účastníků a seznamu účastníků, nebudou uložena. Chceš pokračovat?',
+  })
+
   return (
     <FormProvider {...methods}>
       <form>
@@ -93,7 +100,7 @@ export const ParticipantsStep = ({
               <FormInputError name="participantInputType">
                 <Controller
                   name="record.participantInputType"
-                  control={methods.control}
+                  control={control}
                   rules={{ required }}
                   render={({ field }) => (
                     <IconSelectGroup>
@@ -111,7 +118,13 @@ export const ParticipantsStep = ({
                               value={id}
                               checked={id === field.value}
                               onChange={e => {
-                                field.onChange(e.target.value)
+                                if (inputType) {
+                                  confirmWithModal(() =>
+                                    field.onChange(e.target.value),
+                                  )
+                                } else {
+                                  field.onChange(e.target.value)
+                                }
                               }}
                             />
                           )
