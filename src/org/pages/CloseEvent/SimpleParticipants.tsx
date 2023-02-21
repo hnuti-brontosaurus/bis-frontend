@@ -8,16 +8,10 @@ import {
   FormInputError,
   ImportExcelButton,
   InlineSection,
-  StyledModal,
 } from 'components'
 import { get } from 'lodash'
 import tableStyles from 'org/components/EventForm/steps/ParticipantsStep.module.scss'
-import {
-  FormHTMLAttributes,
-  TdHTMLAttributes,
-  useEffect,
-  useState,
-} from 'react'
+import { FormHTMLAttributes, TdHTMLAttributes, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import {
   FieldErrors,
@@ -28,7 +22,7 @@ import {
   useForm,
   useFormContext,
 } from 'react-hook-form'
-import { FaCheck, FaPencilAlt, FaTrash } from 'react-icons/fa'
+import { FaCheck, FaTrash } from 'react-icons/fa'
 import * as validationMessages from 'utils/validationMessages'
 import type { ParticipantsStepFormShape } from './CloseEventForm'
 import styles from './SimpleParticipants.module.scss'
@@ -49,73 +43,14 @@ export const SimpleParticipants = () => {
   } = useFormContext<ParticipantsStepFormShape>()
   const peopleFields = useFieldArray({ control, name: 'record.contacts' })
 
-  const [open, setOpen] = useState(false)
-  const [defaultValues, setDefaultValues] = useState<EventContact>()
-  const [editPromise, setEditPromise] = useState<{
-    resolve: (data: EventContact) => void
-    reject: (reason?: any) => void
-    promise: Promise<EventContact>
-  }>()
-
-  const getModalData = () => {
-    let res = undefined
-    let rej = undefined
-
-    const promise = new Promise<EventContact>((resolve, reject) => {
-      res = resolve
-      rej = reject
-    })
-
-    const p = {
-      promise,
-      resolve: res as any,
-      reject: rej as any,
-    }
-
-    setEditPromise(p)
-
-    return promise
-  }
-
-  // register array of contacts
-  useEffect(() => {
-    register('record.contacts')
-  }, [register])
-
   useEffect(() => {
     if (isSubmitted) trigger('record.contacts')
   }, [isSubmitted, trigger, peopleFields.fields])
 
-  const handleEdit = async (data: EventContact, i: number) => {
-    setOpen(true)
-    setDefaultValues(data)
-    const finalData = await getModalData()
-    peopleFields.update(i, finalData)
-  }
-
-  const handleFinishEdit = (data: EventContact) => {
-    if (editPromise?.resolve) editPromise.resolve(data)
-  }
-
   return (
     <div className={styles.container}>
-      <StyledModal
-        title="Upravit účastníka"
-        open={open}
-        onClose={() => setOpen(false)}
-      >
-        <SimpleParticipantInput
-          formId="edit-participant-input"
-          defaultValues={defaultValues}
-          onSubmit={data => {
-            handleFinishEdit(data)
-            setOpen(false)
-          }}
-        />
-      </StyledModal>
-
       <div className={classNames(styles.header, styles.userAndExportLine)}>
-        Novy ucastnik:{' '}
+        Nový účastník:{' '}
         <div className={styles.inportPart}>
           <ImportExcelButton<EventContact>
             keyMap={importMap}
@@ -140,7 +75,6 @@ export const SimpleParticipants = () => {
             <th>E-mail</th>
             <th>Telefon</th>
             <th></th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -152,26 +86,21 @@ export const SimpleParticipants = () => {
               }, ${item.phone || '—'}`}
             >
               <TdErr name={`record.contacts.${i}.first_name`} errors={errors}>
-                {item.first_name}
+                <input {...register(`record.contacts.${i}.first_name`)} />
               </TdErr>
               <TdErr name={`record.contacts.${i}.last_name`} errors={errors}>
-                {item.last_name}
+                <input {...register(`record.contacts.${i}.last_name`)} />
               </TdErr>
               <TdErr name={`record.contacts.${i}.email`} errors={errors}>
-                {item.email}
+                <input {...register(`record.contacts.${i}.email`)} />
               </TdErr>
               <TdErr name={`record.contacts.${i}.phone`} errors={errors}>
-                {item.phone}
+                <input {...register(`record.contacts.${i}.phone`)} />
               </TdErr>
               <td>
-                <Button type="button" onClick={() => handleEdit(item, i)}>
-                  <FaPencilAlt />
-                </Button>
-              </td>
-              <td>
-                <Button type="button" onClick={() => peopleFields.remove(i)}>
+                <button type="button" onClick={() => peopleFields.remove(i)}>
                   <FaTrash />
-                </Button>
+                </button>
               </td>
             </tr>
           ))}

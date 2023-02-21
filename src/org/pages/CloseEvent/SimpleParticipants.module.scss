@@ -35,16 +35,28 @@
     &:hover {
       overflow: visible;
     }
+
+    &:last-child {
+      width: 80px !important;
+      button {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   }
 
   td {
+    padding: 0;
+    height: 48px;
     position: relative;
-    &:last-child {
-      width: 10px;
-    }
 
     &.error {
-      box-shadow: inset 0px 0px 0px 2px colors.$error;
+      input {
+        border-color: colors.$error !important;
+      }
     }
     .errorMessage {
       padding-left: 0.25rem;
@@ -58,6 +70,19 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    input {
+      border: 2px solid #0000;
+      background: none;
+      border-radius: 0;
+      width: 100%;
+      height: 100%;
+      padding: 8px;
+
+      &:focus {
+        border-color: colors.$bronto-light;
+      }
+    }
   }
 }
 
@@ -66,8 +91,7 @@
   padding: 10px 0;
 }
 
-
-.userAndExportLine{
+.userAndExportLine {
   display: flex;
   justify-content: space-between;
 }
