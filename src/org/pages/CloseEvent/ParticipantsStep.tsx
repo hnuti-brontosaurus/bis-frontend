@@ -64,7 +64,7 @@ export const ParticipantsStep = ({
   areParticipantsRequired: boolean
   methods: UseFormReturn<ParticipantsStepFormInnerShape>
 }) => {
-  const { watch, control, trigger, formState, setValue } = methods
+  const { watch, control, trigger, formState } = methods
 
   // list of participants is shown when it's required
   // or when organizers prefer it rather than filling just numbers
@@ -89,7 +89,7 @@ export const ParticipantsStep = ({
       */}
         <FormSectionGroup>
           {!areParticipantsRequired && (
-            <FormSection required header="Zpusob registrace ucastniku">
+            <FormSection required header="Způsob registrace účastníků">
               <FormInputError name="participantInputType">
                 <Controller
                   name="record.participantInputType"
@@ -175,12 +175,12 @@ export const ParticipantsStep = ({
             )}
 
           {!areParticipantsRequired && inputType === 'simple-list' && (
-            <FormSection required header="Seznam ucastniku">
+            <FormSection required header="Seznam účastníků">
               <SimpleParticipants />
             </FormSection>
           )}
           {(areParticipantsRequired || inputType === 'full-list') && (
-            <FormSection required header="Seznam ucastniku">
+            <FormSection required header="Seznam účastníků">
               <ParticipantsList eventId={event.id} eventName={event.name} />
             </FormSection>
           )}

@@ -23,16 +23,18 @@ describe('Close event - evidence and participants', () => {
     )
   })
 
-  describe('import of simple participants list from xls', () => {
-    it('should load xls data to participants list form', () => {
-      cy.visit('/org/akce/1000/uzavrit')
+  describe('Simple participants list (contacts)', () => {
+    describe('Import of simple participants list from xls', () => {
+      it('should load xls data to participants list form', () => {
+        cy.visit('/org/akce/1000/uzavrit')
 
-      cy.get('label:contains(Mám jen jméno + příjmení + email)')
-        .should('be.visible')
-        .click()
-      cy.get('label:contains(Importovat seznam)')
-        .should('be.visible')
-        .selectFile('cypress/e2e/simple-participants.xlsx')
+        cy.get('label:contains(Mám jen jméno + příjmení + email)')
+          .should('be.visible')
+          .click()
+        cy.get('label:contains(Importovat seznam)')
+          .should('be.visible')
+          .selectFile('cypress/e2e/simple-participants.xlsx')
+      })
     })
   })
 
