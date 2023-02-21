@@ -154,7 +154,7 @@ export const Header = () => {
             <MenuDivider />
 
             <MenuItem className={styles.menuItemCustom}>
-              <button onClick={logout}>Odhlásit se</button>
+              <button onClick={() => logout()}>Odhlásit se</button>
             </MenuItem>
           </Menu>
         </nav>
