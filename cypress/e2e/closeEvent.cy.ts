@@ -23,6 +23,28 @@ describe('Close event - evidence and participants', () => {
     )
   })
 
+  describe('ParticipantsStep component', () => {
+    beforeEach(() => {
+      cy.visit('/org/akce/1000/uzavrit')
+    })
+
+    it('should show the participant input type options', () => {
+      cy.get('[name=record\\.participantInputType]').should('have.length', 3)
+    })
+
+    it('should show the participant input type options with proper labels', () => {
+      cy.contains('Mám jen počet účastníků')
+      cy.contains('Mám jen jméno + příjmení + email')
+      cy.contains('Mám všechny informace')
+    })
+
+    it('should open modal on second Click', () => {
+      cy.contains('Mám jen počet účastníků').click()
+      cy.contains('Mám jen jméno + příjmení + email').click()
+      cy.contains('Měníš způsob registrace účastníků')
+    })
+  })
+
   describe('Simple participants list (contacts)', () => {
     describe('Import of simple participants list from xls', () => {
       it('should load xls data to participants list form', () => {
@@ -31,6 +53,7 @@ describe('Close event - evidence and participants', () => {
         cy.get('label:contains(Mám jen jméno + příjmení + email)')
           .should('be.visible')
           .click()
+        cy.get('button:contains(Pokračuj)').click()
         cy.get('label:contains(Importovat seznam)')
           .should('be.visible')
           .selectFile('cypress/e2e/simple-participants.xlsx')
@@ -64,6 +87,7 @@ describe('Close event - evidence and participants', () => {
         cy.get('label:contains(Mám všechny informace)')
           .should('be.visible')
           .click()
+        cy.get('button:contains(Pokračuj)').click()
       }
 
       const clickAddNewParticipant = () => {
@@ -241,6 +265,7 @@ describe('Close event - evidence and participants', () => {
       cy.get('label:contains(Mám všechny informace)')
         .should('be.visible')
         .click()
+      cy.get('button:contains(Pokračuj)').click()
 
       // click delete
       cy.get('button[aria-label="Smazat účastníka Jana Novak"]').click()
@@ -267,6 +292,7 @@ describe('Close event - evidence and participants', () => {
       cy.get('label:contains(Mám všechny informace)')
         .should('be.visible')
         .click()
+      cy.get('button:contains(Pokračuj)').click()
 
       // close helper
       cy.get('div[id="closeOwlGuide"]').click()

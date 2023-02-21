@@ -231,7 +231,7 @@ export const CloseEventForm = ({
     } else if (listType === 'full-list') {
       return 3
     }
-    return 2
+    return 3
   }
 
   const showMessage = useShowMessage()
