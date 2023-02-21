@@ -174,7 +174,8 @@ export const getUserRoles = (user: Pick<User, 'roles'>): RoleSlug[] => {
   if (
     hasRole(user, 'organizer') ||
     hasRole(user, 'main_organizer') ||
-    hasRole(user, 'admin')
+    hasRole(user, 'admin') ||
+    hasRole(user, 'office_worker')
   )
     roles.push('organizer')
 

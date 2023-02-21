@@ -70,6 +70,8 @@ export const CreateEvent = () => {
       'end',
       'record',
       'is_canceled',
+      'is_complete',
+      'is_closed',
     ])
     return event2payload(eventToCloneFixed)
   }, [currentUser, eventToClone])

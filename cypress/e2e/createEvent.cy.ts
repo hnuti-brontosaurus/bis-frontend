@@ -601,6 +601,7 @@ describe('create event', () => {
       submit()
 
       cy.wait('@createEvent')
+      cy.get('@createEvent.all').should('have.length', 1)
     })
 
     it('before 03/01 forbid saving event from two years ago', () => {
@@ -608,24 +609,52 @@ describe('create event', () => {
       cy.visit('/org/akce/vytvorit?klonovat=1000')
       next()
 
-      cy.get('[name=start]').type('2022-12-29')
-      cy.get('[name=end]').type('2022-12-31')
-
-      cy.intercept(
-        { method: 'POST', pathname: '/api/frontend/events' },
-        { id: 1000 },
-      ).as('createEvent')
-
-      cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
-      cy.intercept(
-        'POST',
-        '/api/frontend/events/1000/questionnaire/questions/',
-        {},
-      )
+      cy.get('[name=start]').type('2021-12-29')
+      cy.get('[name=end]').type('2021-12-31')
 
       submit()
 
-      cy.wait('@createEvent')
+      cy.get('[class^=SystemMessage]')
+        .should('contain', 'chyby ve validaci')
+        .should('contain', 'Začátek akce:')
+    })
+
+    context('admin or office_worker', () => {
+      ;['admin', 'office_worker'].forEach(role => {
+        it(`[${role}] should be allowed to save event in deeper past`, () => {
+          cy.visit('/logout')
+          cy.interceptLogin({ fixture: role })
+          cy.login('asdf@example.com', 'correcthorsebatterystaple')
+
+          setClock('2023-02-28')
+          cy.visit('/org/akce/vytvorit?klonovat=1000')
+          next()
+
+          cy.get('[name=start]').type('2020-12-29')
+          cy.get('[name=end]').type('2020-12-31')
+
+          cy.intercept(
+            { method: 'POST', pathname: '/api/frontend/events' },
+            { id: 1000 },
+          ).as('createEvent')
+
+          cy.intercept(
+            'POST',
+            '/api/frontend/events/1000/propagation/images/',
+            {},
+          )
+          cy.intercept(
+            'POST',
+            '/api/frontend/events/1000/questionnaire/questions/',
+            {},
+          )
+
+          submit()
+
+          cy.wait('@createEvent')
+          cy.get('@createEvent.all').should('have.length', 1)
+        })
+      })
     })
   })
 })
