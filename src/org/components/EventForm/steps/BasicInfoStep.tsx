@@ -10,10 +10,11 @@ import {
   Loading,
   NumberInput,
 } from 'components'
+import { useCurrentUser } from 'hooks/currentUser'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
-import { getEventCannotBeOlderThan } from 'utils/helpers'
+import { getEventCannotBeOlderThan, getUserRoles } from 'utils/helpers'
 import * as validationMessages from 'utils/validationMessages'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
@@ -23,6 +24,8 @@ export const BasicInfoStep = ({
 }: {
   methods: MethodsShapes['basicInfo']
 }) => {
+  const { data: currentUser } = useCurrentUser()
+
   const { register, control, getValues, watch, trigger, formState } = methods
   const { data: categories } = api.endpoints.readEventCategories.useQuery()
   const { data: programs } = api.endpoints.readPrograms.useQuery()
@@ -44,8 +47,10 @@ export const BasicInfoStep = ({
     return subscription.unsubscribe
   }, [formState.isSubmitted, trigger, watch])
 
-  if (!(administrationUnits && categories && programs))
+  if (!(administrationUnits && categories && programs && currentUser))
     return <Loading>Připravujeme formulář</Loading>
+
+  const isAllowedToSaveOldEvents = getUserRoles(currentUser).includes('admin')
 
   return (
     <FormProvider {...methods}>
@@ -72,16 +77,23 @@ export const BasicInfoStep = ({
                     type="date"
                     id="start"
                     max={watch('end')}
+                    min={
+                      isAllowedToSaveOldEvents
+                        ? undefined
+                        : getEventCannotBeOlderThan()
+                    }
                     {...register('start', {
                       required,
                       max: {
                         value: watch('end'),
                         message: validationMessages.startBeforeEnd,
                       },
-                      min: {
-                        value: getEventCannotBeOlderThan(),
-                        message: validationMessages.oldEvent,
-                      },
+                      min: isAllowedToSaveOldEvents
+                        ? undefined
+                        : {
+                            value: getEventCannotBeOlderThan(),
+                            message: validationMessages.oldEvent,
+                          },
                     })}
                   />
                 </FormInputError>
