@@ -43,7 +43,7 @@ export const ButtonLink = ({
 }
 
 /**
- * A react-router-dom Link styled to look like button
+ * <a> Link styled to look like button
  */
 export const ExternalButtonLink = ({
   children,

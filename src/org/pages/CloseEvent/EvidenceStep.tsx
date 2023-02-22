@@ -8,10 +8,13 @@ import {
   ImageUpload,
   InfoBox,
 } from 'components'
+import { ExternalButtonLink } from 'components/Button/Button'
 import { form as formTexts } from 'config/static/closeEvent'
 import { FormProvider, UseFormReturn } from 'react-hook-form'
+import { HiExternalLink } from 'react-icons/hi'
 import { required } from 'utils/validationMessages'
 import { EvidenceStepFormShape } from './CloseEventForm'
+import styles from './EvidenceStep.module.scss'
 
 export const EvidenceStep = ({
   isVolunteering,
@@ -96,13 +99,15 @@ export const EvidenceStep = ({
                 Přihlašte se univerzálním heslem “vyplnto” nebo heslem vaší
                 organizační jednotky.
               </Help>{' '}
-              <a
+              <ExternalButtonLink
+                tertiary
                 href="https://zpetna-vazba.brontosaurus.cz/login.php"
                 target="__blank"
                 rel="noopener noreferrer"
+                className={styles.outerLinkButton}
               >
-                Připravit zpětnou vazbu
-              </a>
+                Připravit zpětnou vazbu <HiExternalLink />
+              </ExternalButtonLink>
             </div>
           </FormSection>
           <FormSection header="Závěrečná zpráva">
@@ -116,13 +121,15 @@ export const EvidenceStep = ({
                 Přihlašte se univerzálním heslem “vyplnto” nebo heslem vaší
                 organizační jednotky.
               </Help>{' '}
-              <a
+              <ExternalButtonLink
+                tertiary
                 href="https://zpetna-vazba.brontosaurus.cz/login.php"
                 target="__blank"
                 rel="noopener noreferrer"
+                className={styles.outerLinkButton}
               >
-                Vyplnit závěrečnou zprávu
-              </a>
+                Vyplnit závěrečnou zprávu <HiExternalLink />
+              </ExternalButtonLink>
             </div>
           </FormSection>
           {/* Údaje , které je třeba zadat po akci:
