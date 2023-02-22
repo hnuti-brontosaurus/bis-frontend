@@ -21,7 +21,7 @@
   }
 }
 
-@mixin for-middle-desktop-up {
+@mixin for-medium-desktop-up {
   @media (min-width: 1455px) {
     @content;
   }

@@ -135,7 +135,7 @@ $step-button-line-height-phone: 1rem;
   display: none;
 }
 // TODO: fix that
-@include media.for-middle-desktop-up {
+@include media.for-medium-desktop-up {
   .topActions {
     display: flex;
   }
