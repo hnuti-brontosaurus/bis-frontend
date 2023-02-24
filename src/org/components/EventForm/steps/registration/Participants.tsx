@@ -17,6 +17,7 @@ import {
 import { merge } from 'lodash'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
+import Tooltip from 'react-tooltip-lite'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
@@ -58,6 +59,7 @@ export const Participants: FC<{
   const [patchEvent, patchEventStatus] = api.endpoints.updateEvent.useMutation()
   const [createUser, createUserStatus] = api.endpoints.createUser.useMutation()
   const [updateUser, updateUserStatus] = api.endpoints.updateUser.useMutation()
+  const [highLightedRow, setHighlightedRow] = useState<string>()
 
   useShowApiErrorMessage(createUserStatus.error)
   useShowApiErrorMessage(updateUserStatus.error)
@@ -252,11 +254,16 @@ export const Participants: FC<{
                       lastAddedId === participant.id &&
                         timeOfLastAddition > Date.now() - 30000 &&
                         styles.lightUp,
+                      highLightedRow === participant.id
+                        ? styles.highlightedRow
+                        : '',
                     )}
                     onMouseEnter={() => {
+                      setHighlightedRow(participant.id)
                       chooseHighlightedParticipant(participant.id)
                     }}
                     onMouseLeave={() => {
+                      setHighlightedRow(undefined)
                       chooseHighlightedParticipant(undefined)
                     }}
                   >
@@ -273,27 +280,41 @@ export const Participants: FC<{
                       {participant.birthday}
                     </td>
                     <td onClick={() => {}}>
-                      <button
-                        type="button"
-                        aria-label={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}
-                        onClick={() => handleClickEditParticipant(participant)}
+                      <Tooltip
+                        useDefaultStyles
+                        content="Upravit účastníka"
+                        tagName="span"
                       >
-                        <EditUser className={styles.editUserIconContainer} />
-                      </button>
+                        <button
+                          type="button"
+                          aria-label={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}
+                          onClick={() =>
+                            handleClickEditParticipant(participant)
+                          }
+                        >
+                          <EditUser className={styles.editUserIconContainer} />
+                        </button>
+                      </Tooltip>
                     </td>
                     <td onClick={() => {}}>
-                      <button
-                        type="button"
-                        aria-label={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
-                        onClick={() =>
-                          handleClickRemoveParticipant(participant)
-                        }
+                      <Tooltip
+                        useDefaultStyles
+                        content="Smazat účastníka"
+                        tagName="span"
                       >
-                        <Bin
-                          aria-hidden="true"
-                          className={styles.binIconContainer}
-                        />
-                      </button>
+                        <button
+                          type="button"
+                          aria-label={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
+                          onClick={() =>
+                            handleClickRemoveParticipant(participant)
+                          }
+                        >
+                          <Bin
+                            aria-hidden="true"
+                            className={styles.binIconContainer}
+                          />
+                        </button>
+                      </Tooltip>
                     </td>
                   </tr>
                 ))}
@@ -309,6 +330,7 @@ export const Participants: FC<{
           open={showShowApplicationModal}
           onClose={() => {
             setShowShowApplicationModal(false)
+            setHighlightedRow(undefined)
           }}
           userId={currentParticipantId}
           currentParticipant={currentParticipant}

@@ -10,7 +10,7 @@ import {
   InlineSection,
   Label,
   Loading,
-  StyledModal,
+  StyledModal
 } from 'components'
 import stylesTable from 'components/Table.module.scss'
 import dayjs from 'dayjs'
@@ -212,6 +212,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
             offers: null, //{ programs: [], organizer_roles: [], team_roles: [] },
             birthday: dayjs(data.birthday).format('YYYY-MM-DD'),
             donor: null,
+            eyca_card: null,
             contact_address: null,
           } as UserPayload).unwrap()
           await addParticipant(newParticipant.id)
@@ -268,15 +269,13 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
     if (!check || checkAndAdd) {
       if (retrievedUser && retrievedUser._search_id === result.searchId) {
         addParticipant(retrievedUser.id)
-        await createEventApplication({
-          eventId,
-          application: {
-            ...currentApplication,
-            answers: [],
-            first_name: 'InternalApplication',
-            last_name: retrievedUser.id,
-            nickname: currentApplication.id.toString(),
-            health_issues: Date.now().toString(),
+        
+        await updateApplication({
+          id: currentApplication.id,
+          eventId: eventId,
+          patchedEventApplication: {
+            user: retrievedUser.id,
+            state: 'approved',
           },
         })
         clearModalData()
@@ -467,16 +466,13 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                   setCreatingANewUser(false)
 
                                   await addParticipant(result.id)
-                                  await createEventApplication({
-                                    eventId,
-                                    application: {
-                                      ...currentApplication,
-                                      answers: [],
-                                      first_name: 'InternalApplication',
-                                      last_name: result.id,
-                                      nickname:
-                                        currentApplication.id.toString(),
-                                      health_issues: Date.now().toString(),
+
+                                  await updateApplication({
+                                    id: currentApplication.id,
+                                    eventId: eventId,
+                                    patchedEventApplication: {
+                                      user: result.id,
+                                      state: 'approved',
                                     },
                                   })
                                   onClose()
