@@ -248,7 +248,7 @@ export const Applications: FC<{
                   {applicationsAccepted.length > 0 && (
                     <tr>
                       <td colSpan={5} className={styles.oneCellRow}>
-                        Pridani do ucastniku
+                        Přidání do účastníků
                       </td>
                     </tr>
                   )}
