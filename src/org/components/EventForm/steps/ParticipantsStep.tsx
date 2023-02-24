@@ -44,6 +44,7 @@ export const ParticipantsStep: FC<{
             savedApplications && id && savedApplications[id],
           )
         }
+        withParticipants={!onlyApplications}
       />
       {!onlyApplications && (
         <Participants

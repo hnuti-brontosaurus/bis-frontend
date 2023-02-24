@@ -2,11 +2,16 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { EventApplication } from 'app/services/bisTypes'
 import classnames from 'classnames'
-import { EmptyListPlaceholder, Loading } from 'components'
+import { Button, EmptyListPlaceholder, Loading } from 'components'
 import stylesTable from 'components/Table.module.scss'
 import { useRejectApplication } from 'hooks/rejectApplication'
 import { FC, useState } from 'react'
-import { FaTrash as Bin, FaUserPlus as AddUser } from 'react-icons/fa'
+import {
+  FaTrash as Bin,
+  FaTrashRestoreAlt,
+  FaUserPlus as AddUser,
+} from 'react-icons/fa'
+import Tooltip from 'react-tooltip-lite'
 import styles from '../ParticipantsStep.module.scss'
 import { AddParticipantModal } from './AddParticipantModal'
 import { NewApplicationModal } from './NewApplicationModal'
@@ -17,11 +22,13 @@ export const Applications: FC<{
   eventName: string
   chooseHighlightedApplication: (id: string | undefined) => void
   highlightedApplication?: string
+  withParticipants?: boolean
 }> = ({
   eventId,
   eventName,
   highlightedApplication,
   chooseHighlightedApplication,
+  withParticipants,
 }) => {
   const [showNewApplicationModal, setShowNewApplicationModal] =
     useState<boolean>(false)
@@ -29,9 +36,26 @@ export const Applications: FC<{
     useState<boolean>(false)
   const [showShowApplicationModal, setShowShowApplicationModal] =
     useState<boolean>(false)
+  const [highLightedRow, setHighlightedRow] = useState<number>()
   const [currentApplicationId, setCurrentApplicationId] = useState<number>()
 
   const [rejectApplication] = useRejectApplication()
+
+  const [updateApplication, states] =
+    api.endpoints.updateEventApplication.useMutation()
+
+  const restoreApplication = async (
+    application: EventApplication,
+    event: { id: number; name: string },
+  ) => {
+    await updateApplication({
+      id: application.id,
+      eventId: event.id,
+      patchedEventApplication: {
+        state: 'pending',
+      },
+    })
+  }
 
   const { data: membershipCategories } =
     api.endpoints.readMembershipCategories.useQuery({})
@@ -52,49 +76,32 @@ export const Applications: FC<{
         : skipToken,
     )
 
-  // const [deleteEventApplication] =
-  //   api.endpoints.deleteEventApplication.useMutation()
-
   const { data: applicationsData, isLoading: isReadApplicationsLoading } =
     api.endpoints.readEventApplications.useQuery({
       eventId,
       pageSize: 10000,
     })
 
-  let applications = applicationsData
-    ? applicationsData.results.filter(
-        app => app.first_name !== 'InternalApplication',
-      )
-    : []
-  const savedApplications =
-    applicationsData &&
-    applicationsData.results
-      .filter(app => app.first_name === 'InternalApplication')
-      .reduce((savedApps, app) => {
-        // @ts-ignore
-        if (app.nickname) savedApps[app.nickname] = app.last_name
-        return savedApps
-      }, {})
+  let applications = applicationsData ? applicationsData.results : []
 
-  const applicationsFirst = applications.filter(
-    // @ts-ignore
-    app => !(savedApplications && savedApplications[app.id]),
+  const applicationsPending = applications.filter(
+    app => app.state === 'pending',
   )
 
-  const applicationsSecond = applications.filter(
-    // @ts-ignore
-    app => savedApplications && savedApplications[app.id],
+  const applicationsAccepted = applications.filter(
+    app => app.state === 'approved',
   )
 
-  applications = applicationsFirst.concat(applicationsSecond)
+  const applicationsRejected = applications.filter(
+    app => app.state === 'rejected',
+  )
 
   const handleShowApplication = (id: number) => {
     setCurrentApplicationId(id)
     setShowShowApplicationModal(true)
   }
 
-  const thereAreApplications =
-    applications && applications && applications.length !== 0
+  const thereAreApplications = applications && applications.length !== 0
 
   const ApplicationRow = ({
     application,
@@ -106,74 +113,76 @@ export const Applications: FC<{
     <tr
       key={application.id}
       className={classnames(
-        highlightedApplication === application.id.toString()
-          ? styles.highlightedRow
-          : '',
-        application.id &&
-          savedApplications &&
-          // @ts-ignore
-          savedApplications[application.id.toString()]
-          ? styles.applicationWithParticipant
-          : '',
+        highlightedApplication === application.id.toString() &&
+          styles.highlightedRow,
+        application.state === ('rejected' as const) &&
+          styles.applicationWithParticipant,
         className,
+        highLightedRow === application.id ? styles.highlightedRow : '',
+        application.state === ('approved' as const) && styles.approvedRow,
       )}
       onMouseEnter={() => {
+        setHighlightedRow(application.id)
         chooseHighlightedApplication(application.id.toString())
       }}
       onMouseLeave={() => {
+        setHighlightedRow(undefined)
         chooseHighlightedApplication(undefined)
       }}
     >
-      <td
-        onClick={() => handleShowApplication(application.id)}
-        colSpan={
-          savedApplications &&
-          // @ts-ignore
-          savedApplications[application.id.toString()]
-            ? 1
-            : 2
-        }
-      >
-        {application.first_name}, {application.last_name}
-        {application.birthday && ', '}
+      <td onClick={() => handleShowApplication(application.id)}>
+        {application.first_name}
+      </td>
+      <td onClick={() => handleShowApplication(application.id)}>
+        {application.last_name}
+      </td>
+      <td onClick={() => handleShowApplication(application.id)}>
         {application.birthday}
       </td>
-      {savedApplications &&
-        // @ts-ignore
-        savedApplications[application.id.toString()] && (
-          <td className={styles.applicationAddedTag}>'pridano!'</td>
-        )}
-      <td
-        onClick={() => {
-          setCurrentApplicationId(application.id)
-          setShowAddParticipantModal(true)
-        }}
-        className={classnames(
-          stylesTable.cellWithButton,
-          savedApplications &&
-            // @ts-ignore
-            savedApplications[application.id.toString()] &&
-            styles.disabledIconContainer,
-        )}
-      >
-        <AddUser className={classnames(styles.addUserIconContainer)} />
-      </td>
+      {withParticipants && (
+        <td
+          onClick={() => {
+            setCurrentApplicationId(application.id)
+            setShowAddParticipantModal(true)
+          }}
+          className={classnames(
+            stylesTable.cellWithButton,
+            application.state === ('rejected' as const) &&
+              styles.disabledIconContainer,
+            application.state === 'rejected' ? styles.disabledCell : '',
+          )}
+        >
+          <Tooltip useDefaultStyles content="Přidej účastníka" tagName="span">
+            {' '}
+            <AddUser className={classnames(styles.addUserIconContainer)} />
+          </Tooltip>
+        </td>
+      )}
       <td
         onClick={async () => {
-          rejectApplication({
-            application,
-            event: { id: eventId, name: eventName },
-          })
+          if (application.state === ('rejected' as const)) {
+            restoreApplication(application, { id: eventId, name: eventName })
+          } else {
+            rejectApplication({
+              application,
+              event: { id: eventId, name: eventName },
+            })
+          }
         }}
         className={classnames(
           stylesTable.cellWithButton,
-          savedApplications &&
-            // @ts-ignore
-            savedApplications[application.id.toString()] &&
-            styles.disabledIconContainer,
+          application.state === ('approved' as const)
+            ? styles.disabledCell
+            : '',
         )}
       >
-        <Bin className={styles.binIconContainer}></Bin>
+        <Tooltip useDefaultStyles content={'Odzyskaj přihlášku'} tagName="span">
+          {application.state === ('rejected' as const) ? (
+            <FaTrashRestoreAlt></FaTrashRestoreAlt>
+          ) : (
+            <Bin className={styles.binIconContainer}></Bin>
+          )}
+        </Tooltip>
       </td>
     </tr>
   )
@@ -183,67 +192,91 @@ export const Applications: FC<{
       <div className={styles.ListContainer}>
         <h2>Přihlášení</h2>
         <div className={styles.buttonsContainer}>
-          <button
+          <Button secondary type="button">
+            Export do CSV
+          </Button>
+          <Button secondary type="button">
+            Tiskni prezenční listinu
+          </Button>
+          <Button
+            primary
             type="button"
-            className={
-              !thereAreApplications ? styles.disabledButton : undefined
-            }
+            onClick={() => {
+              setShowNewApplicationModal(true)
+            }}
           >
-            Export do CSV (WIP)
-          </button>
-          <button
-            type="button"
-            className={
-              !thereAreApplications ? styles.disabledButton : undefined
-            }
-          >
-            Tiskni prezenční listinu (WIP)
-          </button>
+            Přidej novou přihlášku
+          </Button>
         </div>
-        <div className={styles.searchContainer}>
-          <div className={styles.searchBox}>
-            <button
-              type="button"
-              onClick={() => {
-                setShowNewApplicationModal(true)
-              }}
-            >
-              Přidej novou přihlášku
-            </button>
-          </div>
-        </div>
+
         {!isReadApplicationsLoading ? (
           <div>
-            {thereAreApplications ? (
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Jméno, příjmení, datum narození</th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {applications
-                    .filter(a => ['pending', 'approved'].includes(a.state))
-                    .map((application: EventApplication) => (
-                      <ApplicationRow
-                        key={application.id}
-                        application={application}
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Jméno</th>
+                  <th>příjmení</th>
+                  <th>datum narození</th>
+                  {withParticipants && (
+                    <th>
+                      <AddUser
+                        className={classnames(
+                          styles.addUserIconContainer,
+                          styles.iconHead,
+                        )}
                       />
-                    ))}
-                  {applications
-                    .filter(a => ['rejected'].includes(a.state))
-                    .map((application: EventApplication) => (
-                      <ApplicationRow
-                        key={application.id}
-                        application={application}
-                        className={styles.rejectedRow}
-                      />
-                    ))}
-                </tbody>
-              </table>
-            ) : (
+                    </th>
+                  )}
+                  <th>
+                    <Bin
+                      className={classnames(
+                        styles.binIconContainer,
+                        styles.iconHead,
+                      )}
+                    ></Bin>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <>
+                  {applicationsPending.map((application: EventApplication) => (
+                    <ApplicationRow
+                      key={application.id}
+                      application={application}
+                    />
+                  ))}
+                  {applicationsAccepted.length > 0 && (
+                    <tr>
+                      <td colSpan={5} className={styles.oneCellRow}>
+                        Pridani do ucastniku
+                      </td>
+                    </tr>
+                  )}
+                  {applicationsAccepted.map((application: EventApplication) => (
+                    <ApplicationRow
+                      key={application.id}
+                      application={application}
+                    />
+                  ))}
+                  {applicationsRejected.length > 0 && (
+                    <tr>
+                      <td colSpan={5} className={styles.oneCellRow}>
+                        Rejected
+                      </td>
+                    </tr>
+                  )}
+
+                  {applicationsRejected.map((application: EventApplication) => (
+                    <ApplicationRow
+                      key={application.id}
+                      application={application}
+                    />
+                  ))}
+                </>
+              </tbody>
+            </table>
+
+            {!thereAreApplications && (
               <EmptyListPlaceholder label="Ještě se nikdo nepřihlásil" />
             )}
           </div>
@@ -277,19 +310,12 @@ export const Applications: FC<{
             open={showShowApplicationModal}
             onClose={() => {
               setCurrentApplicationId(undefined)
-
+              setHighlightedRow(undefined)
               setShowShowApplicationModal(false)
             }}
-            userId={
-              // @ts-ignore
-              savedApplications && savedApplications[currentApplication.id]
-            }
             currentApplication={currentApplication}
             eventName={eventName}
             eventId={eventId}
-            // setCurrentApplicationId={setCurrentApplicationId}
-            // setShowAddParticipantModal={setShowAddParticipantModal}
-            // deleteEventApplication={deleteEventApplication}
             categories={membershipCategories?.results ?? []}
             administrationUnits={
               administrationUnits ? administrationUnits.results : []
