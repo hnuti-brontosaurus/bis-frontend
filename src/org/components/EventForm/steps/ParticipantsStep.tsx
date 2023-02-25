@@ -10,7 +10,8 @@ export const ParticipantsStep: FC<{
   onlyApplications?: boolean
   eventName: string
 }> = ({ eventId, onlyApplications, eventName }) => {
-  const [highlightedApplication, setHighlightedApplication] = useState<string>()
+  const [highlightedApplication, setHighlightedApplication] =
+    useState<string[]>()
   const [highlightedParticipant, setHighlightedParticipant] = useState<string>()
 
   const { data: applicationsData } =
@@ -20,17 +21,30 @@ export const ParticipantsStep: FC<{
     })
   const savedApplications: { [s: string]: string } | undefined =
     applicationsData &&
-    applicationsData.results.reduce<{ [s: string]: string }>(
-      (savedApps: { [s: string]: string }, app: EventApplication) => {
-        if (app.user) savedApps[app.id.toString() as string] = app.user
-        return savedApps
-      },
-      {} as { [s: string]: string },
-    )
-  const savedParticipants: { [s: string]: string } | undefined = {}
+    applicationsData.results
+      .filter(app => app.state === ('approved' as const))
+      .reduce<{ [s: string]: string }>(
+        (savedApps: { [s: string]: string }, app: EventApplication) => {
+          if (app.user) {
+            if (savedApps[app.id]) console.log('NO CIEKAWE')
+            else {
+              savedApps[app.id.toString() as string] = app.user
+            }
+          }
+          return savedApps
+        },
+        {} as { [s: string]: string },
+      )
+  const savedParticipants: { [s: string]: string[] } | undefined = {}
   if (savedApplications)
     for (const [key, value] of Object.entries(savedApplications)) {
-      if (value) savedParticipants[value] = key
+      if (value) {
+        if (savedParticipants[value]) {
+          savedParticipants[value] = savedParticipants[value].concat(key)
+        } else {
+          savedParticipants[value] = [key]
+        }
+      }
     }
 
   return (
@@ -38,7 +52,7 @@ export const ParticipantsStep: FC<{
       <Applications
         eventId={eventId}
         eventName={eventName}
-        highlightedApplication={highlightedApplication}
+        highlightedApplications={highlightedApplication}
         chooseHighlightedApplication={id =>
           setHighlightedParticipant(
             savedApplications && id && savedApplications[id],
@@ -51,9 +65,11 @@ export const ParticipantsStep: FC<{
           eventId={eventId}
           highlightedParticipant={highlightedParticipant}
           chooseHighlightedParticipant={id => {
-            setHighlightedApplication(
-              savedParticipants && id && savedParticipants[id],
-            )
+            if (id && savedParticipants)
+              setHighlightedApplication(savedParticipants[id])
+            else {
+              setHighlightedApplication(undefined)
+            }
           }}
           eventName={eventName}
           savedParticipants={savedParticipants}
