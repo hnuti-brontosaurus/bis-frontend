@@ -44,6 +44,7 @@ export const Participants: FC<{
 
   const showMessage = useShowMessage()
 
+  console.log('kkkkkk', savedParticipants)
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const { data: membershipCategories } =
