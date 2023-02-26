@@ -25,12 +25,7 @@ export const ParticipantsStep: FC<{
       .filter(app => app.state === ('approved' as const))
       .reduce<{ [s: string]: string }>(
         (savedApps: { [s: string]: string }, app: EventApplication) => {
-          if (app.user) {
-            if (savedApps[app.id]) console.log('NO CIEKAWE')
-            else {
-              savedApps[app.id.toString() as string] = app.user
-            }
-          }
+          if (app.user) savedApps[app.id.toString() as string] = app.user
           return savedApps
         },
         {} as { [s: string]: string },

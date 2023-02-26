@@ -41,8 +41,7 @@ export const Applications: FC<{
 
   const [rejectApplication] = useRejectApplication()
 
-  const [updateApplication, states] =
-    api.endpoints.updateEventApplication.useMutation()
+  const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
 
   const restoreApplication = async (
     application: EventApplication,

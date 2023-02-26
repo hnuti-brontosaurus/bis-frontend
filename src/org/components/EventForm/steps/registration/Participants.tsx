@@ -44,7 +44,6 @@ export const Participants: FC<{
 
   const showMessage = useShowMessage()
 
-  console.log('kkkkkk', savedParticipants)
   const [currentParticipantId, setCurrentParticipantId] = useState<string>()
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const { data: membershipCategories } =
@@ -90,8 +89,7 @@ export const Participants: FC<{
     setTimeOfLastAddition(Date.now())
   }
 
-  const [updateApplication, states] =
-    api.endpoints.updateEventApplication.useMutation()
+  const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
 
   /**
    * Handle adding a new participant and updating a participant

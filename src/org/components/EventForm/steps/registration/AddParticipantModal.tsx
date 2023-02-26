@@ -10,7 +10,7 @@ import {
   InlineSection,
   Label,
   Loading,
-  StyledModal
+  StyledModal,
 } from 'components'
 import stylesTable from 'components/Table.module.scss'
 import dayjs from 'dayjs'
@@ -269,7 +269,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
     if (!check || checkAndAdd) {
       if (retrievedUser && retrievedUser._search_id === result.searchId) {
         addParticipant(retrievedUser.id)
-        
+
         await updateApplication({
           id: currentApplication.id,
           eventId: eventId,
