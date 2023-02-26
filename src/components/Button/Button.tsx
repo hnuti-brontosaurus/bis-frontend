@@ -104,3 +104,14 @@ export const Button = ({
     </button>
   )
 }
+
+export const EmailButton = ({ children }: { children: string }) => (
+  <ExternalButtonLink tertiary href={`mailto:${children}`}>
+    {children}
+  </ExternalButtonLink>
+)
+export const PhoneButton = ({ children }: { children: string }) => (
+  <ExternalButtonLink tertiary href={`tel:${children}`}>
+    {children}
+  </ExternalButtonLink>
+)

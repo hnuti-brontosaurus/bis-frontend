@@ -46,9 +46,6 @@ h2 {
       &:nth-child(3) {
         border-right: 1px solid #d9d9d9;
       }
-      &:nth-child(1) {
-        text-align: left;
-      }
       &:nth-child(2) {
         width: 50px;
       }
@@ -71,35 +68,6 @@ h2 {
       border-right: 1px solid #d9d9d9;
       text-align: center;
     }
-  }
-}
-
-.disabledIconContainer {
-  svg {
-    path {
-      fill: colors.$gray-200;
-    }
-  }
-  cursor: not-allowed !important;
-}
-
-.binIconContainer {
-  width: 14px;
-  path {
-    fill: colors.$edit-event-main;
-  }
-}
-.addUserIconContainer {
-  width: 20px;
-  path {
-    fill: colors.$close-event-main;
-  }
-}
-
-.editUserIconContainer {
-  width: 20px;
-  path {
-    fill: colors.$edit;
   }
 }
 
@@ -209,17 +177,6 @@ h2 {
   }
 }
 
-.disabledCell {
-  pointer-events: none;
-  cursor: not-allowed !important;
-  color: colors.$gray-200;
-  svg {
-    path {
-      fill: colors.$gray-200;
-    }
-  }
-}
-
 .oneCellRow {
   border-left: 0px !important;
   border-right: 0px;
@@ -231,6 +188,7 @@ h2 {
 }
 
 .iconHead {
+  width: 18px;
   path {
     fill: black;
   }

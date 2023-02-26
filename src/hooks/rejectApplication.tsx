@@ -54,9 +54,8 @@ export const useRejectApplication = () => {
             </div>
           </div>
         ),
-        title: `Mažeš TODO text applikace ${data.application.first_name}`,
-        message:
-          'TODO text Všechna data budou navždy ztracena. Chceš pokračovat?',
+        title: `Odmítáš přihlášku ${data.application.first_name} ${data.application.last_name}`,
+        message: `Přihláška bude přesunuta do kategorie Odmítnuté přihlášky. Chceš pokračovat?`,
       })
     })
     if (isConfirmed) {
@@ -67,10 +66,11 @@ export const useRejectApplication = () => {
           state: 'rejected',
         },
       }).unwrap()
-      showMessage({
-        message: 'TODO text Prihlaska byla úspěšně smazána',
-        type: 'success',
-      })
+      // TODO: commented out because we may not need so much confirmation for applications but TBD
+      // <      showMessage({
+      //         message: 'TODO text Prihlaska byla úspěšně smazána',
+      //         type: 'success',
+      //       })>
     }
   }
   return [rejectApplicationWithModal, states] as const
