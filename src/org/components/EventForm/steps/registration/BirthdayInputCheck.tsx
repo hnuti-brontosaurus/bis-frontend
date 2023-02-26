@@ -9,7 +9,6 @@ import {
   FormInputError,
   InlineSection,
   Label,
-  Loading,
   ObjectWithStrings,
 } from 'components'
 import { FC } from 'react'
@@ -30,7 +29,6 @@ interface IBirthdayInputCheck {
   retrievedUser: User | null | undefined
   retrievedUserIsUsed: boolean
   setCheckAndAdd: (arg: boolean) => void
-  isSavingEventApplication: boolean
 }
 
 export const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
@@ -42,7 +40,6 @@ export const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
   retrievedUser,
   retrievedUserIsUsed,
   setCheckAndAdd,
-  isSavingEventApplication,
 }) => {
   const methodsBirthdate = useForm<{ birthday: string }>({
     resolver: yupResolver(validationSchemaBirthdate),
@@ -101,13 +98,9 @@ export const BirthdayInputCheck: FC<IBirthdayInputCheck> = ({
       {retrievedUser &&
       retrievedUser._search_id === result._search_id &&
       retrievedUserIsUsed ? (
-        !isSavingEventApplication ? (
-          <Button className={styles.birthsdayButton} secondary type="submit">
-            přidej k účastníkům
-          </Button>
-        ) : (
-          <Loading>...</Loading>
-        )
+        <Button className={styles.birthsdayButton} secondary type="submit">
+          přidej k účastníkům
+        </Button>
       ) : (
         <Button className={styles.birthsdayButton} secondary type="submit">
           zkontroluj

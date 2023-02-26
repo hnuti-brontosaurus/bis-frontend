@@ -1,10 +1,7 @@
 import { api } from 'app/services/bis'
 import { Actions, Button } from 'components'
 import modalStyles from 'components/StyledModal/StyledModal.module.scss'
-import {
-  useShowApiErrorMessage,
-  useShowMessage,
-} from 'features/systemMessage/useSystemMessage'
+import { useShowApiErrorMessage } from 'features/systemMessage/useSystemMessage'
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 
@@ -15,7 +12,7 @@ export const useRejectApplication = () => {
     api.endpoints.updateEventApplication.useMutation()
 
   useShowApiErrorMessage(states.error, 'Nepodařilo se TODO text')
-  const showMessage = useShowMessage()
+  // const showMessage = useShowMessage()
 
   const rejectApplicationWithModal = async (data: {
     event: { id: number; name: string }
