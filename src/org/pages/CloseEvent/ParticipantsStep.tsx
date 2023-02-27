@@ -82,7 +82,7 @@ export const ParticipantsStep = ({
     return () => subscription.unsubscribe()
   }, [formState.isSubmitted, trigger, watch])
 
-  const [confirmWithModal] = useConfirmWithModal({
+  const [confirmWithModal, modal] = useConfirmWithModal({
     title: 'Měníš způsob registrace účastníků',
     message:
       'Je možné vybrat pouze jeden způsob registrace. Pokud chceš změnit způsob registrace, data, která jsou zadaná v počtu účastníků a seznamu účastníků, nebudou uložena. Chceš pokračovat?',
@@ -90,6 +90,7 @@ export const ParticipantsStep = ({
 
   return (
     <FormProvider {...methods}>
+      {modal}
       <form>
         {/* orgs should be able to always add people to the participants list
       but when the event group is "other", it's optional, and they must fill number_of_participants instead
