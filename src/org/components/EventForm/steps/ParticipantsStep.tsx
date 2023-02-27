@@ -1,5 +1,4 @@
 import { api } from 'app/services/bis'
-import { EventApplication } from 'app/services/testApi'
 import { FC, useState } from 'react'
 import styles from './ParticipantsStep.module.scss'
 import { Applications } from './registration/Applications'
@@ -19,25 +18,31 @@ export const ParticipantsStep: FC<{
       eventId,
       pageSize: 10000,
     })
-  const savedApplications: { [s: string]: string } | undefined =
+
+  /** creates a new object, where the keys are the application IDs
+   * and the values are the corresponding user IDs for each approved
+   * application */
+  const approvedApplicationsMap: { [s: string]: string } | undefined =
     applicationsData &&
     applicationsData.results
       .filter(app => app.state === ('approved' as const))
-      .reduce<{ [s: string]: string }>(
-        (savedApps: { [s: string]: string }, app: EventApplication) => {
-          if (app.user) savedApps[app.id.toString() as string] = app.user
-          return savedApps
-        },
-        {} as { [s: string]: string },
-      )
-  const savedParticipants: { [s: string]: string[] } | undefined = {}
-  if (savedApplications)
-    for (const [key, value] of Object.entries(savedApplications)) {
-      if (value) {
-        if (savedParticipants[value]) {
-          savedParticipants[value] = savedParticipants[value].concat(key)
+      .reduce<{ [appId: string]: string }>((appsMap, app) => {
+        if (app.user) appsMap[app.id.toString()] = app.user
+        return appsMap
+      }, {})
+
+  /** iterates over the created object from the first part and groups
+   * together the application IDs by their corresponding user IDs */
+  const participantsMap: { [userId: string]: string[] } | undefined = {}
+  if (approvedApplicationsMap)
+    for (const [appId, userId] of Object.entries(approvedApplicationsMap)) {
+      // If the user ID is not already in the participants map, add it with the current application ID as the first item in the array.
+      if (userId) {
+        if (!participantsMap[userId]) {
+          participantsMap[userId] = [appId]
+          // If the user ID is already in the participants map, add the current application ID to the array.
         } else {
-          savedParticipants[value] = [key]
+          participantsMap[userId].push(appId)
         }
       }
     }
@@ -50,24 +55,25 @@ export const ParticipantsStep: FC<{
         highlightedApplications={highlightedApplication}
         chooseHighlightedApplication={id =>
           setHighlightedParticipant(
-            savedApplications && id && savedApplications[id],
+            approvedApplicationsMap && id && approvedApplicationsMap[id],
           )
         }
         withParticipants={!onlyApplications}
+        className={styles.centeredTableBlock}
       />
       {!onlyApplications && (
         <Participants
           eventId={eventId}
           highlightedParticipant={highlightedParticipant}
           chooseHighlightedParticipant={id => {
-            if (id && savedParticipants)
-              setHighlightedApplication(savedParticipants[id])
+            if (id && participantsMap)
+              setHighlightedApplication(participantsMap[id])
             else {
               setHighlightedApplication(undefined)
             }
           }}
           eventName={eventName}
-          savedParticipants={savedParticipants}
+          participantsMap={participantsMap}
         />
       )}
     </div>

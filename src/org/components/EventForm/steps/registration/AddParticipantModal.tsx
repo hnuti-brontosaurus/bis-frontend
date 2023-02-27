@@ -294,6 +294,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
         onClick={e => {
           e.stopPropagation()
         }}
+        className={styles.addParticipantModal}
       >
         {userOptions.length === 0 && allUsers.length === 0 ? (
           <div className={styles.infoBox}>
@@ -451,7 +452,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                             </td>
                             <td>
                               <Button
-                                secondary
+                                primary
                                 isLoading={
                                   retrievedUser &&
                                   result._search_id === retrievedUser._search_id
@@ -475,7 +476,9 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                   clearModalData()
                                 }}
                               >
-                                Přidej
+                                {eventParticipants.includes(result.id)
+                                  ? 'Přidáno, připojit další přihlášku'
+                                  : 'Přidej'}
                               </Button>
                             </td>
                           </tr>

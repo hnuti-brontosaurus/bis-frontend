@@ -20,7 +20,7 @@ interface IShowApplicationModalProps {
   categories: MembershipCategory[]
   administrationUnits: AdministrationUnit[]
   currentParticipant?: User
-  savedParticipants?: { [s: string]: string[] }
+  participantsMap?: { [s: string]: string[] }
 }
 
 // TODO: This modal is still WIP (no need to review atm)
@@ -37,17 +37,17 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
   categories,
   administrationUnits,
   currentParticipant,
-  savedParticipants,
+  participantsMap,
 }) => {
   const { data: currentApplicationData } =
     api.endpoints.readEventApplication.useQuery(
       currentParticipant &&
-        savedParticipants &&
-        savedParticipants[currentParticipant.id].length > 0
+        participantsMap &&
+        participantsMap[currentParticipant.id].length > 0
         ? {
             eventId,
             //TODO: add here showing an array of applications
-            applicationId: Number(savedParticipants[currentParticipant.id][0]),
+            applicationId: Number(participantsMap[currentParticipant.id][0]),
           }
         : skipToken,
     )

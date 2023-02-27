@@ -27,12 +27,14 @@ export const Applications: FC<{
   chooseHighlightedApplication: (id: string | undefined) => void
   highlightedApplications?: string[]
   withParticipants?: boolean
+  className: string
 }> = ({
   eventId,
   eventName,
   highlightedApplications,
   chooseHighlightedApplication,
   withParticipants,
+  className,
 }) => {
   const [showNewApplicationModal, setShowNewApplicationModal] =
     useState<boolean>(false)
@@ -186,7 +188,7 @@ export const Applications: FC<{
 
   return (
     <>
-      <div className={styles.ListContainer}>
+      <div className={classnames(styles.ListContainer, className)}>
         <h2>Přihlášení</h2>
         <div className={styles.buttonsContainer}>
           <Button secondary type="button">

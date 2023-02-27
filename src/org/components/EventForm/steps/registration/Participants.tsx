@@ -27,13 +27,13 @@ export const Participants: FC<{
   eventName: string
   chooseHighlightedParticipant: (id: string | undefined) => void
   highlightedParticipant?: string
-  savedParticipants?: { [s: string]: string[] }
+  participantsMap?: { [s: string]: string[] }
 }> = ({
   eventId,
   eventName,
   highlightedParticipant,
   chooseHighlightedParticipant,
-  savedParticipants,
+  participantsMap,
 }) => {
   const [lastAddedId, setLastAddedId] = useState<string>()
   const [timeOfLastAddition, setTimeOfLastAddition] = useState<number>(0)
@@ -176,11 +176,11 @@ export const Participants: FC<{
 
       // make applications assigned to this user 'pending'
       if (
-        savedParticipants &&
+        participantsMap &&
         removeModalData &&
-        savedParticipants[removeModalData.id]
+        participantsMap[removeModalData.id]
       ) {
-        for (let i of savedParticipants[removeModalData.id]) {
+        for (let i of participantsMap[removeModalData.id]) {
           await updateApplication({
             id: Number(i),
             eventId: eventId,
@@ -338,7 +338,7 @@ export const Participants: FC<{
           administrationUnits={
             administrationUnits ? administrationUnits.results : []
           }
-          savedParticipants={savedParticipants}
+          participantsMap={participantsMap}
         ></ShowApplicationModal>
       )}
     </div>
