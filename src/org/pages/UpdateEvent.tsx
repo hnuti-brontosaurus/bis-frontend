@@ -14,6 +14,7 @@ import { useTitle } from 'hooks/title'
 import { cloneDeep, mergeWith } from 'lodash'
 import merge from 'lodash/merge'
 import { EventForm, InitialEventData } from 'org/components'
+import { ApplicationStates } from 'org/components/EventForm/steps/ParticipantsStep'
 import { useState } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { Optional } from 'utility-types'
@@ -192,7 +193,9 @@ export const UpdateEvent = () => {
         ...patchedImagePromises,
         ...deletedImagePromises,
       ])
-      if (imageOutput.some(({ status }) => status === 'rejected'))
+      if (
+        imageOutput.some(({ status }) => status === ApplicationStates.rejected)
+      )
         showMessage({
           type: 'warning',
           message: 'Některé fotky se nepodařilo uložit',
@@ -239,7 +242,11 @@ export const UpdateEvent = () => {
         ...deletedQuestionPromises,
       ])
       //TODO inform users when something fails
-      if (questionOutput.some(({ status }) => status === 'rejected'))
+      if (
+        questionOutput.some(
+          ({ status }) => status === ApplicationStates.rejected,
+        )
+      )
         showMessage({
           type: 'warning',
           message: 'Některé otázky se nepodařilo uložit',

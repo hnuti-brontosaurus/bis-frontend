@@ -1,10 +1,11 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { User, UserPayload } from 'app/services/bisTypes'
-import classNames from 'classnames'
+import { default as classnames, default as classNames } from 'classnames'
 import {
   Actions,
   Button,
+  EmptyListPlaceholder,
   Loading,
   SelectUnknownUser,
   StyledModal,
@@ -19,6 +20,7 @@ import { merge } from 'lodash'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
+import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
@@ -185,7 +187,7 @@ export const Participants: FC<{
             id: Number(i),
             eventId: eventId,
             patchedEventApplication: {
-              state: 'pending',
+              state: ApplicationStates.pending,
               user: null,
             },
           })
@@ -259,9 +261,15 @@ export const Participants: FC<{
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Jméno, příjmení, datum narození</th>
-                  <th></th>
-                  <th></th>
+                  <th>Jméno</th>
+                  <th>příjmení</th>
+                  <th>datum narození</th>
+                  <th>
+                    <EditUser className={classnames(styles.iconHead)} />
+                  </th>
+                  <th>
+                    <Bin className={classnames(styles.iconHead)}></Bin>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -287,19 +295,16 @@ export const Participants: FC<{
                       setHighlightedRow(undefined)
                       chooseHighlightedParticipant(undefined)
                     }}
+                    onClick={() => {
+                      setShowShowApplicationModal(true)
+                      setCurrentParticipantId(participant.id)
+                    }}
                   >
-                    <td
-                      onClick={() => {
-                        setShowShowApplicationModal(true)
-                        setCurrentParticipantId(participant.id)
-                      }}
-                    >
-                      {participant.first_name}, {participant.last_name}
-                      {participant.nickname && ', '}
-                      {participant.nickname}
-                      {participant.birthday && ', '}
-                      {participant.birthday}
+                    <td>
+                      {`${participant.first_name}(${participant.nickname})`}
                     </td>
+                    <td>{participant.last_name}</td>
+                    <td>{participant.birthday}</td>
                     <TableCellIconButton
                       icon={EditUser}
                       action={() => handleClickEditParticipant(participant)}
@@ -318,6 +323,9 @@ export const Participants: FC<{
                 ))}
               </tbody>
             </table>
+          )}
+          {participants?.results.length == 0 && (
+            <EmptyListPlaceholder label="Zatím nebyli přidáni žádní účastníci." />
           )}
         </div>
       ) : (

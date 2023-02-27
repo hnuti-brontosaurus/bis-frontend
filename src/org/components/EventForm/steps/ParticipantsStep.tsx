@@ -4,6 +4,12 @@ import styles from './ParticipantsStep.module.scss'
 import { Applications } from './registration/Applications'
 import { Participants } from './registration/Participants'
 
+export enum ApplicationStates {
+  approved = 'approved',
+  pending = 'pending',
+  rejected = 'rejected',
+}
+
 export const ParticipantsStep: FC<{
   eventId: number
   onlyApplications?: boolean
@@ -25,7 +31,7 @@ export const ParticipantsStep: FC<{
   const approvedApplicationsMap: { [s: string]: string } | undefined =
     applicationsData &&
     applicationsData.results
-      .filter(app => app.state === ('approved' as const))
+      .filter(app => app.state === ApplicationStates.approved)
       .reduce<{ [appId: string]: string }>((appsMap, app) => {
         if (app.user) appsMap[app.id.toString()] = app.user
         return appsMap

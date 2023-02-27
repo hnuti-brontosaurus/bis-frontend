@@ -25,6 +25,7 @@ import {
   usePersistForm,
 } from 'hooks/persistForm'
 import { isNil, merge, mergeWith, omit, omitBy, pick } from 'lodash'
+import { ApplicationStates } from 'org/components/EventForm/steps/ParticipantsStep'
 import { FormEventHandler, MouseEventHandler, useEffect } from 'react'
 import {
   Controller,
@@ -102,7 +103,7 @@ const form2payload = (data: RegistrationFormShape): EventApplicationPayload => {
       answers,
       address: null,
       close_person: data.isChild ? data.close_person : null,
-      state: 'pending' as const,
+      state: ApplicationStates.pending,
     },
     withOverwriteArray,
   )
