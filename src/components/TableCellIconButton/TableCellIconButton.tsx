@@ -33,6 +33,7 @@ export const TableCellIconButton: FC<
 
   function handleIconClick(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
     e.stopPropagation()
+    e.preventDefault()
     if (action) {
       action()
     }
@@ -55,11 +56,11 @@ export const TableCellIconButton: FC<
           onClick={handleIconClick}
           type="button"
         >
-          <Icon className={styles.iconHead} style={{ color }} />
           <span
             className={styles.circle}
             style={{ backgroundColor: glowColor }}
           ></span>
+          <Icon className={styles.iconHead} style={{ color }} />
         </button>
         {children}
       </Tooltip>
