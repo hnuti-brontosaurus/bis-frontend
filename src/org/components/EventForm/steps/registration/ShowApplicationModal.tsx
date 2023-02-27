@@ -16,20 +16,11 @@ interface IShowApplicationModalProps {
   currentApplication?: EventApplication
   eventName: string
   eventId: number
-  // setCurrentApplicationId?: (v: number) => void
-  // setShowAddParticipantModal?: (v: boolean) => void
-  // deleteEventApplication?: ({
-  //   applicationId,
-  //   eventId,
-  // }: {
-  //   applicationId: number
-  //   eventId: number
-  // }) => void
   userId?: string
   categories: MembershipCategory[]
   administrationUnits: AdministrationUnit[]
   currentParticipant?: User
-  savedParticipants?: { [s: string]: string }
+  savedParticipants?: { [s: string]: string[] }
 }
 
 // TODO: This modal is still WIP (no need to review atm)
@@ -52,10 +43,11 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
     api.endpoints.readEventApplication.useQuery(
       currentParticipant &&
         savedParticipants &&
-        savedParticipants[currentParticipant.id]
+        savedParticipants[currentParticipant.id].length > 0
         ? {
             eventId,
-            applicationId: Number(savedParticipants[currentParticipant.id]),
+            //TODO: add here showing an array of applications
+            applicationId: Number(savedParticipants[currentParticipant.id][0]),
           }
         : skipToken,
     )

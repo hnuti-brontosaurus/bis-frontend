@@ -26,7 +26,7 @@ export const Participants: FC<{
   eventName: string
   chooseHighlightedParticipant: (id: string | undefined) => void
   highlightedParticipant?: string
-  savedParticipants?: { [s: string]: string }
+  savedParticipants?: { [s: string]: string[] }
 }> = ({
   eventId,
   eventName,
@@ -88,6 +88,8 @@ export const Participants: FC<{
     setLastAddedId(newParticipantId)
     setTimeOfLastAddition(Date.now())
   }
+
+  const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
 
   /**
    * Handle adding a new participant and updating a participant
@@ -170,6 +172,20 @@ export const Participants: FC<{
           },
         },
       }).unwrap()
+
+      // make applications assigned to this user 'pending'
+      if (savedParticipants && removeModalData) {
+        for (let i of savedParticipants[removeModalData.id]) {
+          await updateApplication({
+            id: Number(i),
+            eventId: eventId,
+            patchedEventApplication: {
+              state: 'pending',
+              user: null,
+            },
+          })
+        }
+      }
 
       showMessage({
         type: 'success',

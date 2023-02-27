@@ -21,12 +21,12 @@ export const Applications: FC<{
   eventId: number
   eventName: string
   chooseHighlightedApplication: (id: string | undefined) => void
-  highlightedApplication?: string
+  highlightedApplications?: string[]
   withParticipants?: boolean
 }> = ({
   eventId,
   eventName,
-  highlightedApplication,
+  highlightedApplications,
   chooseHighlightedApplication,
   withParticipants,
 }) => {
@@ -41,8 +41,7 @@ export const Applications: FC<{
 
   const [rejectApplication] = useRejectApplication()
 
-  const [updateApplication, states] =
-    api.endpoints.updateEventApplication.useMutation()
+  const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
 
   const restoreApplication = async (
     application: EventApplication,
@@ -113,7 +112,7 @@ export const Applications: FC<{
     <tr
       key={application.id}
       className={classnames(
-        highlightedApplication === application.id.toString() &&
+        highlightedApplications?.includes(application.id.toString()) &&
           styles.highlightedRow,
         application.state === ('rejected' as const) &&
           styles.applicationWithParticipant,
