@@ -10,7 +10,7 @@ import {
   InlineSection,
   Label,
   Loading,
-  StyledModal
+  StyledModal,
 } from 'components'
 import stylesTable from 'components/Table.module.scss'
 import dayjs from 'dayjs'
