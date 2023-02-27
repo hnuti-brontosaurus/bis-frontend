@@ -220,6 +220,7 @@ describe('create event', () => {
         display_name: 'Found User',
         birthday: '2000-01-01',
         qualifications: [],
+        memberships: [{ year: 2123 }],
       },
     )
     cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()
@@ -721,6 +722,13 @@ const fillForm = () => {
       display_name: 'Found User',
       birthday: '2000-01-01',
       qualifications: [],
+      memberships: [
+        { year: 2020 },
+        { year: 2021 },
+        { year: 2022 },
+        { year: 2023 },
+        { year: 2123 },
+      ],
     },
   )
   cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()
