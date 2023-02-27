@@ -39,20 +39,17 @@ import * as yup from 'yup'
  * https://docs.google.com/document/d/1hXfz0NhBL8XrUOEJR5VmuoDOwNADxEo3j5gA5knE1GE/edit?usp=drivesdk
  */
 
-const pronouns: { [slug: string]: string } = {
-  woman: 'Ona/ji',
-  man: 'On/jeho',
-  other: 'Jiné',
-}
-
-export type UserFormShape = Omit<Optional<UserPayload, 'sex'>, 'all_emails'> & {
+export type UserFormShape = Omit<
+  Optional<UserPayload, 'pronoun'>,
+  'all_emails'
+> & {
   isChild?: boolean
 }
 
 // transform user data to initial form data
 const data2form = (user: User): UserFormShape => {
-  return merge({}, omit(user, 'sex', 'address', 'contact_address'), {
-    sex: user.sex?.id ?? 0,
+  return merge({}, omit(user, 'pronoun', 'address', 'contact_address'), {
+    pronoun: user.pronoun?.id ?? 0,
     address: omit(user.address, 'region'),
     contact_address: omit(user.contact_address, 'region'),
     close_person: user.close_person ?? {
@@ -92,21 +89,21 @@ const form2payload = (
     { eyca_card: null },
     omit(
       data,
-      'sex',
+      'pronoun',
       'contact_address',
       'health_insurance_company',
       'close_person',
       'isChild',
     ),
     {
-      sex: Number(data.sex) || null,
+      pronoun: Number(data.pronoun) || null,
       contact_address,
       health_insurance_company: Number(data.health_insurance_company) || null,
       close_person,
     },
   )
 
-  if (!isSelf) delete finalData.sex
+  if (!isSelf) delete finalData.pronoun
 
   return finalData
 }
@@ -146,7 +143,7 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
   birth_name: yup.string(),
   nickname: yup.string(),
   birthday: birthdayValidation.required(),
-  sex: yup.number(), // this is optional - none is 0
+  pronoun: yup.number(), // this is optional - none is 0
   health_insurance_company: yup.number().required(), // this is optional - none is 0
   health_issues: yup.string(),
   email: yup.string().email(),
@@ -224,7 +221,7 @@ export const UserForm = ({
   const showMessage = useShowMessage()
 
   // fetch data for form
-  const { data: sexes } = api.endpoints.readSexes.useQuery({})
+  const { data: pronouns } = api.endpoints.readPronouns.useQuery({})
   const { data: healthInsuranceCompanies } =
     api.endpoints.readHealthInsuranceCompanies.useQuery({ pageSize: 1000 })
 
@@ -302,7 +299,7 @@ export const UserForm = ({
 
   const [isSaving, setIsSaving] = useState(false)
 
-  if (!(sexes && healthInsuranceCompanies))
+  if (!(pronouns && healthInsuranceCompanies))
     return <Loading>Připravujeme formulář</Loading>
 
   const isChild = watch('isChild')
@@ -356,11 +353,11 @@ export const UserForm = ({
               <InlineSection>
                 <Label>Oslovení</Label>
                 <FormInputError>
-                  <select {...register('sex')}>
-                    <option value={0}>Neuvedeno</option>
-                    {sexes.results.map(sex => (
-                      <option key={sex.slug} value={sex.id}>
-                        {pronouns[sex.slug] ?? sex.name}
+                  <select {...register('pronoun')}>
+                    <option value={0}>&ndash;&ndash;&ndash;</option>
+                    {pronouns.results.map(pronoun => (
+                      <option key={pronoun.slug} value={pronoun.id}>
+                        {pronoun.name}
                       </option>
                     ))}
                   </select>

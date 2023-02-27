@@ -337,6 +337,27 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/api/categories/organizer_role_categories/${queryArg.id}/`,
       }),
     }),
+    categoriesPronounCategoriesList: build.query<
+      CategoriesPronounCategoriesListApiResponse,
+      CategoriesPronounCategoriesListApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/categories/pronoun_categories/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    categoriesPronounCategoriesRetrieve: build.query<
+      CategoriesPronounCategoriesRetrieveApiResponse,
+      CategoriesPronounCategoriesRetrieveApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/categories/pronoun_categories/${queryArg.id}/`,
+      }),
+    }),
     categoriesQualificationCategoriesList: build.query<
       CategoriesQualificationCategoriesListApiResponse,
       CategoriesQualificationCategoriesListApiArg
@@ -396,27 +417,6 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: queryArg => ({
         url: `/api/categories/role_categories/${queryArg.id}/`,
-      }),
-    }),
-    categoriesSexCategoriesList: build.query<
-      CategoriesSexCategoriesListApiResponse,
-      CategoriesSexCategoriesListApiArg
-    >({
-      query: queryArg => ({
-        url: `/api/categories/sex_categories/`,
-        params: {
-          page: queryArg.page,
-          page_size: queryArg.pageSize,
-          search: queryArg.search,
-        },
-      }),
-    }),
-    categoriesSexCategoriesRetrieve: build.query<
-      CategoriesSexCategoriesRetrieveApiResponse,
-      CategoriesSexCategoriesRetrieveApiArg
-    >({
-      query: queryArg => ({
-        url: `/api/categories/sex_categories/${queryArg.id}/`,
       }),
     }),
     categoriesTeamRoleCategoriesList: build.query<
@@ -1537,6 +1537,22 @@ export type CategoriesOrganizerRoleCategoriesRetrieveApiArg = {
   /** A unique integer value identifying this Organizátorská role. */
   id: number
 }
+export type CategoriesPronounCategoriesListApiResponse =
+  /** status 200  */ PaginatedPronounCategoryList
+export type CategoriesPronounCategoriesListApiArg = {
+  /** A page number within the paginated result set. */
+  page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
+}
+export type CategoriesPronounCategoriesRetrieveApiResponse =
+  /** status 200  */ PronounCategory
+export type CategoriesPronounCategoriesRetrieveApiArg = {
+  /** A unique integer value identifying this Oslovení. */
+  id: number
+}
 export type CategoriesQualificationCategoriesListApiResponse =
   /** status 200  */ PaginatedQualificationCategoryList
 export type CategoriesQualificationCategoriesListApiArg = {
@@ -1582,22 +1598,6 @@ export type CategoriesRoleCategoriesRetrieveApiResponse =
   /** status 200  */ RoleCategory
 export type CategoriesRoleCategoriesRetrieveApiArg = {
   /** A unique integer value identifying this Typ role. */
-  id: number
-}
-export type CategoriesSexCategoriesListApiResponse =
-  /** status 200  */ PaginatedSexCategoryList
-export type CategoriesSexCategoriesListApiArg = {
-  /** A page number within the paginated result set. */
-  page?: number
-  /** Number of results to return per page. */
-  pageSize?: number
-  /** A search term. */
-  search?: string
-}
-export type CategoriesSexCategoriesRetrieveApiResponse =
-  /** status 200  */ SexCategory
-export type CategoriesSexCategoriesRetrieveApiArg = {
-  /** A unique integer value identifying this Pohlaví. */
   id: number
 }
 export type CategoriesTeamRoleCategoriesListApiResponse =
@@ -2316,6 +2316,7 @@ export type WebEventsListApiArg = {
     | 88
     | 89
     | 9
+    | 90
   )[]
   /** Více hodnot lze oddělit čárkami. */
   category?: (
@@ -2567,11 +2568,23 @@ export type PaginatedOrganizerRoleCategoryList = {
   previous?: string | null
   results?: OrganizerRoleCategory[]
 }
+export type PronounCategory = {
+  id: number
+  name: string
+  slug: string
+}
+export type PaginatedPronounCategoryList = {
+  count?: number
+  next?: string | null
+  previous?: string | null
+  results?: PronounCategory[]
+}
 export type QualificationCategory = {
   id: number
   name: string
   slug: string
   parents: number[]
+  can_approve: number[]
 }
 export type PaginatedQualificationCategoryList = {
   count?: number
@@ -2599,17 +2612,6 @@ export type PaginatedRoleCategoryList = {
   next?: string | null
   previous?: string | null
   results?: RoleCategory[]
-}
-export type SexCategory = {
-  id: number
-  name: string
-  slug: string
-}
-export type PaginatedSexCategoryList = {
-  count?: number
-  next?: string | null
-  previous?: string | null
-  results?: SexCategory[]
 }
 export type TeamRoleCategory = {
   id: number
@@ -2839,7 +2841,7 @@ export type User = {
   subscribed_to_newsletter?: boolean
   health_insurance_company: HealthInsuranceCompany
   health_issues?: string
-  sex: SexCategory
+  pronoun: PronounCategory
   is_active: boolean
   date_joined: string
   roles: RoleCategory[]
@@ -2927,7 +2929,7 @@ export type EventApplication = {
   email?: string | null
   birthday?: string | null
   health_issues?: string
-  sex: SexCategory
+  pronoun: PronounCategory
   created_at: string
   close_person: EventApplicationClosePerson | null
   address: EventApplicationAddress | null
@@ -2951,7 +2953,7 @@ export type PatchedEventApplication = {
   email?: string | null
   birthday?: string | null
   health_issues?: string
-  sex?: number | null
+  pronoun?: number | null
   created_at?: string
   close_person?: EventApplicationClosePerson | null
   address?: EventApplicationAddress | null
@@ -3098,7 +3100,7 @@ export type PatchedUser = {
   subscribed_to_newsletter?: boolean
   health_insurance_company?: number | null
   health_issues?: string
-  sex?: number | null
+  pronoun?: number | null
   is_active?: boolean
   date_joined?: string
   roles?: number[]
@@ -3218,14 +3220,14 @@ export const {
   useCategoriesOpportunityCategoriesRetrieveQuery,
   useCategoriesOrganizerRoleCategoriesListQuery,
   useCategoriesOrganizerRoleCategoriesRetrieveQuery,
+  useCategoriesPronounCategoriesListQuery,
+  useCategoriesPronounCategoriesRetrieveQuery,
   useCategoriesQualificationCategoriesListQuery,
   useCategoriesQualificationCategoriesRetrieveQuery,
   useCategoriesRegionsListQuery,
   useCategoriesRegionsRetrieveQuery,
   useCategoriesRoleCategoriesListQuery,
   useCategoriesRoleCategoriesRetrieveQuery,
-  useCategoriesSexCategoriesListQuery,
-  useCategoriesSexCategoriesRetrieveQuery,
   useCategoriesTeamRoleCategoriesListQuery,
   useCategoriesTeamRoleCategoriesRetrieveQuery,
   useFrontendDashboardItemsListQuery,

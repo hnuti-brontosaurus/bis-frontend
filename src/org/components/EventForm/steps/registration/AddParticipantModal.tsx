@@ -151,7 +151,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
 
   useEffect(() => {
     reset({
-      // TODO: fix sex type
+      // TODO: fix pronoun type
       ...(defaultUserData as unknown as Partial<UserPayload>),
       birthday: defaultUserData.birthday || undefined,
     })
@@ -439,7 +439,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                   setCreatingANewUser(false)
                                   setSelectedUser(result)
                                   reset(
-                                    // TODO: fix sex type
+                                    // TODO: fix pronoun type
                                     selectedUser as unknown as UserPayload,
                                   )
                                   setShowAddParticipantForm(true)
@@ -497,10 +497,10 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       <span>{result.birthday}</span>
                                     </div>
                                   )}
-                                  {result.sex?.name && (
+                                  {result.pronoun?.name && (
                                     <div>
-                                      <span>Pohlaví: </span>
-                                      <span>{result.sex.name}</span>
+                                      <span>Oslovení: </span>
+                                      <span>{result.pronoun.name}</span>
                                     </div>
                                   )}
                                   {result.email && (
@@ -651,10 +651,12 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                         </span>
                                       </div>
                                     )}
-                                    {retrievedUser.sex?.name && (
+                                    {retrievedUser.pronoun?.name && (
                                       <div>
-                                        <span>Pohlaví: </span>
-                                        <span>{retrievedUser.sex.name}</span>
+                                        <span>Oslovení: </span>
+                                        <span>
+                                          {retrievedUser.pronoun.name}
+                                        </span>
                                       </div>
                                     )}
                                     {retrievedUser.email && (
@@ -720,7 +722,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               onClick={() => {
                                 setCreatingANewUser(true)
                                 reset({
-                                  // TODO: fix sex issues
+                                  // TODO: fix pronoun issues
                                   ...(defaultUserData as unknown as Partial<UserPayload>),
                                   birthday:
                                     defaultUserData.birthday || undefined,
@@ -867,26 +869,26 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                       />
                                     </InlineSection>
                                     <InlineSection>
-                                      <Label required>Pohlaví:</Label>
+                                      <Label required>Oslovení:</Label>
                                       <Label htmlFor="male">Mužské</Label>
                                       <input
                                         id="male"
                                         type="radio"
-                                        {...register('sex')}
+                                        {...register('pronoun')}
                                         value={1}
                                       />
                                       <Label htmlFor="female">Ženské</Label>
                                       <input
                                         id="female"
                                         type="radio"
-                                        {...register('sex')}
+                                        {...register('pronoun')}
                                         value={2}
                                       />
                                       <Label htmlFor="other">Jiné</Label>
                                       <input
                                         id="other"
                                         type="radio"
-                                        {...register('sex')}
+                                        {...register('pronoun')}
                                         value={0}
                                       />
                                     </InlineSection>

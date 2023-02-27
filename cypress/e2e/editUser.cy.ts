@@ -14,7 +14,10 @@ describe('Edit user', () => {
       cy.visit('/profil/1234/upravit')
 
       cy.get('form').should('contain', 'Oslovení')
-      cy.get('[name=sex]').should('exist').should('have.value', 1).select('2')
+      cy.get('[name=pronoun]')
+        .should('exist')
+        .should('have.value', 1)
+        .select('2')
 
       cy.intercept(
         { method: 'PATCH', pathname: '/api/frontend/users/*/' },
@@ -23,7 +26,7 @@ describe('Edit user', () => {
       cy.get('button').contains('Potvrdit').click()
       cy.wait('@updateUser')
         .its('request.body')
-        .should('have.a.property', 'sex', 2)
+        .should('have.a.property', 'pronoun', 2)
     })
 
     it('should be able to save no pronoun', () => {
@@ -34,7 +37,7 @@ describe('Edit user', () => {
       cy.visit('/profil/1234/upravit')
 
       cy.get('form').should('contain', 'Oslovení')
-      cy.get('[name=sex]').should('exist').should('have.value', 1).select(0)
+      cy.get('[name=pronoun]').should('exist').should('have.value', 1).select(0)
 
       cy.intercept(
         { method: 'PATCH', pathname: '/api/frontend/users/*/' },
@@ -48,7 +51,7 @@ describe('Edit user', () => {
 
       cy.wait('@updateUser')
         .its('request.body')
-        .should('have.a.property', 'sex', null)
+        .should('have.a.property', 'pronoun', null)
     })
   })
 
@@ -62,7 +65,7 @@ describe('Edit user', () => {
 
       cy.get('form').should('not.contain', 'Oslovení')
 
-      cy.get('[name=sex]').should('not.exist')
+      cy.get('[name=pronoun]').should('not.exist')
       cy.intercept(
         { method: 'PATCH', pathname: '/api/frontend/users/*/' },
         { statusCode: 200 },
@@ -70,7 +73,7 @@ describe('Edit user', () => {
       cy.get('button').contains('Potvrdit').click()
       cy.wait('@updateUser')
         .its('request.body')
-        .should('not.have.a.property', 'sex')
+        .should('not.have.a.property', 'pronoun')
     })
 
     // not sure how to test this one
