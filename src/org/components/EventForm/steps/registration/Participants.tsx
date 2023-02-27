@@ -301,12 +301,14 @@ export const Participants: FC<{
                       action={() => handleClickEditParticipant(participant)}
                       tooltipContent="Upravit účastníka"
                       color={colors.yellow}
+                      ariaLabel={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}
                     />
                     <TableCellIconButton
                       icon={Bin}
                       action={() => handleClickRemoveParticipant(participant)}
                       tooltipContent="Smazat účastníka"
                       color={colors.error}
+                      ariaLabel={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
                     />
                   </tr>
                 ))}

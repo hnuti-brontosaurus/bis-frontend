@@ -4,6 +4,8 @@
   display: inline-block;
   cursor: pointer;
   text-align: center;
+  width: 100%;
+  height: 100%;
 
   &:hover {
     .circle {
@@ -31,14 +33,13 @@
   z-index: 0;
 }
 
-
 .disabledCell {
-    pointer-events: none;
-    cursor: not-allowed !important;
-    color: colors.$gray-200;
-    svg {
-      path {
-        fill: colors.$gray-200;
-      }
+  pointer-events: none;
+  cursor: not-allowed !important;
+  color: colors.$gray-200;
+  svg {
+    path {
+      fill: colors.$gray-200;
     }
   }
+}

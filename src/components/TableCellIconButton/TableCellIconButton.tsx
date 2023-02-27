@@ -12,6 +12,7 @@ interface CustomTableColumnProps {
   glowColor?: string
   tooltipContent?: ReactNode
   disabled?: boolean
+  ariaLabel?: string
 }
 
 export const TableCellIconButton: FC<
@@ -26,12 +27,13 @@ export const TableCellIconButton: FC<
     children,
     tooltipContent,
     disabled,
+    ariaLabel,
     ...rest
   } = props
 
   function handleIconClick(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
     e.stopPropagation()
-    if (typeof action === 'function') {
+    if (action) {
       action()
     }
   }
@@ -47,13 +49,17 @@ export const TableCellIconButton: FC<
         tagName="span"
         hoverDelay={tooltipContent ? 500 : 100000000}
       >
-        <span className={styles.binIconContainer} onClick={handleIconClick}>
+        <button
+          aria-label={ariaLabel}
+          className={styles.binIconContainer}
+          onClick={handleIconClick}
+        >
           <Icon className={styles.iconHead} style={{ color }} />
           <span
             className={styles.circle}
             style={{ backgroundColor: glowColor }}
           ></span>
-        </span>
+        </button>
         {children}
       </Tooltip>
     </td>
