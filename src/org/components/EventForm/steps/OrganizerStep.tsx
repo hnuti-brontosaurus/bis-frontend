@@ -43,6 +43,7 @@ export const OrganizerStep = ({
     intended_for?: EventIntendedForCategory
     group?: EventGroupCategory
     category?: EventCategory
+    start?: string
   }
   isNotOnWeb: boolean
 }) => {
@@ -176,8 +177,9 @@ export const OrganizerStep = ({
                     ))}
                     kvalifikaci nadřazenou
                   </>
-                )}{' '}
-                a musí mít minimálně 18 let.
+                )}
+                , musí mít minimálně 18 let a aktivní členství v roce konání
+                akce.
               </InfoBox>
               <FormInputError>
                 <Controller

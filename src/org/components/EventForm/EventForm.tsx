@@ -457,6 +457,7 @@ export const EventForm: FC<{
     category: categories.results.find(
       c => c.id === +methods.basicInfo.watch('category'),
     ),
+    start: methods.basicInfo.watch('start'),
   }
 
   const isNotOnWeb =
