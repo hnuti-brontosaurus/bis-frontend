@@ -13,7 +13,7 @@
   "close_person": null,
   "health_insurance_company": null,
   "health_issues": "",
-  "sex": null,
+  "pronoun": null,
   "is_active": true,
   "date_joined": "2023-01-04",
   "roles": [],

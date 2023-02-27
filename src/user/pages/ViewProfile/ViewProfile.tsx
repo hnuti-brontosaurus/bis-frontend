@@ -84,8 +84,8 @@ export const ViewProfile = () => {
                 <td>{user.nickname}</td>
               </tr>
               <tr>
-                <th>Pohlaví</th>
-                <td>{user.sex?.name}</td>
+                <th>Oslovení</th>
+                <td>{user.pronoun?.name}</td>
               </tr>
               <tr>
                 <th>Datum narození</th>

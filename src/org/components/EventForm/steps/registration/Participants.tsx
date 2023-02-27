@@ -324,7 +324,7 @@ export const Participants: FC<{
               </tbody>
             </table>
           )}
-          {participants?.results.length == 0 && (
+          {participants?.results.length === 0 && (
             <EmptyListPlaceholder label="Zatím nebyli přidáni žádní účastníci." />
           )}
         </div>

@@ -25,13 +25,13 @@ export type Model = Readonly<
 const generate = async () => {
   const yamlModelTranslations = await (
     await fetch(
-      'https://raw.githubusercontent.com/lamanchy/bis/master/backend/translation/model_translations.yaml',
+      'https://raw.githubusercontent.com/hnuti-brontosaurus/bis/master/backend/translation/model_translations.yaml',
     )
   ).text()
 
   const yamlStringTranslations = await (
     await fetch(
-      'https://raw.githubusercontent.com/lamanchy/bis/master/backend/translation/string_translations.yaml',
+      'https://raw.githubusercontent.com/hnuti-brontosaurus/bis/master/backend/translation/string_translations.yaml',
     )
   ).text()
 

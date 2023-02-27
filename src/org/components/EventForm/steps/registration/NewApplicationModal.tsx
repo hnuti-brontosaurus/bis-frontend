@@ -3,7 +3,7 @@ import { api } from 'app/services/bis'
 import {
   AnswerPayload,
   EventApplication,
-  Question
+  Question,
 } from 'app/services/bisTypes'
 import {
   BirthdayInput,
@@ -13,7 +13,7 @@ import {
   FullSizeElement,
   InlineSection,
   Label,
-  StyledModal
+  StyledModal,
 } from 'components'
 import { FC, FormEventHandler } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'

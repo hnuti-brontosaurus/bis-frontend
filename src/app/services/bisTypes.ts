@@ -21,6 +21,7 @@ export type {
   MembershipCategory,
   PatchedEvent,
   PatchedEventApplication,
+  PronounCategory,
   Propagation,
   Qualification,
   QualificationCategory,
@@ -29,7 +30,6 @@ export type {
   Record,
   Region,
   Registration,
-  SexCategory,
   TokenResponse,
   User,
   UserAddress as Address,
@@ -140,7 +140,7 @@ type UserPayloadFields =
   | 'last_name' // required
   | 'birth_name'
   | 'nickname'
-  | 'sex'
+  | 'pronoun'
   | 'birthday' // required
   | 'email'
   | 'phone'
@@ -155,10 +155,9 @@ type UserPayloadFields =
 export type UserPayload = Overwrite<
   Pick<original.User, UserPayloadFields>,
   {
-    sex: number | null
+    pronoun: number | null
     address: AddressPayload
     contact_address: AddressPayload | null
     health_insurance_company: number | null
   }
 >
-

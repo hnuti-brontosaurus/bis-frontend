@@ -99,10 +99,10 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
               <span>{currentApplication.birthday}</span>
             </div>
           )}
-          {currentApplication.sex?.name && (
+          {currentApplication.pronoun?.name && (
             <div>
-              <span>Pohlaví: </span>
-              <span>{currentApplication.sex.name}</span>
+              <span>Oslovení: </span>
+              <span>{currentApplication.pronoun.name}</span>
             </div>
           )}
           {currentApplication.email && (
@@ -176,10 +176,10 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
               <span>{user.birthday}</span>
             </div>
           )}
-          {user.sex?.name && (
+          {user.pronoun?.name && (
             <div>
-              <span>Pohlaví: </span>
-              <span>{user.sex.name}</span>
+              <span>Oslovení: </span>
+              <span>{user.pronoun.name}</span>
             </div>
           )}
 

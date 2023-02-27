@@ -53,13 +53,14 @@ export const locationPatron = {
 export const user = {
   _name: 'Uživatel',
   _name_plural: 'Uživatel',
+  vokativ: 'Vokativ',
   email_exists: 'Je e-mail skutečný?',
   is_active: 'Může se uživatel přihlásit?',
   date_joined: 'Datum vzniku účtu',
   close_person: 'Rodič / blízká osoba',
   health_insurance_company: 'Pojišťovna',
   roles: 'Role',
-  internal_note: 'Poznámka kanclu',
+  internal_note: 'Poznámka ústředí',
   subscribed_to_newsletter: 'Odebírá novinky?',
 } as const
 
@@ -152,7 +153,7 @@ export const brontosaurusMovement = {
   finance_director: ['Finanční ředitel', 'Má veškerá oprávnění'],
   bis_administrators: ['Správci BISu', 'Mají veškeré oprávnění'],
   office_workers: [
-    'Pracovníci kanceláře',
+    'Pracovníci ústředí',
     'Mohou měnit vše kromě základních oprávnění',
   ],
   audit_committee: [
@@ -400,6 +401,7 @@ export const qualificationCategory = {
   _name: 'Typ kvalifikace',
   _name_plural: 'Typ kvalifikace',
   parents: 'Nadřazené kvalifikace',
+  can_approve: 'Schvaluje kvalifikace',
 } as const
 
 export const administrationUnitCategory = {
@@ -467,9 +469,9 @@ export const healthInsuranceCompany = {
   _name_plural: 'Zdravotní pojišťovna',
 } as const
 
-export const sexCategory = {
-  _name: 'Pohlaví',
-  _name_plural: 'Pohlaví',
+export const pronounCategory = {
+  _name: 'Oslovení',
+  _name_plural: 'Oslovení',
 } as const
 
 export const donor = {
@@ -585,6 +587,176 @@ export const dashboardItem = {
   repeats_every_year: 'Opakuje se každý rok?',
 } as const
 
+export const game = {
+  _name: 'Program',
+  _name_plural: 'Program',
+  is_hidden: [
+    'Je program skrytý?',
+    'Editor může program skrýt (autorské práva, nekorektní text, atd.)',
+  ],
+  created_at: 'Vytvořen',
+  contributor: ['Přispěvatel', 'Kdo zadal program do sborníku?'],
+  is_original: [
+    'Autorský program?',
+    'Jsi autorem tohoto programu — vytvořil si ho? Pokud ne, vyplň původ programu níže.',
+  ],
+  origin: [
+    'Původ programu',
+    'Kdo je autorem programu, odkud byl program převzat?',
+  ],
+  administration_unit: [
+    'Zákldní článek (RC/klub)',
+    'Chceš program přiřadit pod určitý článek? Dej mu kredit!',
+  ],
+  thumbs_up: 'Dali palec nahoru',
+  favourites: 'Oblíbili si',
+  watchers: 'Sledují',
+  stars: ['Počet hvězd', 'Interní hodnocení pro editory'],
+  is_verified: [
+    'Je program ověřen?',
+    'Editor může program ověřit, záruka brontosauří kvality',
+  ],
+  tags: [
+    'Tagy',
+    'Pokud ti nějaký tag chybí, napiš mi na sbornik@brontosaurus.cz, díky!',
+  ],
+  physical_category: 'Fyzická náročnost',
+  physical_note: ['Poznámky', 'Specifické poznámky k fyzické náročnosti'],
+  mental_category: 'Psychická náročnost',
+  mental_note: ['Poznámky', 'Specifické poznámky k psychické náročnosti'],
+  location_category: [
+    'Místa uvedení',
+    'Typová místa, na kterých lze / dává smysl program uvést',
+  ],
+  location_note: ['Poznámky', 'Specifické poznámky k místu uvedení'],
+  participant_number_category: 'Vhodný počet účastníků',
+  participant_number_note: [
+    'Poznámky',
+    'Specifické poznámky k počtu účastníků',
+  ],
+  participant_age_category: 'Vhodný věk účastníků',
+  participant_age_note: ['Poznámky', 'Specifické poznámky k věku účastníků'],
+  game_length_category: 'Délka programu',
+  game_length_note: ['Poznámky', 'Specifické poznámky k délce programu'],
+  preparation_length_category: 'Délka přípravy',
+  preparation_length_note: [
+    'Poznámky',
+    'Specifické poznámky k délce / náročnosti přípravy programu',
+  ],
+  material_requirement_category: 'Množství materiálu',
+  material_requirement_note: [
+    'Poznámky',
+    'Specifické poznámky k množství materiálu',
+  ],
+  organizers_number_category: 'Počet orgů pro uvedení',
+  organizers_number_note: [
+    'Poznámky',
+    'Specifické poznámky k počtu orgů pro uvedení programu',
+  ],
+  short_description: ['Krátké představení', 'Maximálně 250 znaků'],
+  goal: 'Cíle programu',
+  description: ['Pravidla', 'Popis a pravidla programu'],
+  motivation: [
+    'Motivace',
+    'Tipy na vtáhnutí účastníků do hry (scénkou, hudbou, aktivitkou)',
+  ],
+  material: [
+    'Soupis materiálu',
+    'Co je potřeba k uvedení hry, soubory pro tisk lze přiložit níže',
+  ],
+  notes: [
+    'Metodické poznámky',
+    'Tipy a triky pro uvedení, otázky na reflexi, atd.',
+  ],
+} as const
+
+export const baseFile = {
+  _name: 'Soubor',
+  _name_plural: 'Soubor',
+  file: 'Soubor',
+} as const
+
+export const gameFile = { _name: 'Soubor', _name_plural: 'Soubor' } as const
+
+export const comment = {
+  _name: 'Komentář',
+  _name_plural: 'Komentář',
+  author: 'Autor',
+  is_hidden: 'Je skrytý?',
+} as const
+
+export const commentFile = { _name: 'Soubor', _name_plural: 'Soubor' } as const
+
+export const playedAt = {
+  _name: 'Uvedení programu',
+  _name_plural: 'Uvedení programu',
+} as const
+
+export const playedAtFile = {
+  _name: 'Soubor',
+  _name_plural: 'Soubor',
+  played_at: 'Uvedení programu',
+} as const
+
+export const gameList = {
+  _name: 'Seznam programů',
+  _name_plural: 'Seznam programů',
+  games: 'Programy',
+  owner: 'Autor seznamu',
+} as const
+
+export const tag = { _name: 'Tag', _name_plural: 'Tag' } as const
+
+export const baseCategory = {
+  _name: 'Kategorie',
+  _name_plural: 'Kategorie',
+} as const
+
+export const physicalCategory = {
+  _name: 'Kategorie fyzické náročnosti',
+  _name_plural: 'Kategorie fyzické náročnosti',
+} as const
+
+export const mentalCategory = {
+  _name: 'Kategorie psychické náročnosti',
+  _name_plural: 'Kategorie psychické náročnosti',
+} as const
+
+export const locationCategory = {
+  _name: 'Kategorie místa uvedení',
+  _name_plural: 'Kategorie místa uvedení',
+} as const
+
+export const participantNumberCategory = {
+  _name: 'Kategorie početu účastníků',
+  _name_plural: 'Kategorie početu účastníků',
+} as const
+
+export const participantAgeCategory = {
+  _name: 'Kategorie věku účastníků',
+  _name_plural: 'Kategorie věku účastníků',
+} as const
+
+export const gameLengthCategory = {
+  _name: 'Kategorie délky programu',
+  _name_plural: 'Kategorie délky programu',
+} as const
+
+export const preparationLengthCategory = {
+  _name: 'Kategorie délky přípravy',
+  _name_plural: 'Kategorie délky přípravy',
+} as const
+
+export const materialRequirementCategory = {
+  _name: 'Kategorie množství materiálu',
+  _name_plural: 'Kategorie množství materiálu',
+} as const
+
+export const organizersNumberCategory = {
+  _name: 'Kategorie početu orgů pro uvedení',
+  _name_plural: 'Kategorie početu orgů pro uvedení',
+} as const
+
 export const generic = {
   user: 'Uživatel',
   email: 'E-mail',
@@ -604,7 +776,7 @@ export const generic = {
   phone: 'Tel. číslo',
   birthday: 'Datum narození',
   order: 'Pořadí',
-  sex: 'Pohlaví',
+  pronoun: 'Oslovení',
   event: 'Akce',
   image: 'Obrázek',
   health_issues: 'Alergie a zdravotní omezení',
@@ -613,11 +785,15 @@ export const generic = {
   date: 'Datum',
   place: 'Místo',
   note: 'Poznámka',
+  game: 'Program',
+  file: 'Soubor',
+  comment: 'Komentář',
+  emoji: 'Smajlík',
 } as const
 
 export const admin = {
   header: 'BIS - Brontosauří informační systém',
-  subheader: 'Administrátorský přístup pro organizační jednotky a kancleář',
+  subheader: 'Administrátorský přístup pro organizační jednotky a ústředí',
 } as const
 
 export const login = {

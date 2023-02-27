@@ -49,12 +49,12 @@ import type {
   OpportunityPayload,
   PaginatedList,
   PatchedEventApplication,
+  PronounCategory,
   QualificationCategory,
   Question,
   Questionnaire,
   Region,
   Registration,
-  SexCategory,
   TokenResponse,
   User,
   UserPayload,
@@ -277,9 +277,9 @@ export const api = createApi({
         },
       }),
     }),
-    readSexes: build.query<PaginatedList<SexCategory>, ListArguments>({
+    readPronouns: build.query<PaginatedList<PronounCategory>, ListArguments>({
       query: queryArg => ({
-        url: `categories/sex_categories/`,
+        url: `categories/pronoun_categories/`,
         params: {
           page: queryArg.page,
           page_size: queryArg.pageSize,
