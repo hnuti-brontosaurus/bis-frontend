@@ -175,7 +175,11 @@ export const Participants: FC<{
       }).unwrap()
 
       // make applications assigned to this user 'pending'
-      if (savedParticipants && removeModalData) {
+      if (
+        savedParticipants &&
+        removeModalData &&
+        savedParticipants[removeModalData.id]
+      ) {
         for (let i of savedParticipants[removeModalData.id]) {
           await updateApplication({
             id: Number(i),
