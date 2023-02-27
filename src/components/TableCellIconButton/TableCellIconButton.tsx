@@ -53,6 +53,7 @@ export const TableCellIconButton: FC<
           aria-label={ariaLabel}
           className={styles.binIconContainer}
           onClick={handleIconClick}
+          type="button"
         >
           <Icon className={styles.iconHead} style={{ color }} />
           <span
