@@ -3,7 +3,7 @@ import { api } from 'app/services/bis'
 import {
   AnswerPayload,
   EventApplication,
-  Question,
+  Question
 } from 'app/services/bisTypes'
 import {
   BirthdayInput,
@@ -13,12 +13,13 @@ import {
   FullSizeElement,
   InlineSection,
   Label,
-  StyledModal,
+  StyledModal
 } from 'components'
 import { FC, FormEventHandler } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
+import { ApplicationStates } from '../ParticipantsStep'
 import styles from './NewApplicationModal.module.scss'
 
 interface INewApplicationModalProps {
@@ -101,7 +102,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
         answers: filteredAnswers,
         address: null,
         close_person: closePersonData,
-        state: 'pending' as const,
+        state: ApplicationStates.pending,
       },
       eventId,
     }

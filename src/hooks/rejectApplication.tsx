@@ -2,6 +2,7 @@ import { api } from 'app/services/bis'
 import { Actions, Button } from 'components'
 import modalStyles from 'components/StyledModal/StyledModal.module.scss'
 import { useShowApiErrorMessage } from 'features/systemMessage/useSystemMessage'
+import { ApplicationStates } from 'org/components/EventForm/steps/ParticipantsStep'
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 
@@ -60,7 +61,7 @@ export const useRejectApplication = () => {
         id: data.application.id,
         eventId: data.event.id,
         patchedEventApplication: {
-          state: 'rejected',
+          state: ApplicationStates.rejected,
         },
       }).unwrap()
       // TODO: commented out because we may not need so much confirmation for applications but TBD

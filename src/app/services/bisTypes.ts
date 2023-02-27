@@ -34,6 +34,7 @@ export type {
   User,
   UserAddress as Address,
   UserSearch,
+  StateEnum,
 } from './testApi'
 
 export type OpportunityCategory = Overwrite<
@@ -160,3 +161,4 @@ export type UserPayload = Overwrite<
     health_insurance_company: number | null
   }
 >
+

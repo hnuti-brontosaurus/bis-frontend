@@ -16,6 +16,7 @@ import {
   FaUserPlus as AddUser,
 } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
+import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { AddParticipantModal } from './AddParticipantModal'
 import { NewApplicationModal } from './NewApplicationModal'
@@ -57,7 +58,7 @@ export const Applications: FC<{
       id: application.id,
       eventId: event.id,
       patchedEventApplication: {
-        state: 'pending',
+        state: ApplicationStates.pending,
       },
     })
   }
@@ -90,15 +91,15 @@ export const Applications: FC<{
   let applications = applicationsData ? applicationsData.results : []
 
   const applicationsPending = applications.filter(
-    app => app.state === 'pending',
+    app => app.state === ApplicationStates.pending,
   )
 
   const applicationsAccepted = applications.filter(
-    app => app.state === 'approved',
+    app => app.state === ApplicationStates.approved,
   )
 
   const applicationsRejected = applications.filter(
-    app => app.state === 'rejected',
+    app => app.state === ApplicationStates.rejected,
   )
 
   const handleShowApplication = (id: number) => {
@@ -120,11 +121,11 @@ export const Applications: FC<{
       className={classnames(
         highlightedApplications?.includes(application.id.toString()) &&
           styles.highlightedRow,
-        application.state === ('rejected' as const) &&
+        application.state === ApplicationStates.rejected &&
           styles.applicationWithParticipant,
         className,
         highLightedRow === application.id ? styles.highlightedRow : '',
-        application.state === ('approved' as const) && styles.approvedRow,
+        application.state === ApplicationStates.approved && styles.approvedRow,
       )}
       onMouseEnter={() => {
         setHighlightedRow(application.id)
@@ -151,7 +152,7 @@ export const Applications: FC<{
             setCurrentApplicationId(application.id)
             setShowAddParticipantModal(true)
           }}
-          disabled={application.state === 'rejected'}
+          disabled={application.state === ApplicationStates.rejected}
           tooltipContent={'Přidej účastníka'}
           color={colors.bronto}
         />
@@ -159,10 +160,12 @@ export const Applications: FC<{
 
       <TableCellIconButton
         icon={
-          application.state === ('rejected' as const) ? FaTrashRestoreAlt : Bin
+          application.state === ApplicationStates.rejected
+            ? FaTrashRestoreAlt
+            : Bin
         }
         action={async () => {
-          if (application.state === ('rejected' as const)) {
+          if (application.state === ApplicationStates.rejected) {
             restoreApplication(application, { id: eventId, name: eventName })
           } else {
             rejectApplication({
@@ -171,14 +174,14 @@ export const Applications: FC<{
             })
           }
         }}
-        disabled={application.state === ('approved' as const)}
+        disabled={application.state === 'approved'}
         tooltipContent={
-          application.state === ('rejected' as const)
+          application.state === 'rejected'
             ? 'Obnov přihlášku'
             : 'Odmítni přihlášku'
         }
         color={
-          application.state === ('rejected' as const)
+          application.state === ApplicationStates.rejected
             ? colors.bronto
             : colors['error']
         }

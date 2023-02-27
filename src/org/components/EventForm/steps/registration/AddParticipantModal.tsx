@@ -20,6 +20,7 @@ import { FaAt, FaBirthdayCake, FaPhoneAlt } from 'react-icons/fa'
 import Tooltip from 'react-tooltip-lite'
 import colors from 'styles/colors.module.scss'
 import * as yup from 'yup'
+import { ApplicationStates } from '../ParticipantsStep'
 import { BirthdayInputCheck } from './BirthdayInputCheck'
 import styles from './NewApplicationModal.module.scss'
 
@@ -218,7 +219,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
             eventId: eventId,
             patchedEventApplication: {
               user: newParticipant.id,
-              state: 'approved',
+              state: ApplicationStates.approved,
             },
           })
           onClose()
@@ -272,7 +273,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
           eventId: eventId,
           patchedEventApplication: {
             user: retrievedUser.id,
-            state: 'approved',
+            state: ApplicationStates.approved,
           },
         })
         clearModalData()
@@ -469,7 +470,7 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     eventId: eventId,
                                     patchedEventApplication: {
                                       user: result.id,
-                                      state: 'approved',
+                                      state: ApplicationStates.approved,
                                     },
                                   })
                                   onClose()
