@@ -129,9 +129,6 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
     ...(userOptions3 ? userOptions3.results : []),
   ]
 
-  const [createEventApplication, { isLoading: isSavingEventApplication }] =
-    api.endpoints.createEventApplication.useMutation()
-
   const userOptions = Array.from(
     new Map(userOptionsDuplicates.map(item => [item['id'], item])).values(),
   )
@@ -456,7 +453,6 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                               <Button
                                 secondary
                                 isLoading={
-                                  isSavingEventApplication &&
                                   retrievedUser &&
                                   result._search_id === retrievedUser._search_id
                                 }
@@ -578,9 +574,6 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                   setCheckAndAdd={v => {
                                     setCheckAndAdd(v)
                                   }}
-                                  isSavingEventApplication={
-                                    isSavingEventApplication
-                                  }
                                 />
                               </div>
                             </td>

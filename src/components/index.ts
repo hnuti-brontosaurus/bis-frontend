@@ -3,7 +3,13 @@ export {
   birthdayValidation,
 } from './BirthdayInput/BirthdayInput'
 export { Breadcrumbs } from './Breadcrumbs/Breadcrumbs'
-export { Button, ButtonLink, ExternalButtonLink } from './Button/Button'
+export {
+  Button,
+  ButtonLink,
+  EmailButton,
+  ExternalButtonLink,
+  PhoneButton,
+} from './Button/Button'
 export { ButtonSelect } from './ButtonSelect/ButtonSelect'
 export { DataView } from './DataView/DataView'
 export { EmptyListPlaceholder } from './EmptyListPlaceholder/EmptyListPlaceholder'
@@ -60,5 +66,6 @@ export {
 } from './SelectUsers/SelectUsers'
 export { Step, Steps } from './Steps/Steps'
 export { StyledModal } from './StyledModal/StyledModal'
+export { TableCellIconButton } from './TableCellIconButton/TableCellIconButton'
 export { TogglePasswordInput } from './TogglePasswordInput/TogglePasswordInput'
 export { Web } from './Web/Web'

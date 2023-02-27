@@ -2,8 +2,12 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { EventApplication } from 'app/services/bisTypes'
 import classnames from 'classnames'
-import { Button, EmptyListPlaceholder, Loading } from 'components'
-import stylesTable from 'components/Table.module.scss'
+import {
+  Button,
+  EmptyListPlaceholder,
+  Loading,
+  TableCellIconButton,
+} from 'components'
 import { useRejectApplication } from 'hooks/rejectApplication'
 import { FC, useState } from 'react'
 import {
@@ -11,7 +15,7 @@ import {
   FaTrashRestoreAlt,
   FaUserPlus as AddUser,
 } from 'react-icons/fa'
-import Tooltip from 'react-tooltip-lite'
+import colors from 'styles/colors.module.scss'
 import styles from '../ParticipantsStep.module.scss'
 import { AddParticipantModal } from './AddParticipantModal'
 import { NewApplicationModal } from './NewApplicationModal'
@@ -139,26 +143,23 @@ export const Applications: FC<{
         {application.birthday}
       </td>
       {withParticipants && (
-        <td
-          onClick={() => {
+        <TableCellIconButton
+          icon={AddUser}
+          action={() => {
             setCurrentApplicationId(application.id)
             setShowAddParticipantModal(true)
           }}
-          className={classnames(
-            stylesTable.cellWithButton,
-            application.state === ('rejected' as const) &&
-              styles.disabledIconContainer,
-            application.state === 'rejected' ? styles.disabledCell : '',
-          )}
-        >
-          <Tooltip useDefaultStyles content="Přidej účastníka" tagName="span">
-            {' '}
-            <AddUser className={classnames(styles.addUserIconContainer)} />
-          </Tooltip>
-        </td>
+          disabled={application.state === 'rejected'}
+          tooltipContent={'Přidej účastníka'}
+          color={colors.bronto}
+        />
       )}
-      <td
-        onClick={async () => {
+
+      <TableCellIconButton
+        icon={
+          application.state === ('rejected' as const) ? FaTrashRestoreAlt : Bin
+        }
+        action={async () => {
           if (application.state === ('rejected' as const)) {
             restoreApplication(application, { id: eventId, name: eventName })
           } else {
@@ -168,21 +169,18 @@ export const Applications: FC<{
             })
           }
         }}
-        className={classnames(
-          stylesTable.cellWithButton,
-          application.state === ('approved' as const)
-            ? styles.disabledCell
-            : '',
-        )}
-      >
-        <Tooltip useDefaultStyles content={'Odzyskaj přihlášku'} tagName="span">
-          {application.state === ('rejected' as const) ? (
-            <FaTrashRestoreAlt></FaTrashRestoreAlt>
-          ) : (
-            <Bin className={styles.binIconContainer}></Bin>
-          )}
-        </Tooltip>
-      </td>
+        disabled={application.state === ('approved' as const)}
+        tooltipContent={
+          application.state === ('rejected' as const)
+            ? 'Obnov přihlášku'
+            : 'Odmítni přihlášku'
+        }
+        color={
+          application.state === ('rejected' as const)
+            ? colors.bronto
+            : colors['error']
+        }
+      />
     </tr>
   )
 
@@ -218,21 +216,11 @@ export const Applications: FC<{
                   <th>datum narození</th>
                   {withParticipants && (
                     <th>
-                      <AddUser
-                        className={classnames(
-                          styles.addUserIconContainer,
-                          styles.iconHead,
-                        )}
-                      />
+                      <AddUser className={classnames(styles.iconHead)} />
                     </th>
                   )}
                   <th>
-                    <Bin
-                      className={classnames(
-                        styles.binIconContainer,
-                        styles.iconHead,
-                      )}
-                    ></Bin>
+                    <Bin className={classnames(styles.iconHead)}></Bin>
                   </th>
                 </tr>
               </thead>
@@ -260,7 +248,7 @@ export const Applications: FC<{
                   {applicationsRejected.length > 0 && (
                     <tr>
                       <td colSpan={5} className={styles.oneCellRow}>
-                        Rejected
+                        Odmítnuté přihlášky
                       </td>
                     </tr>
                   )}

@@ -1,10 +1,7 @@
 import { api } from 'app/services/bis'
 import { Actions, Button } from 'components'
 import modalStyles from 'components/StyledModal/StyledModal.module.scss'
-import {
-  useShowApiErrorMessage,
-  useShowMessage,
-} from 'features/systemMessage/useSystemMessage'
+import { useShowApiErrorMessage } from 'features/systemMessage/useSystemMessage'
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 
@@ -15,7 +12,7 @@ export const useRejectApplication = () => {
     api.endpoints.updateEventApplication.useMutation()
 
   useShowApiErrorMessage(states.error, 'Nepodařilo se TODO text')
-  const showMessage = useShowMessage()
+  // const showMessage = useShowMessage()
 
   const rejectApplicationWithModal = async (data: {
     event: { id: number; name: string }
@@ -54,9 +51,8 @@ export const useRejectApplication = () => {
             </div>
           </div>
         ),
-        title: `Mažeš TODO text applikace ${data.application.first_name}`,
-        message:
-          'TODO text Všechna data budou navždy ztracena. Chceš pokračovat?',
+        title: `Odmítáš přihlášku ${data.application.first_name} ${data.application.last_name}`,
+        message: `Přihláška bude přesunuta do kategorie Odmítnuté přihlášky. Chceš pokračovat?`,
       })
     })
     if (isConfirmed) {
@@ -67,10 +63,11 @@ export const useRejectApplication = () => {
           state: 'rejected',
         },
       }).unwrap()
-      showMessage({
-        message: 'TODO text Prihlaska byla úspěšně smazána',
-        type: 'success',
-      })
+      // TODO: commented out because we may not need so much confirmation for applications but TBD
+      // <      showMessage({
+      //         message: 'TODO text Prihlaska byla úspěšně smazána',
+      //         type: 'success',
+      //       })>
     }
   }
   return [rejectApplicationWithModal, states] as const

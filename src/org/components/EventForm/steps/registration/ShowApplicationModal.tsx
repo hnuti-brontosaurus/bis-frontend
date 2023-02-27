@@ -6,7 +6,7 @@ import type {
   MembershipCategory,
   User,
 } from 'app/services/bisTypes'
-import { StyledModal } from 'components'
+import { EmailButton, PhoneButton, StyledModal } from 'components'
 import { FC, Fragment } from 'react'
 import styles from '../ParticipantsStep.module.scss'
 
@@ -108,13 +108,17 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
           {currentApplication.email && (
             <div>
               <span>E-mail: </span>
-              <span>{currentApplication.email}</span>
+              <span>
+                <EmailButton>{currentApplication.email}</EmailButton>
+              </span>
             </div>
           )}
           {currentApplication.phone && (
             <div>
               <span>Telefon: </span>
-              <span>{currentApplication.phone}</span>
+              <span>
+                <PhoneButton>{currentApplication.phone}</PhoneButton>
+              </span>
             </div>
           )}
           {currentApplication.health_issues && (
@@ -128,10 +132,20 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
               <span>Blízká osoba: </span>
               <span>{`${currentApplication.close_person.first_name} ${currentApplication.close_person.last_name}`}</span>
               {currentApplication.close_person.email && (
-                <span>{` email: ${currentApplication.close_person.email}`}</span>
+                <>
+                  <span>email: nnnn</span>
+                  <EmailButton>
+                    {currentApplication.close_person.email}
+                  </EmailButton>
+                </>
               )}
               {currentApplication.close_person.phone && (
-                <span>{` tel: ${currentApplication.close_person.phone}`}</span>
+                <>
+                  <span>tel: </span>
+                  <PhoneButton>
+                    {currentApplication.close_person.phone}
+                  </PhoneButton>
+                </>
               )}
             </div>
           )}
@@ -172,13 +186,17 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
           {user.email && (
             <div>
               <span>E-mail: </span>
-              <span>{user.email}</span>
+              <span>
+                <EmailButton>{user.email}</EmailButton>
+              </span>
             </div>
           )}
           {user.phone && (
             <div>
               <span>Telefon: </span>
-              <span>{user.phone}</span>
+              <span>
+                <PhoneButton>{user.phone}</PhoneButton>
+              </span>
             </div>
           )}
           {user.health_issues && (
@@ -192,10 +210,14 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
               <span>Blízká osoba: </span>
               <span>{`${user.close_person.first_name} ${user.close_person.last_name}`}</span>
               {user.close_person.email && (
-                <span>{` email: ${user.close_person.email}`}</span>
+                <span>
+                  'email: ' <EmailButton>{user.close_person.email}</EmailButton>
+                </span>
               )}
               {user.close_person.phone && (
-                <span>{` tel: ${user.close_person.phone}`}</span>
+                <span>
+                  'tel: ' <PhoneButton>{user.close_person.phone}</PhoneButton>
+                </span>
               )}
             </div>
           )}

@@ -8,6 +8,7 @@ import {
   Loading,
   SelectUnknownUser,
   StyledModal,
+  TableCellIconButton,
 } from 'components'
 import { UserForm } from 'components/UserForm/UserForm'
 import {
@@ -17,7 +18,7 @@ import {
 import { merge } from 'lodash'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
-import Tooltip from 'react-tooltip-lite'
+import colors from 'styles/colors.module.scss'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
@@ -174,7 +175,11 @@ export const Participants: FC<{
       }).unwrap()
 
       // make applications assigned to this user 'pending'
-      if (savedParticipants && removeModalData) {
+      if (
+        savedParticipants &&
+        removeModalData &&
+        savedParticipants[removeModalData.id]
+      ) {
         for (let i of savedParticipants[removeModalData.id]) {
           await updateApplication({
             id: Number(i),
@@ -295,43 +300,20 @@ export const Participants: FC<{
                       {participant.birthday && ', '}
                       {participant.birthday}
                     </td>
-                    <td onClick={() => {}}>
-                      <Tooltip
-                        useDefaultStyles
-                        content="Upravit účastníka"
-                        tagName="span"
-                      >
-                        <button
-                          type="button"
-                          aria-label={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}
-                          onClick={() =>
-                            handleClickEditParticipant(participant)
-                          }
-                        >
-                          <EditUser className={styles.editUserIconContainer} />
-                        </button>
-                      </Tooltip>
-                    </td>
-                    <td onClick={() => {}}>
-                      <Tooltip
-                        useDefaultStyles
-                        content="Smazat účastníka"
-                        tagName="span"
-                      >
-                        <button
-                          type="button"
-                          aria-label={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
-                          onClick={() =>
-                            handleClickRemoveParticipant(participant)
-                          }
-                        >
-                          <Bin
-                            aria-hidden="true"
-                            className={styles.binIconContainer}
-                          />
-                        </button>
-                      </Tooltip>
-                    </td>
+                    <TableCellIconButton
+                      icon={EditUser}
+                      action={() => handleClickEditParticipant(participant)}
+                      tooltipContent="Upravit účastníka"
+                      color={colors.yellow}
+                      ariaLabel={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}
+                    />
+                    <TableCellIconButton
+                      icon={Bin}
+                      action={() => handleClickRemoveParticipant(participant)}
+                      tooltipContent="Smazat účastníka"
+                      color={colors.error}
+                      ariaLabel={`Smazat účastníka ${participant.first_name} ${participant.last_name}`}
+                    />
                   </tr>
                 ))}
               </tbody>
