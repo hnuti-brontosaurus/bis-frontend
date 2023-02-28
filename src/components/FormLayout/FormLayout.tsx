@@ -102,16 +102,25 @@ export const FormSubsection = ({
   help,
   required,
   onWeb,
+  className,
+  headerClassName,
 }: {
   children: ReactNode
   header: ReactNode
   help?: ReactNode
   required?: boolean
   onWeb?: boolean
+  className?: string
+  headerClassName?: string
 }) => {
   return (
-    <div className={styles.subsection}>
-      <FormSubheader required={required} help={help} onWeb={onWeb}>
+    <div className={classNames(styles.subsection, className)}>
+      <FormSubheader
+        className={classNames(headerClassName)}
+        required={required}
+        help={help}
+        onWeb={onWeb}
+      >
         {header}
       </FormSubheader>
       {children}

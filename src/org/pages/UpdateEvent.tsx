@@ -11,7 +11,7 @@ import {
 } from 'features/systemMessage/useSystemMessage'
 import { FullEvent } from 'hooks/readFullEvent'
 import { useTitle } from 'hooks/title'
-import { cloneDeep, mergeWith } from 'lodash'
+import { cloneDeep, isEqual, mergeWith } from 'lodash'
 import merge from 'lodash/merge'
 import { EventForm, InitialEventData } from 'org/components'
 import { ApplicationStates } from 'org/components/EventForm/steps/ParticipantsStep'
@@ -217,15 +217,7 @@ export const UpdateEvent = () => {
         .filter(question => {
           const oldQuestion = questions.find(oq => oq.id === question.id)
           // if something is different, patch
-          return (
-            oldQuestion &&
-            !(
-              oldQuestion.id === question.id &&
-              oldQuestion.is_required === question.is_required &&
-              oldQuestion.order === question.order &&
-              oldQuestion.question === question.question
-            )
-          )
+          return oldQuestion && !isEqual(oldQuestion, question)
         })
         .map(({ id, ...question }) =>
           updateEventQuestion({ eventId, id: id as number, question }).unwrap(),

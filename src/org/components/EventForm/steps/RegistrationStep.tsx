@@ -1,3 +1,5 @@
+import { QuestionType } from 'app/services/bisTypes'
+import classNames from 'classnames'
 import {
   Button,
   FormInputError,
@@ -10,11 +12,17 @@ import {
 } from 'components'
 import { form as formTexts } from 'config/static/event'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
-import { FaTrashAlt } from 'react-icons/fa'
+import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { requireBoolean } from 'utils/helpers'
 import * as messages from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 import styles from './RegistrationStep.module.scss'
+
+const questionTypes: { type: QuestionType; name: string }[] = [
+  { type: 'text', name: 'Text' },
+  { type: 'radio', name: 'Možnosti' },
+  { type: 'checkbox', name: 'Možnosti (více)' },
+]
 
 export const RegistrationStep = ({
   methods,
@@ -165,9 +173,7 @@ export const RegistrationStep = ({
                         <textarea
                           {...register(
                             'registration.questionnaire.introduction',
-                            {
-                              required: messages.required,
-                            },
+                            { required: messages.required },
                           )}
                         />
                       </FormInputError>
@@ -194,11 +200,11 @@ export const RegistrationStep = ({
                   </FormSubsection>
                   <FormSubsection header="Otázky">
                     <div className={styles.questionsBox}>
-                      <ul>
+                      <ul className={styles.questionList}>
                         {questionFields.fields.map((item, index) => (
                           <li key={item.id}>
                             <div className={styles.question}>
-                              Otazka {index + 1}:
+                              Otázka {index + 1}
                               <div className={styles.questionInputGroup}>
                                 <FormInputError
                                   className={styles.questionInput}
@@ -211,10 +217,25 @@ export const RegistrationStep = ({
                                     )}
                                   />
                                 </FormInputError>
+                                <FormInputError className={styles.typeInput}>
+                                  <select
+                                    {...register(
+                                      `questions.${index}.data.type`,
+                                      { required: messages.required },
+                                    )}
+                                  >
+                                    {questionTypes.map(({ type, name }) => (
+                                      <option key={type} value={type}>
+                                        {name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </FormInputError>
                                 <label
-                                  className={
-                                    (styles.questionRequired, 'checkboxLabel')
-                                  }
+                                  className={classNames(
+                                    'checkboxLabel',
+                                    styles.questionRequired,
+                                  )}
                                 >
                                   <input
                                     type="checkbox"
@@ -224,73 +245,121 @@ export const RegistrationStep = ({
                                   />{' '}
                                   povinné?
                                 </label>
-                                <Button
+                                <button
                                   type="button"
-                                  danger
                                   onClick={() => questionFields.remove(index)}
                                   className={styles.delete}
+                                  aria-label="Smazat otázku"
+                                  title="Smazat otázku"
                                 >
-                                  <FaTrashAlt /> <span>smazat</span>
-                                </Button>
+                                  <FaTrashAlt />
+                                </button>
                               </div>
+                              {['radio', 'checkbox'].includes(
+                                watch(`questions.${index}.data.type`),
+                              ) && (
+                                <QuestionOptions
+                                  question={index}
+                                  methods={methods}
+                                  type={
+                                    watch(`questions.${index}.data.type`) as
+                                      | 'radio'
+                                      | 'checkbox'
+                                  }
+                                />
+                              )}
                             </div>
                           </li>
                         ))}
+                        <li>
+                          <button
+                            className={styles.addQuestionButton}
+                            type="button"
+                            onClick={() =>
+                              questionFields.append({
+                                question: '',
+                                data: {
+                                  type: 'text',
+                                  options: [{ option: '' }],
+                                },
+                              })
+                            }
+                          >
+                            Přidat otázku <FaPlus />
+                          </button>
+                        </li>
                       </ul>
-                      <div className={styles.questionsAddNew}>
-                        {questionFields.fields.length === 0 &&
-                          'Nejsou přidané žádné otázky '}
-                        <Button
-                          type="button"
-                          secondary
-                          onClick={() =>
-                            questionFields.append({ question: '' })
-                          }
-                        >
-                          Přidat otázku
-                        </Button>
-                      </div>
                     </div>
                   </FormSubsection>
                 </FormSubsection>
               )}
             </>
           )}
-          {/*
-                <pre>
-                  {`
-Způsob přihlášení *! (help?: Způsoby přihlášení na vaši akci na www.brontosaurus.cz, které se zobrazí po kliknutí na tlačítko “chci jet”:
-standardní přihláška na brontowebu (doporučujeme!) -  Je jednotná pro celé HB. Do této přihlášky si můžete přidat 4 vlastní otázky. Vyplněné údaje se pak rovnou zobrazí v BIS, což tobě i kanceláři ulehčí práci.
-jiná elektornická přihláška -  Přesměruje zájemce na vaši přihlášku. 
-přihlášení na e-mail organizátora - Přesměruje zájemce na outlook s kontaktním emailem.
-Registrace není potřeba, stačí přijít - Zobrazí se jako text u vaší akce.
-Máme bohužel plno, zkuste jinou z našich akcí - Zobrazí se jako text u vaší akce.)
-
-Standardní přihláška na brontowebu
-Fce: tlačítko chci jet odkáže na: vyplnit předdefinovaný brontosauří formulář
-Jiná elektronická přihláška
-Fce: tlačítko chci jet = proklik na jinou elektronickou přihlášku
-přihlášení  na mail organizátora
-Fce: tlačítko chci jet = otevření outlook, kde je příjemce mail organizátora
-Registrace není potřeba, stačí přijít
-FCE: propíše se na web, že není třeba se hlásit
-Máme bohužel plno, zkuste jinou z našich akcí
-Fce: propíše se to na web
-
-při vybrání možnosti “Standardní příhláška na brontowebu” se objeví tyto položky 
-(help? - Zde můžeš připsat svoje doplňující otázky pro účastníky, které se zobrazí u standartní přihlášky na brontowebu)
-Otázka 1
-Otázka 2
-Otázka 3
-Otázka 4
-
-při vybrání možnosti “jiná elektronická přihláška” se zobrazí políčko
-URL tvé přihlášky
-Fce: proklik na přihlášky vytvořenou externě`}
-                </pre>
-*/}
         </FormSectionGroup>
       </form>
     </FormProvider>
+  )
+}
+
+const QuestionOptions = ({
+  question,
+  methods,
+  type,
+}: {
+  question: number
+  methods: MethodsShapes['registration']
+  type: 'radio' | 'checkbox'
+}) => {
+  const { control, register } = methods
+  const optionFields = useFieldArray({
+    control,
+    name: `questions.${question}.data.options`,
+  })
+
+  return (
+    <div>
+      <ul
+        className={classNames(
+          styles.options,
+          type === 'radio' ? styles.radio : styles.checkbox,
+        )}
+      >
+        {optionFields.fields.map((item, index) => (
+          <li key={item.id}>
+            <div className={styles.option}>
+              <FormInputError>
+                <input
+                  {...register(
+                    `questions.${question}.data.options.${index}.option`,
+                    { required: messages.required },
+                  )}
+                />
+              </FormInputError>
+              <button
+                type="button"
+                onClick={() => optionFields.remove(index)}
+                className={styles.delete}
+                aria-label="Smazat možnost"
+                title="Smazat možnost"
+              >
+                <FaTrashAlt />
+              </button>
+            </div>
+          </li>
+        ))}
+        <li>
+          <Button
+            tertiary
+            className={styles.addOptionButton}
+            type="button"
+            onClick={() => {
+              optionFields.append({ option: '' })
+            }}
+          >
+            Přidat možnost <FaPlus />
+          </Button>
+        </li>
+      </ul>
+    </div>
   )
 }

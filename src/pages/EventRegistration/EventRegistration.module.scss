@@ -28,3 +28,13 @@
   font-weight: bold;
   padding: 1rem;
 }
+
+// when organizers put very long words into questions and options
+// try to display them a bit gracefully
+.questionWordWrap {
+  overflow-wrap: break-word;
+  max-width: 100%;
+  label {
+    overflow-wrap: break-word;
+  }
+}
