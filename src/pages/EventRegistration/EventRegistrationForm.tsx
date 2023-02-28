@@ -5,6 +5,7 @@ import type {
   EventApplicationPayload,
 } from 'app/services/bisTypes'
 import { User } from 'app/services/bisTypes'
+import classNames from 'classnames'
 import {
   Actions,
   BirthdayInput,
@@ -367,21 +368,26 @@ export const EventRegistrationForm = ({
               <FormSection header="Dotazník">
                 {fields.map((field, index) => {
                   const question = questionnaire!.questions[index]
+                  if (!question) return null
                   return (
                     <FormSubsection
                       key={field.id}
                       header={question.question}
                       required={question.is_required}
+                      headerClassName={styles.questionWordWrap}
                     >
-                      <FormInputError name={`answers.${index}.answer`}>
+                      <FormInputError name={`answers.${index}.answer`} isBlock>
                         {question.data?.type === 'checkbox' ||
                         question.data?.type === 'radio' ? (
-                          <fieldset>
+                          <fieldset className={styles.questionWordWrap}>
                             <InlineSection>
                               {question.data.options?.map(({ option }) => (
                                 <label
                                   key={option}
-                                  className={`${question.data!.type}Label`}
+                                  className={classNames(
+                                    styles.questionWordWrap,
+                                    `${question.data!.type}Label`,
+                                  )}
                                 >
                                   <input
                                     type={question.data!.type}
