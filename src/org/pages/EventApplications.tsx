@@ -1,16 +1,14 @@
+import { Event } from 'app/services/bisTypes'
 import { Breadcrumbs } from 'components'
-import { FullEvent } from 'hooks/readFullEvent'
 import { ParticipantsStep } from 'org/components/EventForm/steps/ParticipantsStep'
 import { useOutletContext } from 'react-router-dom'
 
 export const EventApplications = () => {
-  const { event } = useOutletContext<{ event: FullEvent }>()
+  const { event } = useOutletContext<{ event: Event }>()
   return (
     <>
       <Breadcrumbs eventName={event.name} />
-      <ParticipantsStep
-        event={{ ...event, location: event?.location?.toString() || '' }}
-      />
+      <ParticipantsStep event={event} />
     </>
   )
 }

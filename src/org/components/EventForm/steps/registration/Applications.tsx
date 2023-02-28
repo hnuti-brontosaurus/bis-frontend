@@ -1,5 +1,6 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
+import type { AdministrationUnit, Event } from 'app/services/bisTypes'
 import { EventApplication } from 'app/services/bisTypes'
 import classnames from 'classnames'
 import {
@@ -24,7 +25,7 @@ import { generatePdf } from './participantsPdf'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
 export const Applications: FC<{
-  event: { id: number; name: string; location: string }
+  event: Event
   chooseHighlightedApplication: (id: string | undefined) => void
   highlightedApplications?: string[]
   withParticipants?: boolean
@@ -64,7 +65,7 @@ export const Applications: FC<{
 
   const { data: membershipCategories } =
     api.endpoints.readMembershipCategories.useQuery({})
-  const { data: administrationUnits } =
+  const { data: administrationUnitsData } =
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
   const { data: participants } = api.endpoints.readEventParticipants.useQuery({
@@ -106,9 +107,48 @@ export const Applications: FC<{
     setShowShowApplicationModal(true)
   }
 
+  const administrationUnits =
+    administrationUnitsData && administrationUnitsData.results
+      ? administrationUnitsData.results
+      : []
+
+  const getEventAdministrationUnits = (event: Event) => {
+    const names: string[] = []
+    for (const id of event.administration_units) {
+      const administrationUnit = administrationUnits.find(
+        (d: AdministrationUnit) => d.id === id,
+      )
+      if (administrationUnit) {
+        names.push(administrationUnit.name)
+      }
+    }
+    return names
+  }
+
+  const removeApplicationsDuplicates = (arr: EventApplication[]) => {
+    const uniqueSet = new Set()
+    return arr.filter((obj: EventApplication) => {
+      const { first_name, last_name, email, phone } = obj
+      const uniqueKey = `${first_name}-${last_name}-${email}-${phone}`
+      if (!uniqueSet.has(uniqueKey)) {
+        uniqueSet.add(uniqueKey)
+        return true
+      }
+      return false
+    })
+  }
+
   const generateAndSavePdf = () => {
-    console.log('dzikiii')
-    const doc = generatePdf(applications || [], event)
+    console.log('event', event)
+    const doc = generatePdf(
+      removeApplicationsDuplicates(
+        applicationsPending.concat(applicationsAccepted),
+      ) || [],
+      {
+        ...event,
+        administration_units_names: getEventAdministrationUnits(event),
+      },
+    )
     doc.save(`Lidé přihlášení na akci: ${event.name}`)
   }
 
@@ -314,9 +354,7 @@ export const Applications: FC<{
             eventName={event.name}
             eventId={event.id}
             categories={membershipCategories?.results ?? []}
-            administrationUnits={
-              administrationUnits ? administrationUnits.results : []
-            }
+            administrationUnits={administrationUnits}
           ></ShowApplicationModal>
         )}
       </div>
