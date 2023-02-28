@@ -1,4 +1,5 @@
 import { QuestionType } from 'app/services/bisTypes'
+import classNames from 'classnames'
 import {
   Button,
   FormInputError,
@@ -199,11 +200,11 @@ export const RegistrationStep = ({
                   </FormSubsection>
                   <FormSubsection header="Otázky">
                     <div className={styles.questionsBox}>
-                      <ul>
+                      <ul className={styles.questionList}>
                         {questionFields.fields.map((item, index) => (
                           <li key={item.id}>
                             <div className={styles.question}>
-                              Otázka {index + 1}:
+                              Otázka {index + 1}
                               <div className={styles.questionInputGroup}>
                                 <FormInputError
                                   className={styles.questionInput}
@@ -216,7 +217,7 @@ export const RegistrationStep = ({
                                     )}
                                   />
                                 </FormInputError>
-                                <FormInputError>
+                                <FormInputError className={styles.typeInput}>
                                   <select
                                     {...register(
                                       `questions.${index}.data.type`,
@@ -231,9 +232,10 @@ export const RegistrationStep = ({
                                   </select>
                                 </FormInputError>
                                 <label
-                                  className={
-                                    (styles.questionRequired, 'checkboxLabel')
-                                  }
+                                  className={classNames(
+                                    'checkboxLabel',
+                                    styles.questionRequired,
+                                  )}
                                 >
                                   <input
                                     type="checkbox"
@@ -243,43 +245,50 @@ export const RegistrationStep = ({
                                   />{' '}
                                   povinné?
                                 </label>
-                                <Button
+                                <button
                                   type="button"
-                                  danger
                                   onClick={() => questionFields.remove(index)}
                                   className={styles.delete}
+                                  aria-label="Smazat otázku"
+                                  title="Smazat otázku"
                                 >
-                                  <FaTrashAlt /> <span>smazat</span>
-                                </Button>
+                                  <FaTrashAlt />
+                                </button>
                               </div>
+                              {['radio', 'checkbox'].includes(
+                                watch(`questions.${index}.data.type`),
+                              ) && (
+                                <QuestionOptions
+                                  question={index}
+                                  methods={methods}
+                                  type={
+                                    watch(`questions.${index}.data.type`) as
+                                      | 'radio'
+                                      | 'checkbox'
+                                  }
+                                />
+                              )}
                             </div>
-                            {['radio', 'checkbox'].includes(
-                              watch(`questions.${index}.data.type`),
-                            ) && (
-                              <QuestionOptions
-                                question={index}
-                                methods={methods}
-                              />
-                            )}
                           </li>
                         ))}
+                        <li>
+                          <button
+                            className={styles.addQuestionButton}
+                            type="button"
+                            onClick={() =>
+                              questionFields.append({
+                                question: '',
+                                data: {
+                                  type: 'text',
+                                  options: [{ option: '' }],
+                                },
+                              })
+                            }
+                          >
+                            Přidat otázku <FaPlus />
+                          </button>
+                        </li>
                       </ul>
-                      <div className={styles.questionsAddNew}>
-                        {questionFields.fields.length === 0 &&
-                          'Nejsou přidané žádné otázky '}
-                        <Button
-                          type="button"
-                          secondary
-                          onClick={() =>
-                            questionFields.append({
-                              question: '',
-                              data: { type: 'text', options: [{ option: '' }] },
-                            })
-                          }
-                        >
-                          <FaPlus /> Přidat otázku
-                        </Button>
-                      </div>
                     </div>
                   </FormSubsection>
                 </FormSubsection>
@@ -295,10 +304,13 @@ export const RegistrationStep = ({
 const QuestionOptions = ({
   question,
   methods,
+  type,
 }: {
   question: number
   methods: MethodsShapes['registration']
+  type: 'radio' | 'checkbox'
 }) => {
+  console.log(type)
   const { control, register } = methods
   const optionFields = useFieldArray({
     control,
@@ -306,38 +318,49 @@ const QuestionOptions = ({
   })
 
   return (
-    <div className={styles.options}>
-      <ul>
+    <div>
+      <ul
+        className={classNames(
+          styles.options,
+          type === 'radio' ? styles.radio : styles.checkbox,
+        )}
+      >
         {optionFields.fields.map((item, index) => (
-          <li key={item.id} className={styles.option}>
-            Možnost {index + 1}:{' '}
-            <FormInputError>
-              <input
-                {...register(
-                  `questions.${question}.data.options.${index}.option`,
-                  { required: messages.required },
-                )}
-              />
-            </FormInputError>
-            <button
-              type="button"
-              onClick={() => optionFields.remove(index)}
-              className={styles.delete}
-            >
-              <FaTrashAlt /> <span>smazat</span>
-            </button>
+          <li key={item.id}>
+            <div className={styles.option}>
+              <FormInputError>
+                <input
+                  {...register(
+                    `questions.${question}.data.options.${index}.option`,
+                    { required: messages.required },
+                  )}
+                />
+              </FormInputError>
+              <button
+                type="button"
+                onClick={() => optionFields.remove(index)}
+                className={styles.delete}
+                aria-label="Smazat možnost"
+                title="Smazat možnost"
+              >
+                <FaTrashAlt />
+              </button>
+            </div>
           </li>
         ))}
+        <li>
+          <Button
+            tertiary
+            className={styles.addOptionButton}
+            type="button"
+            onClick={() => {
+              optionFields.append({ option: '' })
+            }}
+          >
+            Přidat možnost <FaPlus />
+          </Button>
+        </li>
       </ul>
-      <Button
-        secondary
-        type="button"
-        onClick={() => {
-          optionFields.append({ option: '' })
-        }}
-      >
-        <FaPlus /> Přidat možnost
-      </Button>
     </div>
   )
 }
