@@ -20,18 +20,17 @@ import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { AddParticipantModal } from './AddParticipantModal'
 import { NewApplicationModal } from './NewApplicationModal'
+import { generatePdf } from './participantsPdf'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
 export const Applications: FC<{
-  eventId: number
-  eventName: string
+  event: { id: number; name: string; location: string }
   chooseHighlightedApplication: (id: string | undefined) => void
   highlightedApplications?: string[]
   withParticipants?: boolean
   className: string
 }> = ({
-  eventId,
-  eventName,
+  event,
   highlightedApplications,
   chooseHighlightedApplication,
   withParticipants,
@@ -69,14 +68,14 @@ export const Applications: FC<{
     api.endpoints.readAdministrationUnits.useQuery({ pageSize: 2000 })
 
   const { data: participants } = api.endpoints.readEventParticipants.useQuery({
-    eventId,
+    eventId: event.id,
   })
 
   const { data: currentApplication } =
     api.endpoints.readEventApplication.useQuery(
-      eventId && currentApplicationId
+      event.id && currentApplicationId
         ? {
-            eventId,
+            eventId: event.id,
             applicationId: currentApplicationId,
           }
         : skipToken,
@@ -84,7 +83,7 @@ export const Applications: FC<{
 
   const { data: applicationsData, isLoading: isReadApplicationsLoading } =
     api.endpoints.readEventApplications.useQuery({
-      eventId,
+      eventId: event.id,
       pageSize: 10000,
     })
 
@@ -105,6 +104,12 @@ export const Applications: FC<{
   const handleShowApplication = (id: number) => {
     setCurrentApplicationId(id)
     setShowShowApplicationModal(true)
+  }
+
+  const generateAndSavePdf = () => {
+    console.log('dzikiii')
+    const doc = generatePdf(applications || [], event)
+    doc.save(`Lidé přihlášení na akci: ${event.name}`)
   }
 
   const thereAreApplications = applications && applications.length !== 0
@@ -166,11 +171,11 @@ export const Applications: FC<{
         }
         action={async () => {
           if (application.state === ApplicationStates.rejected) {
-            restoreApplication(application, { id: eventId, name: eventName })
+            restoreApplication(application, { id: event.id, name: event.name })
           } else {
             rejectApplication({
               application,
-              event: { id: eventId, name: eventName },
+              event: { id: event.id, name: event.name },
             })
           }
         }}
@@ -197,7 +202,7 @@ export const Applications: FC<{
           <Button secondary type="button">
             Export do CSV
           </Button>
-          <Button secondary type="button">
+          <Button secondary type="button" onClick={() => generateAndSavePdf()}>
             Tiskni prezenční listinu
           </Button>
           <Button
@@ -280,7 +285,7 @@ export const Applications: FC<{
           onClose={() => {
             setShowNewApplicationModal(false)
           }}
-          eventId={eventId}
+          eventId={event.id}
         ></NewApplicationModal>
 
         {currentApplication && (
@@ -291,7 +296,7 @@ export const Applications: FC<{
             }}
             currentApplication={currentApplication}
             defaultUserData={currentApplication}
-            eventId={eventId}
+            eventId={event.id}
             eventParticipants={
               participants ? participants?.results.map(({ id }) => id) : []
             }
@@ -306,8 +311,8 @@ export const Applications: FC<{
               setShowShowApplicationModal(false)
             }}
             currentApplication={currentApplication}
-            eventName={eventName}
-            eventId={eventId}
+            eventName={event.name}
+            eventId={event.id}
             categories={membershipCategories?.results ?? []}
             administrationUnits={
               administrationUnits ? administrationUnits.results : []

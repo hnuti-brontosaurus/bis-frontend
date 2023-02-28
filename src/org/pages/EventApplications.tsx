@@ -9,9 +9,7 @@ export const EventApplications = () => {
     <>
       <Breadcrumbs eventName={event.name} />
       <ParticipantsStep
-        eventId={event.id}
-        eventName={event.name}
-        onlyApplications
+        event={{ ...event, location: event?.location?.toString() || '' }}
       />
     </>
   )

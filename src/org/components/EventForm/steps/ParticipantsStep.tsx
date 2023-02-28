@@ -1,3 +1,4 @@
+import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { FC, useState } from 'react'
 import styles from './ParticipantsStep.module.scss'
@@ -11,19 +12,22 @@ export enum ApplicationStates {
 }
 
 export const ParticipantsStep: FC<{
-  eventId: number
+  event: { id: number; name: string; location: string }
   onlyApplications?: boolean
-  eventName: string
-}> = ({ eventId, onlyApplications, eventName }) => {
+}> = ({ event, onlyApplications }) => {
   const [highlightedApplication, setHighlightedApplication] =
     useState<string[]>()
   const [highlightedParticipant, setHighlightedParticipant] = useState<string>()
 
   const { data: applicationsData } =
-    api.endpoints.readEventApplications.useQuery({
-      eventId,
-      pageSize: 10000,
-    })
+    api.endpoints.readEventApplications.useQuery(
+      event
+        ? {
+            eventId: event.id,
+            pageSize: 10000,
+          }
+        : skipToken,
+    )
 
   /** creates a new object, where the keys are the application IDs
    * and the values are the corresponding user IDs for each approved
@@ -56,8 +60,8 @@ export const ParticipantsStep: FC<{
   return (
     <div className={styles.participantsContainer}>
       <Applications
-        eventId={eventId}
-        eventName={eventName}
+      // @ts-ignore
+        event={{ ...event, location: event.location?.name }}
         highlightedApplications={highlightedApplication}
         chooseHighlightedApplication={id =>
           setHighlightedParticipant(
@@ -69,7 +73,7 @@ export const ParticipantsStep: FC<{
       />
       {!onlyApplications && (
         <Participants
-          eventId={eventId}
+          eventId={event.id}
           highlightedParticipant={highlightedParticipant}
           chooseHighlightedParticipant={id => {
             if (id && participantsMap)
@@ -78,7 +82,7 @@ export const ParticipantsStep: FC<{
               setHighlightedApplication(undefined)
             }
           }}
-          eventName={eventName}
+          eventName={event.name}
           participantsMap={participantsMap}
         />
       )}

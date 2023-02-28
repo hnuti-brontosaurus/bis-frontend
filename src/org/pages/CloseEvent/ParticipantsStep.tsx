@@ -194,7 +194,13 @@ export const ParticipantsStep = ({
           )}
           {(areParticipantsRequired || inputType === 'full-list') && (
             <FormSection required header="Seznam účastníků">
-              <ParticipantsList eventId={event.id} eventName={event.name} />
+              <ParticipantsList
+                event={{
+                  id: event.id,
+                  name: event.name,
+                  location: event.location.toString(),
+                }}
+              />
             </FormSection>
           )}
         </FormSectionGroup>
