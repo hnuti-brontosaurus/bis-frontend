@@ -66,13 +66,20 @@ describe('Close event - evidence and participants', () => {
           .last()
           .find('td')
           .first()
-          .should('contain', 'Petr')
+          .find('input')
+          .should('have.value', 'Petr')
+          .parent()
           .next()
-          .should('contain', 'Pan')
+          .find('input')
+          .should('have.value', 'Pan')
+          .parent()
           .next()
-          .should('contain', 'petr.pan@')
+          .find('input')
+          .should('have.value', 'petr.pan@example.com')
+          .parent()
           .next()
-          .should('contain', '761001002')
+          .find('input')
+          .should('have.value', '761001002')
       })
     })
   })
@@ -382,13 +389,16 @@ describe('Close event - evidence and participants', () => {
     })
 
     describe('Import full participants from excel', () => {
-      it('[existent users] should import data, save the users as participants and show in table', () => {
+      beforeEach(() => {
         cy.visit('/org/akce/1000/uzavrit')
 
         cy.get('label:contains(Mám všechny informace)')
           .should('be.visible')
           .click()
+        cy.get('button:contains(Pokračuj)').click()
+      })
 
+      it('[existent users] should import data, save the users as participants and show in table', () => {
         // at the beginning, the table has 4 rows
         cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
           'have.length',
@@ -454,12 +464,6 @@ describe('Close event - evidence and participants', () => {
       })
 
       it('[non-existent users] should import data, create users and save them as participants', () => {
-        cy.visit('/org/akce/1000/uzavrit')
-
-        cy.get('label:contains(Mám všechny informace)')
-          .should('be.visible')
-          .click()
-
         // at the beginning, the table has 4 rows
         cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
           'have.length',
