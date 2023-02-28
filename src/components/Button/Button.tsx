@@ -11,6 +11,7 @@ interface ButtonProps {
   tertiary?: boolean
   isLoading?: boolean
   disabled?: boolean
+  small?: boolean
 }
 
 /**
@@ -23,6 +24,7 @@ export const ButtonLink = ({
   danger,
   secondary,
   tertiary,
+  small,
   ...props
 }: LinkProps & ButtonProps) => {
   return (
@@ -34,6 +36,7 @@ export const ButtonLink = ({
         danger && styles.danger,
         secondary && styles.secondary,
         tertiary && styles.tertiary,
+        small && styles.smallButton,
       )}
       {...props}
     >
@@ -52,6 +55,7 @@ export const ExternalButtonLink = ({
   danger,
   secondary,
   tertiary,
+  small,
   ...props
 }: AnchorHTMLAttributes<HTMLAnchorElement> & ButtonProps) => {
   return (
@@ -63,6 +67,7 @@ export const ExternalButtonLink = ({
         danger && styles.danger,
         secondary && styles.secondary,
         tertiary && styles.tertiary,
+        small && styles.smallButton,
       )}
       {...props}
     >
@@ -83,6 +88,7 @@ export const Button = ({
   tertiary,
   disabled,
   isLoading,
+  small,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & ButtonProps) => {
   return (
@@ -94,6 +100,7 @@ export const Button = ({
         danger && styles.danger,
         secondary && styles.secondary,
         tertiary && styles.tertiary,
+        small && styles.smallButton,
         (isLoading || disabled) && styles.disabled,
       )}
       disabled={disabled}

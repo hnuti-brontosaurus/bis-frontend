@@ -199,14 +199,20 @@ export const Applications: FC<{
       <div className={classnames(styles.ListContainer, className)}>
         <h2>Přihlášení</h2>
         <div className={styles.buttonsContainer}>
-          <Button secondary type="button">
+          <Button secondary small type="button">
             Export do CSV
           </Button>
-          <Button secondary type="button" onClick={() => generateAndSavePdf()}>
+          <Button
+            secondary
+            small
+            type="button"
+            onClick={() => generateAndSavePdf()}
+          >
             Tiskni prezenční listinu
           </Button>
           <Button
             primary
+            small
             type="button"
             onClick={() => {
               setShowNewApplicationModal(true)

@@ -301,7 +301,9 @@ export const Participants: FC<{
                     }}
                   >
                     <td>
-                      {`${participant.first_name}(${participant.nickname})`}
+                      {`${participant.first_name}${
+                        participant.nickname && `(${participant.nickname})`
+                      }`}
                     </td>
                     <td>{participant.last_name}</td>
                     <td>{participant.birthday}</td>
@@ -324,7 +326,7 @@ export const Participants: FC<{
               </tbody>
             </table>
           )}
-          {participants?.results.length === 0 && (
+          {participants?.results?.length === 0 && (
             <EmptyListPlaceholder label="Zatím nebyli přidáni žádní účastníci." />
           )}
         </div>
