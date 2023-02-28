@@ -3,7 +3,7 @@ import type { Event, EventPayload, Location } from 'app/services/bisTypes'
 import {
   EventPropagationImagePayload,
   Question,
-  User
+  User,
 } from 'app/services/bisTypes'
 import { Loading, NewLocation, Step, Steps } from 'components'
 import * as translations from 'config/static/combinedTranslations'
@@ -11,7 +11,7 @@ import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import {
   useClearPersistentForm,
   usePersistentFormData,
-  usePersistForm
+  usePersistForm,
 } from 'hooks/persistForm'
 import { merge, mergeWith, omit, uniq } from 'lodash'
 import pick from 'lodash/pick'
@@ -538,11 +538,7 @@ export const EventForm: FC<{
       <Step name="přihlášky" hidden={!initialData?.id}>
         {initialData?.id && initialData?.name && (
           <ParticipantsStep
-            event={{
-              id: initialData.id,
-              name: initialData.name,
-              location: initialData?.location?.name || ' ',
-            }}
+            event={initialData as unknown as Event}
             onlyApplications
           />
         )}
