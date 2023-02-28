@@ -1,5 +1,6 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
+import type { Event } from 'app/services/bisTypes'
 import { FC, useState } from 'react'
 import styles from './ParticipantsStep.module.scss'
 import { Applications } from './registration/Applications'
@@ -12,7 +13,7 @@ export enum ApplicationStates {
 }
 
 export const ParticipantsStep: FC<{
-  event: { id: number; name: string; location: string }
+  event: Event
   onlyApplications?: boolean
 }> = ({ event, onlyApplications }) => {
   const [highlightedApplication, setHighlightedApplication] =
@@ -60,8 +61,8 @@ export const ParticipantsStep: FC<{
   return (
     <div className={styles.participantsContainer}>
       <Applications
-      // @ts-ignore
-        event={{ ...event, location: event.location?.name }}
+        // @ts-ignore
+        event={event}
         highlightedApplications={highlightedApplication}
         chooseHighlightedApplication={id =>
           setHighlightedParticipant(

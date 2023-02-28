@@ -9,7 +9,7 @@ const BLANK_CELLS_FOR_PARTICIPANTS = 50
 export const generatePdf = (participants: any, event: any) => {
   const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: 'landscape' })
 
-  const { name = '', dateFrom = '', dateTo = '', location = '' } = event
+  const { name = '', start = '', end = '', location = '' } = event
 
   /** For using UTF-8 in generated pdf it is necessary
    *  to import a font that supports UTF-8 encoding
@@ -41,16 +41,16 @@ export const generatePdf = (participants: any, event: any) => {
   doc.setFont('RobotoBlack')
   doc.text('Místo: ', 20, 38)
   doc.setFont('Roboto')
-  doc.text(`${location}`, 42, 38)
+  doc.text(`${location && location.name ? location.name : ' '}`, 42, 38)
   doc.setFont('RobotoBlack')
-  if (dateFrom === dateTo || !dateTo) {
+  if (start === end || !end) {
     doc.text('Datum: ', 20, 46)
     doc.setFont('Roboto')
-    doc.text(`${dateFrom}`, 40, 46)
+    doc.text(`${start}`, 40, 46)
   } else {
     doc.text('Datum: ', 20, 46)
     doc.setFont('Roboto')
-    doc.text(`${dateFrom} - ${dateTo}`, 40, 46)
+    doc.text(`${start} - ${end}`, 40, 46)
   }
   /** Logo */
   doc.addImage(
@@ -64,9 +64,9 @@ export const generatePdf = (participants: any, event: any) => {
 
   /** Right Data */
   doc.setFont('RobotoBlack')
-  doc.text('ZČ, RC klub HB: ', 180, 46)
+  doc.text('ZČ/RC/Klub HB: ', 150, 46)
   doc.setFont('Roboto')
-  doc.text(`${name}`, 220, 46)
+  doc.text(`${event.administration_units_names.join(', ')}`, 190, 46)
 
   /** GDPR */
 
@@ -86,7 +86,6 @@ export const generatePdf = (participants: any, event: any) => {
   //   doc.text(declarationTitle, 20, 122)
   //   doc.setFont('Roboto')
   //   doc.text(declaration, 40, 122)
-  doc.setFontSize(9)
   /** Table */
   doc.setFont('Roboto')
 
@@ -204,7 +203,8 @@ export const generatePdf = (participants: any, event: any) => {
     margins
     when this PR is accepted: https://github.com/parallax/jsPDF/pull/3351
     */
-    padding: 0.5,
+
+    padding: 1,
     margins,
     // this seems necessary to set font properties in the table
     rowStart: () => {
@@ -213,8 +213,8 @@ export const generatePdf = (participants: any, event: any) => {
     },
     printHeaders: true,
     headerBackgroundColor: '#fff',
+    fontSize: 10,
   }
-  doc.setFont('Roboto')
   /** TODO:  
     remove those comments
     when this PR is accepted: https://github.com/parallax/jsPDF/pull/3351
