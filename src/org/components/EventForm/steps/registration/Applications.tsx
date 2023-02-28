@@ -139,7 +139,6 @@ export const Applications: FC<{
   }
 
   const generateAndSavePdf = () => {
-    console.log('event', event)
     const doc = generatePdf(
       removeApplicationsDuplicates(
         applicationsPending.concat(applicationsAccepted),

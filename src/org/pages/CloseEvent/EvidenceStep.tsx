@@ -56,6 +56,7 @@ export const EvidenceStep = ({
                   {...register('record.comment_on_work_done', {
                     required: isVolunteering && required,
                   })}
+                  className={styles.widerTextArea}
                 />
               </FormInputError>
             </FormSubsection>
