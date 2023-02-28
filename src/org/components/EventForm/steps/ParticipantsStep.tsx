@@ -62,11 +62,7 @@ export const ParticipantsStep: FC<{
     <div className={styles.participantsContainer}>
       <Applications
         // @ts-ignore
-<<<<<<< HEAD
         event={event}
-=======
-        event={{ ...event, location: event.location?.name }}
->>>>>>> 0387513 (Fix linting)
         highlightedApplications={highlightedApplication}
         chooseHighlightedApplication={id =>
           setHighlightedParticipant(
