@@ -310,7 +310,6 @@ const QuestionOptions = ({
   methods: MethodsShapes['registration']
   type: 'radio' | 'checkbox'
 }) => {
-  console.log(type)
   const { control, register } = methods
   const optionFields = useFieldArray({
     control,

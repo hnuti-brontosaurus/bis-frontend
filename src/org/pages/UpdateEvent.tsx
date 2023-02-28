@@ -217,7 +217,7 @@ export const UpdateEvent = () => {
         .filter(question => {
           const oldQuestion = questions.find(oq => oq.id === question.id)
           // if something is different, patch
-          return !isEqual(oldQuestion, question)
+          return oldQuestion && !isEqual(oldQuestion, question)
         })
         .map(({ id, ...question }) =>
           updateEventQuestion({ eventId, id: id as number, question }).unwrap(),

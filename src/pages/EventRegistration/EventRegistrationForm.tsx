@@ -379,7 +379,10 @@ export const EventRegistrationForm = ({
                           <fieldset>
                             <InlineSection>
                               {question.data.options?.map(({ option }) => (
-                                <label key={option}>
+                                <label
+                                  key={option}
+                                  className={`${question.data!.type}Label`}
+                                >
                                   <input
                                     type={question.data!.type}
                                     value={option}

@@ -23,6 +23,15 @@ export const event = merge(
     record: { participantInputType: 'Způsob zadání účastníků' },
   },
   { 'main_image.image': 'Hlavní foto' },
+  {
+    questions: {
+      data: {
+        _name: translations.question.data,
+        type: 'Typ',
+        options: { _name: 'Možnosti', option: 'Možnost' },
+      },
+    },
+  },
 )
 
 export const user = merge({}, translations.user, {
