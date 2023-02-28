@@ -19,9 +19,9 @@ import { MethodsShapes } from '..'
 import styles from './RegistrationStep.module.scss'
 
 const questionTypes: { type: QuestionType; name: string }[] = [
-  { type: 'text', name: 'Text' },
-  { type: 'radio', name: 'Možnosti' },
-  { type: 'checkbox', name: 'Možnosti (více)' },
+  { type: 'text', name: 'Odstavec' },
+  { type: 'radio', name: 'Výběr z možností' },
+  { type: 'checkbox', name: 'Zaškrtávací políčka' },
 ]
 
 export const RegistrationStep = ({
@@ -198,7 +198,12 @@ export const RegistrationStep = ({
                       </FormInputError>
                     </FullSizeElement>
                   </FormSubsection>
-                  <FormSubsection header="Otázky">
+                  <FormSubsection
+                    header="Otázky"
+                    help={
+                      'Odstavec = odpověď textem, výběr z možností = při odpovědi na otázku se musí vybrat pouze jedna z možností, zaškrtávací políčka = při odpovědi na otázku je možné vybrat více možností'
+                    }
+                  >
                     <div className={styles.questionsBox}>
                       <ul className={styles.questionList}>
                         {questionFields.fields.map((item, index) => (
