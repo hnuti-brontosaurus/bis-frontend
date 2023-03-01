@@ -199,6 +199,14 @@ const initialData2form = (
     } as EventFormShape['propagation']
   }
 
+  if (data?.questions) {
+    const questions = data.questions.map(({ data, ...question }) => {
+      return { ...question, data: data ?? { type: 'text' } }
+    })
+
+    returnData.questions = questions
+  }
+
   return returnData
 }
 
@@ -290,6 +298,12 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
   if (!data.propagation?.is_shown_on_web) {
     finalData.registration = null
     finalData.propagation = null
+  }
+
+  if (finalData.questions) {
+    finalData.questions.forEach(question => {
+      if (question.data?.type === 'text') delete question.data.options
+    })
   }
 
   return finalData
@@ -457,6 +471,7 @@ export const EventForm: FC<{
     category: categories.results.find(
       c => c.id === +methods.basicInfo.watch('category'),
     ),
+    start: methods.basicInfo.watch('start'),
   }
 
   const isNotOnWeb =

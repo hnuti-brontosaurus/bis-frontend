@@ -220,6 +220,7 @@ describe('create event', () => {
         display_name: 'Found User',
         birthday: '2000-01-01',
         qualifications: [],
+        memberships: [{ year: 2123 }],
       },
     )
     cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()
@@ -336,6 +337,128 @@ describe('create event', () => {
     submit()
 
     cy.wait('@createEvent2').its('response.statusCode').should('equal', 400)
+  })
+
+  describe('selecting standard registration form', () => {
+    beforeEach(() => {
+      // clone event and go to proper step
+      cy.interceptFullEvent()
+      cy.visit('/org/akce/vytvorit?klonovat=1000')
+      next()
+
+      cy.get('input[name=start]').should('be.visible').type('2123-01-15')
+      cy.get('input[name=end]').should('be.visible').type('2123-01-17')
+
+      cy.get('button:contains(přihlášení)').should('be.visible').click()
+    })
+
+    it('should allow adding registration form questions and save it to api', () => {
+      cy.get('[name="propagation.is_shown_on_web"]').check('true')
+
+      cy.get('[name=registrationMethod]').check('standard')
+
+      // add question and fill it
+      cy.get('button').contains('Přidat otázku').click()
+      cy.get('[name="questions.0.question"]').type('Otázka 1')
+      cy.get('[name="questions.0.is_required"]').check()
+
+      // add another question, type checkbox
+      cy.get('button').contains('Přidat otázku').click()
+      cy.get('[name="questions.1.question"]').type('Otázka 2')
+      cy.get('[name="questions.1.data.type"]').select('checkbox')
+      cy.get('button')
+        .contains('Přidat možnost')
+        .should('have.length', 1)
+        .click()
+      cy.get('[name^="questions.1.data.options"]').should('have.length', 2)
+
+      cy.get('[name="questions.1.data.options.0.option"]').type('Option 1')
+      cy.get('[name="questions.1.data.options.1.option"]').type('Option 2')
+
+      // add another question, type radio
+      cy.get('button').contains('Přidat otázku').click()
+      cy.get('[name="questions.2.question"]').type('Otázka 3')
+      cy.get('[name="questions.2.is_required"]').check()
+      cy.get('[name="questions.2.data.type"]').select('radio')
+      cy.get('button')
+        .contains('Přidat možnost')
+        .should('have.length', 2)
+        .last()
+        .click()
+        .click()
+      cy.get('[name="questions.2.data.options.0.option"]').type(
+        'Radio option 1',
+      )
+      cy.get('[name="questions.2.data.options.1.option"]').type(
+        'Radio option 2',
+      )
+      cy.get('[name="questions.2.data.options.2.option"]').type(
+        'Radio option 3',
+      )
+
+      // submit and check that correct data are sent
+      cy.intercept(
+        { method: 'POST', pathname: '/api/frontend/events' },
+        { id: 1000 },
+      ).as('createEvent')
+
+      cy.intercept(
+        {
+          method: 'POST',
+          pathname:
+            '/api/frontend/events/1000/registration/questionnaire/questions',
+        },
+        { times: 3 },
+      ).as('createQuestion')
+
+      cy.intercept(
+        {
+          method: 'POST',
+          pathname: '/api/frontend/events/1000/propagation/images/',
+        },
+        {},
+      )
+      submit()
+
+      cy.wait('@createEvent')
+
+      cy.wait(['@createQuestion', '@createQuestion', '@createQuestion']).then(
+        intercepts => {
+          expect(intercepts.length).to.eql(3)
+          const bodies = intercepts.map(i => i.request.body)
+          expect(bodies).to.deep.include.members([
+            {
+              question: 'Otázka 1',
+              data: { type: 'text' },
+              is_required: true,
+              order: 0,
+            },
+            {
+              question: 'Otázka 2',
+              data: {
+                type: 'checkbox',
+                options: [{ option: 'Option 1' }, { option: 'Option 2' }],
+              },
+              is_required: false,
+              order: 1,
+            },
+            {
+              question: 'Otázka 3',
+              data: {
+                type: 'radio',
+                options: [
+                  { option: 'Radio option 1' },
+                  { option: 'Radio option 2' },
+                  { option: 'Radio option 3' },
+                ],
+              },
+              is_required: true,
+              order: 2,
+            },
+          ])
+        },
+      )
+    })
   })
 
   describe('selecting alternative registration form', () => {
@@ -721,6 +844,13 @@ const fillForm = () => {
       display_name: 'Found User',
       birthday: '2000-01-01',
       qualifications: [],
+      memberships: [
+        { year: 2020 },
+        { year: 2021 },
+        { year: 2022 },
+        { year: 2023 },
+        { year: 2123 },
+      ],
     },
   )
   cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()

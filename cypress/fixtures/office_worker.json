@@ -22,7 +22,13 @@
   "nickname": "Nickname",
   "display_name": "Nickname (FirstName LastName)",
   "birthday": "2000-01-01",
-  "memberships": [],
+  "memberships": [
+    { "year": 2020 },
+    { "year": 2021 },
+    { "year": 2022 },
+    { "year": 2023 },
+    { "year": 2123 }
+  ],
   "address": {
     "street": "Street 1",
     "city": "Jeseník",

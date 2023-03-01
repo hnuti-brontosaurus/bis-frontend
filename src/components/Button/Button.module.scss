@@ -18,6 +18,10 @@
   }
 }
 
+@mixin small-button {
+  padding: 4px 8px;
+}
+
 @mixin primary-button {
   color: white;
   background-color: colors.$bronto;
@@ -53,6 +57,10 @@
     color: colors.$bronto;
     width: 30px;
   }
+}
+
+.smallButton {
+  @include small-button;
 }
 
 .primary {
