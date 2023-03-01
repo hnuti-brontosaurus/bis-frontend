@@ -238,7 +238,7 @@ export const Applications: FC<{
       <div className={classnames(styles.ListContainer, className)}>
         <h2>Přihlášení</h2>
         <div className={styles.buttonsContainer}>
-          <Button secondary small type="button">
+          <Button secondary disabled small type="button">
             Export do CSV
           </Button>
           <Button
