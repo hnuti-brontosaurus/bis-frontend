@@ -189,6 +189,30 @@ describe('Close event - evidence and participants', () => {
         cy.get('[name=first_name]').should('have.value', '')
       })
 
+      it('[empty email] should send email: null to backend', () => {
+        visitPage()
+        clickAddNewParticipant()
+        // fill data
+        fillUserForm()
+        // but keep the email empty
+        cy.get('[name=email]').clear()
+
+        // close helper
+        cy.get('div[id="closeOwlGuide"]').click()
+
+        // click Submit and succeed
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/users' },
+          { fixture: 'newUser' },
+        ).as('createUser')
+        cy.get('[type=submit]:contains(Potvrdit)').click()
+
+        // we should create user with email: null
+        cy.wait('@createUser').its('request.body.email').should('be.null')
+        // and call update event
+        cy.wait('@updateEvent')
+      })
+
       it('[api error] should show error and keep modal open', () => {
         visitPage()
         clickAddNewParticipant()

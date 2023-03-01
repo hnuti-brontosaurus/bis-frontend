@@ -103,6 +103,10 @@ const form2payload = (
     },
   )
 
+  // if email is empty string, set it to null
+  // (maybe deleting it would also work)
+  if (!finalData.email) finalData.email = null
+
   if (!isSelf) delete finalData.pronoun
 
   return finalData
