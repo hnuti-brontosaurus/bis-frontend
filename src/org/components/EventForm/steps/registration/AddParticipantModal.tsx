@@ -385,8 +385,8 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                                     ...result.all_emails,
                                     result.email,
                                   ])
-                                    ? 0
-                                    : 10000
+                                    ? 10000
+                                    : 0
                                 }
                                 content={`${currentApplication.email}/${result.email}`}
                               >

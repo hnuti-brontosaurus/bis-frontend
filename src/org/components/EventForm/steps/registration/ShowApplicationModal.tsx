@@ -43,7 +43,7 @@ export const ShowApplicationModal: FC<IShowApplicationModalProps> = ({
     api.endpoints.readEventApplication.useQuery(
       currentParticipant &&
         participantsMap &&
-        participantsMap[currentParticipant.id].length > 0
+        participantsMap[currentParticipant.id]?.length > 0
         ? {
             eventId,
             //TODO: add here showing an array of applications
