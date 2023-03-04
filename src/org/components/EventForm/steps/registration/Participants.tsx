@@ -330,37 +330,35 @@ export const Participants: FC<{
           onCancel={handleCancelImportParticipants}
         />
       </StyledModal>
-      <h2>
-        Účastníci{' '}
-        <ImportExcelButton<UserImport>
-          keyMap={{
-            first_name: 0,
-            last_name: 1,
-            birthday: 2,
-            email: 3,
-            phone: 4,
-            address: 5,
-            contact_address: 6,
-            health_insurance_company: 7,
-            health_issues: 8,
-            close_person: {
-              first_name: 9,
-              last_name: 10,
-              email: 11,
-              phone: 12,
-            },
-            birth_name: 13,
-            nickname: 14,
-          }}
-          headerRows={2}
-          onUpload={handleImportParticipants}
-        >
-          Importovat z excelu
-        </ImportExcelButton>
-        <ExternalButtonLink tertiary href={spreadsheetTemplate}>
-          (vzor)
-        </ExternalButtonLink>
-      </h2>
+      <h2>Účastníci</h2>
+      <ImportExcelButton<UserImport>
+        keyMap={{
+          first_name: 0,
+          last_name: 1,
+          birthday: 2,
+          email: 3,
+          phone: 4,
+          address: 5,
+          contact_address: 6,
+          health_insurance_company: 7,
+          health_issues: 8,
+          close_person: {
+            first_name: 9,
+            last_name: 10,
+            email: 11,
+            phone: 12,
+          },
+          birth_name: 13,
+          nickname: 14,
+        }}
+        headerRows={2}
+        onUpload={handleImportParticipants}
+      >
+        Importovat z excelu
+      </ImportExcelButton>
+      <ExternalButtonLink tertiary href={spreadsheetTemplate}>
+        (vzor)
+      </ExternalButtonLink>
       {!isReadParticipantsLoading ? (
         <div>
           <div>Přidat účastníka:</div>

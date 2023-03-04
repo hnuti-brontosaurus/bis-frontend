@@ -46,23 +46,28 @@ export const ImportParticipantsList = ({
   onCancel,
 }: {
   data?: UserImport[]
-  onConfirm: (data: ConfirmedUser[]) => void
+  onConfirm: (data: ConfirmedUser[]) => Promise<void>
   onCancel: () => void
 }) => {
   const [selectedRow, setSelectedRow] = useState<number>(-1)
   const [processedData, setProcessedData] = useState<ProcessedUserWithStatus[]>(
     [],
   )
+  const [isSaving, setIsSaving] = useState(false)
 
   const showMessage = useShowMessage()
 
   const handleConfirm = () => {
-    if (processedData.some(datum => !datum.isValid))
+    if (processedData.some(({ isValid }) => !isValid))
       return showMessage({
         message: 'Opravte, prosím, chyby ve validaci!',
         type: 'error',
       })
-    onConfirm(processedData.map(({ user }) => user))
+
+    setIsSaving(true)
+    onConfirm(processedData.map(({ user }) => user)).finally(() => {
+      setIsSaving(false)
+    })
   }
 
   const handleUserDataChange = (
@@ -104,7 +109,7 @@ export const ImportParticipantsList = ({
         <Button secondary onClick={onCancel}>
           Zrušit
         </Button>
-        <Button primary onClick={handleConfirm}>
+        <Button primary isLoading={isSaving} onClick={handleConfirm}>
           Potvrdit
         </Button>
       </Actions>

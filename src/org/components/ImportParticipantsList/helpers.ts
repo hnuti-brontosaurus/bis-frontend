@@ -66,7 +66,15 @@ export const import2payload = (
       })
     : null
 
-  const birthday = dayjs(data.birthday, 'D.M.YYYY').format('YYYY-MM-DD')
+  const dayjsBirthday = dayjs(data.birthday, [
+    'D.M.YYYY',
+    'YYYY-M-D',
+    'YYYY-MM-DD',
+  ])
+
+  const birthday = dayjsBirthday.isValid()
+    ? dayjsBirthday.format('YYYY-MM-DD')
+    : null
 
   const address = data.address?.trim?.() ? parseAddress(data.address) : null
   const contact_address = data.contact_address?.trim?.()
