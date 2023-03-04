@@ -291,10 +291,12 @@ export const Participants: FC<{
       </StyledModal>
 
       <h2>Účastníci</h2>
-      <ImportParticipants onConfirm={handleSaveImportedParticipants} />
+      <div className={styles.buttonsContainer}>
+        <ImportParticipants onConfirm={handleSaveImportedParticipants} />
+      </div>
       {!isReadParticipantsLoading ? (
         <div>
-          <div>Přidat účastníka:</div>
+          <div>Přidat účastníka z BISu:</div>
           <SelectUnknownUser
             value={selectedUser ?? undefined}
             onChange={async selectedUser => {

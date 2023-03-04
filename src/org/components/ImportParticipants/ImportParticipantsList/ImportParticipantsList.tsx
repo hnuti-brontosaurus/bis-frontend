@@ -110,7 +110,7 @@ export const ImportParticipantsList = ({
           Zrušit
         </Button>
         <Button primary isLoading={isSaving} onClick={handleConfirm}>
-          Potvrdit
+          Přidat do seznamu
         </Button>
       </Actions>
     </div>
@@ -165,11 +165,8 @@ const RowWithForm = ({
 
   const request = api.endpoints.readUserByBirthdate.useQuery(
     searchUserParams &&
-      typeof searchUserParams?.first_name === 'string' &&
       searchUserParams.first_name &&
-      typeof searchUserParams?.last_name === 'string' &&
       searchUserParams.last_name &&
-      typeof searchUserParams?.birthday === 'string' &&
       searchUserParams.birthday
       ? (searchUserParams as {
           first_name: string
