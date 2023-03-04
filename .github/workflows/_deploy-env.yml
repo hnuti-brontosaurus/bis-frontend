@@ -2,15 +2,27 @@ on:
   workflow_call:
     inputs:
       environment:
-        required: true
+        required: false #true
+        type: string
+      url:
+        required: false #true
         type: string
       target_repo:
-        required: true
+        required: false #true
         type: string
-      target_branch:
+      api:
         required: false
         type: string
-        default: 'gh-pages'
+      cors_proxy:
+        required: false
+        type: string
+    secrets:
+      target_ssh_key:
+        required: false #true
+        type: string
+      sentry_dsn:
+        required: false
+        type: string
 
 jobs:
   build-and-deploy:
@@ -18,11 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
+      url: https://${{ inputs.url }}
 
     steps:
-      - name: echo vars
-        run: echo "api ${{ vars.API }} ${{ secrets.SENTRY_DSN }} ${{inputs.target_branch}}"
-
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -41,35 +51,30 @@ jobs:
       - name: Build project
         run: cd source && yarn build
         env:
-          PUBLIC_URL: https://${{ vars.URL }}
-          REACT_APP_API_BASE_URL: ${{ vars.API }}
-          REACT_APP_CORS_PROXY: ${{ vars.CORS_PROXY }}
-          REACT_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          PUBLIC_URL: ${{ inputs.url }}
+          REACT_APP_API_BASE_URL: ${{ inputs.api }}
+          REACT_APP_CORS_PROXY: ${{ inputs.cors_proxy }}
+          REACT_APP_SENTRY_DSN: ${{ secrets.sentry_dsn }}
 
       - name: Checkout dev target
         uses: 'actions/checkout@v3'
         with:
           repository: ${{ inputs.target_repo }}
-          ref: ${{ inputs.target_branch }}
-          ssh-key: ${{ secrets.DEPLOY_GH_PAGES_SSH_KEY }}
+          # 'hnuti-brontosaurus/bis-frontend-build-dev'
+          ref: 'main'
+          ssh-key: ${{ secrets.target_ssh_key }}
           path: target
           persist-credentials: true
 
       - name: Push files to target
         run: |
-          # move files from source to target repository
-          rm -rf target/static/
-          cp -r source/build/* target
-          cd target
           # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
           git config user.name github-actions
           git config user.email github-actions@github.com
-          echo ${{ vars.URL }} > CNAME
-          echo "# Build of bis-frontend (${{ inputs.environment }})
-
-          This is a ${{ inputs.environment }} build of [hnuti-brontosaurus/bis-frontend](https://github.com/hnuti-brontosaurus/bis-frontend) for github pages
-
-          It's generated automatically by github actions. Don't change it directly!" > README.md
+          # move files from source to target repository
+          cp -r source/build/* target
+          cd target
+          echo ${{ inputs.url }} > CNAME
           git add .
-          git commit --allow-empty -m $GITHUB_SHA
-          git push -f
+          git commit -m $GITHUB_SHA
+          git push
