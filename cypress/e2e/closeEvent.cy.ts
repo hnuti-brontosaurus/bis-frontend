@@ -452,7 +452,7 @@ describe('Close event - evidence and participants', () => {
 
         cy.get('[class^=ImportParticipantsList_container]')
           .find('button')
-          .contains('Potvrdit')
+          .contains('Přidat do seznamu')
           .click()
 
         // check that the users appear in the table
@@ -528,7 +528,7 @@ describe('Close event - evidence and participants', () => {
 
         cy.get('[class^=ImportParticipantsList_container]')
           .find('button')
-          .contains('Potvrdit')
+          .contains('Přidat do seznamu')
           .click()
 
         // these data should match those provided in stylesheet (after transformation)
@@ -702,7 +702,7 @@ describe('Close event - evidence and participants', () => {
 
         cy.get('[class^=ImportParticipantsList_container]')
           .find('button')
-          .contains('Potvrdit')
+          .contains('Přidat do seznamu')
           .click()
 
         // check that users get created/updated with the right data
