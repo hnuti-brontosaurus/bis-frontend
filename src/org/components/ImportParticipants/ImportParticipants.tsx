@@ -1,6 +1,7 @@
 import { UserPayload } from 'app/services/bisTypes'
 import spreadsheetTemplate from 'assets/templates/Vzor_import účastníků.xlsx'
 import { ExternalButtonLink, ImportExcelButton, StyledModal } from 'components'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useState } from 'react'
 import { Overwrite } from 'utility-types'
 import {
@@ -28,9 +29,19 @@ export const ImportParticipants = ({
   const [importParticipantsData, setImportParticipantsData] =
     useState<UserImport[]>()
 
+  const showMessage = useShowMessage()
+
   const handleConfirm = async (data: ConfirmedUser[]) => {
-    await onConfirm(data)
-    setImportParticipantsModalOpen(false)
+    try {
+      await onConfirm(data)
+      showMessage({
+        message: 'Import se povedl',
+        type: 'success',
+      })
+      setImportParticipantsModalOpen(false)
+    } catch (e) {
+      // just catch the error
+    }
   }
 
   const handleCancel = () => {
@@ -39,7 +50,12 @@ export const ImportParticipants = ({
   }
 
   const handleImportParticipants = async (data: UserImport[]) => {
-    setImportParticipantsData(data)
+    setImportParticipantsData(
+      data.filter(
+        ({ first_name, last_name, birthday }) =>
+          first_name || last_name || birthday,
+      ),
+    )
     setImportParticipantsModalOpen(true)
   }
 
