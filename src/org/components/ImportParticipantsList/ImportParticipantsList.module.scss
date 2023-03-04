@@ -18,6 +18,14 @@
           background-color: colors.$gray-200;
         }
       }
+
+      &.invalid {
+        background-color: colors.$error-light;
+      }
+
+      &.validating {
+        background-color: lightyellow;
+      }
     }
   }
 }

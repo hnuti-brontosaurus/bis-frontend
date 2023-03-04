@@ -10,6 +10,14 @@ import { merge, pick } from 'lodash'
 import { normalizeString } from 'utils/helpers'
 import { UserImport } from '../EventForm/steps/registration/Participants'
 
+/**
+ * Convert raw imported excel data into usable data
+ *
+ * In particular, parse addresses and other data,
+ * convert health_insurance_company from its name to id,
+ * merge with the fetched user
+ * ...
+ */
 export const import2payload = (
   data: UserImport,
   {
@@ -84,7 +92,7 @@ export const import2payload = (
   } as const
 
   const importedFields = Object.fromEntries(
-    Object.entries(preparedFields).filter(([key, value]) => Boolean(value)),
+    Object.entries(preparedFields).filter(([, value]) => Boolean(value)),
   ) as Partial<User>
 
   return merge(
@@ -95,6 +103,15 @@ export const import2payload = (
   )
 }
 
+/**
+ * Parse address from string to address object
+ *
+ * It has to be in format
+ * Street Number, Zip Code City
+ * For example
+ * Na Návsi 1, 76323 Horní Lhota
+ * Vinohradská 1778/51a, 120 00 Praha 2
+ */
 const parseAddress = (input: string): AddressPayload => {
   input.split(/[,;]\s*/g)
 

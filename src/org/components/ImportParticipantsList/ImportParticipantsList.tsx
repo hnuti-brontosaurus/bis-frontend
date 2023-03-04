@@ -1,7 +1,9 @@
 import { api } from 'app/services/bis'
 import { User, UserPayload } from 'app/services/bisTypes'
+import classNames from 'classnames'
 import { Actions, Button, LoadingIcon } from 'components'
-import { UserForm } from 'components/UserForm/UserForm'
+import { UserForm, userValidationSchema } from 'components/UserForm/UserForm'
+import { mergeWith } from 'lodash'
 import merge from 'lodash/merge'
 import { useEffect, useMemo, useState } from 'react'
 import { FaTimesCircle, FaUserCheck, FaUserPlus } from 'react-icons/fa'
@@ -43,7 +45,7 @@ export const ImportParticipantsList = ({
     [],
   )
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     onConfirm(processedData.map(({ user }) => user))
   }
 
@@ -111,6 +113,19 @@ const getRequestStatus = (
 
 type RequestStatus = ReturnType<typeof getRequestStatus>
 
+const prepareUserForValidation = (user?: Partial<UserPayload>) =>
+  mergeWith(
+    {
+      isChild: false,
+      close_person: { first_name: '', last_name: '', email: '', phone: '' },
+      contact_address: { street: '', city: '', zip_code: '' },
+      health_insurance_company: 0,
+      pronoun: 0,
+    },
+    user,
+    (objValue, srcValue) => srcValue ?? objValue,
+  )
+
 const RowWithForm = ({
   initialData,
   expanded,
@@ -131,6 +146,22 @@ const RowWithForm = ({
 
   // here, we keep the current request status
   const [status, setStatus] = useState<RequestStatus>('pending')
+
+  // keep track of the validity of the field
+  const [isValid, setIsValid] = useState<boolean>()
+
+  // validate currentData
+  useEffect(() => {
+    setIsValid(undefined)
+    userValidationSchema
+      .validate(prepareUserForValidation(currentData))
+      .then(() => {
+        setIsValid(true)
+      })
+      .catch(() => {
+        setIsValid(false)
+      })
+  }, [currentData])
 
   // change status when request changes
   useEffect(() => {
@@ -184,7 +215,14 @@ const RowWithForm = ({
 
   return (
     <>
-      <tr onClick={onToggle} className={styles.userRow}>
+      <tr
+        onClick={onToggle}
+        className={classNames(
+          styles.userRow,
+          isValid === false && styles.invalid,
+          isValid === undefined && styles.validating,
+        )}
+      >
         <td>{currentData.first_name}</td>
         <td>{currentData.last_name}</td>
         <td>{currentData.birthday}</td>
