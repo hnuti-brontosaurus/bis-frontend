@@ -8,7 +8,7 @@ import { data2form, form2payload } from 'components/UserForm/UserForm'
 import dayjs from 'dayjs'
 import { merge, pick } from 'lodash'
 import { normalizeString } from 'utils/helpers'
-import { UserImport } from '../EventForm/steps/registration/Participants'
+import { UserImport } from '../ImportParticipants'
 
 /**
  * Convert raw imported excel data into usable data

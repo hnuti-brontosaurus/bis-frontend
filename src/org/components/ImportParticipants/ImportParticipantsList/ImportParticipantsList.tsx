@@ -10,7 +10,7 @@ import merge from 'lodash/merge'
 import { useEffect, useMemo, useState } from 'react'
 import { FaTimesCircle, FaUserCheck, FaUserPlus } from 'react-icons/fa'
 import { formatDateTime } from 'utils/helpers'
-import { UserImport } from '../EventForm/steps/registration/Participants'
+import { UserImport } from '../ImportParticipants'
 import { import2payload } from './helpers'
 import styles from './ImportParticipantsList.module.scss'
 
