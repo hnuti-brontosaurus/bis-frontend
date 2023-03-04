@@ -1,7 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { User, UserPayload } from 'app/services/bisTypes'
-import { default as classnames, default as classNames } from 'classnames'
+import classNames from 'classnames'
 import {
   Actions,
   Button,
@@ -17,6 +17,8 @@ import {
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
 import { merge } from 'lodash'
+import { ImportParticipants } from 'org/components/ImportParticipants/ImportParticipants'
+import { ConfirmedUser } from 'org/components/ImportParticipants/ImportParticipantsList/ImportParticipantsList'
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
@@ -93,6 +95,32 @@ export const Participants: FC<{
   }
 
   const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
+
+  const addParticipants = async (newParticipantIds: string[]) => {
+    const allParticipants: string[] = []
+
+    if (participants) {
+      allParticipants.push(...participants.results.map(p => p.id))
+    }
+    allParticipants.push(...newParticipantIds)
+
+    await patchEvent({
+      id: eventId,
+      event: {
+        record: {
+          participants: allParticipants,
+          contacts: [],
+          number_of_participants: null,
+          number_of_participants_under_26: null,
+        },
+      },
+    }).unwrap()
+
+    newParticipantIds.forEach(id => {
+      setLastAddedId(id)
+      setTimeOfLastAddition(Date.now())
+    })
+  }
 
   /**
    * Handle adding a new participant and updating a participant
@@ -205,6 +233,34 @@ export const Participants: FC<{
     }
   }
 
+  const handleSaveImportedParticipants = async (data: ConfirmedUser[]) => {
+    const existingParticipants = data.filter(
+      datum => 'id' in datum && datum.id,
+    ) as ({ id: string } & Partial<UserPayload>)[]
+    const newParticipantsData = data.filter(
+      datum => !('id' in datum && datum.id),
+    ) as UserPayload[]
+
+    // create non-existent people
+    const newParticipants = await Promise.all(
+      newParticipantsData.map(datum => createUser(datum).unwrap()),
+    )
+
+    // save participants
+    await addParticipants(
+      existingParticipants
+        .map(p => p.id)
+        .concat(newParticipants.map(p => p.id)),
+    )
+
+    // update existent people
+    await Promise.all(
+      existingParticipants.map(async ({ id, ...data }) => {
+        await updateUser({ id, patchedUser: data })
+      }),
+    )
+  }
+
   const removeModalTitle = removeModalData
     ? `Opravdu chcete smazat účastnici/účastníka ${removeModalData.first_name} ${removeModalData.last_name} z akce ${eventName}?`
     : undefined
@@ -233,10 +289,14 @@ export const Participants: FC<{
           onCancel={handleCancelRemoveParticipant}
         />
       </StyledModal>
+
       <h2>Účastníci</h2>
+      <div className={styles.buttonsContainer}>
+        <ImportParticipants onConfirm={handleSaveImportedParticipants} />
+      </div>
       {!isReadParticipantsLoading ? (
         <div>
-          <div>Přidat účastníka:</div>
+          <div>Přidat účastníka z BISu:</div>
           <SelectUnknownUser
             value={selectedUser ?? undefined}
             onChange={async selectedUser => {
@@ -265,10 +325,10 @@ export const Participants: FC<{
                   <th>příjmení</th>
                   <th>datum narození</th>
                   <th>
-                    <EditUser className={classnames(styles.iconHead)} />
+                    <EditUser className={classNames(styles.iconHead)} />
                   </th>
                   <th>
-                    <Bin className={classnames(styles.iconHead)}></Bin>
+                    <Bin className={classNames(styles.iconHead)}></Bin>
                   </th>
                 </tr>
               </thead>

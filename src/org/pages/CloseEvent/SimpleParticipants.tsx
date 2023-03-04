@@ -28,10 +28,10 @@ import type { ParticipantsStepFormShape } from './CloseEventForm'
 import styles from './SimpleParticipants.module.scss'
 
 const importMap = {
-  first_name: ['jméno', 'first-name', 'first_name', 'given_name'],
-  last_name: ['příjmení', 'last-name', 'last_name', 'family_name'],
-  email: ['email', 'e-mail', 'mail'],
-  phone: ['telefon', 'phone', 'mobil'],
+  first_name: 0,
+  last_name: 1,
+  email: 2,
+  phone: 3,
 }
 
 export const SimpleParticipants = () => {

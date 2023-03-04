@@ -23,6 +23,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from 'app/store'
 import { ClearBounds } from 'components'
+import dayjs from 'dayjs'
 import type { Assign, Overwrite } from 'utility-types'
 import type {
   AdministrationUnit,
@@ -147,7 +148,9 @@ export const api = createApi({
       query: queryArg => ({
         url: `frontend/get_unknown_user/`,
         params: {
-          birthday: queryArg.birthday,
+          birthday: dayjs(queryArg.birthday, ['D-M-YYYY', 'YYYY-MM-DD']).format(
+            'YYYY-MM-DD',
+          ),
           first_name: queryArg.first_name,
           last_name: queryArg.last_name,
         },

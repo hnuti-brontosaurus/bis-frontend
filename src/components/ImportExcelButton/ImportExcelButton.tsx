@@ -1,20 +1,26 @@
 /**
  * This button imports data from excel
+ *
+ * Never import it directly, but only from components!
+ * Because it's lazily loaded and in fact you're exporting LazyImportExcelButton
  */
 import { ChangeEventHandler, ReactNode } from 'react'
-import { normalizeKeys } from 'utils/helpers'
+import { Schema } from 'type-fest'
+import { array2object } from 'utils/helpers'
 import * as xlsx from 'xlsx'
 import styles from './ImportExcelButton.module.scss'
 
 export interface ImportExcelButtonProps<T extends {}> {
   // keyMap is a config which says how to map columns in imported document (keyMap values) onto imported object (keyMap keys)
-  keyMap: Record<keyof T, string[]>
+  keyMap: Schema<T, number>
+  headerRows?: number
   children: ReactNode
   onUpload: (data: T[]) => void
 }
 
 export const ImportExcelButton = <T extends {}>({
   keyMap,
+  headerRows = 1,
   children,
   onUpload,
 }: ImportExcelButtonProps<T>) => {
@@ -25,11 +31,13 @@ export const ImportExcelButton = <T extends {}>({
       reader.readAsBinaryString(file)
       reader.onload = () => {
         const wb = xlsx.read(reader.result, { type: 'binary' })
-        const json = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+        const json = xlsx.utils
+          .sheet_to_json(wb.Sheets[wb.SheetNames[0]], {
+            header: 1,
+          })
+          .slice(headerRows)
         const normalizedJson = json
-          .map(entry =>
-            normalizeKeys<T>(entry as { [key: string]: string }, keyMap),
-          )
+          .map(entry => array2object<T>(entry as unknown[], keyMap))
           // ignore rows that imported nothing
           .filter(row => Object.keys(keyMap).some(key => row[key as keyof T]))
         onUpload(normalizedJson)

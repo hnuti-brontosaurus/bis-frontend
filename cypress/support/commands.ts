@@ -139,7 +139,7 @@ Cypress.Commands.add('interceptCategories', () => {
   cy.intercept(
     { method: 'GET', pathname: '/api/categories/health_insurance_companies/' },
     { fixture: 'healthInsuranceCompanies' },
-  )
+  ).as('category_readHealthInsuranceCompanies')
   cy.intercept(
     { method: 'GET', pathname: '/api/categories/pronoun_categories/' },
     { fixture: 'pronouns' },

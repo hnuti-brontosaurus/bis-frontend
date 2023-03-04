@@ -48,6 +48,7 @@ export const TableCellIconButton: FC<
         useDefaultStyles
         content={tooltipContent}
         tagName="span"
+        // this hack prevents empty tooltip from showing up
         hoverDelay={tooltipContent ? 500 : 100000000}
       >
         <button

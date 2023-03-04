@@ -1,5 +1,5 @@
 import type { Event, User } from 'app/services/bisTypes'
-import { cloneDeep, findKey, mapKeys } from 'lodash'
+import { cloneDeep, mapValues } from 'lodash'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import padStart from 'lodash/padStart'
@@ -11,6 +11,7 @@ import {
   FieldValues,
   UseFormReturn,
 } from 'react-hook-form'
+import { Schema } from 'type-fest'
 import { required } from './validationMessages'
 
 export function getIdBySlug<T, O extends { id: number; slug: T }>(
@@ -316,25 +317,18 @@ export const sortOrder = <T extends { order?: number }>(a: T, b: T) => {
  * Input unnormalized object and config that shows how raw object keys map on final object key
  * Output object with normalized keys and the same values as the other one
  */
-export const normalizeKeys = <T extends {}>(
-  obj: { [key: string]: unknown },
-  shape: Record<keyof T, string[]>,
-): T => {
-  return mapKeys(obj, (value, rawKey) =>
-    findKey(
-      shape,
-      values =>
-        values.findIndex(val =>
-          normalizeString(rawKey).includes(normalizeString(val)),
-        ) > -1,
-    ),
+export const array2object = <T extends { [key: string]: unknown }>(
+  arr: unknown[],
+  shape: Schema<T, number>,
+): T =>
+  mapValues(shape, value =>
+    typeof value === 'number' ? arr[value] : array2object(arr, value),
   ) as T
-}
 
 /**
  * Transform string to lowercase without diacritics, for more graceful comparison
  */
-const normalizeString = (input: string): string => {
+export const normalizeString = (input: string): string => {
   return (
     input
       .toLowerCase()
