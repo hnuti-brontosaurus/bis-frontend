@@ -3,7 +3,6 @@ name: Build & deploy to gh-pages (development)
 on:
   push:
     branches:
-      - deploy-multiple-gh-pages
       - main
 
 jobs:
@@ -14,21 +13,3 @@ jobs:
       target_repo: hnuti-brontosaurus/bis-frontend-build-dev
       target_branch: main
     secrets: inherit
-    # with:
-    #   # (required) which environment to run the action with
-    #   # in particular, which environment variables and secrets to use
-    #   environment: development
-    #   # (required) url where the app will live; without protocol (https://) and without trailing slash (/)
-    #   url: ${{ vars.URL }}
-    #   # (required) a repository to push the build to
-    #   target_repo: ${{ vars.TARGET_REPO }}
-    #   # (optional) path to api, if it's on a different domain
-    #   api: ${{ vars.API }}
-    #   # (optional) path to proxy to serve images, if it's on a different domain
-    #   cors_proxy: ${{ vars.CORS_PROXY }}
-    # secrets:
-    #   # (required)
-    #   target_ssh_key: ${{ secrets.DEPLOY_GH_PAGES_SSH_KEY }}
-    #   # (optional) Sentry DSN, if you want to use Sentry for error reporting
-    #   # beware: this one is actually exposed in the build, not really secret
-    #   sentry_dsn: ${{ secrets.SENTRY_DSN }}
