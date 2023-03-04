@@ -1,0 +1,80 @@
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: false #true
+        type: string
+      url:
+        required: false #true
+        type: string
+      target_repo:
+        required: false #true
+        type: string
+      api:
+        required: false
+        type: string
+      cors_proxy:
+        required: false
+        type: string
+    secrets:
+      target_ssh_key:
+        required: false #true
+        type: string
+      sentry_dsn:
+        required: false
+        type: string
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: https://${{ inputs.url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: source
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: source/yarn.lock
+
+      - name: Install NPM packages
+        run: cd source && yarn install --frozen-lockfile
+
+      - name: Build project
+        run: cd source && yarn build
+        env:
+          PUBLIC_URL: ${{ inputs.url }}
+          REACT_APP_API_BASE_URL: ${{ inputs.api }}
+          REACT_APP_CORS_PROXY: ${{ inputs.cors_proxy }}
+          REACT_APP_SENTRY_DSN: ${{ secrets.sentry_dsn }}
+
+      - name: Checkout dev target
+        uses: 'actions/checkout@v3'
+        with:
+          repository: ${{ inputs.target_repo }}
+          # 'hnuti-brontosaurus/bis-frontend-build-dev'
+          ref: 'main'
+          ssh-key: ${{ secrets.target_ssh_key }}
+          path: target
+          persist-credentials: true
+
+      - name: Push files to target
+        run: |
+          # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          # move files from source to target repository
+          cp -r source/build/* target
+          cd target
+          echo ${{ inputs.url }} > CNAME
+          git add .
+          git commit -m $GITHUB_SHA
+          git push

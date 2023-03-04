@@ -1,68 +1,34 @@
-name: Build & deploy to gh-pages (dev)
+name: Build & deploy to gh-pages (development)
 
 on:
   push:
     branches:
       - deploy-multiple-gh-pages
       - main
-    # paths-ignore:
-    #   - '**.md'
 
-env:
-  URL: example.com
+environment: development
 
 jobs:
-  build:
-    name: Build and deploy
-    runs-on: ubuntu-latest
-    environment:
-      name: development
-      url: https://${{ env.URL }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          path: source
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
-          cache-dependency-path: source/yarn.lock
-
-      - name: Install NPM packages
-        run: cd source && yarn install --frozen-lockfile
-
-      - name: Build project
-        run: cd source && yarn build
-        env:
-          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
-          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
-          REACT_APP_CORS_PROXY: ${{ secrets.REACT_APP_CORS_PROXY }}
-          REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_SENTRY_DSN }}
-
-      # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
-      - name: Set GitHub Actions as Commit Author
-        run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-
-      - name: Checkout dev target
-        uses: 'actions/checkout@v3'
-        with:
-          repository: 'hnuti-brontosaurus/bis-frontend-build-dev'
-          ref: 'gh-pages'
-          ssh-key: ${{ secrets.DEPLOY_GH_PAGES_SSH_KEY }}
-          path: target
-          persist-credentials: true
-
-      - name: Push files to target
-        run: |
-          cp -r source/build/* target
-          cd target
-          echo ${{ env.URL }} > CNAME
-          git add .
-          git commit -m $GITHUB_SHA
-          git push
+  check:
+    run: echo "hello world"
+  build-and-deploy-dev:
+    environment: development
+    uses: hnuti-brontosaurus/bis-frontend/.github/workflows/deploy-env.yml@${{ GITHUB_BASE_REF }}
+    with:
+      # (required) which environment to run the action with
+      # in particular, which environment variables and secrets to use
+      environment: development
+      # (required) url where the app will live; without protocol (https://) and without trailing slash (/)
+      url: ${{ vars.URL }}
+      # (required) a repository to push the build to
+      target_repo: ${{ vars.TARGET_REPO }}
+      # (optional) path to api, if it's on a different domain
+      api: ${{ vars.API }}
+      # (optional) path to proxy to serve images, if it's on a different domain
+      cors_proxy: ${{ vars.CORS_PROXY }}
+    secrets:
+      # (required)
+      target_ssh_key: ${{ secrets.DEPLOY_GH_PAGES_SSH_KEY }}
+      # (optional) Sentry DSN, if you want to use Sentry for error reporting
+      # beware: this one is actually exposed in the build, not really secret
+      sentry_dsn: ${{ secrets.SENTRY_DSN }}
