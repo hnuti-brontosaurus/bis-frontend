@@ -26,7 +26,7 @@ import {
   usePersistentFormData,
   usePersistForm,
 } from 'hooks/persistForm'
-import { merge, mergeWith, omit, startsWith } from 'lodash'
+import { merge, mergeWith, omit, pick, startsWith } from 'lodash'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Optional } from 'utility-types'
@@ -47,7 +47,7 @@ export type UserFormShape = Omit<
 }
 
 // transform user data to initial form data
-const data2form = (user: User): UserFormShape => {
+export const data2form = (user: User): UserFormShape => {
   return merge({}, omit(user, 'pronoun', 'address', 'contact_address'), {
     pronoun: user.pronoun?.id ?? 0,
     address: omit(user.address, 'region'),
@@ -66,7 +66,7 @@ const data2form = (user: User): UserFormShape => {
 }
 
 // transform form data to edit user payload
-const form2payload = (
+export const form2payload = (
   data: UserFormShape,
   isSelf = false,
 ): Partial<UserPayload> => {
@@ -87,13 +87,21 @@ const form2payload = (
 
   const finalData: Partial<UserPayload> = merge(
     { eyca_card: null },
-    omit(
+    pick(
       data,
-      'pronoun',
-      'contact_address',
-      'health_insurance_company',
-      'close_person',
-      'isChild',
+      'first_name',
+      'last_name',
+      'birth_name',
+      'nickname',
+      'birthday',
+      'health_issues',
+      'email',
+      'phone',
+      'subscribed_to_newsletter',
+      'address',
+      'donor',
+      'offers',
+      'eyca_card',
     ),
     {
       pronoun: Number(data.pronoun) || null,
@@ -207,12 +215,15 @@ const validationSchema: yup.ObjectSchema<UserFormShape> = yup.object({
   }),
 })
 
+export { validationSchema as userValidationSchema }
+
 export const UserForm = ({
   id,
   initialData,
   isSelf = false,
   onSubmit,
   onCancel,
+  validateImmediately,
 }: {
   // provide id for persisting form data
   // because we don't want to overwrite contexts
@@ -221,6 +232,7 @@ export const UserForm = ({
   onSubmit: (data: UserPayload, id?: string) => void
   onCancel: () => void
   initialData?: User
+  validateImmediately?: boolean
 }) => {
   const showMessage = useShowMessage()
 
@@ -246,6 +258,10 @@ export const UserForm = ({
     resolver: yupResolver(validationSchema),
   })
   const { register, watch, control, trigger, formState, handleSubmit } = methods
+
+  useEffect(() => {
+    if (validateImmediately) trigger()
+  }, [trigger, validateImmediately])
 
   usePersistForm('user', id, watch)
 

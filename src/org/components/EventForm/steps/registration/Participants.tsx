@@ -255,6 +255,7 @@ export const Participants: FC<{
     setImportParticipantsModalOpen(false)
     setImportParticipantsData(undefined)
   }
+
   const handleImportParticipants = async (data: UserImport[]) => {
     setImportParticipantsData(data)
     setImportParticipantsModalOpen(true)
@@ -265,16 +266,28 @@ export const Participants: FC<{
       datum => 'id' in datum && datum.id,
     ) as ({ id: string } & Partial<UserPayload>)[]
     const newParticipantsData = data.filter(
-      datum => !('id' in datum),
+      datum => !('id' in datum && datum.id),
     ) as UserPayload[]
+
+    // create non-existent people
     const newParticipants = await Promise.all(
       newParticipantsData.map(datum => createUser(datum).unwrap()),
     )
+
+    // save participants
     await addParticipants(
       existingParticipants
         .map(p => p.id)
         .concat(newParticipants.map(p => p.id)),
     )
+
+    // update existent people
+    await Promise.all(
+      existingParticipants.map(async ({ id, ...data }) => {
+        await updateUser({ id, patchedUser: data })
+      }),
+    )
+
     setImportParticipantsModalOpen(false)
   }
 
@@ -312,7 +325,7 @@ export const Participants: FC<{
         onClose={handleCancelImportParticipants}
       >
         <ImportParticipantsList
-          data={importParticipantsData ?? []}
+          data={importParticipantsData}
           onConfirm={handleSaveImportedParticipants}
           onCancel={handleCancelImportParticipants}
         />

@@ -1,5 +1,4 @@
-import { Interception } from 'cypress/types/net-stubbing'
-import { isEqual, merge } from 'lodash'
+import { merge } from 'lodash'
 import * as participantsExample from '../fixtures/eventParticipants.json'
 import * as newUserExample from '../fixtures/newUser.json'
 
@@ -570,11 +569,7 @@ describe('Close event - evidence and participants', () => {
             email: 'jana.novakova@example.com',
             phone: '601001002',
             birthday: '1993-03-01',
-            address: {
-              street: 'Horní 50',
-              city: 'Praha 6',
-              zip_code: '16000',
-            },
+            address: { street: 'Horní 50', city: 'Praha 6', zip_code: '16000' },
             contact_address: {
               street: 'Dolní 40',
               city: 'Praha 5',
@@ -593,13 +588,11 @@ describe('Close event - evidence and participants', () => {
         ]
 
         cy.wait(['@createUser', '@createUser']).then(intercepts => {
-          expect(intercepts).to.satisfy((intercepts: Interception[]) =>
-            // test that the two users got saved with the data above
-            // but we don't know the order for sure, that's why this function is so complicated
-            expectations.every(expectation =>
-              intercepts.some(obj => isEqual(obj.request.body, expectation)),
-            ),
-          )
+          expect(
+            intercepts
+              .map(i => i.request.body)
+              .sort((a, b) => (a.first_name > b.first_name ? 1 : -1)),
+          ).to.deep.equal(expectations)
         })
 
         cy.wait('@updateEvent')
@@ -621,6 +614,159 @@ describe('Close event - evidence and participants', () => {
           6,
         )
       })
+
+      it('should allow editing imported data', () => {
+        // at the beginning, the table has 4 rows
+        cy.get('table[class^=ParticipantsStep_table] tbody tr').should(
+          'have.length',
+          4,
+        )
+
+        cy.intercept(
+          {
+            method: 'GET',
+            path: '/api/frontend/get_unknown_user/?birthday=1993-03-01&first_name=Jana&last_name=Nov%C3%A1kov%C3%A1',
+          },
+          { fixture: 'user1' },
+        )
+
+        cy.intercept(
+          {
+            method: 'GET',
+            path: '/api/frontend/get_unknown_user/?birthday=1995-05-12&first_name=Dan&last_name=Nov%C3%A1k',
+          },
+          { statusCode: 404 },
+        )
+
+        cy.get('label:contains(Importovat z excelu)')
+          .should('be.visible')
+          .selectFile('cypress/e2e/full-participants.xlsx')
+
+        cy.wait('@category_readHealthInsuranceCompanies').wait(100)
+
+        // click one of the users
+        cy.get(
+          '[class^=ImportParticipantsList_container] table tbody tr[class^=ImportParticipantsList_userRow]',
+        )
+          .should('have.length', 2)
+          .first()
+          .click()
+
+        // edit some of the user's fields
+        cy.get('[class^=ImportParticipantsList_container] table tbody tr')
+          .should('have.length', 3)
+          .first()
+          .next()
+          .find('input[name="address.street"]')
+          .should('have.value', 'Horní 50')
+          .clear()
+          .type('Rygol 123')
+          // and confirm the form
+          .parents('form')
+          .find('button')
+          .contains('Potvrdit')
+          .click()
+
+        // same for the second user
+        cy.get(
+          '[class^=ImportParticipantsList_container] table tbody tr[class^=ImportParticipantsList_userRow]',
+        )
+          .should('have.length', 2)
+          .last()
+          .click()
+
+        cy.get('[class^=ImportParticipantsList_container] table tbody tr')
+          .find('input[name="address.street"]')
+          .should('have.value', 'Hlavní 5')
+          .clear()
+          .type('asdfasdf 123')
+          .parents('form')
+          .find('input[name=nickname]')
+          .should('have.value', '')
+          .type('Jablko')
+          // and confirm the form
+          .parents('form')
+          .find('button')
+          .contains('Potvrdit')
+          .click()
+
+        cy.intercept(
+          { method: 'POST', pathname: '/api/frontend/users/', times: 1 },
+          { fixture: 'user1' },
+        ).as('createUser')
+
+        cy.intercept(
+          { method: 'PATCH', pathname: '/api/frontend/users/*/', times: 1 },
+          { fixture: 'user2' },
+        ).as('updateUser')
+
+        cy.get('[class^=ImportParticipantsList_container]')
+          .find('button')
+          .contains('Potvrdit')
+          .click()
+
+        // check that users get created/updated with the right data
+        cy.wait('@createUser')
+          .its('request.body')
+          .should('deep.equal', {
+            first_name: 'Dan',
+            last_name: 'Novák',
+            nickname: 'Jablko',
+            birth_name: '',
+            subscribed_to_newsletter: true,
+            health_insurance_company: null,
+            health_issues: '',
+            email: 'dan.novak@example.com',
+            phone: '',
+            birthday: '1995-05-12',
+            address: {
+              street: 'asdfasdf 123',
+              city: 'Brno - střed',
+              zip_code: '10100',
+            },
+            contact_address: null,
+            close_person: null,
+            donor: null,
+            offers: null,
+            eyca_card: null,
+          })
+
+        cy.wait('@updateUser')
+          .its('request.body')
+          .should('deep.equal', {
+            first_name: 'Jana',
+            last_name: 'Nováková',
+            nickname: 'Julie',
+            birth_name: 'Nová',
+            subscribed_to_newsletter: true,
+            health_insurance_company: 3,
+            health_issues: 'Jahody',
+            email: 'jana.novakova@example.com',
+            phone: '601001002',
+            birthday: '1993-03-01',
+            address: {
+              street: 'Rygol 123',
+              city: 'Praha 6',
+              zip_code: '16000',
+            },
+            contact_address: {
+              street: 'Dolní 40',
+              city: 'Praha 5',
+              zip_code: '15000',
+            },
+            close_person: {
+              first_name: 'Dana',
+              last_name: 'Nováková',
+              email: 'dana@example.com',
+              phone: '602002003',
+            },
+            donor: null,
+            offers: null,
+            eyca_card: null,
+          })
+      })
+
+      it('[invalid data] should show invalid rows highlighted')
     })
   })
 })

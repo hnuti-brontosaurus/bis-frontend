@@ -1,8 +1,10 @@
 import {
   AddressPayload,
   HealthInsuranceCompany,
+  User,
   UserPayload,
 } from 'app/services/bisTypes'
+import { data2form, form2payload } from 'components/UserForm/UserForm'
 import dayjs from 'dayjs'
 import { merge, pick } from 'lodash'
 import { normalizeString } from 'utils/helpers'
@@ -12,8 +14,12 @@ export const import2payload = (
   data: UserImport,
   {
     healthInsuranceCompanies,
-  }: { healthInsuranceCompanies: HealthInsuranceCompany[] },
-): UserPayload => {
+    loaded,
+  }: {
+    healthInsuranceCompanies: HealthInsuranceCompany[]
+    loaded: User | undefined
+  },
+): UserPayload & { id?: string } => {
   const originalFields = pick(
     data,
     'first_name',
@@ -33,6 +39,15 @@ export const import2payload = (
     donor: null,
     offers: null,
     eyca_card: null,
+    // default imported fields
+    first_name: '',
+    last_name: '',
+    email: null,
+    phone: '',
+    close_person: null,
+    address: null,
+    contact_address: null,
+    health_insurance_company: null,
   }
 
   const phone = String(data.phone ?? '')
@@ -45,8 +60,8 @@ export const import2payload = (
 
   const birthday = dayjs(data.birthday, 'D.M.YYYY').format('YYYY-MM-DD')
 
-  const address = parseAddress(data.address)
-  const contact_address = data.contact_address?.trim()
+  const address = data.address?.trim?.() ? parseAddress(data.address) : null
+  const contact_address = data.contact_address?.trim?.()
     ? parseAddress(data.contact_address)
     : null
 
@@ -58,14 +73,26 @@ export const import2payload = (
       )?.id ?? null
     : null
 
-  return merge(defaultFields, originalFields, {
+  const preparedFields = {
+    ...originalFields,
     birthday,
     phone,
     close_person,
     address,
     contact_address,
     health_insurance_company,
-  })
+  } as const
+
+  const importedFields = Object.fromEntries(
+    Object.entries(preparedFields).filter(([key, value]) => Boolean(value)),
+  ) as Partial<User>
+
+  return merge(
+    defaultFields,
+    loaded && form2payload(data2form(loaded)),
+    loaded?.id && { id: loaded.id },
+    importedFields,
+  )
 }
 
 const parseAddress = (input: string): AddressPayload => {
