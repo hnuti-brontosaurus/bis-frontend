@@ -1,0 +1,68 @@
+name: Build & deploy to gh-pages (dev)
+
+on:
+  push:
+    branches:
+      - deploy-multiple-gh-pages
+      - main
+    # paths-ignore:
+    #   - '**.md'
+
+env:
+  URL: example.com
+
+jobs:
+  build:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: https://${{ env.URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: source
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: source/yarn.lock
+
+      - name: Install NPM packages
+        run: cd source && yarn install --frozen-lockfile
+
+      - name: Build project
+        run: cd source && yarn build
+        env:
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+          REACT_APP_CORS_PROXY: ${{ secrets.REACT_APP_CORS_PROXY }}
+          REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_SENTRY_DSN }}
+
+      # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
+      - name: Set GitHub Actions as Commit Author
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+
+      - name: Checkout dev target
+        uses: 'actions/checkout@v3'
+        with:
+          repository: 'hnuti-brontosaurus/bis-frontend-build-dev'
+          ref: 'gh-pages'
+          ssh-key: ${{ secrets.DEPLOY_GH_PAGES_SSH_KEY }}
+          path: target
+          persist-credentials: true
+
+      - name: Push files to target
+        run: |
+          cp -r source/build/* target
+          cd target
+          echo ${{ env.URL }} > CNAME
+          git add .
+          git commit -m $GITHUB_SHA
+          git push
