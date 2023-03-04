@@ -1,12 +1,15 @@
+import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { User, UserPayload } from 'app/services/bisTypes'
 import classNames from 'classnames'
 import { Actions, Button, LoadingIcon } from 'components'
 import { UserForm, userValidationSchema } from 'components/UserForm/UserForm'
-import { mergeWith } from 'lodash'
+import { useShowMessage } from 'features/systemMessage/useSystemMessage'
+import { mergeWith, pick } from 'lodash'
 import merge from 'lodash/merge'
 import { useEffect, useMemo, useState } from 'react'
 import { FaTimesCircle, FaUserCheck, FaUserPlus } from 'react-icons/fa'
+import { formatDateTime } from 'utils/helpers'
 import { UserImport } from '../EventForm/steps/registration/Participants'
 import { import2payload } from './helpers'
 import styles from './ImportParticipantsList.module.scss'
@@ -25,7 +28,13 @@ const statusTitles = {
   error: 'Chyba',
 }
 
-type ProcessedUserWithStatus = { status: unknown; user: ConfirmedUser }
+type RequestStatus = ReturnType<typeof getRequestStatus>
+
+type ProcessedUserWithStatus = {
+  status: RequestStatus
+  user: ConfirmedUser
+  isValid: boolean | undefined
+}
 
 export type ConfirmedUser =
   | UserPayload
@@ -45,7 +54,14 @@ export const ImportParticipantsList = ({
     [],
   )
 
-  const handleConfirm = async () => {
+  const showMessage = useShowMessage()
+
+  const handleConfirm = () => {
+    if (processedData.some(datum => !datum.isValid))
+      return showMessage({
+        message: 'Opravte, prosím, chyby ve validaci!',
+        type: 'error',
+      })
     onConfirm(processedData.map(({ user }) => user))
   }
 
@@ -111,8 +127,6 @@ const getRequestStatus = (
   return 'error'
 }
 
-type RequestStatus = ReturnType<typeof getRequestStatus>
-
 const prepareUserForValidation = (user?: Partial<UserPayload>) =>
   mergeWith(
     {
@@ -121,6 +135,7 @@ const prepareUserForValidation = (user?: Partial<UserPayload>) =>
       contact_address: { street: '', city: '', zip_code: '' },
       health_insurance_company: 0,
       pronoun: 0,
+      email: '',
     },
     user,
     (objValue, srcValue) => srcValue ?? objValue,
@@ -137,7 +152,27 @@ const RowWithForm = ({
   onToggle: () => void
   onChange: (userWithState: ProcessedUserWithStatus) => void
 }) => {
-  const request = api.endpoints.readUserByBirthdate.useQuery(initialData)
+  const [searchUserParams, setSearchUserParams] = useState<{
+    first_name?: string
+    last_name?: string
+    birthday?: string
+  }>()
+
+  const request = api.endpoints.readUserByBirthdate.useQuery(
+    searchUserParams &&
+      typeof searchUserParams?.first_name === 'string' &&
+      searchUserParams.first_name &&
+      typeof searchUserParams?.last_name === 'string' &&
+      searchUserParams.last_name &&
+      typeof searchUserParams?.birthday === 'string' &&
+      searchUserParams.birthday
+      ? (searchUserParams as {
+          first_name: string
+          last_name: string
+          birthday: string
+        })
+      : skipToken,
+  )
   const { data: healthInsuranceCompanies } =
     api.endpoints.readHealthInsuranceCompanies.useQuery({})
 
@@ -177,9 +212,9 @@ const RowWithForm = ({
     setCurrentData(confirmed)
   }, [healthInsuranceCompanies?.results, initialData, request.data])
 
-  const currentDataWithStatus = useMemo(
-    () => (currentData ? { status, user: currentData } : undefined),
-    [currentData, status],
+  const currentDataWithStatus: ProcessedUserWithStatus | undefined = useMemo(
+    () => (currentData ? { status, user: currentData, isValid } : undefined),
+    [currentData, isValid, status],
   )
 
   // when current data or status change, let the parent component know
@@ -206,6 +241,23 @@ const RowWithForm = ({
     [currentData],
   )
 
+  // change parameters for searching user when name or birthday changes
+  useEffect(() => {
+    setSearchUserParams(searchUserParams => {
+      if (
+        currentData &&
+        (!searchUserParams ||
+          !(
+            searchUserParams.first_name === currentData?.first_name &&
+            searchUserParams.last_name === currentData.last_name &&
+            searchUserParams.birthday === currentData.birthday
+          ))
+      )
+        return pick(currentData, 'first_name', 'last_name', 'birthday')
+      else return searchUserParams
+    })
+  }, [currentData])
+
   if (!currentData) return null
 
   const handleFormSubmit = (user: UserPayload, id?: string) => {
@@ -225,7 +277,9 @@ const RowWithForm = ({
       >
         <td>{currentData.first_name}</td>
         <td>{currentData.last_name}</td>
-        <td>{currentData.birthday}</td>
+        <td>
+          {currentData.birthday ? formatDateTime(currentData.birthday) : null}
+        </td>
         <td>
           <span title={title} aria-label={title}>
             {icon}
@@ -236,12 +290,10 @@ const RowWithForm = ({
         <tr>
           <td colSpan={4}>
             <UserForm
-              id={
-                initialData.first_name +
-                initialData.last_name +
-                initialData.birthday +
-                initialData.email
-              }
+              id={`${currentData.first_name}_
+                ${currentData.last_name}_
+                ${currentData.birthday}_
+                ${currentData.email}`}
               initialData={initialFormData}
               validateImmediately
               onSubmit={handleFormSubmit}

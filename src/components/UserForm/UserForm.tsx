@@ -49,6 +49,7 @@ export type UserFormShape = Omit<
 // transform user data to initial form data
 export const data2form = (user: User): UserFormShape => {
   return merge({}, omit(user, 'pronoun', 'address', 'contact_address'), {
+    email: user.email ?? '',
     pronoun: user.pronoun?.id ?? 0,
     address: omit(user.address, 'region'),
     contact_address: omit(user.contact_address, 'region'),
@@ -256,6 +257,7 @@ export const UserForm = ({
       withOverwriteArray,
     ),
     resolver: yupResolver(validationSchema),
+    mode: validateImmediately ? 'onChange' : undefined,
   })
   const { register, watch, control, trigger, formState, handleSubmit } = methods
 
