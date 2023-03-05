@@ -463,6 +463,9 @@ export const EventForm: FC<{
   const isVolunteering =
     getIdBySlug(categories.results, 'public__volunteering') ===
     +methods.basicInfo.watch('category')
+  const isInternalSectionMeeting =
+    getIdBySlug(categories.results, 'internal__section_meeting') ===
+    +methods.basicInfo.watch('category')
   const mainOrganizerDependencies = {
     intended_for: intendedFor.results.find(
       c => c.id === +methods.intendedFor.watch('intended_for'),
@@ -513,6 +516,7 @@ export const EventForm: FC<{
           isVolunteering={isVolunteering}
           isWeekendEvent={isWeekendEvent}
           isCamp={isCamp}
+          isInternalSectionMeeting={isInternalSectionMeeting}
         />
       </Step>
       <Step

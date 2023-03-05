@@ -49,12 +49,19 @@
     }
   }
 
-  .data {
-    margin: 1rem 0;
-    padding: 1rem;
-    max-width: 100%;
-    overflow: scroll;
-    background-color: #eee;
+  // this piece is unused
+  // it's for for displaying raw data
+  // .data {
+  //   margin: 1rem 0;
+  //   padding: 1rem;
+  //   max-width: 100%;
+  //   overflow: scroll;
+  //   background-color: #eee;
+  // }
+
+  .dataHeader {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
   }
 
   .infoBoxDetail {

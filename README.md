@@ -18,8 +18,7 @@ Read and improve the documentation in the [`docs` folder](docs)
 1. Clone this repository
 1. Go to working directory: `cd bis-frontend`
 1. Install dependencies: `yarn`
-1. Build production version (make sure to setup or omit variables as you need):
-1. Run development version: `REACT_APP_API_BASE_URL="https://bis.proxy.mrkvon.org/https://dev.bis.lomic.cz/api/" REACT_APP_CORS_PROXY="https://bis.proxy.mrkvon.org/" yarn build`
+1. Build production version (make sure to setup or omit variables as you need): `REACT_APP_API_BASE_URL="https://bis.proxy.mrkvon.org/https://dev.bis.lomic.cz/api/" REACT_APP_CORS_PROXY="https://bis.proxy.mrkvon.org/" yarn build`
 1. A `build/` folder should have been created in the root of your project. Copy the files from `build/` to your production server, and [serve as single page application for example with nginx](https://gist.github.com/huangzhuolin/24f73163e3670b1cd327f2b357fd456a).
 
 ## Configuration

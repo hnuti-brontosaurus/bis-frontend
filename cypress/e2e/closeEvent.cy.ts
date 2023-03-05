@@ -597,7 +597,8 @@ describe('Close event - evidence and participants', () => {
 
         cy.wait('@updateEvent')
           .its('request.body.record.participants')
-          .should('deep.equal', [
+          // order is not certain, because of create-user intercepts' uncertain order
+          .should('have.members', [
             '22222222-2d92-4645-9858-c89372669217',
             '00000000-1111-2222-3333-444444444444',
             'dddddddd-dddd-dddd-dddd-dddddddddddd',
@@ -605,6 +606,7 @@ describe('Close event - evidence and participants', () => {
             '11111111-1111-1111-1111-1111111111ab',
             '22222222-2222-2222-2222-2222222222ab',
           ])
+          .and('have.length', 6)
 
         cy.wait('@fetchParticipants')
 

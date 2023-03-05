@@ -4,7 +4,7 @@ import { Event } from 'app/services/bisTypes'
 import classNames from 'classnames'
 import styles from 'components/Table.module.scss'
 import { useQueries } from 'hooks/queries'
-import { useRemoveEvent } from 'hooks/removeEvent'
+// import { useRemoveEvent } from 'hooks/removeEvent'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
 import { FC, ReactElement, useMemo } from 'react'
@@ -74,7 +74,8 @@ export const EventTable: FC<{
     ),
   )
 
-  const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
+  // possibility to delete event was removed
+  // const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
   const [cancelEvent, { isLoading: isEventCanceling }] = useCancelEvent()
   const [restoreCanceledEvent, { isLoading: isEventRestoring }] =
     useRestoreCanceledEvent()
@@ -235,14 +236,15 @@ export const EventTable: FC<{
                           </button>
                         )}
                       </MenuItem>
-                      <MenuItem>
+                      {/* Possibility to delete event was removed, use Cancel ("zrušit") instead */}
+                      {/* <MenuItem>
                         <button
                           disabled={isEventRemoving}
                           onClick={() => removeEvent(event)}
                         >
                           smazat
                         </button>
-                      </MenuItem>
+                      </MenuItem> */}
                     </>
                   )}
                 </Menu>

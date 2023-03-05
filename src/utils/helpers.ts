@@ -179,8 +179,10 @@ export const getUserRoles = (user: Pick<User, 'roles'>): RoleSlug[] => {
     hasRole(user, 'office_worker')
   )
     roles.push('organizer')
-
-  roles.push('user')
+  // we show role user only to people who have no other meaningful frontend role
+  // TODO but this may need to be thought through better
+  // if you always want to show user role, just remove the `else`
+  else roles.push('user')
 
   return roles
 }
