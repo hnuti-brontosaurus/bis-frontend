@@ -2,6 +2,10 @@
 
 ## Deployment to github pages
 
+Currently, we have a [development deployment](https://github.com/hnuti-brontosaurus/bis-frontend-build-dev) which gets built on every commit/merge to main.
+
+You could also make a production development which would get build on every merge to e.g. production branch. To do this, copy and edit workflow [deploy-dev.yml](../.github/workflows/deploy-dev.yml) accordingly. You'll also need to set up the environment variables and secrets for the new environment:
+
 ### Deployment variables
 
 - `URL` - where the app will live (must be domain name without `https://` and without trailing slash)
