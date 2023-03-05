@@ -29,11 +29,13 @@ export const PropagationStep = ({
   isVolunteering,
   isWeekendEvent,
   isCamp,
+  isInternalSectionMeeting,
 }: {
   methods: MethodsShapes['propagation']
   isVolunteering: boolean
   isWeekendEvent: boolean
   isCamp: boolean
+  isInternalSectionMeeting: boolean
 }) => {
   const { control, register, getValues } = methods
   const { data: diets } = api.endpoints.readDiets.useQuery()
@@ -111,72 +113,76 @@ export const PropagationStep = ({
               </FormInputError>
             </InlineSection>
           </FormSection>
-          {(isWeekendEvent || isCamp) && ( // only camp and weekend
-            <FormSection required header="Ubytování" onWeb>
-              <FullSizeElement>
+          {(isWeekendEvent || isCamp) &&
+            !(isWeekendEvent && isInternalSectionMeeting) && ( // only camp and weekend, and not weekend+internal-section-meeting
+              <FormSection required header="Ubytování" onWeb>
+                <FullSizeElement>
+                  <FormInputError>
+                    <textarea
+                      {...register('propagation.accommodation', {
+                        required,
+                      })}
+                    />
+                  </FormInputError>
+                </FullSizeElement>
+              </FormSection>
+            )}
+          {(isWeekendEvent || isCamp) &&
+            !(isWeekendEvent && isInternalSectionMeeting) && ( // only camp and weekend, and not weekend+internal-section-meeting
+              <FormSection
+                header="Strava"
+                required
+                onWeb
+                help="Můžete vybrat více druhů stravy."
+              >
                 <FormInputError>
-                  <textarea
-                    {...register('propagation.accommodation', {
-                      required,
-                    })}
+                  <Controller
+                    name="propagation.diets"
+                    control={control}
+                    rules={{ required }}
+                    render={({ field }) => (
+                      <InlineSection>
+                        {[...diets.results]
+                          .reverse() // fast hack to show meaty diet last
+                          .map(({ id, name }) => (
+                            <label
+                              key={id}
+                              className={classNames(
+                                'labelCheckboxTag',
+                                'checkboxLabel',
+                              )}
+                            >
+                              <input
+                                ref={field.ref}
+                                key={id}
+                                type="checkbox"
+                                name={field.name}
+                                value={id}
+                                checked={
+                                  field.value && field.value.includes(id)
+                                }
+                                onChange={e => {
+                                  // check when unchecked and vise-versa
+                                  const targetId = Number(e.target.value)
+                                  const set = new Set(field.value)
+                                  if (set.has(targetId)) {
+                                    set.delete(targetId)
+                                  } else {
+                                    set.add(targetId)
+                                  }
+                                  field.onChange(Array.from(set))
+                                }}
+                              />{' '}
+                              <div>{name}</div>
+                              {foodIcons[name]}
+                            </label>
+                          ))}
+                      </InlineSection>
+                    )}
                   />
                 </FormInputError>
-              </FullSizeElement>
-            </FormSection>
-          )}
-          {(isWeekendEvent || isCamp) && ( // only camp and weekend
-            <FormSection
-              header="Strava"
-              required
-              onWeb
-              help="Můžete vybrat více druhů stravy."
-            >
-              <FormInputError>
-                <Controller
-                  name="propagation.diets"
-                  control={control}
-                  rules={{ required }}
-                  render={({ field }) => (
-                    <InlineSection>
-                      {[...diets.results]
-                        .reverse() // fast hack to show meaty diet last
-                        .map(({ id, name }) => (
-                          <label
-                            key={id}
-                            className={classNames(
-                              'labelCheckboxTag',
-                              'checkboxLabel',
-                            )}
-                          >
-                            <input
-                              ref={field.ref}
-                              key={id}
-                              type="checkbox"
-                              name={field.name}
-                              value={id}
-                              checked={field.value && field.value.includes(id)}
-                              onChange={e => {
-                                // check when unchecked and vise-versa
-                                const targetId = Number(e.target.value)
-                                const set = new Set(field.value)
-                                if (set.has(targetId)) {
-                                  set.delete(targetId)
-                                } else {
-                                  set.add(targetId)
-                                }
-                                field.onChange(Array.from(set))
-                              }}
-                            />{' '}
-                            <div>{name}</div>
-                            {foodIcons[name]}
-                          </label>
-                        ))}
-                    </InlineSection>
-                  )}
-                />
-              </FormInputError>
-            </FormSection>
-          )}
+              </FormSection>
+            )}
           {/* TODO povinné pouze u dobrovolnických */}
           <FormSection header="Práce" onWeb>
             <InlineSection>
