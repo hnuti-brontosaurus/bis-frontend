@@ -12,7 +12,7 @@ import {
 import * as combinedTranslations from 'config/static/combinedTranslations'
 import { sanitize } from 'dompurify'
 import type { FullEvent } from 'hooks/readFullEvent'
-import { useRemoveEvent } from 'hooks/removeEvent'
+// import { useRemoveEvent } from 'hooks/removeEvent'
 import { useTitle } from 'hooks/title'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
@@ -27,7 +27,7 @@ import {
   FaRegCheckCircle,
   FaRegCopy,
   FaRegEye,
-  FaTrashAlt,
+  // FaTrashAlt,
   FaUsers,
 } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
@@ -58,13 +58,15 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
       : skipToken,
   )
 
-  const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
+  // possibility to delete event was removed
+  // const [removeEvent, { isLoading: isEventRemoving }] = useRemoveEvent()
 
   const [cancelEvent, { isLoading: isEventCanceling }] = useCancelEvent()
   const [restoreCanceledEvent, { isLoading: isEventRestoring }] =
     useRestoreCanceledEvent()
 
-  if (isEventRemoving) return <Loading>Mažeme akci</Loading>
+  // possibility to delete event was removed
+  // if (isEventRemoving) return <Loading>Mažeme akci</Loading>
 
   if (isEventCanceling) return <Loading>Rušíme akci</Loading>
 
@@ -151,9 +153,10 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
                     <AiOutlineStop /> zrušit
                   </Button>
                 )}
-                <Button danger onClick={() => removeEvent(event)}>
+                {/* Possibility to delete event was removed, use Cancel ("zrušit") instead */}
+                {/* <Button danger onClick={() => removeEvent(event)}>
                   <FaTrashAlt /> smazat
-                </Button>
+                </Button> */}
               </>
             ) : null}
           </Actions>
