@@ -13,7 +13,7 @@ ol {
     font-weight: 600;
   }
 
-  .withFormatedHTML {
+  .withFormattedHTML {
     ul {
       list-style-type: disc;
       margin-left: 1.5rem;
@@ -37,6 +37,18 @@ ol {
       // font-size: 2rem - $i * 0.2rem;
       font-size: 1rem;
       font-weight: 600;
+    }
+  }
+
+  // give a headspace to every block on first level
+  .block {
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .container {
+    .block {
+      margin-top: 0;
+      margin-bottom: 0;
     }
   }
 }

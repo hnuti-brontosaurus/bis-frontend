@@ -48,7 +48,7 @@ export const DataView = <T extends Data>({
     if (/<\/?[a-z][\s\S]*>/i.test(data))
       return (
         <div
-          className={styles.withFormatedHTML}
+          className={styles.withFormattedHTML}
           dangerouslySetInnerHTML={{
             __html: sanitize(data),
           }}
@@ -122,10 +122,11 @@ export const DataView = <T extends Data>({
         if (
           typeof value === 'object' &&
           !('slug' in value && 'name' in value) &&
-          !('id' in value && 'name' in value)
+          !('id' in value && 'name' in value) &&
+          !('display_name' in value)
         )
           return (
-            <div key={key}>
+            <div key={key} className={styles.block}>
               {createElement(
                 `h${depth + 2}`,
                 {},

@@ -275,7 +275,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
           </div>
         </div>
         {/* <pre className={styles.data}>{JSON.stringify(event, null, 2)}</pre> */}
-        <h2>Data</h2>
+        <h2 className={styles.dataHeader}>Data</h2>
         <DataView
           data={formattedEvent}
           translations={combinedTranslations.event}
