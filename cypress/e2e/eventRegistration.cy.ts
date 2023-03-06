@@ -8,7 +8,9 @@ describe('Standard event registration form', () => {
     })
 
     it('should show form with personal data and questions', () => {
-      cy.visit('/akce/2000/prihlasit')
+      cy.visit(
+        '/akce/2000/prihlasit?next=https%3A%2F%2Fexample.com%2Fasdf%2Fghjkl',
+      )
 
       // fill personal data
       cy.get('[name=first_name]').type('GivenName')
@@ -75,6 +77,12 @@ describe('Standard event registration form', () => {
 
       // check that we switched to final page
       cy.get('body').should('contain', 'Hotovo')
+      cy.get('button').contains('Hotovo').click()
+
+      // if we want to perform tests on other domain, we need to specify origin
+      cy.origin('example.com', () => {
+        cy.url().should('equal', 'https://example.com/asdf/ghjkl')
+      })
     })
   })
 })
