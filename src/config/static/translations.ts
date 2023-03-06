@@ -56,7 +56,7 @@ export const user = {
   vokativ: 'Vokativ',
   email_exists: 'Je e-mail skutečný?',
   is_active: 'Může se uživatel přihlásit?',
-  date_joined: 'Datum vzniku účtu',
+  date_joined: 'Datum vzniku uživatelského profilu',
   close_person: 'Rodič / blízká osoba',
   health_insurance_company: 'Pojišťovna',
   roles: 'Role',
@@ -193,9 +193,15 @@ export const event = {
   program: 'Program',
   intended_for: 'Pro koho?',
   location: ['Lokalita', 'Zobrazí se na webu jako místo konání akce'],
-  is_canceled: 'Zrušena?',
-  is_complete: 'Vše vyplněno?',
-  is_closed: 'Uzavřena?',
+  is_canceled: ['Je akce zrušena?', 'Akce se nebude konat / nekonala'],
+  is_complete: [
+    'Vše vyplněno?',
+    'Příznak, zda-li jsou všechny povinné údaje po akci vyplněny',
+  ],
+  is_closed: [
+    'Je akce uzavřena?',
+    'Uzavřená akce nelze editovat, je archivována',
+  ],
   start: 'Začátek akce',
   start_time: 'Čas začátku akce',
   end: 'Konec akce',
@@ -207,8 +213,9 @@ export const event = {
   number_of_sub_events: 'Počet akcí v uvedeném období',
   administration_units: 'Organizační jednotky',
   main_organizer: 'Hlavní organizátor',
-  other_organizers: 'Všichni organizátoři',
+  other_organizers: 'Další organizátoři',
   is_attendance_list_required: 'Je prezenční listina vyžadována?',
+  vip_propagation: 'Je akce propagována v rámci VIP propagace?',
 } as const
 
 export const eventFinance = {
@@ -233,7 +240,6 @@ export const eventPropagation = {
   _name: 'Propagace akce',
   _name_plural: 'Propagace akce',
   is_shown_on_web: 'Je akce zobrazena na webu?',
-  vip_propagation: 'Je akce propagována v rámci VIP propagace?',
   minimum_age: 'Minimální věk',
   maximum_age: 'Maximální věk',
   cost: [
@@ -253,10 +259,22 @@ export const eventPropagation = {
   ],
   organizers: 'Organizátoři (text do propagace)',
   web_url: 'Web akce',
-  invitation_text_introduction: 'Zvací text: Co nás čeká?',
-  invitation_text_practical_information: 'Zvací text: Co, kde a jak',
-  invitation_text_work_description: 'Zvací text: Dobrovolnická pomoc',
-  invitation_text_about_us: 'Zvací text: Malá ochutnávka',
+  invitation_text_introduction: [
+    'Zvací text: Co nás čeká?',
+    'Základní informace o tvé akci. Popiš téma akce a nastiň, co se tam bude dít a jak budete pomáhat, co se účastník naučí nového. Prvních několik vět se zobrazí v přehledu akcí na webu. První věty jsou k upoutání pozornosti nejdůležitější, proto se na ně zaměř a shrň ve 2-4 větách na co se účastníci mohou těšit.',
+  ],
+  invitation_text_practical_information: [
+    'Zvací text: Co, kde a jak',
+    'Stručný popis programu akce – jakého typu budou aktivity na akci, kde se bude spát, co se bude jíst a další praktické záležitosti. Nezapomeň zdůraznit, zda bude program aktivní a plný zážitkového programu nebo bude spíše poklidnější nebo zaměřený na vzdělávání. Také napiš zda bude program fyzicky popř. psychicky náročný, aby účastníci věděli co mají čekat.',
+  ],
+  invitation_text_work_description: [
+    'Zvací text: Dobrovolnická pomoc',
+    'Stručně popiš dobrovolnickou činnost a její smysl pro přírodu, památky nebo lidi (např. „sázíme vrbky, aby měli místní ptáci kde hnízdit“). Zasaď dobrovolnickou pomoc do kontextu místa a jeho příběhu (např. “kosením pomůžeme udržet pestrost nejvzácnější louky unikátní krajiny Bílých Karpat, jež …” ). Napiš, co se při práci účastníci naučí a v čem je to může rozvinout. Přidej i další zajímavosti, které se vážou k dané dobrovolnické činnosti a lokalitě. Uveď kolik prostoru na akci se bude věnovat dobrovolnické činnosti a jak bude náročná.',
+  ],
+  invitation_text_about_us: [
+    'Zvací text: Malá ochutnávka',
+    'Malá ochutnávka uvádí fotky, které k akci přiložíte. Popište fotky, které přikládáte nebo přibližte jak vypadaly akce na stejném místě v minulosti. U nových akcí můžete více ukázat místo a důvody proč vás oslovilo a představit organizátory.',
+  ],
   contact_person: 'Kontaktní osoba',
   contact_name: [
     'Jméno kontaktní osoby',
@@ -295,9 +313,9 @@ export const vIPEventPropagation = {
 } as const
 
 export const eventRegistration = {
-  _name: 'Registrace',
-  _name_plural: 'Registrace',
-  is_registration_required: 'Je požadována registrace?',
+  _name: 'Přihlášení',
+  _name_plural: 'Přihlášení',
+  is_registration_required: 'Musí se účastníci na akci přihlásit?',
   is_event_full: 'Je akce plná?',
   questionnaire: 'Dotazník',
   alternative_registration_link: 'Alternativní adresa pro přihlášení',
@@ -322,8 +340,8 @@ export const eventRecord = {
 } as const
 
 export const eventContact = {
-  _name: 'Kontakt z akce',
-  _name_plural: 'Kontakt z akce',
+  _name: 'Zjednodušená prezenční listina z jednodenní akce',
+  _name_plural: 'Zjednodušená prezenční listina z jednodenní akce',
   record: 'Záznam z akce',
 } as const
 
@@ -342,7 +360,7 @@ export const eventPhoto = {
 export const eventApplication = {
   _name: 'Přihláška na akci',
   _name_plural: 'Přihláška na akci',
-  event_registration: 'Registrace k akci',
+  event_registration: 'Přihlášení na akci',
   state: 'Stav',
 } as const
 
@@ -359,7 +377,7 @@ export const eventApplicationAddress = {
 export const questionnaire = {
   _name: 'Dotazník',
   _name_plural: 'Dotazník',
-  event_registration: 'Registrace k akci',
+  event_registration: 'Přihlášení na akci',
   introduction: 'Úvodní text dotazníku',
   after_submit_text: 'Text po zodpovězení dotazníku',
 } as const
@@ -369,7 +387,7 @@ export const question = {
   _name_plural: 'Otázka dotazníku',
   question: 'Otázka',
   data: 'Data',
-  is_required: 'Nutno vyplnit?',
+  is_required: 'Povinná otázka?',
   questionnaire: 'Dotazník',
 } as const
 

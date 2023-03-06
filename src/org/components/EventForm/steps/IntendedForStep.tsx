@@ -10,10 +10,10 @@ import {
   InlineSection,
   Loading,
 } from 'components'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { getIdBySlug, requireBoolean } from 'utils/helpers'
-import { required } from 'utils/validationMessages'
+import { required, vipPropagationRequired } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 
 export const IntendedForStep = ({
@@ -24,7 +24,8 @@ export const IntendedForStep = ({
   isCamp: boolean
 }) => {
   const { data: intendedFor } = api.endpoints.readIntendedFor.useQuery()
-  const { watch, register, control, unregister, setValue } = methods
+  const { watch, register, trigger, control, unregister, setValue, formState } =
+    methods
 
   // unregister stuff
   useEffect(() => {
@@ -36,13 +37,35 @@ export const IntendedForStep = ({
           'for_first_time_participant',
         ) !== data.intended_for
       ) {
-        unregister('propagation.vip_propagation')
-        setValue('propagation.vip_propagation', null)
+        unregister('vip_propagation')
+        setValue('vip_propagation', null)
       }
     })
 
     return () => subscription.unsubscribe()
   }, [watch, intendedFor?.results, unregister, setValue])
+
+  const vipPropagation = watch('vip_propagation')
+  const isVipPropagationRequired = useMemo(() => {
+    if (
+      vipPropagation?.goals_of_event ||
+      vipPropagation?.program ||
+      vipPropagation?.short_invitation_text ||
+      vipPropagation?.rover_propagation
+    )
+      return true
+    else return false
+  }, [
+    vipPropagation?.goals_of_event,
+    vipPropagation?.program,
+    vipPropagation?.rover_propagation,
+    vipPropagation?.short_invitation_text,
+  ])
+
+  // trigger vip_propagation validation
+  useEffect(() => {
+    if (formState.isSubmitted) trigger('vip_propagation')
+  }, [trigger, isVipPropagationRequired, formState.isSubmitted])
 
   if (!intendedFor) return <Loading>Připravujeme formulář</Loading>
 
@@ -94,6 +117,11 @@ export const IntendedForStep = ({
                 <FullSizeElement>
                   <InfoBox>
                     <p>
+                      Pokud chcete být zařazeni do VIP propagace, vyplňte
+                      všechny 3 otázky uvedené níže. VIP propagace je primárně
+                      určena pro tábory a víkendovky.
+                    </p>
+                    <p>
                       Hnutí Brontosaurus pravidelně vytváří nabídku výběrových
                       dobrovolnických akcí, kterými oslovujeme nové účastníky,
                       zejména středoškolskou mládež a začínající vysokoškoláky
@@ -127,7 +155,7 @@ export const IntendedForStep = ({
                 </FullSizeElement>
 
                 <FullSizeElement>
-                  <FormSubheader required>
+                  <FormSubheader required={isVipPropagationRequired}>
                     Cíle akce a přínos pro prvoúčastníky
                   </FormSubheader>
                   <InfoBox>
@@ -137,16 +165,16 @@ export const IntendedForStep = ({
                   </InfoBox>
                   <FormInputError>
                     <textarea
-                      {...register(
-                        'propagation.vip_propagation.goals_of_event',
-                        { required },
-                      )}
+                      {...register('vip_propagation.goals_of_event', {
+                        required:
+                          isVipPropagationRequired && vipPropagationRequired,
+                      })}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
 
                 <FullSizeElement>
-                  <FormSubheader required>
+                  <FormSubheader required={isVipPropagationRequired}>
                     Programové pojetí akce pro prvoúčastníky
                   </FormSubheader>
                   <InfoBox>
@@ -158,15 +186,16 @@ export const IntendedForStep = ({
                   </InfoBox>
                   <FormInputError>
                     <textarea
-                      {...register('propagation.vip_propagation.program', {
-                        required,
+                      {...register('vip_propagation.program', {
+                        required:
+                          isVipPropagationRequired && vipPropagationRequired,
                       })}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
 
                 <FullSizeElement>
-                  <FormSubheader required>
+                  <FormSubheader required={isVipPropagationRequired}>
                     Krátký zvací text do propagace
                   </FormSubheader>
                   <InfoBox>
@@ -175,28 +204,29 @@ export const IntendedForStep = ({
                   </InfoBox>
                   <FormInputError>
                     <textarea
-                      {...register(
-                        'propagation.vip_propagation.short_invitation_text',
-                        { maxLength: 200, required },
-                      )}
+                      {...register('vip_propagation.short_invitation_text', {
+                        maxLength: 200,
+                        required:
+                          isVipPropagationRequired && vipPropagationRequired,
+                      })}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
                 {
-                  /*
-                        only "camp" can see this
-                        https://docs.google.com/document/d/1p3nz0-kVJxwN_pRCYYyhy0BObyGox6LDk35RQPADT4g/edit?disco=AAAAc3SBnZQ
-                        */
+                  // only "camp" can see this
+                  // https://docs.google.com/document/d/1p3nz0-kVJxwN_pRCYYyhy0BObyGox6LDk35RQPADT4g/edit?disco=AAAAc3SBnZQ
                   isCamp && (
                     <FormSubsection
                       header="Propagovat akci v Roverském kmeni"
-                      required
+                      required={isVipPropagationRequired}
                       help="Placená propagace vaší vícedenní akce v časopisu Roverský kmen za poplatek 100 Kč."
                     >
                       <FormInputError>
                         <Controller
-                          name="propagation.vip_propagation.rover_propagation"
+                          name="vip_propagation.rover_propagation"
                           control={control}
+                          // TODO validation requirements not clear
+                          // TODO this field won't get saved if vip propagation is not filled
                           rules={{ ...requireBoolean }}
                           render={({ field }) => (
                             <InlineSection>

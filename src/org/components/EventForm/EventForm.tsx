@@ -94,13 +94,7 @@ const shapes = {
     'program',
     'administration_units',
   ],
-  intendedFor: [
-    'intended_for',
-    'propagation.vip_propagation.goals_of_event',
-    'propagation.vip_propagation.program',
-    'propagation.vip_propagation.short_invitation_text',
-    'propagation.vip_propagation.rover_propagation',
-  ],
+  intendedFor: ['intended_for', 'vip_propagation'],
   registration: [
     'propagation.is_shown_on_web',
     'registrationMethod',
@@ -274,9 +268,6 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
   }
 
   if (data.propagation) {
-    finalData.propagation!.vip_propagation =
-      data.propagation.vip_propagation ?? null
-
     if (String(data.propagation.working_hours) === '') {
       finalData.propagation!.working_hours = null
     }
@@ -284,6 +275,20 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
       finalData.propagation!.working_days = null
     }
   }
+
+  const isVipPropagationFilled =
+    data.vip_propagation &&
+    data.vip_propagation.goals_of_event &&
+    data.vip_propagation.program &&
+    data.vip_propagation.short_invitation_text &&
+    data.vip_propagation.goals_of_event.trim() &&
+    data.vip_propagation.program.trim() &&
+    data.vip_propagation.short_invitation_text.trim()
+
+  finalData.vip_propagation = isVipPropagationFilled
+    ? data.vip_propagation
+    : null
+
   if (data.online) {
     finalData.location = { id: 1 }
   } else {

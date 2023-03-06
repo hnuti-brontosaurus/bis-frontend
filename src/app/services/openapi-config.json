@@ -1,5 +1,5 @@
 {
-  "schemaFile": "https://dev.bis.lomic.cz/api/schema/",
+  "schemaFile": "https://bis.tatooine.wftech.eu/api/schema/",
   "apiFile": "./emptyApi.ts",
   "apiImport": "emptySplitApi",
   "outputFile": "./testApi.ts",

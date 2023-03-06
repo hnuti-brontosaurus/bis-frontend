@@ -12,14 +12,11 @@ export const event = merge(
     finance: translations.eventFinance,
     images: translations.eventPropagationImage,
     questions: translations.question,
+    vip_propagation: translations.vIPEventPropagation,
+    registrationMethod: 'Způsob přihlášení',
   },
   {
-    propagation: {
-      vip_propagation: translations.vIPEventPropagation,
-    },
-    registration: {
-      questionnaire: translations.questionnaire,
-    },
+    registration: { questionnaire: translations.questionnaire },
     record: { participantInputType: 'Způsob zadání účastníků' },
   },
   { 'main_image.image': 'Hlavní foto' },
