@@ -1,4 +1,5 @@
 import { CellConfig, jsPDF } from 'jspdf'
+import { formatDateRange, formatDateTime } from 'utils/helpers'
 // import { Person } from '../../person/types'
 // import { NullableEventProps } from '../types'
 import { Roboto, RobotoBlack } from './fonts'
@@ -43,15 +44,10 @@ export const generatePdf = (participants: any, event: any) => {
   doc.setFont('Roboto')
   doc.text(`${location && location.name ? location.name : ' '}`, 42, 38)
   doc.setFont('RobotoBlack')
-  if (start === end || !end) {
-    doc.text('Datum: ', 20, 46)
-    doc.setFont('Roboto')
-    doc.text(`${start}`, 40, 46)
-  } else {
-    doc.text('Datum: ', 20, 46)
-    doc.setFont('Roboto')
-    doc.text(`${start} - ${end}`, 40, 46)
-  }
+  const dates = formatDateRange(start, end)
+  doc.text('Datum: ', 20, 46)
+  doc.setFont('Roboto')
+  doc.text(dates, 40, 46)
   /** Logo */
   doc.addImage(
     'https://i.ibb.co/GQVswbN/logo-44ee59a67744e7267959.png',
@@ -101,7 +97,7 @@ export const generatePdf = (participants: any, event: any) => {
       id: `${index + 1}.`,
       first_name,
       last_name,
-      birthday: birthday || ' ',
+      birthday: birthday ? formatDateTime(birthday) : ' ',
       address: ' ',
       postalCode: ' ',
       phone: phone ? removePrefixFromPhone(phone) : ' ',

@@ -21,7 +21,6 @@ import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { AddParticipantModal } from './AddParticipantModal'
 import { NewApplicationModal } from './NewApplicationModal'
-import { generatePdf } from './participantsPdf'
 import { ShowApplicationModal } from './ShowApplicationModal'
 
 export const Applications: FC<{
@@ -138,7 +137,11 @@ export const Applications: FC<{
     })
   }
 
-  const generateAndSavePdf = () => {
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
+
+  const generateAndSavePdf = async () => {
+    setIsGeneratingPdf(true)
+    const { generatePdf } = await import('./participantsPdf')
     const doc = generatePdf(
       removeApplicationsDuplicates(
         applicationsPending.concat(applicationsAccepted),
@@ -148,7 +151,10 @@ export const Applications: FC<{
         administration_units_names: getEventAdministrationUnits(event),
       },
     )
-    doc.save(`Lidé přihlášení na akci: ${event.name}`)
+    await doc.save(`Lidé přihlášení na akci: ${event.name}`, {
+      returnPromise: true,
+    })
+    setIsGeneratingPdf(false)
   }
 
   const thereAreApplications = applications && applications.length !== 0
@@ -245,6 +251,7 @@ export const Applications: FC<{
             secondary
             small
             type="button"
+            isLoading={isGeneratingPdf}
             onClick={() => generateAndSavePdf()}
           >
             Tiskni prezenční listinu
