@@ -13,7 +13,7 @@ import { getRegistrationMethod } from 'org/components/EventForm/EventForm'
 import { useState } from 'react'
 import { FaRegCalendarAlt } from 'react-icons/fa'
 import { GrLocation } from 'react-icons/gr'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { formatDateRange } from 'utils/helpers'
 import styles from './EventRegistration.module.scss'
 import {
@@ -23,6 +23,9 @@ import {
 } from './EventRegistrationForm'
 
 export const EventRegistration = () => {
+  const [searchParams] = useSearchParams()
+  const next = searchParams.get('next') ?? 'https://brontosaurus.cz'
+
   const params = useParams()
   const eventId = Number(params.eventId)
   const { data: user, isAuthenticated } = useCurrentUser()
@@ -100,7 +103,7 @@ export const EventRegistration = () => {
   const handleFinish = () => {
     clearPersistentData()
     // when finished, go to main brontosaurus site
-    globalThis.location.href = 'https://brontosaurus.cz'
+    globalThis.location.href = next
   }
 
   const handleSubmit = async (data: EventApplicationPayload) => {
