@@ -64,7 +64,9 @@ export const IntendedForStep = ({
 
   // trigger vip_propagation validation
   useEffect(() => {
-    if (formState.isSubmitted) trigger('vip_propagation')
+    if (formState.isSubmitted)
+      // trigger in next tick, to fix revalidating first field
+      Promise.resolve().then(() => trigger('vip_propagation'))
   }, [trigger, isVipPropagationRequired, formState.isSubmitted])
 
   if (!intendedFor) return <Loading>Připravujeme formulář</Loading>
