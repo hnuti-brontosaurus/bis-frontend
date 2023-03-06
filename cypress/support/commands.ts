@@ -144,6 +144,29 @@ Cypress.Commands.add('interceptCategories', () => {
     { method: 'GET', pathname: '/api/categories/pronoun_categories/' },
     { fixture: 'pronouns' },
   )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/categories/event_categories/' },
+    { fixture: 'eventCategories' },
+  )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/categories/event_group_categories/' },
+    { fixture: 'eventGroupCategories' },
+  )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/categories/event_program_categories/' },
+    { fixture: 'eventProgramCategories' },
+  )
+  cy.intercept(
+    {
+      method: 'GET',
+      pathname: '/api/categories/event_intended_for_categories/',
+    },
+    { fixture: 'eventIntendedForCategories' },
+  )
+  cy.intercept(
+    { method: 'GET', pathname: '/api/categories/diet_categories/' },
+    { fixture: 'dietCategories' },
+  )
 })
 
 export {}

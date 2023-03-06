@@ -32,67 +32,16 @@ const submit = () =>
   cy.get('[type=submit]:contains(Uložit)').last().should('be.visible').click()
 
 describe('create event', () => {
-  // stub api endpoints before each request
-  beforeEach(() => {
-    cy.intercept(
-      { method: 'GET', pathname: '/api/categories/qualification_categories/' },
-      { fixture: 'qualificationCategories' },
-    )
-    cy.intercept('POST', '/api/auth/login/', { token: '1234567890abcdef' })
-    cy.intercept('GET', '/api/auth/whoami/', {
-      id: '0419781d-06ba-432b-8617-797ea14cf848',
-    })
-    cy.intercept(
-      { method: 'GET', path: /\/api\/frontend\/users\/[a-zA-Z0-9-]+\// },
-      { fixture: 'organizer' },
-    )
-  })
-
   // sign in before each request
   beforeEach(() => {
+    cy.interceptCategories()
+    cy.interceptLogin()
     // https://xkcd.com/936/
     cy.login('asdf@example.com', 'correcthorsebatterystaple')
   })
 
   // stub more api endpoints
   beforeEach(() => {
-    cy.intercept('GET', '/api/categories/event_categories/', {
-      results: [
-        { id: 1, slug: 'a', name: 'Aaaaa' },
-        { id: 2, slug: 'b', name: 'bbbbbb' },
-        { id: 3, slug: 'c', name: 'ccccc' },
-        { id: 4, slug: 'd', name: 'DDddDDdd' },
-      ],
-    })
-    cy.intercept('GET', '/api/categories/event_group_categories/', {
-      results: [
-        { id: 3, slug: 'camp', name: 'Camp' },
-        { id: 2, slug: 'weekend_event', name: 'Weekend Event' },
-        { id: 1, slug: 'other', name: 'Other' },
-      ],
-    })
-    cy.intercept('GET', '/api/categories/event_program_categories/', {
-      results: [
-        { id: 1, slug: 'a', name: 'aa' },
-        { id: 2, slug: 'b', name: 'bb' },
-        { id: 3, slug: 'c', name: 'cc' },
-        { id: 4, slug: 'd', name: 'dd' },
-        { id: 5, slug: 'e', name: 'ee' },
-        { id: 6, slug: 'f', name: 'ff' },
-      ],
-    })
-    cy.intercept('GET', '/api/categories/event_intended_for_categories/', {
-      results: [
-        { id: 1, slug: 'a', name: 'aa' },
-        { id: 2, slug: 'b', name: 'bb' },
-        { id: 3, slug: 'c', name: 'cc' },
-        { id: 4, slug: 'd', name: 'dd' },
-        { id: 5, slug: 'e', name: 'ee' },
-      ],
-    })
-    cy.intercept('GET', '/api/categories/diet_categories/', {
-      results: [],
-    })
     cy.intercept('GET', '/api/web/administration_units/*', {
       results: [
         {
@@ -138,7 +87,7 @@ describe('create event', () => {
     cy.get('input[name=start_time]').should('be.visible').type('15:31')
     cy.get('input[name=end]').should('be.visible').type('2123-01-17')
     cy.get('[name=category]').should('be.visible').select(2)
-    cy.get('[name=program]').should('be.visible').select('bb')
+    cy.get('[name=program]').should('be.visible').select('Akce příroda')
     cy.get('#react-select-3-input')
       .should('be.visible')
       .click()
@@ -780,6 +729,75 @@ describe('create event', () => {
       })
     })
   })
+
+  describe('VIP propagation', () => {
+    beforeEach(() => {
+      fillForm()
+      cy.get('button').contains('pro koho').should('be.visible').click()
+      cy.get('input[name=intended_for]').check('5', { force: true })
+
+      cy.intercept(
+        { method: 'POST', pathname: '/api/frontend/events' },
+        { id: 1000 },
+      ).as('createEvent')
+      cy.intercept('POST', '/api/frontend/events/1000/propagation/images/', {})
+      cy.intercept(
+        'POST',
+        '/api/frontend/events/1000/questionnaire/questions/',
+        {},
+      )
+    })
+
+    it('[no VIP fields filled] should respond with vip_propagation null', () => {
+      // type a bit but change my mind...
+      cy.get('[name="vip_propagation.goals_of_event"]')
+        .type('goals of event are goals')
+        .clear()
+
+      submit()
+
+      cy.wait('@createEvent')
+        .its('request.body')
+        .should('have.property', 'vip_propagation', null)
+    })
+
+    it('[all vip fields filled] should respond with vip_propagation data', () => {
+      cy.get('[name="vip_propagation.goals_of_event"]').type(
+        'goals of event are goals',
+      )
+      cy.get('[name="vip_propagation.program"]').type(
+        'program is rich and full of events',
+      )
+      cy.get('[name="vip_propagation.short_invitation_text"]').type(
+        'you are cordially but shortly invited',
+      )
+
+      submit()
+
+      cy.wait('@createEvent')
+        .its('request.body.vip_propagation')
+        .should('deep.equal', {
+          goals_of_event: 'goals of event are goals',
+          program: 'program is rich and full of events',
+          short_invitation_text: 'you are cordially but shortly invited',
+        })
+    })
+
+    it('[some vip fields filled] should show validation error (fill all or none)', () => {
+      cy.get('[name="vip_propagation.goals_of_event"]').type(
+        'goals of event are goals',
+      )
+
+      submit()
+
+      cy.get('[class^=SystemMessage_header]')
+        .should('be.visible')
+        .contains('chyby ve validaci')
+      cy.get('[class^=SystemMessage_detail]')
+        .should('be.visible')
+        .contains('Vyplňte všechna pole VIP propagace, nebo je nechte prázdná')
+    })
+  })
 })
 
 // open create-event page, pre-fill fields and move to "team" tab
@@ -796,7 +814,7 @@ const fillForm = () => {
   cy.get('input[name=start_time]').should('be.visible').type('15:31')
   cy.get('input[name=end]').should('be.visible').type('2023-01-17')
   cy.get('[name=category]').should('be.visible').select(2)
-  cy.get('[name=program]').should('be.visible').select('bb')
+  cy.get('[name=program]').should('be.visible').select('Akce příroda')
   cy.get('#react-select-3-input')
     .should('be.visible')
     .click()
