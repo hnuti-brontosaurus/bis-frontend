@@ -36,8 +36,8 @@ export const IntendedForStep = ({
           'for_first_time_participant',
         ) !== data.intended_for
       ) {
-        unregister('propagation.vip_propagation')
-        setValue('propagation.vip_propagation', null)
+        unregister('vip_propagation')
+        setValue('vip_propagation', null)
       }
     })
 
@@ -137,10 +137,9 @@ export const IntendedForStep = ({
                   </InfoBox>
                   <FormInputError>
                     <textarea
-                      {...register(
-                        'propagation.vip_propagation.goals_of_event',
-                        { required },
-                      )}
+                      {...register('vip_propagation.goals_of_event', {
+                        required,
+                      })}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
@@ -158,7 +157,7 @@ export const IntendedForStep = ({
                   </InfoBox>
                   <FormInputError>
                     <textarea
-                      {...register('propagation.vip_propagation.program', {
+                      {...register('vip_propagation.program', {
                         required,
                       })}
                     ></textarea>
@@ -175,10 +174,10 @@ export const IntendedForStep = ({
                   </InfoBox>
                   <FormInputError>
                     <textarea
-                      {...register(
-                        'propagation.vip_propagation.short_invitation_text',
-                        { maxLength: 200, required },
-                      )}
+                      {...register('vip_propagation.short_invitation_text', {
+                        maxLength: 200,
+                        required,
+                      })}
                     ></textarea>
                   </FormInputError>
                 </FullSizeElement>
@@ -195,7 +194,7 @@ export const IntendedForStep = ({
                     >
                       <FormInputError>
                         <Controller
-                          name="propagation.vip_propagation.rover_propagation"
+                          name="vip_propagation.rover_propagation"
                           control={control}
                           rules={{ ...requireBoolean }}
                           render={({ field }) => (

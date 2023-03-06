@@ -2660,12 +2660,6 @@ export type Finance = {
   total_event_cost?: number | null
   budget?: string
 }
-export type VipPropagation = {
-  goals_of_event: string
-  program: string
-  short_invitation_text: string
-  rover_propagation?: boolean
-}
 export type Propagation = {
   is_shown_on_web: boolean
   minimum_age?: number | null
@@ -2686,7 +2680,12 @@ export type Propagation = {
   contact_name?: string
   contact_phone?: string
   contact_email?: string
-  vip_propagation: VipPropagation | null
+}
+export type VipPropagation = {
+  goals_of_event: string
+  program: string
+  short_invitation_text: string
+  rover_propagation?: boolean
 }
 export type Questionnaire = {
   introduction?: string
@@ -2738,6 +2737,7 @@ export type Event = {
   duration: number
   finance: Finance | null
   propagation: Propagation | null
+  vip_propagation: VipPropagation | null
   registration: Registration | null
   record: Record | null
 }
@@ -2999,6 +2999,7 @@ export type PatchedEvent = {
   duration?: number
   finance?: Finance | null
   propagation?: Propagation | null
+  vip_propagation?: VipPropagation | null
   registration?: Registration | null
   record?: Record | null
 }

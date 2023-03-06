@@ -12,11 +12,9 @@ export const event = merge(
     finance: translations.eventFinance,
     images: translations.eventPropagationImage,
     questions: translations.question,
+    vip_propagation: translations.vIPEventPropagation,
   },
   {
-    propagation: {
-      vip_propagation: translations.vIPEventPropagation,
-    },
     registration: {
       questionnaire: translations.questionnaire,
     },

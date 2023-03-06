@@ -70,9 +70,9 @@
     "contact_person": "fc4af496-1340-411c-b169-b8e3c527ce61",
     "contact_name": "",
     "contact_phone": "",
-    "contact_email": "",
-    "vip_propagation": null
+    "contact_email": ""
   },
+  "vip_propagation": null,
   "registration": {
     "is_registration_required": true,
     "is_event_full": false,
