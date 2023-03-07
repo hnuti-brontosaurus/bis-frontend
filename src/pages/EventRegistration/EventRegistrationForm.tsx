@@ -11,6 +11,7 @@ import {
   BirthdayInput,
   birthdayValidation,
   Button,
+  ExternalButtonLink,
   FormInputError,
   FormSection,
   FormSectionGroup,
@@ -415,8 +416,24 @@ export const EventRegistrationForm = ({
                 })}
               </FormSection>
             )}
+            <InlineSection>
+              <Label>
+                Odesláním této přihlášky souhlasím se{' '}
+                <ExternalButtonLink
+                  tertiary
+                  href="https://brontosaurus.cz/osobni-udaje"
+                  target="__blank"
+                  rel="noopener noreferrer"
+                  small
+                >
+                  zpracováním osobních údajů.
+                </ExternalButtonLink>
+              </Label>
+            </InlineSection>
             <Actions>
-              <Button type="reset">Zrušit</Button>
+              <Button secondary type="reset">
+                Zrušit
+              </Button>
               <Button primary type="submit">
                 Odeslat přihlášku
               </Button>
