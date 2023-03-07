@@ -86,15 +86,14 @@ export const EventRegistration = () => {
       <Error message="Na tuto akci se nemusíte přihlašovat. Stačí přijít."></Error>
     )
 
-  // currently this is not displayed because of https://github.com/lamanchy/bis/issues/15
-  if (registrationMethod === 'other')
-    return (
-      <Error message="Přihláška je jinde">
-        <a href={event.registration.alternative_registration_link}>
-          Pokračujte zde
-        </a>
-      </Error>
-    )
+  // when alternative registration link is set, redirect there
+  // at this point, we know for sure that alternative_registration_link
+  // is available, because we checked it in getRegistrationMethod
+  if (registrationMethod === 'other') {
+    globalThis.location.href = event.registration
+      .alternative_registration_link as string
+    return <Loading>Přesměrujeme na přihlášku</Loading>
+  }
 
   const handleRestart = () => {
     clearPersistentData()
