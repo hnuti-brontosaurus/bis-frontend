@@ -42,7 +42,7 @@ export const Participants: FC<{
   const [lastAddedId, setLastAddedId] = useState<string>()
   const [timeOfLastAddition, setTimeOfLastAddition] = useState<number>(0)
   const { data: participants, isLoading: isReadParticipantsLoading } =
-    api.endpoints.readEventParticipants.useQuery({ eventId })
+    api.endpoints.readEventParticipants.useQuery({ eventId, pageSize: 10000 })
 
   const [showShowApplicationModal, setShowShowApplicationModal] =
     useState<boolean>(false)

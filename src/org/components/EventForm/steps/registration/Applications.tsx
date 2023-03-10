@@ -69,6 +69,7 @@ export const Applications: FC<{
 
   const { data: participants } = api.endpoints.readEventParticipants.useQuery({
     eventId: event.id,
+    pageSize: 10000,
   })
 
   const { data: currentApplication } =
