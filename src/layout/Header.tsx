@@ -21,21 +21,27 @@ export const Header = () => {
   const [canAddEvent] = useAllowedToCreateEvent()
   const navigate = useNavigate()
 
+  // what's the current access
   const [access, setAccess] = useCurrentAccess()
 
+  // get configurations for all user's accesses
   const userAccesses = useMemo(
     () => (user ? getUserAccesses(user) : []),
     [user],
   )
 
-  const handleSwitchAccess = (accessConfig: AccessConfig) => {
-    if (!accessConfig.external) setAccess(accessConfig.slug)
-    navigate(accessConfig.url)
-  }
-
+  // get configuration for current access
   const currentAccessConfig = useMemo(() => {
     return userAccesses.find(config => config.slug === access)
   }, [access, userAccesses])
+
+  // switching access
+  const handleSwitchAccess = (accessConfig: AccessConfig) => {
+    // if we stay within the app, remember the new current access
+    if (!accessConfig.external) setAccess(accessConfig.slug)
+    // go to the main page of the new access
+    navigate(accessConfig.url)
+  }
 
   return (
     <div className={styles.container}>
