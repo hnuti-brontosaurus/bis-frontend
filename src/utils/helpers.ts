@@ -255,12 +255,18 @@ export const joinAnd = (values: string[]): string => {
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatRange
  */
 export const formatDateRange = (startDate: string, endDate: string) => {
-  const dateTimeFormat = new Intl.DateTimeFormat('cs', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-  return dateTimeFormat.formatRange(new Date(startDate), new Date(endDate))
+  try {
+    const dateTimeFormat = new Intl.DateTimeFormat('cs', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+    return dateTimeFormat.formatRange(new Date(startDate), new Date(endDate))
+  } catch {
+    // version for older browsers
+    if (startDate === endDate) return formatDateTime(startDate)
+    else return formatDateTime(startDate) + ' - ' + formatDateTime(endDate)
+  }
 }
 
 /**
