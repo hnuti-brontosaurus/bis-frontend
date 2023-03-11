@@ -1,4 +1,4 @@
-import classnames from 'classnames'
+import classNames from 'classnames'
 import React, { FC, ReactNode } from 'react'
 import Tooltip from 'react-tooltip-lite'
 import styles from './TableCellIconButton.module.scss'
@@ -41,7 +41,7 @@ export const TableCellIconButton: FC<
 
   return (
     <td
-      className={classnames(className, disabled && styles.disabledCell)}
+      className={classNames(className, disabled && styles.disabledCell)}
       {...rest}
     >
       <Tooltip

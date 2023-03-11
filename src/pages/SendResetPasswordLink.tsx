@@ -1,7 +1,7 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { api } from 'app/services/bis'
-import { default as classNames, default as classnames } from 'classnames'
+import classNames from 'classnames'
 import { Button, ButtonLink, FormInputError, Loading } from 'components'
 import { useTitle } from 'hooks/title'
 import styles from 'pages/Login/Login.module.scss'
@@ -76,7 +76,7 @@ export const SendResetPasswordLink = () => {
           <form onSubmit={handleFormSubmit}>
             <FormInputError isBlock>
               <input
-                className={classnames(styles.formElement)}
+                className={classNames(styles.formElement)}
                 type="text"
                 placeholder="E-mail"
                 {...register('email', {
