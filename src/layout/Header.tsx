@@ -1,20 +1,18 @@
 import { Menu, MenuButton, MenuDivider, MenuItem } from '@szhsin/react-menu'
+import { RoleCategory } from 'app/services/bisTypes'
 import logoMini from 'assets/logo-mini.png'
 import logo from 'assets/logo.png'
 import classNames from 'classnames'
+import { LoadingIcon } from 'components'
 import { useCurrentUser } from 'hooks/currentUser'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
-import { useCurrentRole } from 'hooks/useCurrentRole'
+import { useCurrentAccess } from 'hooks/useCurrentAccess'
 import { useLogout } from 'hooks/useLogout'
+import { useMemo } from 'react'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { FaRegUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  availableRoles,
-  getUserRoles,
-  hasRoleAdminAccess,
-  RoleSlug,
-} from 'utils/helpers'
+import { AccessConfig, getUserAccesses } from 'utils/roles'
 import styles from './Header.module.scss'
 
 export const Header = () => {
@@ -23,13 +21,26 @@ export const Header = () => {
   const [canAddEvent] = useAllowedToCreateEvent()
   const navigate = useNavigate()
 
-  const roles = user ? getUserRoles(user) : []
+  // what's the current access
+  const [access, setAccess] = useCurrentAccess()
 
-  const [role, setRole] = useCurrentRole()
+  // get configurations for all user's accesses
+  const userAccesses = useMemo(
+    () => (user ? getUserAccesses(user) : []),
+    [user],
+  )
 
-  const handleSwitchRole = (role: RoleSlug) => {
-    if (!hasRoleAdminAccess(role)) setRole(role)
-    navigate(availableRoles[role].url)
+  // get configuration for current access
+  const currentAccessConfig = useMemo(() => {
+    return userAccesses.find(config => config.slug === access)
+  }, [access, userAccesses])
+
+  // switching access
+  const handleSwitchAccess = (accessConfig: AccessConfig) => {
+    // if we stay within the app, remember the new current access
+    if (!accessConfig.external) setAccess(accessConfig.slug)
+    // go to the main page of the new access
+    navigate(accessConfig.url)
   }
 
   return (
@@ -45,7 +56,7 @@ export const Header = () => {
         </Link>
       </nav>
       <div className={styles.spacer}></div>
-      {user && role ? (
+      {user && access ? (
         <nav>
           <Menu
             menuButton={({ open }) => (
@@ -54,16 +65,26 @@ export const Header = () => {
                   open && styles.menuButtonOpen,
                   styles.menuButton,
                 )}
+                title={
+                  currentAccessConfig?.roles &&
+                  getAccessTitle(currentAccessConfig.roles)
+                }
               >
-                {availableRoles[role].name}
+                {currentAccessConfig?.name ?? <LoadingIcon />}
               </MenuButton>
             )}
             // align={'center'}
           >
-            {roles.map(slug => (
-              <MenuItem key={slug} className={styles.menuItemCustom}>
-                <button onClick={() => handleSwitchRole(slug)}>
-                  {availableRoles[slug].name}
+            {userAccesses.map(accessConfig => (
+              <MenuItem
+                key={accessConfig.slug}
+                className={styles.menuItemCustom}
+                title={
+                  accessConfig?.roles && getAccessTitle(accessConfig.roles)
+                }
+              >
+                <button onClick={() => handleSwitchAccess(accessConfig)}>
+                  {accessConfig.name}
                 </button>
               </MenuItem>
             ))}
@@ -162,3 +183,6 @@ export const Header = () => {
     </div>
   )
 }
+
+const getAccessTitle = (roles: RoleCategory[]) =>
+  `Přístup pro Tvé role: ${roles.map(role => role.name).join(', ')}`

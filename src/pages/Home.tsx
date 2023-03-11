@@ -1,15 +1,15 @@
 import { useCurrentUser } from 'hooks/currentUser'
-import { useCurrentRole } from 'hooks/useCurrentRole'
+import { useCurrentAccess } from 'hooks/useCurrentAccess'
 import { Home as OrgHome } from 'org/pages/Home'
 import { Home as UserHome } from 'user/pages/Home'
 
 export const Home = () => {
   const { data: user } = useCurrentUser()
-  const [role] = useCurrentRole()
+  const [access] = useCurrentAccess()
   if (!user) return null
-  return role === 'organizer' ? (
+  return access === 'organizer' ? (
     <OrgHome />
-  ) : role === 'user' ? (
+  ) : access === 'user' ? (
     <UserHome />
   ) : null
 }

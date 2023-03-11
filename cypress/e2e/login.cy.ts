@@ -57,7 +57,7 @@ describe('login', () => {
     cy.get('[type=submit]').should('be.visible').click()
     // api request is sent
     // app redirects to home
-    cy.location('pathname').should('equal', '/org')
+    cy.location('pathname').should('equal', '/')
     cy.contains('Organizátor')
     cy.contains('Po akci')
   })

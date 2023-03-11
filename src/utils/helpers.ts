@@ -1,4 +1,4 @@
-import type { Event, User } from 'app/services/bisTypes'
+import type { Event } from 'app/services/bisTypes'
 import { cloneDeep, mapValues } from 'lodash'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
@@ -137,61 +137,6 @@ export const getEventCannotBeOlderThan = (): string => {
  */
 export const isEventClosed = (event: { end: string }): boolean =>
   shouldBeFinishedUntil(event) < Date.now()
-
-export const isOrganizer = (user: Pick<User, 'roles'>): boolean =>
-  Boolean(
-    user.roles.find(role =>
-      ['organizer', 'admin', 'main_organizer'].includes(role.slug),
-    ),
-  )
-
-export const hasRole = (user: Pick<User, 'roles'>, role: string): boolean =>
-  user.roles.findIndex(r => r.slug === role) > -1
-
-export type RoleSlug = 'organizer' | 'admin' | 'user' | 'zc'
-
-export const availableRoles: Record<
-  RoleSlug,
-  { slug: RoleSlug; name: string; url: string }
-> = {
-  admin: { slug: 'admin', name: 'Administrace', url: '/admin' },
-  organizer: { slug: 'organizer', name: 'Organizátor/ka', url: '/org' },
-  user: { slug: 'user', name: 'Uživatel/ka', url: '/user' },
-  zc: { slug: 'zc', name: 'Základní článek', url: '/admin' },
-}
-
-export const getUserRoles = (user: Pick<User, 'roles'>): RoleSlug[] => {
-  const roles: RoleSlug[] = []
-  if (hasRole(user, 'admin') || hasRole(user, 'office_worker'))
-    roles.push('admin')
-
-  if (
-    ['chairman', 'vice_chairman', 'manager', 'board_member'].some(role =>
-      hasRole(user, role),
-    )
-  )
-    roles.push('zc')
-
-  if (
-    hasRole(user, 'organizer') ||
-    hasRole(user, 'main_organizer') ||
-    hasRole(user, 'admin') ||
-    hasRole(user, 'office_worker')
-  )
-    roles.push('organizer')
-  // we show role user only to people who have no other meaningful frontend role
-  // TODO but this may need to be thought through better
-  // if you always want to show user role, just remove the `else`
-  else roles.push('user')
-
-  return roles
-}
-
-export const hasRoleAdminAccess = (role: RoleSlug) =>
-  role === 'admin' || role === 'zc'
-
-export const hasUserAdminAccess = (user: Pick<User, 'roles'>) =>
-  getUserRoles(user).some(role => hasRoleAdminAccess(role))
 
 export const splitDateTime = (datetime: string): [string, string] => {
   const [date] = datetime.split('T')

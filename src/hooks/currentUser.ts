@@ -1,9 +1,9 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import { useEffect } from 'react'
-import { getUserRoles } from 'utils/helpers'
+import { getUserDefaultAccess } from 'utils/roles'
 import { useAuth } from './auth'
-import { useCurrentRole } from './useCurrentRole'
+import { useCurrentAccess } from './useCurrentAccess'
 
 export const useCurrentUser = () => {
   const auth = useAuth()
@@ -36,17 +36,14 @@ export const useCurrentUser = () => {
     })()
   }, [logout, restWhoami.error, restWhoami.isError])
 
-  const [role, , setInitialRole] = useCurrentRole()
+  const [access, , setInitialAccess] = useCurrentAccess()
 
-  // when we get currentUser, and a role is not set, we set a default role
+  // when we get currentUser, and access is not set, we set a default access
   useEffect(() => {
-    if (currentUser && !role) {
-      const defaultRole = getUserRoles(currentUser).includes('organizer')
-        ? 'organizer'
-        : 'user'
-      setInitialRole(defaultRole)
+    if (currentUser && !access) {
+      setInitialAccess(getUserDefaultAccess(currentUser))
     }
-  }, [currentUser, role, setInitialRole])
+  }, [currentUser, access, setInitialAccess])
 
   return {
     data: currentUser,

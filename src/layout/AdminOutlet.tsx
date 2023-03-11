@@ -1,7 +1,7 @@
 import { ButtonLink, Error, Loading } from 'components'
 import { useCurrentUser } from 'hooks/currentUser'
 import { Outlet } from 'react-router-dom'
-import { hasUserAdminAccess } from 'utils/helpers'
+import { hasUserAdminAccess } from 'utils/roles'
 
 export const AdminOutlet = () => {
   const { data: user, isLoading } = useCurrentUser()
