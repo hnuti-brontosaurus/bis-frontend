@@ -1,7 +1,7 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { api } from 'app/services/bis'
-import { default as classNames } from 'classnames'
+import classNames from 'classnames'
 import {
   Button,
   FormInputError,

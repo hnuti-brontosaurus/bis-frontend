@@ -38,12 +38,16 @@ body {
   &.page {
     & > .row {
       &.content {
-        @include media.for-tablet-portrait-up {
+        @include media.for-medium-desktop-up {
           margin: 0 70px;
         }
 
         @include media.for-phone-only {
           margin: 0 4px;
+        }
+
+        @include media.for-tablet-landscape-up {
+          margin: 0 20px;
         }
       }
     }
