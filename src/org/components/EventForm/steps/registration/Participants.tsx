@@ -292,10 +292,15 @@ export const Participants: FC<{
 
       <h2>Účastníci</h2>
       <div className={styles.buttonsContainer}>
-        <ImportParticipants onConfirm={handleSaveImportedParticipants} />
+        <div className={styles.excelButtons}>
+          <ImportParticipants onConfirm={handleSaveImportedParticipants} />
+        </div>
+        <Button type="button" primary small onClick={handleClickNewParticipant}>
+          Přidej nového účastníka
+        </Button>
       </div>
       {!isReadParticipantsLoading ? (
-        <div>
+        <div className={styles.existingParticipantContainer}>
           <div>Přidat účastníka z BISu:</div>
           <SelectUnknownUser
             value={selectedUser ?? undefined}
@@ -314,9 +319,7 @@ export const Participants: FC<{
               })
             }}
           />
-          <Button type="button" secondary onClick={handleClickNewParticipant}>
-            Přidat nového účastníka
-          </Button>
+
           {participants && participants.results && (
             <table className={styles.table}>
               <thead>
