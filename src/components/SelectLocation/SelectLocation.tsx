@@ -14,6 +14,7 @@ import {
   MarkerType,
   SelectObject,
 } from 'components'
+import { toDecimal } from 'geolib'
 import { LatLngTuple } from 'leaflet'
 import { cloneDeep } from 'lodash'
 import merge from 'lodash/merge'
@@ -32,6 +33,7 @@ import { Overwrite } from 'utility-types'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
 import styles from './SelectLocation.module.scss'
+
 const Map = React.lazy(async () => {
   const { Map } = await import('components/Map')
   return { default: Map }
@@ -48,8 +50,26 @@ const newLocationSchema: yup.ObjectSchema<NewLocation> = yup.object({
     .object({
       coordinates: yup
         .tuple([
-          yup.number().required().min(-180).max(180),
-          yup.number().required().min(-90).max(90),
+          yup
+            .number()
+            .required()
+            .min(-180)
+            .max(180)
+            .test(
+              'coordinate',
+              'Zadejte platnou GPS souřadnici',
+              value => typeof toDecimal(value) === 'number',
+            ),
+          yup
+            .number()
+            .required()
+            .min(-90)
+            .max(90)
+            .test(
+              'coordinate',
+              'Zadejte platnou GPS souřadnici',
+              value => typeof toDecimal(value) === 'number',
+            ),
         ])
         .required(),
     })
@@ -348,15 +368,21 @@ const CreateLocation = ({
     { required },
   )
 
+  /**
+   * When both latitude and longitude are set, we parse the values
+   * and when they're ok, we do stuff (e.g. fly to that place)
+   */
   const handleGPSBlur = () => {
     const rawCoordinates = methods.getValues('gps_location.coordinates')
-    const areCoordinatesNumeric = rawCoordinates.every(
-      a => !isNaN(parseInt(a as unknown as string)),
+
+    const parsedCoords: [unknown, unknown] = toDecimal(rawCoordinates)
+
+    const areCoordinatesNumeric = parsedCoords.every(
+      coord => typeof coord === 'number',
     )
+
     if (areCoordinatesNumeric) {
-      const coordinates = [...rawCoordinates]
-        .reverse()
-        .map(a => Number(a)) as LatLngTuple
+      const coordinates = parsedCoords.reverse() as LatLngTuple
       onChangeCoordinates(coordinates)
     } else {
       onChangeCoordinates(undefined)
