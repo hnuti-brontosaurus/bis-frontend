@@ -1,23 +1,23 @@
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { api } from 'app/services/bis'
 import { RootState } from 'app/store'
-import type { RoleSlug } from 'utils/helpers'
+import type { AccessSlug } from 'utils/roles'
 
 type AuthState = {
-  role: RoleSlug | null
+  access: AccessSlug | null
   token: string | null
   isLoggingOut: boolean
 }
 
 const slice = createSlice({
   name: 'auth',
-  initialState: { role: null, token: null, isLoggingOut: false } as AuthState,
+  initialState: { access: null, token: null, isLoggingOut: false } as AuthState,
   reducers: {
-    setRole: (state, { payload }: PayloadAction<RoleSlug>) => {
-      state.role = payload
+    setAccess: (state, { payload }: PayloadAction<AccessSlug>) => {
+      state.access = payload
     },
-    setInitialRole: (state, { payload }: PayloadAction<RoleSlug>) => {
-      if (!state.role) state.role = payload
+    setInitialAccess: (state, { payload }: PayloadAction<AccessSlug>) => {
+      if (!state.access) state.access = payload
     },
   },
   extraReducers: builder => {
@@ -53,4 +53,4 @@ export const selectAuthenticated = (state: RootState) =>
 
 export const selectLoggingOut = (state: RootState) => state.auth.isLoggingOut
 
-export const selectCurrentRole = (state: RootState) => state.auth.role
+export const selectCurrentAccess = (state: RootState) => state.auth.access

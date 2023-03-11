@@ -22,10 +22,11 @@ import {
 } from 'components'
 import { useShowMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
-import { get, intersection, uniqBy } from 'lodash'
+import { get, uniqBy } from 'lodash'
 import { Fragment, useCallback, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
-import { getUserRoles, joinAnd } from 'utils/helpers'
+import { joinAnd } from 'utils/helpers'
+import { canUserSaveEventForOtherOrganizer } from 'utils/roles'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
 import {
@@ -253,8 +254,7 @@ export const OrganizerStep = ({
                       // they can save event which they won't be allowed to read :(
                       // but it is a requirement
                       const isAllowedWithoutOrganizing =
-                        intersection(['zc', 'admin'], getUserRoles(currentUser))
-                          .length > 0
+                        canUserSaveEventForOtherOrganizer(currentUser)
 
                       return (
                         isAllowedWithoutOrganizing ||

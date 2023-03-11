@@ -14,7 +14,8 @@ import { useCurrentUser } from 'hooks/currentUser'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import Select from 'react-select'
-import { getEventCannotBeOlderThan, getUserRoles } from 'utils/helpers'
+import { getEventCannotBeOlderThan } from 'utils/helpers'
+import { canUserSaveOldEvent } from 'utils/roles'
 import * as validationMessages from 'utils/validationMessages'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
@@ -50,7 +51,7 @@ export const BasicInfoStep = ({
   if (!(administrationUnits && categories && programs && currentUser))
     return <Loading>Připravujeme formulář</Loading>
 
-  const isAllowedToSaveOldEvents = getUserRoles(currentUser).includes('admin')
+  const isAllowedToSaveOldEvents = canUserSaveOldEvent(currentUser)
 
   return (
     <FormProvider {...methods}>

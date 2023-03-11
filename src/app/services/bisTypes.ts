@@ -31,10 +31,11 @@ export type {
   Registration,
   StateEnum,
   TokenResponse,
-  User,
   UserAddress as Address,
   UserSearch,
 } from './testApi'
+
+export type User = Overwrite<original.User, { roles: RoleCategory[] }>
 
 export type OpportunityCategory = Overwrite<
   original.OpportunityCategory,
@@ -177,3 +178,21 @@ export type Question = Overwrite<
     data?: QuestionData
   }
 >
+
+export type RoleSlug =
+  | 'director'
+  | 'admin'
+  | 'office_worker'
+  | 'auditor'
+  | 'executive'
+  | 'education_member'
+  | 'chairman'
+  | 'vice_chairman'
+  | 'manager'
+  | 'board_member'
+  | 'main_organizer'
+  | 'organizer'
+  | 'qualified_organizer'
+  | 'any'
+
+export type RoleCategory = Overwrite<original.RoleCategory, { slug: RoleSlug }>

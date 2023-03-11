@@ -1,7 +1,6 @@
 import { Loading } from 'components'
 import { useCurrentUser } from 'hooks/currentUser'
 import { Navigate, Outlet, useSearchParams } from 'react-router-dom'
-import { isOrganizer } from 'utils/helpers'
 import { UnauthenticatedLayout } from './UnauthenticatedLayout'
 
 export const UnauthenticatedOutlet = () => {
@@ -9,8 +8,7 @@ export const UnauthenticatedOutlet = () => {
   const [searchParams] = useSearchParams()
 
   if (user) {
-    const redirect =
-      searchParams.get('next') ?? (isOrganizer(user) ? '/org' : '/')
+    const redirect = searchParams.get('next') ?? '/'
 
     const reload = searchParams.get('reload')
 
