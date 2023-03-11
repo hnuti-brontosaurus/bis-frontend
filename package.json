@@ -20,6 +20,7 @@
     "classnames": "^2.3.2",
     "dayjs": "^1.11.6",
     "dompurify": "^2.4.1",
+    "geolib": "^3.3.3",
     "gh-pages": "^5.0.0",
     "jspdf": "^2.5.1",
     "leaflet": "^1.9.2",
