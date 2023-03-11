@@ -101,6 +101,15 @@ h2 {
       flex-direction: row;
       justify-content: space-between;
       margin-top: 16px;
+
+      .excelButtons {
+        display: flex;
+        gap: 12px;
+      }
+    }
+
+    .existingParticipantContainer {
+      margin-top: 12px;
     }
 
     .lightUp {

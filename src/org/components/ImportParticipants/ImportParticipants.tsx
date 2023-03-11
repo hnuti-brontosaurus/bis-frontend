@@ -94,11 +94,12 @@ export const ImportParticipants = ({
         }}
         headerRows={2}
         onUpload={handleImportParticipants}
+        
       >
         Importovat z excelu
       </ImportExcelButton>
-      <ExternalButtonLink tertiary href={spreadsheetTemplate}>
-        (vzor)
+      <ExternalButtonLink tertiary small href={spreadsheetTemplate}>
+        (vzor .xlsx)
       </ExternalButtonLink>
     </>
   )

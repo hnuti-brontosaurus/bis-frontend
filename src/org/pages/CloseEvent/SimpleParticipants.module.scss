@@ -4,6 +4,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .importPart {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: end;
+  }
 }
 
 .header {
@@ -89,9 +96,4 @@
 .emptyTable {
   width: 100%;
   padding: 10px 0;
-}
-
-.userAndExportLine {
-  display: flex;
-  justify-content: space-between;
 }
