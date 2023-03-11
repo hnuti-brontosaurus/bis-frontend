@@ -69,7 +69,7 @@ export const EvidenceStep = ({
               header="Sken prezenční listiny"
               help="Povinné pro akce pobírající dotaci. Doporučené pro všechny ostatní."
             >
-              <ImageUpload name="record.attendance_list" />
+              <ImagesUpload name="pages" image="page" />
             </FormSubsection>
           </FormSection>
           <FormSection header="Finance">

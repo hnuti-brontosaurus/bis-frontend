@@ -67,10 +67,9 @@
     "invitation_text_practical_information": "<p>,fc&lt;',c&lt;cv&lt;s,c;&lt;a</p>",
     "invitation_text_work_description": "<p>asdffdsa</p>",
     "invitation_text_about_us": "",
-    "contact_person": "fc4af496-1340-411c-b169-b8e3c527ce61",
-    "contact_name": "",
+    "contact_name": "contact name",
     "contact_phone": "",
-    "contact_email": ""
+    "contact_email": "asdf@example.com"
   },
   "vip_propagation": null,
   "registration": {
@@ -85,7 +84,6 @@
   "record": {
     "total_hours_worked": 5,
     "comment_on_work_done": "a",
-    "attendance_list": null,
     "participants": [],
     "number_of_participants": 4,
     "number_of_participants_under_26": 4,

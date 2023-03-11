@@ -19,6 +19,13 @@ describe('Close event - evidence and participants', () => {
       { results: [] },
     )
     cy.intercept(
+      {
+        method: 'GET',
+        pathname: '/api/frontend/events/*/record/attendance_list_pages/',
+      },
+      { results: [] },
+    )
+    cy.intercept(
       { method: 'GET', pathname: '/api/frontend/events/*/finance/receipts/' },
       { results: [] },
     )

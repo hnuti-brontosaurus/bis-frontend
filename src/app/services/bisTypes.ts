@@ -97,6 +97,12 @@ export type EventPropagationImagePayload = Optional<
   'id'
 >
 
+export type AttendanceListPage = original.AttendanceListPage
+export type AttendanceListPagePayload = Optional<
+  original.AttendanceListPage,
+  'id'
+>
+
 export type EventPhoto = Overwrite<original.EventPhoto, { photo: CorrectImage }>
 export type EventPhotoPayload = Optional<original.EventPhoto, 'id'>
 

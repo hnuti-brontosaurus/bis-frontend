@@ -97,8 +97,14 @@ export const userEmail = {
 export const duplicateUser = {
   _name: 'Duplicita',
   _name_plural: 'Duplicita',
-  user: 'Primární uživatel',
-  other: 'Duplicitní uživatel',
+  user: [
+    'Primární uživatel',
+    'Tento uživatel (by měl) obsahovat aktuání informace',
+  ],
+  other: [
+    'Duplicitní uživatel',
+    'Tento uživatel (by měl) být zastaralý, jeho informace budou (po kontrole) připojeny k primárnímu (vybranému) uživateli',
+  ],
 } as const
 
 export const administrationUnit = {
@@ -275,7 +281,6 @@ export const eventPropagation = {
     'Zvací text: Malá ochutnávka',
     'Malá ochutnávka uvádí fotky, které k akci přiložíte. Popište fotky, které přikládáte nebo přibližte jak vypadaly akce na stejném místě v minulosti. U nových akcí můžete více ukázat místo a důvody proč vás oslovilo a představit organizátory.',
   ],
-  contact_person: 'Kontaktní osoba',
   contact_name: [
     'Jméno kontaktní osoby',
     'Nechte prázdné pokud chcete použít jméno kontaktní osoby',
@@ -326,7 +331,7 @@ export const eventRecord = {
   _name_plural: 'Záznam z akce',
   total_hours_worked: 'Odpracováno člověkohodin',
   comment_on_work_done: 'Okomentování vykonané práce',
-  attendance_list: 'Prezenční listina',
+  attendance_list_pages: 'Prezenční listina',
   participants: 'Účastníci',
   note: 'Poznámka k akci',
   number_of_participants: [
@@ -355,6 +360,13 @@ export const eventPhoto = {
   _name: 'Fotka z akce',
   _name_plural: 'Fotka z akce',
   record: 'Záznam z akce',
+} as const
+
+export const eventAttendanceListPage = {
+  _name: 'Prezenční listina',
+  _name_plural: 'Prezenční listina',
+  record: 'Záznam z akce',
+  page: 'Strana',
 } as const
 
 export const eventApplication = {

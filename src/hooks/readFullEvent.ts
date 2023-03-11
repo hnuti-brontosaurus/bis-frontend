@@ -19,7 +19,6 @@ export type FullEvent = Assign<
     {
       main_organizer: User // in older events, main_organizer may be missing
       other_organizers: User[]
-      propagation: Overwrite<Propagation, { contact_person: User }> | null // in older events, contact_person may be missing
       location: Location | undefined
     }
   >,
@@ -58,11 +57,6 @@ export const useReadFullEvent = (
   const otherOrganizersQuery = api.endpoints.readUsers.useQuery(
     event?.other_organizers ? { id: event.other_organizers } : skipToken,
   )
-  const contactPersonQuery = api.endpoints.readUser.useQuery(
-    event?.propagation?.contact_person
-      ? { id: event.propagation.contact_person }
-      : skipToken,
-  )
   const locationQuery = api.endpoints.readLocation.useQuery(
     event?.location ? { id: event.location } : skipToken,
   )
@@ -73,7 +67,6 @@ export const useReadFullEvent = (
     questionsQuery,
     mainOrganizerQuery,
     otherOrganizersQuery,
-    contactPersonQuery,
     locationQuery,
   ]
 
@@ -88,22 +81,12 @@ export const useReadFullEvent = (
       imagesQuery.data &&
       (!eventQuery.data.main_organizer || mainOrganizerQuery.data) &&
       otherOrganizersQuery.data &&
-      (!eventQuery.data.propagation?.contact_person ||
-        contactPersonQuery.data) &&
       questionsQuery.data &&
       (!eventQuery.data.location || locationQuery.data)
         ? {
             ...eventQuery.data,
             main_organizer: mainOrganizerQuery.data as User, // in some old events this might be missing
             other_organizers: otherOrganizersQuery.data.results,
-            propagation:
-              eventQuery.data.propagation &&
-              mergeWith(
-                {},
-                eventQuery.data.propagation,
-                { contact_person: contactPersonQuery.data },
-                withOverwriteArray,
-              ),
             images: imagesQuery.data.results,
             questions: questionsQuery.data.results,
             location:

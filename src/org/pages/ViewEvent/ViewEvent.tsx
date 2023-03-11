@@ -213,18 +213,9 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
               <tr>
                 <th>Kontaktní osoba</th>
                 <td>
-                  <div>
-                    {event.propagation?.contact_name ||
-                      event.propagation?.contact_person?.display_name}
-                  </div>
-                  <div>
-                    {event.propagation?.contact_phone ||
-                      event.propagation?.contact_person?.phone}
-                  </div>
-                  <div>
-                    {event.propagation?.contact_email ||
-                      event.propagation?.contact_person?.email}
-                  </div>
+                  <div>{event.propagation?.contact_name}</div>
+                  <div>{event.propagation?.contact_phone}</div>
+                  <div>{event.propagation?.contact_email}</div>
                 </td>
               </tr>
             </tbody>

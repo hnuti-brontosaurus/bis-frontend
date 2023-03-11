@@ -27,6 +27,8 @@ import dayjs from 'dayjs'
 import type { Assign, Overwrite } from 'utility-types'
 import type {
   AdministrationUnit,
+  AttendanceListPage,
+  AttendanceListPagePayload,
   DietCategory,
   Event,
   EventApplication,
@@ -78,6 +80,7 @@ export const api = createApi({
   }),
   tagTypes: [
     'Application',
+    'AttendanceListPage',
     'User',
     'UserSearch',
     'Event',
@@ -872,6 +875,52 @@ export const api = createApi({
     //     responseType: 'blob',
     //   }),
     // }),
+    readAttendanceListPages: build.query<
+      PaginatedList<AttendanceListPage>,
+      ListArguments & { eventId: number }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    createAttendanceListPage: build.mutation<
+      AttendanceListPage,
+      { eventId: number; eventAttendanceListPage: AttendanceListPagePayload }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/`,
+        method: 'POST',
+        body: queryArg.eventAttendanceListPage,
+      }),
+    }),
+    updateAttendanceListPage: build.mutation<
+      AttendanceListPage,
+      {
+        eventId: number
+        id: number
+        patchedAttendanceListPage: Partial<AttendanceListPagePayload>
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedAttendanceListPage,
+      }),
+    }),
+    deleteAttendanceListPage: build.mutation<
+      void,
+      { eventId: number; id: number }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+    }),
     createEventPhoto: build.mutation<
       EventPhoto,
       { eventId: number; eventPhoto: EventPhotoPayload }
