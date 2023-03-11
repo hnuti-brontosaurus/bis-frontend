@@ -225,6 +225,7 @@ export const UserForm = ({
   onSubmit,
   onCancel,
   validateImmediately,
+  loading,
 }: {
   // provide id for persisting form data
   // because we don't want to overwrite contexts
@@ -234,6 +235,7 @@ export const UserForm = ({
   onCancel: () => void
   initialData?: User
   validateImmediately?: boolean
+  loading?: boolean
 }) => {
   const showMessage = useShowMessage()
 
@@ -510,7 +512,7 @@ export const UserForm = ({
           <Button secondary type="reset">
             Zrušit
           </Button>
-          <Button primary isLoading={isSaving} type="submit">
+          <Button primary isLoading={isSaving || loading} type="submit">
             Potvrdit
           </Button>
         </Actions>

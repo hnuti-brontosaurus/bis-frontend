@@ -1,6 +1,13 @@
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
-import type { Event } from 'app/services/bisTypes'
+import type { Event, User, UserPayload } from 'app/services/bisTypes'
+import { StyledModal } from 'components'
+import { UserForm } from 'components/UserForm/UserForm'
+import {
+  useShowApiErrorMessage,
+  useShowMessage,
+} from 'features/systemMessage/useSystemMessage'
+import { merge } from 'lodash'
 import { FC, useState } from 'react'
 import styles from './ParticipantsStep.module.scss'
 import { Applications } from './registration/Applications'
@@ -19,7 +26,23 @@ export const ParticipantsStep: FC<{
   const [highlightedApplication, setHighlightedApplication] =
     useState<string[]>()
   const [highlightedParticipant, setHighlightedParticipant] = useState<string>()
+  const [userModalOpen, setUserModalOpen] = useState(false)
+  const [userModalData, setUserModalData] = useState<User | undefined>()
+  const [updateUser, updateUserStatus] = api.endpoints.updateUser.useMutation()
+  const [createUser, createUserStatus] = api.endpoints.createUser.useMutation()
 
+  const [lastAddedId, setLastAddedId] = useState<string>()
+  const [timeOfLastAddition, setTimeOfLastAddition] = useState<number>(0)
+
+  const showMessage = useShowMessage()
+  const handleCancelUserForm = () => {
+    setUserModalOpen(false)
+  }
+  const [patchEvent, patchEventStatus] = api.endpoints.updateEvent.useMutation()
+
+  const userModalTitle = userModalData
+    ? `Úprava dat účastnice/účastníka ${userModalData.first_name} ${userModalData.last_name}`
+    : 'Nový účastník'
   const { data: applicationsData } =
     api.endpoints.readEventApplications.useQuery(
       event
@@ -30,6 +53,63 @@ export const ParticipantsStep: FC<{
         : skipToken,
     )
 
+  const handleClickEditParticipant = (data: User) => {
+    setUserModalData(data)
+    setUserModalOpen(true)
+  }
+
+  useShowApiErrorMessage(createUserStatus.error)
+  useShowApiErrorMessage(updateUserStatus.error)
+
+  const { data: participants, isLoading: isReadParticipantsLoading } =
+    api.endpoints.readEventParticipants.useQuery({ eventId: event.id })
+
+  const addParticipant = async (newParticipantId: string) => {
+    let newParticipants: string[] = []
+
+    if (participants) {
+      newParticipants = participants.results.map(p => p.id)
+    }
+    newParticipants.push(newParticipantId)
+
+    await patchEvent({
+      id: event.id,
+      event: {
+        record: {
+          participants: newParticipants,
+          contacts: [],
+          number_of_participants: null,
+          number_of_participants_under_26: null,
+        },
+      },
+    }).unwrap()
+  }
+
+  const handleSubmitUserForm = async (data: UserPayload, id?: string) => {
+    // if id is passed, update user
+    if (id) {
+      await updateUser({ id, patchedUser: data }).unwrap()
+      // say that it was success
+      showMessage({
+        type: 'success',
+        message: 'Změny byly uloženy',
+      })
+    }
+    // otherwise create new user and add them as participant
+    else {
+      const fixedData = merge({ donor: null, offers: null }, data)
+      // then we create the user and add them as participant
+      const { id: userId } = await createUser(fixedData).unwrap()
+      await addParticipant(userId)
+      // say that it was success
+      showMessage({
+        type: 'success',
+        message: 'Nový účastník byl úspěšně vytvořen a přidán',
+      })
+    }
+    // and if everything works, close the form
+    setUserModalOpen(false)
+  }
   /** creates a new object, where the keys are the application IDs
    * and the values are the corresponding user IDs for each approved
    * application */
@@ -60,6 +140,19 @@ export const ParticipantsStep: FC<{
 
   return (
     <div className={styles.participantsContainer}>
+      <StyledModal
+        title={userModalTitle}
+        open={userModalOpen}
+        onClose={handleCancelUserForm}
+      >
+        <UserForm
+          id={(userModalData?.id ?? 'new') + '-participant'}
+          initialData={userModalData}
+          onCancel={handleCancelUserForm}
+          onSubmit={handleSubmitUserForm}
+          loading={patchEventStatus.isLoading}
+        />
+      </StyledModal>
       <Applications
         // @ts-ignore
         event={event}
@@ -71,6 +164,13 @@ export const ParticipantsStep: FC<{
         }
         withParticipants={!onlyApplications}
         className={styles.centeredTableBlock}
+        onAddNewParticipant={() => {
+          setUserModalData(undefined)
+          setUserModalOpen(true)
+        }}
+        openAddNewUser={() => {
+          setUserModalOpen(true)
+        }}
       />
       {!onlyApplications && (
         <Participants
@@ -85,6 +185,19 @@ export const ParticipantsStep: FC<{
           }}
           eventName={event.name}
           participantsMap={participantsMap}
+          onClickAddNewParticipant={() => {
+            setUserModalData(undefined)
+            setUserModalOpen(true)
+          }}
+          onEditUser={handleClickEditParticipant}
+          lastAddedId={lastAddedId}
+          timeOfLastAddition={timeOfLastAddition}
+          onAddNewParticipant={({ id, time }: { id: string; time: number }) => {
+            setLastAddedId(id)
+            setTimeOfLastAddition(time)
+          }}
+          createUser={createUser}
+          updateUser={updateUser}
         />
       )}
     </div>
