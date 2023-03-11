@@ -6,7 +6,7 @@
   padding: 4px 32px;
   cursor: pointer;
   text-align: center;
-  height: 44px;
+  min-height: 44px;
   font-size: 1rem;
 
   display: inline-flex;
@@ -19,7 +19,7 @@
 }
 
 @mixin small-button {
-  padding: 4px 8px;
+  padding: 2px 4px;
 }
 
 @mixin primary-button {
@@ -42,8 +42,10 @@
 
 @mixin tertiary-button {
   color: colors.$bronto;
-  background-color: white;
+  background-color: none;
   text-decoration: underline;
+  border-radius: unset;
+  padding: 0px;
   border: 0;
   &:hover {
     color: colors.$bronto-400;
