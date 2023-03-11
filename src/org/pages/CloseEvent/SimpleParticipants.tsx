@@ -49,20 +49,20 @@ export const SimpleParticipants = () => {
 
   return (
     <div className={styles.container}>
-      <div className={classNames(styles.header, styles.userAndExportLine)}>
-        Nový účastník:{' '}
-        <div className={styles.inportPart}>
-          <ImportExcelButton<EventContact>
-            keyMap={importMap}
-            onUpload={data => peopleFields.append(data)}
-          >
-            Importovat seznam účastníků z excelu
-          </ImportExcelButton>{' '}
-          <ExternalButtonLink tertiary href={spreadsheetTemplate}>
-            (vzor)
-          </ExternalButtonLink>
-        </div>
+      <div className={styles.importPart}>
+        <ImportExcelButton<EventContact>
+          keyMap={importMap}
+          onUpload={data => peopleFields.append(data)}
+        >
+          Importovat seznam účastníků z excelu
+        </ImportExcelButton>{' '}
+        <ExternalButtonLink tertiary href={spreadsheetTemplate}>
+          (vzor)
+        </ExternalButtonLink>
       </div>
+      {/* <div className={classNames(styles.header, styles.userAndExportLine)}>
+        Nový účastník:{' '}
+      </div> */}
 
       <div className={styles.inputLine}>
         <SimpleParticipantInput onSubmit={data => peopleFields.prepend(data)} />
@@ -159,10 +159,11 @@ const SimpleParticipantInput = ({
   })
 
   return (
-    <div>
+    <>
       <FormProvider {...methods}>
         <OutsideForm id={formId} onSubmit={handleFormSubmit} />
         <InlineSection>
+          Novy ucaastnik:
           <FormInputError>
             <input
               form={formId}
@@ -206,7 +207,7 @@ const SimpleParticipantInput = ({
           </Button>
         </InlineSection>
       </FormProvider>
-    </div>
+    </>
   )
 }
 
