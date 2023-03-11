@@ -162,7 +162,6 @@ export const RegistrationStep = ({
                   help={formTexts.registration.questionnaire.help}
                 >
                   <FormSubsection
-                    required
                     header="Úvod k dotazníku"
                     help={
                       formTexts.registration.questionnaire.introduction.help
@@ -173,14 +172,12 @@ export const RegistrationStep = ({
                         <textarea
                           {...register(
                             'registration.questionnaire.introduction',
-                            { required: messages.required },
                           )}
                         />
                       </FormInputError>
                     </FullSizeElement>
                   </FormSubsection>
                   <FormSubsection
-                    required
                     header="Text po odeslání"
                     help={
                       formTexts.registration.questionnaire.after_submit_text
@@ -192,7 +189,6 @@ export const RegistrationStep = ({
                         <textarea
                           {...register(
                             'registration.questionnaire.after_submit_text',
-                            { required: messages.required },
                           )}
                         />
                       </FormInputError>

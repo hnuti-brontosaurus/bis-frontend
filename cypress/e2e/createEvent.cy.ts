@@ -291,21 +291,68 @@ describe('create event', () => {
   describe('selecting standard registration form', () => {
     beforeEach(() => {
       // clone event and go to proper step
-      cy.interceptFullEvent()
-      cy.visit('/org/akce/vytvorit?klonovat=1000')
+      cy.interceptFullEvent(27, 'simpleEvent')
+      cy.visit('/org/akce/vytvorit?klonovat=27')
       next()
 
       cy.get('input[name=start]').should('be.visible').type('2123-01-15')
       cy.get('input[name=end]').should('be.visible').type('2123-01-17')
 
-      cy.get('button:contains(přihlášení)').should('be.visible').click()
+      fillPropagationFields()
+      cy.get('button').contains('přihlášení').should('be.visible').click()
+      cy.get('[name=registrationMethod]').check('standard')
+    })
+
+    // intercept POST responses
+    beforeEach(() => {
+      cy.intercept(
+        { method: 'POST', pathname: '/api/frontend/events' },
+        { id: 27 },
+      ).as('createEvent')
+
+      cy.intercept(
+        {
+          method: 'POST',
+          pathname:
+            '/api/frontend/events/27/registration/questionnaire/questions',
+        },
+        { times: 3 },
+      ).as('createQuestion')
+
+      cy.intercept(
+        {
+          method: 'POST',
+          pathname: '/api/frontend/events/27/propagation/images/',
+        },
+        {},
+      )
+    })
+
+    it('should save correct intro and after questionnaire text', () => {
+      cy.get('[name="registration.questionnaire.introduction"]').type('foo')
+      cy.get('[name="registration.questionnaire.after_submit_text"]').type(
+        'bar',
+      )
+      submit()
+      cy.wait('@createEvent')
+        .its('request.body')
+        .should('have.nested.deep.property', 'registration.questionnaire', {
+          introduction: 'foo',
+          after_submit_text: 'bar',
+        })
+    })
+
+    it('should save correct empty intro and after questionnaire text', () => {
+      submit()
+      cy.wait('@createEvent')
+        .its('request.body')
+        .should('have.nested.deep.property', 'registration.questionnaire', {
+          introduction: '',
+          after_submit_text: '',
+        })
     })
 
     it('should allow adding registration form questions and save it to api', () => {
-      cy.get('[name="propagation.is_shown_on_web"]').check('true')
-
-      cy.get('[name=registrationMethod]').check('standard')
-
       // add question and fill it
       cy.get('button').contains('Přidat otázku').click()
       cy.get('[name="questions.0.question"]').type('Otázka 1')
@@ -346,27 +393,6 @@ describe('create event', () => {
       )
 
       // submit and check that correct data are sent
-      cy.intercept(
-        { method: 'POST', pathname: '/api/frontend/events' },
-        { id: 1000 },
-      ).as('createEvent')
-
-      cy.intercept(
-        {
-          method: 'POST',
-          pathname:
-            '/api/frontend/events/1000/registration/questionnaire/questions',
-        },
-        { times: 3 },
-      ).as('createQuestion')
-
-      cy.intercept(
-        {
-          method: 'POST',
-          pathname: '/api/frontend/events/1000/propagation/images/',
-        },
-        {},
-      )
       submit()
 
       cy.wait('@createEvent')
@@ -876,4 +902,27 @@ const fillForm = () => {
   // when we submit too fast, tests fail
   // somehow main_organizer needs time to appear in form data
   cy.wait(1000)
+}
+
+const fillPropagationFields = () => {
+  cy.get('button').contains('přihlášení').click()
+  cy.get('[name="propagation.is_shown_on_web"]').check('true')
+
+  cy.get('button').contains('info pro účastníky').click()
+
+  cy.get('input[name="propagation.cost"]').type('0')
+  cy.get('input[name="propagation.minimum_age"]').type('0')
+  cy.get('input[name="propagation.maximum_age"]').type('120')
+
+  cy.get('button').contains('pozvánka').click()
+
+  cy.get('[id="propagation.invitation_text_introduction"]').type('foo')
+  cy.get('[id="propagation.invitation_text_practical_information"]').type('bar')
+
+  cy.get('button').contains('organizátorský tým').click()
+
+  cy.get('input[name="propagation.organizers"]').type(
+    'nickname, name and otherName',
+  )
+  cy.get('[name=contactPersonIsMainOrganizer]').check()
 }
