@@ -417,6 +417,8 @@ const CreateLocation = ({
           <Label htmlFor="location.gps" required>
             GPS:
           </Label>
+        </InlineSection>
+        <InlineSection>
           <FormInputError>
             <input
               type="text"
@@ -428,10 +430,11 @@ const CreateLocation = ({
                 handleGPSBlur()
                 blurLatitude(e)
               }}
-              className={styles.GPS}
             />
           </FormInputError>
-          N{' '}
+          N
+        </InlineSection>
+        <InlineSection>
           <FormInputError>
             <input
               type="text"
@@ -442,7 +445,6 @@ const CreateLocation = ({
                 handleGPSBlur()
                 blurLongitude(e)
               }}
-              className={styles.GPS}
             />
           </FormInputError>
           E
@@ -469,10 +471,22 @@ const CreateLocation = ({
           </FormInputError>
         </InlineSection>
         <div className={styles.saveLocationButtons}>
-          <Button secondary type="reset" form={formId} onClick={handleCancel}>
+          <Button
+            secondary
+            small
+            type="reset"
+            form={formId}
+            onClick={handleCancel}
+          >
             Zrušit
           </Button>
-          <Button primary type="submit" form={formId} onClick={handleConfirm}>
+          <Button
+            primary
+            small
+            type="submit"
+            form={formId}
+            onClick={handleConfirm}
+          >
             Potvrdit místo konání
           </Button>
         </div>
