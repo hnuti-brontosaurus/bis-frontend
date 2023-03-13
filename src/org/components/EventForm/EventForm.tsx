@@ -250,10 +250,12 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
         finalData.registration.alternative_registration_link = ''
         // keep questionnaire set
         // set default value on questionnaire fields (can't be null)
-        finalData.registration.questionnaire!.introduction =
-          finalData.registration.questionnaire?.introduction ?? ''
-        finalData.registration.questionnaire!.after_submit_text =
-          finalData.registration.questionnaire?.after_submit_text ?? ''
+        if (finalData.registration.questionnaire) {
+          finalData.registration.questionnaire.introduction =
+            finalData.registration.questionnaire.introduction ?? ''
+          finalData.registration.questionnaire.after_submit_text =
+            finalData.registration.questionnaire.after_submit_text ?? ''
+        }
         break
       case 'other':
         finalData.registration.is_registration_required = true
