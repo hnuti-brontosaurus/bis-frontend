@@ -91,13 +91,12 @@ input[type='reset'] {
 }
 
 .checkboxLabel {
-  padding: 0.5rem 1.2rem;
   display: grid;
   grid-template-columns: 1em auto 2em;
   gap: 1em;
   align-items: center;
   width: 100%;
-  margin: 1rem 1rem 0;
+  margin: 1rem 1rem 0 0;
   cursor: pointer;
   @include media.for-tablet-landscape-up {
     gap: 0.7em;

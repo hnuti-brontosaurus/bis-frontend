@@ -193,12 +193,14 @@ export const EventRegistrationForm = ({
   user,
   onSubmit,
   onCancel,
+  isSaving,
 }: {
   id: string
   questionnaire?: WebQuestionnaire
   user?: User
   onSubmit: (data: EventApplicationPayload) => void
   onCancel: () => void
+  isSaving?: boolean
 }) => {
   const persistedData = usePersistentFormData(
     'registration',
@@ -380,8 +382,10 @@ export const EventRegistrationForm = ({
                       <FormInputError name={`answers.${index}.answer`} isBlock>
                         {question.data?.type === 'checkbox' ||
                         question.data?.type === 'radio' ? (
-                          <fieldset className={styles.questionWordWrap}>
-                            <InlineSection>
+                          <div className={styles.answerBox}>
+                            <fieldset
+                              className={classNames(styles.questionWordWrap)}
+                            >
                               {question.data.options?.map(({ option }) => (
                                 <label
                                   key={option}
@@ -401,14 +405,16 @@ export const EventRegistrationForm = ({
                                   {option}
                                 </label>
                               ))}
-                            </InlineSection>
-                          </fieldset>
+                            </fieldset>
+                          </div>
                         ) : (
-                          <textarea
-                            {...register(`answers.${index}.answer`, {
-                              required: question.is_required && required,
-                            })}
-                          ></textarea>
+                          <div className={styles.answerBox}>
+                            <textarea
+                              {...register(`answers.${index}.answer`, {
+                                required: question.is_required && required,
+                              })}
+                            ></textarea>
+                          </div>
                         )}
                       </FormInputError>
                     </FormSubsection>
@@ -434,7 +440,7 @@ export const EventRegistrationForm = ({
               <Button secondary type="reset">
                 Zrušit
               </Button>
-              <Button primary type="submit">
+              <Button primary type="submit" isLoading={isSaving}>
                 Odeslat přihlášku
               </Button>
             </Actions>
