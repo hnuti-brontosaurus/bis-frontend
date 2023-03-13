@@ -283,7 +283,7 @@ export const array2object = <T extends { [key: string]: unknown }>(
  * and when it's not string, return the original value
  */
 export const normalizeString = (input: string): string => {
-  if (input !== 'string') return input
+  if (typeof input !== 'string') return input
   return (
     input
       .toLowerCase()
