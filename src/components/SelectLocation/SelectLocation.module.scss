@@ -137,7 +137,7 @@
   padding: 0.8rem;
   border-radius: 8px;
   width: 100%;
-  height: sizes.$map-height;
+  height: calc(sizes.$map-height + 100px);
   overflow: auto;
   @include media.for-tablet-landscape-up {
     width: 300px;
@@ -147,9 +147,6 @@
   }
   .fieldTitle {
     font-weight: 600;
-  }
-  .GPS {
-    width: 70px !important;
   }
 
   .saveLocationButtons {
