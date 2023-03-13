@@ -1,5 +1,15 @@
 # Deployment
 
+## Deployment to development server https://dev.bis.brontosaurus.cz
+
+Make a commit to https://github.com/hnuti-brontosaurus/bis which includes `#deploy`. It works with every branch, including feature branches. When the app builds and tests pass, it gets deployed to [development server](https://dev.bis.brontosaurus.cz)
+
+So, e.g. you can update its frontend submodule, and make a commit with message `chore: update frontend #deploy`. In any case, please use commit messages consistent with current backend commit style.
+
+## Deployment to production server
+
+When commit in https://github.com/hnuti-brontosaurus/bis is tagged with tag `v*.*.*`, a production build gets created. Then an administrator has to confirm the deployment.
+
 ## Deployment to github pages
 
 Currently, we have a [development deployment](https://github.com/hnuti-brontosaurus/bis-frontend-build-dev) which gets built on every commit/merge to main.
