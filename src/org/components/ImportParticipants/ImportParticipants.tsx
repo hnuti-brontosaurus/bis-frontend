@@ -94,7 +94,6 @@ export const ImportParticipants = ({
         }}
         headerRows={2}
         onUpload={handleImportParticipants}
-        
       >
         Importovat z excelu
       </ImportExcelButton>
