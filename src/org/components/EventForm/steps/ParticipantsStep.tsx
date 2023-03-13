@@ -61,8 +61,9 @@ export const ParticipantsStep: FC<{
   useShowApiErrorMessage(createUserStatus.error)
   useShowApiErrorMessage(updateUserStatus.error)
 
-  const { data: participants, isLoading: isReadParticipantsLoading } =
-    api.endpoints.readEventParticipants.useQuery({ eventId: event.id })
+  const { data: participants } = api.endpoints.readEventParticipants.useQuery({
+    eventId: event.id,
+  })
 
   const addParticipant = async (newParticipantId: string) => {
     let newParticipants: string[] = []
@@ -164,10 +165,6 @@ export const ParticipantsStep: FC<{
         }
         withParticipants={!onlyApplications}
         className={styles.centeredTableBlock}
-        onAddNewParticipant={() => {
-          setUserModalData(undefined)
-          setUserModalOpen(true)
-        }}
         openAddNewUser={() => {
           setUserModalOpen(true)
         }}

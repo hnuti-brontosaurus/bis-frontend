@@ -152,13 +152,13 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
     return filteredEmails.length >= 1
   }
 
-  const { data: retrievedUser, error: inlineUserError } =
-    api.endpoints.readUserByBirthdate.useQuery(
-      selectedUserInputBirthday &&
-        selectedUserInputBirthday.birthday.length === 10
-        ? selectedUserInputBirthday
-        : skipToken,
-    )
+  // const { data: retrievedUser, error: inlineUserError } =
+  const { data: retrievedUser } = api.endpoints.readUserByBirthdate.useQuery(
+    selectedUserInputBirthday &&
+      selectedUserInputBirthday.birthday.length === 10
+      ? selectedUserInputBirthday
+      : skipToken,
+  )
   const [patchEvent] = api.endpoints.updateEvent.useMutation()
   const readFullUser = useReadFullUser()
 
@@ -487,8 +487,6 @@ export const AddParticipantModal: FC<INewApplicationModalProps> = ({
                   // updatedUsers[userIndex] = fullUser
                   // return onChange(updatedUsers)
 
-                  console.log('full user', fullUser)
-                  console.log('user', user)
                   if (fullUser && fullUser._search_id === user._search_id) {
                     addParticipant(fullUser.id)
 

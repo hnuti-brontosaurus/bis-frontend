@@ -29,14 +29,12 @@ export const Applications: FC<{
   highlightedApplications?: string[]
   withParticipants?: boolean
   className: string
-  onAddNewParticipant: () => void
   openAddNewUser: () => void
 }> = ({
   event,
   highlightedApplications,
   chooseHighlightedApplication,
   withParticipants,
-  onAddNewParticipant,
   className,
   openAddNewUser,
 }) => {

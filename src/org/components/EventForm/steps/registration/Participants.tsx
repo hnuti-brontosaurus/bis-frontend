@@ -126,14 +126,6 @@ export const Participants: FC<{
     })
   }
 
-  /**
-   * Handle adding a new participant and updating a participant
-   * This is done through a form in modal
-   */
-  // keep state
-  // const [userModalOpen, setUserModalOpen] = useState(false)
-  const [userModalData, setUserModalData] = useState<User | undefined>()
-
   const handleClickNewParticipant = () => {
     onClickAddNewParticipant()
   }
