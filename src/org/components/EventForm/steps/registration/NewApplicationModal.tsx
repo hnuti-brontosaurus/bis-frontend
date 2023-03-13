@@ -1,25 +1,15 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from 'app/services/bis'
 import {
-  AnswerPayload,
   EventApplication,
-  Question,
+  EventApplicationPayload,
 } from 'app/services/bisTypes'
-import {
-  BirthdayInput,
-  birthdayValidation,
-  Button,
-  FormInputError,
-  FullSizeElement,
-  InlineSection,
-  Label,
-  StyledModal,
-} from 'components'
-import { FC, FormEventHandler } from 'react'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { required } from 'utils/validationMessages'
+import { birthdayValidation, Error, StyledModal } from 'components'
+import { useClearPersistentForm, useDirectPersistForm } from 'hooks/persistForm'
+import { EventRegistrationForm } from 'pages/EventRegistration/EventRegistrationForm'
+import { FC, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import { ApplicationStates } from '../ParticipantsStep'
 import styles from './NewApplicationModal.module.scss'
 
 interface INewApplicationModalProps {
@@ -33,12 +23,15 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   onClose,
   eventId,
 }) => {
-  const [createEventApplication, { isLoading: isLoadingCreateApplication }] =
+  const [isSaving, setIsSaving] = useState(false)
+
+  const [createEventApplication] =
     api.endpoints.createEventApplication.useMutation()
 
-  const { data: questions } = api.endpoints.readEventQuestions.useQuery({
-    eventId,
-  })
+  const clearPersistentData = useClearPersistentForm(
+    'registration',
+    String(eventId),
+  )
 
   const validationSchema = yup.object().shape({
     first_name: yup.string().required().trim(),
@@ -68,54 +61,37 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: { birthday: '' },
   })
-  const { register, handleSubmit, reset, control } = methods
+  const { reset } = methods
 
-  const createEventDataWithAnswers = (data: EventApplication) => {
-    let filteredAnswers: AnswerPayload[] = []
-    if (data.answers) {
-      filteredAnswers = data.answers
-        .filter(({ answer }) => Boolean(answer))
-        .map(({ answer, question }) => ({
-          answer,
-          question: question.id,
-        }))
-    }
+  // fetch event
+  const {
+    data: event,
+    isError: isEventError,
+    error: eventError,
+  } = api.endpoints.readWebEvent.useQuery({ id: eventId })
 
-    let closePersonData = null
-    if (
-      data.close_person?.first_name ||
-      data.close_person?.last_name ||
-      data.close_person?.email ||
-      data.close_person?.phone
-    ) {
-      closePersonData = {
-        first_name: data.close_person.first_name || '',
-        last_name: data.close_person.last_name || '',
-        email: data.close_person.email || '',
-        phone: data.close_person.phone || '',
-      }
-    }
+  const persist = useDirectPersistForm('registration', String(eventId))
 
-    return {
-      application: {
-        ...data,
-        answers: filteredAnswers,
-        address: null,
-        close_person: closePersonData,
-        state: ApplicationStates.pending,
-      },
-      eventId,
-    }
-  }
+  const handleFormSubmit = async (data: EventApplicationPayload) => {
+    try {
+      setIsSaving(true)
+      await createEventApplication({
+        application: data,
+        eventId,
+      }).unwrap()
+      clearPersistentData()
 
-  const handleFormSubmit: FormEventHandler<HTMLFormElement> = e => {
-    e.stopPropagation()
-    handleSubmit(async data => {
-      await createEventApplication(createEventDataWithAnswers(data))
       onClose()
-    })(e)
+    } catch (error) {
+      persist({ step: 'progress' })
+    } finally {
+      setIsSaving(false)
+    }
   }
+
   if (!open) return null
+
+  if (isEventError) return <Error error={eventError}></Error>
 
   return (
     <StyledModal
@@ -133,165 +109,16 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
         className={styles.content}
       >
         <div className={styles.modalFormBox}>
-          <FormProvider {...methods}>
-            <form onSubmit={handleFormSubmit}>
-              <>
-                <h3>Údaje přihlášeného:</h3>
-
-                <InlineSection>
-                  <Label htmlFor="first_name" required>
-                    Jméno
-                  </Label>
-                  <FormInputError>
-                    <input
-                      type="text"
-                      id="first_name"
-                      {...register('first_name', { required: 'jaaaaaaaaa' })}
-                    />
-                  </FormInputError>
-                  <Label htmlFor="last_name" required>
-                    Příjmení
-                  </Label>
-                  <FormInputError>
-                    <input
-                      type="text"
-                      id="last_name"
-                      {...register('last_name', { required })}
-                    />
-                  </FormInputError>
-                </InlineSection>
-
-                <InlineSection>
-                  <Label htmlFor="nickname">Přezdívka</Label>
-                  <FormInputError>
-                    <input
-                      type="text"
-                      id="nickname"
-                      {...register('nickname')}
-                    />
-                  </FormInputError>
-                </InlineSection>
-
-                <InlineSection>
-                  <Label htmlFor="phone" required>
-                    Telefon
-                  </Label>
-                  <FormInputError>
-                    <input type="tel" id="phone" {...register('phone')} />
-                  </FormInputError>
-                  <Label htmlFor="email" required>
-                    E-mail
-                  </Label>
-                  <FormInputError>
-                    <input type="email" id="email" {...register('email')} />
-                  </FormInputError>
-                </InlineSection>
-
-                <InlineSection>
-                  <Label required>Datum narození</Label>
-                  <FormInputError>
-                    <Controller
-                      control={control}
-                      name="birthday"
-                      render={({ field }) => {
-                        // @ts-ignore
-                        return <BirthdayInput {...field} />
-                      }}
-                    />
-                  </FormInputError>
-                </InlineSection>
-
-                <InlineSection>
-                  <Label htmlFor="health_issues">
-                    Alergie a zdravotní omezení:
-                  </Label>
-                  <FormInputError>
-                    <textarea
-                      id="health_issues"
-                      {...register('health_issues')}
-                    />
-                  </FormInputError>
-                </InlineSection>
-
-                <h3>Blízká osoba:</h3>
-
-                <InlineSection>
-                  <Label htmlFor="close_person_first_name">Jméno</Label>
-                  <FormInputError>
-                    <input
-                      type="text"
-                      id="close_person_first_name"
-                      {...register('close_person.first_name')}
-                    />
-                  </FormInputError>
-                  <Label htmlFor="close_person_last_name">Příjmení</Label>
-                  <FormInputError>
-                    <input
-                      type="text"
-                      id="close_person_last_name"
-                      {...register('close_person.last_name')}
-                    />
-                  </FormInputError>
-                </InlineSection>
-
-                <InlineSection>
-                  <Label htmlFor="close_person_phone">Telefon</Label>
-                  <FormInputError>
-                    <input
-                      type="tel"
-                      id="close_person_phone"
-                      {...register('close_person.phone')}
-                    />
-                  </FormInputError>
-                  <Label htmlFor="close_person_email">E-mail</Label>
-                  <FormInputError>
-                    <input
-                      type="email"
-                      id="close_person_email"
-                      {...register('close_person.email')}
-                    />
-                  </FormInputError>
-                </InlineSection>
-                {questions && (
-                  <>
-                    <h3>Otázky:</h3>
-                    {questions.results.map((question: Question, i) => {
-                      return (
-                        <>
-                          {' '}
-                          <p>
-                            <Label
-                              htmlFor={`answers.${i}`}
-                              required={question.is_required ? true : false}
-                            >
-                              {question.question}
-                            </Label>
-                          </p>
-                          <FullSizeElement>
-                            <FormInputError>
-                              <textarea
-                                id={`answers.${i}`}
-                                {...register(`answers.${i}`, {
-                                  setValueAs: v => ({
-                                    is_required: question?.is_required,
-                                    answer: v,
-                                    question: { id: question.id },
-                                  }),
-                                })}
-                              />
-                            </FormInputError>
-                          </FullSizeElement>
-                        </>
-                      )
-                    })}
-                  </>
-                )}
-                <Button primary isLoading={isLoadingCreateApplication}>
-                  <input type="submit" value="Přidej přihlášku" />
-                </Button>
-              </>
-            </form>
-          </FormProvider>
+          <EventRegistrationForm
+            id={String(eventId)}
+            questionnaire={event?.registration?.questionnaire ?? undefined}
+            onSubmit={handleFormSubmit}
+            onCancel={() => {
+              onClose()
+              clearPersistentData()
+            }}
+            isSaving={isSaving}
+          />
         </div>
       </div>
     </StyledModal>
