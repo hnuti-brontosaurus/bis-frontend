@@ -9,9 +9,8 @@ export const form = {
         icon: OneTreeIcon,
         name: (
           <>
-            Jednodenní akce,
-            <br />
-            Akce bez adresáře
+            Jednodenní <br />
+            (příp. akce bez adresáře)
           </>
         ),
         help: (
@@ -29,8 +28,6 @@ export const form = {
         name: (
           <>
             Víkendovka,
-            <br />
-            Akce s adresářem,
             <br />
             Brďo schůzky
           </>
