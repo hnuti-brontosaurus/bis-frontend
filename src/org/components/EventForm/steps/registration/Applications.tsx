@@ -2,7 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import type { AdministrationUnit, Event } from 'app/services/bisTypes'
 import { EventApplication } from 'app/services/bisTypes'
-import classnames from 'classnames'
+import classNames from 'classnames'
 import {
   Button,
   EmptyListPlaceholder,
@@ -29,12 +29,16 @@ export const Applications: FC<{
   highlightedApplications?: string[]
   withParticipants?: boolean
   className: string
+  onAddNewParticipant: () => void
+  openAddNewUser: () => void
 }> = ({
   event,
   highlightedApplications,
   chooseHighlightedApplication,
   withParticipants,
+  onAddNewParticipant,
   className,
+  openAddNewUser,
 }) => {
   const [showNewApplicationModal, setShowNewApplicationModal] =
     useState<boolean>(false)
@@ -169,7 +173,7 @@ export const Applications: FC<{
   }) => (
     <tr
       key={application.id}
-      className={classnames(
+      className={classNames(
         highlightedApplications?.includes(application.id.toString()) &&
           styles.highlightedRow,
         application.state === ApplicationStates.rejected &&
@@ -242,7 +246,7 @@ export const Applications: FC<{
 
   return (
     <>
-      <div className={classnames(styles.ListContainer, className)}>
+      <div className={classNames(styles.ListContainer, className)}>
         <h2>Přihlášení</h2>
         <div className={styles.buttonsContainer}>
           <Button secondary disabled small type="button">
@@ -279,11 +283,11 @@ export const Applications: FC<{
                   <th>datum narození</th>
                   {withParticipants && (
                     <th>
-                      <AddUser className={classnames(styles.iconHead)} />
+                      <AddUser className={classNames(styles.iconHead)} />
                     </th>
                   )}
                   <th>
-                    <Bin className={classnames(styles.iconHead)}></Bin>
+                    <Bin className={classNames(styles.iconHead)}></Bin>
                   </th>
                 </tr>
               </thead>
@@ -353,6 +357,7 @@ export const Applications: FC<{
             eventParticipants={
               participants ? participants?.results.map(({ id }) => id) : []
             }
+            openAddNewUser={openAddNewUser}
           />
         )}
         {currentApplication && (

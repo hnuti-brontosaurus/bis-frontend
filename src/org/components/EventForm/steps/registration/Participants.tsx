@@ -11,12 +11,10 @@ import {
   StyledModal,
   TableCellIconButton,
 } from 'components'
-import { UserForm } from 'components/UserForm/UserForm'
 import {
   useShowApiErrorMessage,
   useShowMessage,
 } from 'features/systemMessage/useSystemMessage'
-import { merge } from 'lodash'
 import { ImportParticipants } from 'org/components/ImportParticipants/ImportParticipants'
 import { ConfirmedUser } from 'org/components/ImportParticipants/ImportParticipantsList/ImportParticipantsList'
 import { FC, useState } from 'react'
@@ -32,15 +30,27 @@ export const Participants: FC<{
   chooseHighlightedParticipant: (id: string | undefined) => void
   highlightedParticipant?: string
   participantsMap?: { [s: string]: string[] }
+  onClickAddNewParticipant: () => void
+  onEditUser: (user: User) => void
+  lastAddedId: string | undefined
+  timeOfLastAddition: number
+  onAddNewParticipant: ({ id, time }: { id: string; time: number }) => void
+  createUser: any
+  updateUser: any
 }> = ({
   eventId,
   eventName,
   highlightedParticipant,
   chooseHighlightedParticipant,
   participantsMap,
+  onClickAddNewParticipant,
+  onEditUser,
+  lastAddedId,
+  timeOfLastAddition,
+  onAddNewParticipant,
+  createUser,
+  updateUser,
 }) => {
-  const [lastAddedId, setLastAddedId] = useState<string>()
-  const [timeOfLastAddition, setTimeOfLastAddition] = useState<number>(0)
   const { data: participants, isLoading: isReadParticipantsLoading } =
     api.endpoints.readEventParticipants.useQuery({ eventId, pageSize: 10000 })
 
@@ -62,12 +72,8 @@ export const Participants: FC<{
   )
 
   const [patchEvent, patchEventStatus] = api.endpoints.updateEvent.useMutation()
-  const [createUser, createUserStatus] = api.endpoints.createUser.useMutation()
-  const [updateUser, updateUserStatus] = api.endpoints.updateUser.useMutation()
   const [highLightedRow, setHighlightedRow] = useState<string>()
 
-  useShowApiErrorMessage(createUserStatus.error)
-  useShowApiErrorMessage(updateUserStatus.error)
   useShowApiErrorMessage(patchEventStatus.error)
 
   const addParticipant = async (newParticipantId: string) => {
@@ -90,8 +96,7 @@ export const Participants: FC<{
       },
     }).unwrap()
 
-    setLastAddedId(newParticipantId)
-    setTimeOfLastAddition(Date.now())
+    onAddNewParticipant({ id: newParticipantId, time: Date.now() })
   }
 
   const [updateApplication] = api.endpoints.updateEventApplication.useMutation()
@@ -117,8 +122,7 @@ export const Participants: FC<{
     }).unwrap()
 
     newParticipantIds.forEach(id => {
-      setLastAddedId(id)
-      setTimeOfLastAddition(Date.now())
+      onAddNewParticipant({ id, time: Date.now() })
     })
   }
 
@@ -127,52 +131,12 @@ export const Participants: FC<{
    * This is done through a form in modal
    */
   // keep state
-  const [userModalOpen, setUserModalOpen] = useState(false)
+  // const [userModalOpen, setUserModalOpen] = useState(false)
   const [userModalData, setUserModalData] = useState<User | undefined>()
 
-  const handleCancelUserForm = () => {
-    setUserModalOpen(false)
-  }
-
-  const handleSubmitUserForm = async (data: UserPayload, id?: string) => {
-    // if id is passed, update user
-    if (id) {
-      await updateUser({ id, patchedUser: data }).unwrap()
-      // say that it was success
-      showMessage({
-        type: 'success',
-        message: 'Změny byly uloženy',
-      })
-    }
-    // otherwise create new user and add them as participant
-    else {
-      const fixedData = merge({ donor: null, offers: null }, data)
-      // then we create the user and add them as participant
-      const { id: userId } = await createUser(fixedData).unwrap()
-      await addParticipant(userId)
-      // say that it was success
-      showMessage({
-        type: 'success',
-        message: 'Nový účastník byl úspěšně vytvořen a přidán',
-      })
-    }
-    // and if everything works, close the form
-    setUserModalOpen(false)
-  }
-
   const handleClickNewParticipant = () => {
-    setUserModalData(undefined)
-    setUserModalOpen(true)
+    onClickAddNewParticipant()
   }
-
-  const handleClickEditParticipant = (data: User) => {
-    setUserModalData(data)
-    setUserModalOpen(true)
-  }
-
-  const userModalTitle = userModalData
-    ? `Úprava dat účastnice/účastníka ${userModalData.first_name} ${userModalData.last_name}`
-    : 'Nový účastník'
 
   /**
    * Handle removing a participant
@@ -268,18 +232,6 @@ export const Participants: FC<{
   return (
     <div className={styles.ListContainer}>
       <StyledModal
-        title={userModalTitle}
-        open={userModalOpen}
-        onClose={handleCancelUserForm}
-      >
-        <UserForm
-          id={(userModalData?.id ?? 'new') + '-participant'}
-          initialData={userModalData}
-          onCancel={handleCancelUserForm}
-          onSubmit={handleSubmitUserForm}
-        />
-      </StyledModal>
-      <StyledModal
         title={removeModalTitle}
         open={removeModalOpen}
         onClose={handleCancelRemoveParticipant}
@@ -319,7 +271,6 @@ export const Participants: FC<{
               })
             }}
           />
-
           {participants && participants.results && (
             <table className={styles.table}>
               <thead>
@@ -372,7 +323,7 @@ export const Participants: FC<{
                     <td>{participant.birthday}</td>
                     <TableCellIconButton
                       icon={EditUser}
-                      action={() => handleClickEditParticipant(participant)}
+                      action={() => onEditUser(participant)}
                       tooltipContent="Upravit účastníka"
                       color={colors.yellow}
                       ariaLabel={`Upravit účastníka ${participant.first_name} ${participant.last_name}`}

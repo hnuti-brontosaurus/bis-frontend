@@ -300,7 +300,7 @@ export const SelectUnknownUsers = forwardRef<
   )
 })
 
-const useReadFullUser = () => {
+export const useReadFullUser = () => {
   const [readUserByBirthday] = api.endpoints.readUserByBirthdate.useLazyQuery()
   return async (user: UserSearch): Promise<User> => {
     try {

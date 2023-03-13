@@ -106,3 +106,19 @@
 .successBirthdate {
   background-color: colors.$bronto-super-light !important;
 }
+
+.collapseUserRow {
+  cursor: pointer;
+  &:hover {
+    background-color: colors.$bronto-200;
+  }
+}
+
+.smallUserDuplicateText {
+  width: 400px;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+.smallUserDuplicateButton {
+  font-size: 14px;
+}
