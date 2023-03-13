@@ -280,8 +280,10 @@ export const array2object = <T extends { [key: string]: unknown }>(
 
 /**
  * Transform string to lowercase without diacritics, for more graceful comparison
+ * and when it's not string, return the original value
  */
 export const normalizeString = (input: string): string => {
+  if (input !== 'string') return input
   return (
     input
       .toLowerCase()
