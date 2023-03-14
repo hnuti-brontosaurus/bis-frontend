@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import {
+  Event,
   EventApplication,
   EventApplicationPayload,
 } from 'app/services/bisTypes'
@@ -16,16 +17,17 @@ import styles from './NewApplicationModal.module.scss'
 interface INewApplicationModalProps {
   open: boolean
   onClose: () => void
-  eventId: number
+  event: Event
 }
 
 export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   open,
   onClose,
-  eventId,
+  event,
 }) => {
   const [isSaving, setIsSaving] = useState(false)
 
+  const eventId = event.id
   const [createEventApplication] =
     api.endpoints.createEventApplication.useMutation()
 
@@ -64,22 +66,26 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   })
   const { reset } = methods
 
-  // fetch event
-  const { data: eventMain } = api.endpoints.readEvent.useQuery({ id: eventId })
-
   const {
-    data: event,
+    data: eventWeb,
     isError: isEventError,
     error: eventError,
   } = api.endpoints.readWebEvent.useQuery(
-    eventMain?.propagation?.is_shown_on_web ? { id: eventId } : skipToken,
+    event?.propagation?.is_shown_on_web ? { id: eventId } : skipToken,
   )
 
   const persist = useDirectPersistForm('registration', String(eventId))
+  const [patchEvent] = api.endpoints.updateEvent.useMutation()
 
   const handleFormSubmit = async (data: EventApplicationPayload) => {
     try {
       setIsSaving(true)
+      if (!event.registration) {
+        await patchEvent({
+          id: eventId,
+          event: { registration: { questionnaire: {} } },
+        })
+      }
       await createEventApplication({
         application: data,
         eventId,
@@ -116,7 +122,7 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
         <div className={styles.modalFormBox}>
           <EventRegistrationForm
             id={String(eventId)}
-            questionnaire={event?.registration?.questionnaire ?? undefined}
+            questionnaire={eventWeb?.registration?.questionnaire ?? undefined}
             onSubmit={handleFormSubmit}
             onCancel={() => {
               onClose()
