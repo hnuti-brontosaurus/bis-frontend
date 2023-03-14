@@ -340,7 +340,7 @@ export const Applications: FC<{
           onClose={() => {
             setShowNewApplicationModal(false)
           }}
-          eventId={event.id}
+          event={event}
         ></NewApplicationModal>
 
         {currentApplication && (
