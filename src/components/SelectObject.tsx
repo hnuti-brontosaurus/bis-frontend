@@ -28,6 +28,7 @@ type SelectObjectProps<T> = Omit<
       getDisabled?: (value: T) => string
       getLabel: (value: T) => string
       getValue: (value: T) => string
+      colorTheme?: string
     }
   >,
   'defaultValue'
@@ -53,6 +54,7 @@ const SelectObjectInner = <T,>(
     getValue,
     search,
     className,
+    colorTheme,
     ...rest
   }: SelectObjectProps<T> & {
     search: QueryReturning<T>
@@ -83,7 +85,9 @@ const SelectObjectInner = <T,>(
       isOptionDisabled={obj => Boolean(getDisabled?.(obj))}
       getOptionLabel={getLabel}
       getOptionValue={getValue}
-      className={`${className} customInput ${styles.selectObject}`}
+      className={`${className} customInput ${styles.selectObject} ${
+        colorTheme === 'opportunities' ? `${styles.opportunitiesTheme}` : ''
+      }`}
       noOptionsMessage={() => {
         if (!searchQuery || searchQuery.length < 3)
           return <div>Zadej alespoň 2 znaky</div>

@@ -20,3 +20,15 @@
     }
   }
 }
+
+.opportunitiesTheme {
+  > div {
+    border-color: colors.$opportunities-light;
+  }
+
+  &:hover {
+    > div {
+      border-color: colors.$opportunities-light;
+    }
+  }
+}

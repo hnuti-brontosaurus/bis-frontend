@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import get from 'lodash/get'
 import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
@@ -14,8 +15,9 @@ export const UncontrolledImageUpload = forwardRef<
     value?: string
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
     onBlur: any
+    colorTheme?: string
   }
->(({ value, onChange, ...rest }, ref) => {
+>(({ value, onChange, colorTheme, ...rest }, ref) => {
   const [internalState, setInternalState] = useState<string>('')
 
   const actualValue = value ?? internalState
@@ -44,7 +46,12 @@ export const UncontrolledImageUpload = forwardRef<
           </div>
         </div>
       ) : (
-        <div className={styles.addButton}>
+        <div
+          className={classNames(
+            styles.addButton,
+            colorTheme === 'opportunities' && styles.opportunitiesTheme,
+          )}
+        >
           <MdPhotoCamera size={60} />
           Přidej fotku
         </div>
@@ -56,17 +63,22 @@ export const UncontrolledImageUpload = forwardRef<
 export const ImageUpload = ({
   name,
   required,
+  colorTheme,
 }: {
   name: string
   required?: boolean
+  colorTheme?: string
 }) => {
   const { control } = useFormContext()
+
   return (
     <Controller
       name={name}
       rules={{ required: required && messages.required }}
       control={control}
-      render={({ field }) => <UncontrolledImageUpload {...field} />}
+      render={({ field }) => (
+        <UncontrolledImageUpload {...field} colorTheme={colorTheme} />
+      )}
     />
   )
 }
@@ -76,9 +88,11 @@ export const ImageUpload = ({
 export const ImagesUpload = ({
   name,
   image = 'image',
+  colorTheme,
 }: {
   name: string
   image?: string
+  colorTheme?: string
 }) => {
   const { control, watch, getValues } = useFormContext()
   const imageFields = useFieldArray({
@@ -124,7 +138,9 @@ export const ImagesUpload = ({
             <Controller
               name={`${name}.${index}.${image}`}
               control={control}
-              render={({ field }) => <UncontrolledImageUpload {...field} />}
+              render={({ field }) => (
+                <UncontrolledImageUpload {...field} colorTheme={colorTheme} />
+              )}
             />
             {watch(`${name}.${index}.${image}`) && (
               <button

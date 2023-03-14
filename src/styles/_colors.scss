@@ -2,17 +2,24 @@ $error: rgb(247, 100, 100);
 $error-400: darken($error, 10);
 $error-light: #f8d5d4;
 
-$bronto: #080;
-$bronto-500: rgb(9, 80, 9);
-$bronto-400: rgb(0, 94, 0);
-$bronto-300: #080;
-$bronto-200: #b8f3d7;
+$bronto-500: rgb(0, 94, 0);
+$bronto-400: #080;
+$bronto-300: #b8f3d7;
+$bronto-200: #beecd5;
 $bronto-100: #dcf5e8;
-$bronto-light: #beecd5;
-$bronto-super-light: #dcf5e8;
+$bronto-light: $bronto-200;
+$bronto-super-light: $bronto-100;
 
-$opportunities: #3f7089;
-$opportunities-light: #d8e6ed;
+$bronto: $bronto-400;
+
+$opportunities-100: #d8e6ed;
+$opportunities-200: #92c3db;
+$opportunities-300: #3f7089;
+$opportunities-400: #24536b;
+$opportunities-500: #0f2936;
+
+$opportunities: $opportunities-300;
+$opportunities-light: $opportunities-100;
 
 $create-event-main: $bronto;
 $close-event-main: #6dd6a3;

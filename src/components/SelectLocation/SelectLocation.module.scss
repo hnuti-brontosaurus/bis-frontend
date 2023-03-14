@@ -139,6 +139,7 @@
   width: 100%;
   height: calc(sizes.$map-height + 100px);
   overflow: auto;
+
   @include media.for-tablet-landscape-up {
     width: 300px;
   }
@@ -199,5 +200,21 @@
   display: none;
   @include media.for-tablet-landscape-up {
     display: block;
+  }
+}
+
+.opportunitiesLocation {
+  .locationInfo {
+    border-color: colors.$opportunities-light;
+  }
+  .locationSelected {
+    background-color: colors.$opportunities-light;
+  }
+
+  button {
+    border-color: colors.$opportunities;
+    &:hover {
+      background-color: colors.$opportunities-light;
+    }
   }
 }
