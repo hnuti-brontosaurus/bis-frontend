@@ -93,13 +93,18 @@ export const generatePdf = (participants: any, event: any) => {
     return phone
   }
   const participantsToPrint = participants.map(
-    ({ first_name, last_name, birthday, phone, email }: any, index: any) => ({
+    (
+      { first_name, last_name, birthday, phone, email, address }: any,
+      index: any,
+    ) => ({
       id: `${index + 1}.`,
       first_name,
       last_name,
       birthday: birthday ? formatDateTime(birthday) : ' ',
-      address: ' ',
-      postalCode: ' ',
+      address:
+        (address?.street ? address.street : ' ') +
+        (address?.city ? address.city : ''),
+      postalCode: address?.zip_code ? address.zip_code : ' ',
       phone: phone ? removePrefixFromPhone(phone) : ' ',
       email: email || ' ',
       signature: ' ',
@@ -186,6 +191,7 @@ export const generatePdf = (participants: any, event: any) => {
       padding: 20,
     },
   ]
+  // margins arount the table
   const margins = {
     top: 10,
     bottom: 10,
@@ -194,15 +200,9 @@ export const generatePdf = (participants: any, event: any) => {
   }
 
   const config = {
-    // padding: { top: 0, bottom: 0, left: 0, right: 0 },
-    /** TODO:  
-    margins
-    when this PR is accepted: https://github.com/parallax/jsPDF/pull/3351
-    */
-
     padding: 1,
-    margins,
     // this seems necessary to set font properties in the table
+    margins,
     rowStart: () => {
       doc.setFont('Roboto')
       doc.setFontSize(10)
@@ -214,6 +214,7 @@ export const generatePdf = (participants: any, event: any) => {
   /** TODO:  
     remove those comments
     when this PR is accepted: https://github.com/parallax/jsPDF/pull/3351
+    so probably never
   */
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
