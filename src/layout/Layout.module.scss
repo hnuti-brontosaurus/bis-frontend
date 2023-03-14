@@ -38,9 +38,9 @@ body {
   &.page {
     & > .row {
       &.content {
-        @include media.for-medium-desktop-up {
-          margin: 0 70px;
-        }
+        // @include media.for-medium-desktop-up {
+        //   margin: 0 70px;
+        // }
 
         @include media.for-phone-only {
           margin: 0 4px;
@@ -54,11 +54,11 @@ body {
   }
 }
 
-.box.page {
-  .noPageMargin {
-    @include media.for-tablet-portrait-up {
-      margin-left: -70px;
-      margin-right: -70px;
-    }
-  }
-}
+// .box.page {
+//   .noPageMargin {
+//     @include media.for-tablet-portrait-up {
+//       margin-left: -70px;
+//       margin-right: -70px;
+//     }
+//   }
+// }

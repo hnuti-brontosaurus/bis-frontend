@@ -77,9 +77,9 @@ input[type='reset'] {
       transform: scale(0);
       transition: 120ms transform ease-in-out;
       /* used instead of bg-color, to enable printing */
-      box-shadow: inset 1em 1em colors.$bronto-300;
+      box-shadow: inset 1em 1em colors.$bronto;
       /* to work in "Windows High Contrast Mode" */
-      background-color: colors.$bronto-300;
+      background-color: colors.$bronto;
     }
 
     &:checked {
@@ -168,6 +168,7 @@ input[type='checkbox']:disabled {
   background-color: colors.$bronto-light;
   border-radius: 40px;
   color: colors.$bronto;
+  overflow: hidden;
 
   &:has(input[type='checkbox']:checked) {
     background-color: colors.$bronto;

@@ -15,10 +15,10 @@
     padding-right: 0;
   }
 
-  @include media.for-tablet-portrait-up {
-    padding-left: 70px;
-    padding-right: 70px;
-  }
+  // @include media.for-tablet-portrait-up {
+  //   padding-left: 70px;
+  //   padding-right: 70px;
+  // }
 
   @include media.for-desktop-up {
     padding-left: 8rem;
@@ -39,10 +39,10 @@
     padding-right: 35px;
   }
 
-  @include media.for-tablet-portrait-up {
-    padding-left: 70px;
-    padding-right: 70px;
-  }
+  // @include media.for-tablet-portrait-up {
+  //   padding-left: 70px;
+  //   padding-right: 70px;
+  // }
 
   @include media.for-desktop-up {
     padding-left: 8rem;
