@@ -139,7 +139,11 @@ export const OpportunityForm = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleFormSubmit} onReset={handleFormReset}>
+      <form
+        onSubmit={handleFormSubmit}
+        onReset={handleFormReset}
+        className={styles.opportunityForm}
+      >
         <FormSectionGroup className="opportunitySection">
           <FormSection
             required
@@ -159,6 +163,7 @@ export const OpportunityForm = ({
                         detail={info}
                         icon={Icon}
                         value={category.id}
+                        className={styles.blueSelectIcon}
                         {...register('category', { required })}
                       />
                     )
@@ -262,6 +267,7 @@ export const OpportunityForm = ({
                     methods.formState.errors,
                     'location',
                   )}
+                  colorTheme="opportunities"
                   {...field}
                 />
               )}
@@ -363,7 +369,7 @@ export const OpportunityForm = ({
           </FullSizeElement>
           <FormSection header="Fotka příležitosti" required>
             <FormInputError>
-              <ImageUpload name="image" required />
+              <ImageUpload name="image" colorTheme="opportunities" required />
             </FormInputError>
           </FormSection>
           <FormSection

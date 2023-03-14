@@ -106,6 +106,9 @@
   .icon {
     border-color: colors.$opportunities-light;
     background-color: colors.$opportunities-light;
+    path {
+      fill: colors.$opportunities;
+    }
     &:hover {
       border-color: colors.$opportunities;
     }

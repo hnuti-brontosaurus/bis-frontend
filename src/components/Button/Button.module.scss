@@ -27,7 +27,7 @@
   background-color: colors.$bronto;
   border: 3px solid colors.$bronto;
   &:hover {
-    background-color: colors.$bronto-400;
+    background-color: colors.$bronto-500;
   }
 }
 
@@ -48,7 +48,7 @@
   padding: 0px;
   border: 0;
   &:hover {
-    color: colors.$bronto-400;
+    color: colors.$bronto-500;
     text-decoration: none;
   }
 }
@@ -96,5 +96,15 @@
   :local .primary {
     background-color: colors.$opportunities;
     border-color: colors.$opportunities;
+    &:hover {
+      background-color: colors.$opportunities-400;
+    }
+  }
+
+  :local .secondary {
+    border-color: colors.$opportunities;
+    &:hover {
+      background-color: colors.$opportunities-light;
+    }
   }
 }

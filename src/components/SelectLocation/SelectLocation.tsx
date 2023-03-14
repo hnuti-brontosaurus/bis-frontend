@@ -87,8 +87,9 @@ export const SelectLocation = forwardRef<
     errorMessage?: string
     value: SelectedOrNewLocation | null
     onChange: (location: SelectedOrNewLocation | null) => void
+    colorTheme?: string
   }
->(({ value, onChange, errorMessage }, ref) => {
+>(({ value, onChange, errorMessage, colorTheme }, ref) => {
   const [isEditing, setIsEditing] = useState(false)
   const [bounds, setBounds] = useState<ClearBounds>()
 
@@ -194,7 +195,12 @@ export const SelectLocation = forwardRef<
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={classNames(
+        styles.wrapper,
+        colorTheme === 'opportunities' && styles.opportunitiesLocation,
+      )}
+    >
       <div className={styles.topContentContainer}>
         <div className={styles.selectLocationBox}>
           {isEditing ? (
@@ -224,6 +230,7 @@ export const SelectLocation = forwardRef<
                     placeholder="Název"
                     search={api.endpoints.readLocations}
                     ref={ref}
+                    colorTheme={colorTheme}
                   />
                   {value ? (
                     <FiCheckCircle size={36} className={styles.editStateDone} />
