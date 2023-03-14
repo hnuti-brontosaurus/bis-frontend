@@ -33,9 +33,9 @@ $step-button-line-height-phone: 1rem;
   flex-wrap: wrap;
   gap: 0.2rem 0.5rem;
   overflow: hidden;
-  margin-top: 16px;
+  margin-top: 0.1rem;
   @include media.for-tablet-landscape-up {
-    margin-top: 0;
+    margin-top: 0.3rem;
   }
   @include media.for-big-desktop-up {
     gap: 0.2rem $step-button-horizontal-gap;
