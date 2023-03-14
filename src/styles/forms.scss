@@ -92,6 +92,8 @@ input[type='reset'] {
 
 .checkboxLabel {
   display: grid;
+  padding: 12px;
+  overflow: hidden;
   grid-template-columns: 1em auto 2em;
   gap: 1em;
   align-items: center;
