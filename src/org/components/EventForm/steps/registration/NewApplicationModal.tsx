@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { api } from 'app/services/bis'
 import {
   EventApplication,
@@ -64,11 +65,15 @@ export const NewApplicationModal: FC<INewApplicationModalProps> = ({
   const { reset } = methods
 
   // fetch event
+  const { data: eventMain } = api.endpoints.readEvent.useQuery({ id: eventId })
+
   const {
     data: event,
     isError: isEventError,
     error: eventError,
-  } = api.endpoints.readWebEvent.useQuery({ id: eventId })
+  } = api.endpoints.readWebEvent.useQuery(
+    eventMain?.propagation?.is_shown_on_web ? { id: eventId } : skipToken,
+  )
 
   const persist = useDirectPersistForm('registration', String(eventId))
 
