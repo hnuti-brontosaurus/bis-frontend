@@ -81,6 +81,7 @@ export const api = createApi({
     'User',
     'UserSearch',
     'Event',
+    'WebEvent',
     'EventApplication',
     'EventImage',
     'EventPhoto',
@@ -495,6 +496,7 @@ export const api = createApi({
     // This endpoint provides data relevant to event display and registration
     readWebEvent: build.query<WebEvent, { id: number }>({
       query: queryArg => ({ url: `web/events/${queryArg.id}/` }),
+      providesTags: (result, error, { id }) => [{ type: 'WebEvent', id }],
     }),
     readOrganizedEvents: build.query<
       PaginatedList<Event>,
@@ -628,6 +630,10 @@ export const api = createApi({
         method: 'POST',
         body: queryArg.question,
       }),
+      invalidatesTags: (_result, _error, { eventId }) => [
+        { type: 'EventQuestion', id: `${eventId}_QUESTION_LIST` },
+        { type: 'WebEvent', id: eventId },
+      ],
     }),
     readEventQuestions: build.query<
       PaginatedList<Question>,
@@ -668,6 +674,7 @@ export const api = createApi({
       invalidatesTags: (_result, _error, { id, eventId }) => [
         { type: 'EventQuestion', id: `${eventId}_${id}` },
         { type: 'EventQuestion', id: `${eventId}_QUESTION_LIST` },
+        { type: 'WebEvent', id: eventId },
       ],
     }),
     deleteEventQuestion: build.mutation<void, { eventId: number; id: number }>({
@@ -678,6 +685,7 @@ export const api = createApi({
       invalidatesTags: (_result, _error, { id, eventId }) => [
         { type: 'EventQuestion', id: `${eventId}_${id}` },
         { type: 'EventQuestion', id: `${eventId}_QUESTION_LIST` },
+        { type: 'WebEvent', id: eventId },
       ],
     }),
     createFinanceReceipt: build.mutation<

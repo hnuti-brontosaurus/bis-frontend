@@ -42,8 +42,9 @@ import { validationErrors2Message } from 'utils/validationErrors'
 import { required } from 'utils/validationMessages'
 import * as yup from 'yup'
 import styles from './EventRegistration.module.scss'
+import { mergeAnswers } from './helpers'
 
-type FormAnswer = Overwrite<AnswerPayload, { answer: string | string[] }>
+export type FormAnswer = Overwrite<AnswerPayload, { answer: string | string[] }>
 
 export type RegistrationFormShape = Assign<
   SetRequired<
@@ -187,6 +188,7 @@ const validationSchema: yup.ObjectSchema<RegistrationFormShape> = yup.object({
     .required(),
 })
 
+// May also be called Application instead of Registration
 export const EventRegistrationForm = ({
   id,
   questionnaire,
@@ -212,6 +214,13 @@ export const EventRegistrationForm = ({
     {},
     initialData2form(user, questionnaire),
     persistedData,
+    {
+      answers: mergeAnswers(
+        questionnaire?.questions ?? [],
+        initialData2form(user, questionnaire).answers ?? [],
+        persistedData?.answers,
+      ),
+    },
     withOverwriteArray,
   )
 
