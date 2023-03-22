@@ -52,9 +52,9 @@ export type RegistrationFormShape = Assign<
       Omit<EventApplicationPayload, 'nickname' | 'health_issues' | 'state'>,
       'first_name' | 'last_name' | 'phone' | 'email' | 'birthday'
     >,
-    'birthday'
+    'birthday' | 'is_child_application'
   >,
-  { isChild: boolean; answers: FormAnswer[] }
+  { answers: FormAnswer[] }
 >
 
 export type RegistrationFormShapeWithStep = RegistrationFormShape & {
@@ -91,7 +91,7 @@ const initialData2form = (
 
   return omitBy(
     merge(
-      { close_person: null },
+      { close_person: null, is_child_application: false },
       initialPersonalData,
       initialQuestionnaireData,
     ),
@@ -110,11 +110,11 @@ const form2payload = (data: RegistrationFormShape): EventApplicationPayload => {
 
   const submitData = mergeWith(
     {},
-    omit(data, 'isChild', 'step'),
+    omit(data, 'step'),
     {
       answers,
       address: null,
-      close_person: data.isChild ? data.close_person : null,
+      close_person: data.is_child_application ? data.close_person : null,
       state: ApplicationStates.pending,
     },
     withOverwriteArray,
@@ -124,13 +124,13 @@ const form2payload = (data: RegistrationFormShape): EventApplicationPayload => {
 }
 
 const validationSchema: yup.ObjectSchema<RegistrationFormShape> = yup.object({
-  isChild: yup.boolean().defined(),
+  is_child_application: yup.boolean().defined(),
   first_name: yup.string().trim().required(),
   last_name: yup.string().trim().required(),
   email: yup
     .string()
     .email()
-    .when('isChild', {
+    .when('is_child_application', {
       is: true,
       then: schema => schema.defined(),
       otherwise: schema => schema.required(),
@@ -138,7 +138,7 @@ const validationSchema: yup.ObjectSchema<RegistrationFormShape> = yup.object({
   phone: yup
     .string()
     .trim()
-    .when('isChild', {
+    .when('is_child_application', {
       is: true,
       then: schema => schema.defined(),
       otherwise: schema => schema.required(),
@@ -152,7 +152,7 @@ const validationSchema: yup.ObjectSchema<RegistrationFormShape> = yup.object({
       phone: yup.string().trim().required(),
       email: yup.string().email().required(),
     })
-    .when('isChild', {
+    .when('is_child_application', {
       is: true,
       then: schema => schema.required(),
       otherwise: schema => schema.notRequired().default(null),
@@ -226,7 +226,7 @@ export const EventRegistrationForm = ({
 
   const methods = useForm<Omit<RegistrationFormShape, 'step'>>({
     resolver: yupResolver(validationSchema),
-    defaultValues: defaultValues.isChild
+    defaultValues: defaultValues.is_child_application
       ? defaultValues
       : merge({}, defaultValues, { close_person: null }),
   })
@@ -276,15 +276,15 @@ export const EventRegistrationForm = ({
 
   const { fields } = useFieldArray({ control, name: 'answers' })
 
-  const isChild = watch('isChild')
+  const is_child_application = watch('is_child_application')
 
   useEffect(() => {
     if (formState.isSubmitted) trigger()
-  }, [formState.isSubmitted, isChild, trigger])
+  }, [formState.isSubmitted, is_child_application, trigger])
 
   useEffect(() => {
-    if (!isChild) setValue('close_person', null)
-  }, [isChild, setValue])
+    if (!is_child_application) setValue('close_person', null)
+  }, [is_child_application, setValue])
 
   return (
     <>
@@ -297,10 +297,10 @@ export const EventRegistrationForm = ({
             <InlineSection>
               <Label>Přihlašuji dítě</Label>
               <FormInputError>
-                <input type="checkbox" {...register('isChild')} />
+                <input type="checkbox" {...register('is_child_application')} />
               </FormInputError>
             </InlineSection>
-            {isChild && (
+            {is_child_application && (
               <FormSection header="Rodič/zákonný zástupce">
                 <InlineSection>
                   <Label required>Jméno</Label>
@@ -334,7 +334,7 @@ export const EventRegistrationForm = ({
                 </InlineSection>
               </FormSection>
             )}
-            <FormSection header={isChild ? 'Dítě' : 'Osobní data'}>
+            <FormSection header={is_child_application ? 'Dítě' : 'Osobní data'}>
               <InlineSection>
                 <Label required>Jméno</Label>
                 <FormInputError>
@@ -358,13 +358,13 @@ export const EventRegistrationForm = ({
                 </FormInputError>
               </InlineSection>
               <InlineSection>
-                <Label required={!isChild}>Telefon</Label>
+                <Label required={!is_child_application}>Telefon</Label>
                 <FormInputError>
                   <input type="tel" {...register('phone')} />
                 </FormInputError>
               </InlineSection>
               <InlineSection>
-                <Label required={!isChild}>E-mail</Label>
+                <Label required={!is_child_application}>E-mail</Label>
                 <FormInputError>
                   <input type="email" {...register('email')} />
                 </FormInputError>

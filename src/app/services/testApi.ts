@@ -2935,6 +2935,7 @@ export type EventApplication = {
   address: EventApplicationAddress | null
   answers: Answer[]
   note?: string
+  is_child_application?: boolean
 }
 export type PaginatedEventApplicationList = {
   count?: number
@@ -2959,6 +2960,7 @@ export type PatchedEventApplication = {
   address?: EventApplicationAddress | null
   answers?: Answer[]
   note?: string
+  is_child_application?: boolean
 }
 export type PaginatedQuestionList = {
   count?: number
