@@ -118,7 +118,7 @@ export type Location = Overwrite<
 
 export type AnswerPayload = Overwrite<original.Answer, { question: number }>
 
-// TODO: add address
+// TODO: possibly replace with PatchedEventApplication from testApi
 export type EventApplicationPayload = Pick<
   original.EventApplication,
   | 'first_name'
@@ -131,6 +131,7 @@ export type EventApplicationPayload = Pick<
   | 'close_person'
   | 'health_issues'
   | 'state'
+  | 'is_child_application'
 > & { answers: AnswerPayload[] }
 
 export type AddressPayload = Omit<original.UserAddress, 'region'>

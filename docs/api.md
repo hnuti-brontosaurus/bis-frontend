@@ -1,6 +1,6 @@
 # API
 
-This app is based on [BIS API](https://github.com/lamanchy/bis), which currently (2022/12) runs e.g. at https://dev.bis.lomic.cz/api/
+This app is based on [BIS API](https://github.com/hnuti-brontosaurus/bis), which currently (2023/03) runs e.g. at https://dev.bis.brontosaurus.cz/api/
 
 ## Connection
 
