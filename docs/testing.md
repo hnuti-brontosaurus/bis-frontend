@@ -16,8 +16,8 @@ To run tests interactively,
    If other app is running on port 3000, you'll have to stop it first
 1. `yarn cypress open`
 1. Select e2e tests from the available options
-1. Select Chrome/Chromium for browser
-   Firefox doesn't currently work for testing because some crypto methods are disabled in cypress
+1. Select your preferred browser
+1. Select a test file to run from list
 
 ### Automatic
 

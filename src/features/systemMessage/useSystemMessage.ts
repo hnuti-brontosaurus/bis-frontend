@@ -22,7 +22,8 @@ export const useShowMessage = () => {
     (
       message: Pick<SystemMessage, 'type' | 'message' | 'detail' | 'timeout'>,
     ) => {
-      const id = globalThis.crypto.randomUUID()
+      // use Math.random for backward compatibility, e.g. Firefox older than v95
+      const id = globalThis.crypto?.randomUUID?.() ?? Math.random().toString()
 
       const msg = { ...message, id, time: Date.now() }
       dispatch(actions.addMessage(msg))
