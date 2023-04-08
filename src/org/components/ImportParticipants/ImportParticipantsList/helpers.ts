@@ -70,6 +70,7 @@ export const import2payload = (
     'D.M.YYYY',
     'YYYY-M-D',
     'YYYY-MM-DD',
+    'M/D/YYYY',
   ])
 
   const birthday = dayjsBirthday.isValid()
@@ -119,17 +120,43 @@ export const import2payload = (
  * For example
  * Na Návsi 1, 76323 Horní Lhota
  * Vinohradská 1778/51a, 120 00 Praha 2
+ *
+ * Or in format
+ * Street Number, City, Zip Code
+ * Street Number, Zip Code, City
  */
+const zipCodeRegex = /^((\d[-\s]?){2,5})$/
+const zipAndCityRegex = /^((\d[-\s]?){2,4}\d)\s*(.+)$/
+// const addressRegex = /^(.+),\s*(\d{3}\s?\d{2})\s*(.+)$/
 const parseAddress = (input: string): AddressPayload => {
-  input.split(/[,;]\s*/g)
+  const parts = input.split(/[,;]\s*/g)
 
-  const addressRegex = /^(.*),\s*(\d{3}\s?\d{2})\s*(.*)$/
+  // street will always be the first
+  const street = parts[0] ?? ''
+  let zip_code = ''
+  let city = ''
 
-  const matches = addressRegex.exec(input)
+  // let's find if there is a zip code part
+  // like this, it will be 0 when not found
+  const zipCodeIndex =
+    parts.slice(1).findIndex(part => zipCodeRegex.test(part)) + 1
 
-  return {
-    street: matches?.[1] ?? '',
-    city: matches?.[3] ?? '',
-    zip_code: matches?.[2] ?? '',
+  if (zipCodeIndex > 0) {
+    zip_code = parts[zipCodeIndex]
   }
+
+  // and if yes, we'll assume the other part is city
+  const cityIndex = zipCodeIndex === 1 ? 2 : 1
+  city = parts[cityIndex] ?? ''
+
+  // otherwise, we try to parse zip code and city
+  if (zipCodeIndex === 0) {
+    const matches = zipAndCityRegex.exec(parts[1])
+    if (matches) {
+      zip_code = matches[1]
+      city = matches[3]
+    }
+  }
+
+  return { street, city, zip_code }
 }
