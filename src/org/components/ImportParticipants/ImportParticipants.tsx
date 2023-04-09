@@ -21,7 +21,12 @@ export type UserImport = Overwrite<
 export const ImportParticipants = ({
   onConfirm,
 }: {
-  onConfirm: (data: ConfirmedUser[]) => Promise<void>
+  onConfirm: (data: ConfirmedUser[]) => Promise<{
+    create: UserPayload[]
+    update: ({
+      id: string
+    } & Partial<UserPayload>)[]
+  }>
 }) => {
   const [importParticipantsModalOpen, setImportParticipantsModalOpen] =
     useState(false)
@@ -33,12 +38,36 @@ export const ImportParticipants = ({
 
   const handleConfirm = async (data: ConfirmedUser[]) => {
     try {
-      await onConfirm(data)
-      showMessage({
-        message: 'Import se povedl',
-        type: 'success',
-      })
-      setImportParticipantsModalOpen(false)
+      const failedImports = await onConfirm(data)
+
+      if (
+        failedImports.create.length === 0 &&
+        failedImports.update.length === 0
+      ) {
+        showMessage({
+          message: 'Import se povedl',
+          type: 'success',
+        })
+        setImportParticipantsModalOpen(false)
+      }
+
+      if (failedImports.create.length > 0) {
+        showMessage({
+          type: 'error',
+          message: `Nepodařilo se nám vytvořit účastníky ${failedImports.create
+            .map(({ first_name, last_name }) => `${first_name} ${last_name}`)
+            .join(', ')}`,
+        })
+      }
+
+      if (failedImports.update.length > 0) {
+        showMessage({
+          type: 'error',
+          message: `Nepodařilo se nám upravit osobní informace účastníků ${failedImports.create
+            .map(({ first_name, last_name }) => `${first_name} ${last_name}`)
+            .join(', ')}`,
+        })
+      }
     } catch (e) {
       // just catch the error
     }
