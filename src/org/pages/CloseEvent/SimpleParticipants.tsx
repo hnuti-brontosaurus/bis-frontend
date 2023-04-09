@@ -163,7 +163,7 @@ const SimpleParticipantInput = ({
       <FormProvider {...methods}>
         <OutsideForm id={formId} onSubmit={handleFormSubmit} />
         <InlineSection>
-          Novy ucaastnik:
+          Nový účastník:
           <FormInputError>
             <input
               form={formId}

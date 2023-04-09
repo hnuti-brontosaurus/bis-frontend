@@ -30,10 +30,22 @@ export const ImportExcelButton = <T extends {}>({
       const reader = new FileReader()
       reader.readAsBinaryString(file)
       reader.onload = () => {
-        const wb = xlsx.read(reader.result, { type: 'binary' })
+        const wb = xlsx.read(reader.result, {
+          type: 'binary',
+          // these options below help parse dates as yyyy-mm-dd
+          // https://stackoverflow.com/a/60655956
+          // https://github.com/SheetJS/sheetjs/issues/2169
+          cellDates: true,
+          cellText: false,
+        })
         const json = xlsx.utils
           .sheet_to_json(wb.Sheets[wb.SheetNames[0]], {
             header: 1,
+            // these options below help parse dates as yyyy-mm-dd
+            // https://stackoverflow.com/a/60655956
+            // https://github.com/SheetJS/sheetjs/issues/2169
+            raw: false,
+            dateNF: 'yyyy-mm-dd',
           })
           .slice(headerRows)
         const normalizedJson = json

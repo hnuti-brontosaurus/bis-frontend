@@ -149,9 +149,11 @@ export const api = createApi({
       query: queryArg => ({
         url: `frontend/get_unknown_user/`,
         params: {
-          birthday: dayjs(queryArg.birthday, ['D-M-YYYY', 'YYYY-MM-DD']).format(
+          birthday: dayjs(queryArg.birthday, [
+            'D-M-YYYY',
             'YYYY-MM-DD',
-          ),
+            'YYYY-M-D',
+          ]).format('YYYY-MM-DD'),
           first_name: queryArg.first_name,
           last_name: queryArg.last_name,
         },

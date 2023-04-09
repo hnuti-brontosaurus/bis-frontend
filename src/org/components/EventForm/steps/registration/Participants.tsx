@@ -20,6 +20,7 @@ import { ConfirmedUser } from 'org/components/ImportParticipants/ImportParticipa
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
+import { formatDateTime } from 'utils/helpers'
 import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
@@ -35,8 +36,8 @@ export const Participants: FC<{
   lastAddedId: string | undefined
   timeOfLastAddition: number
   onAddNewParticipant: ({ id, time }: { id: string; time: number }) => void
-  createUser: any
-  updateUser: any
+  createUser: ReturnType<typeof api.endpoints.createUser.useMutation>[0]
+  updateUser: ReturnType<typeof api.endpoints.updateUser.useMutation>[0]
 }> = ({
   eventId,
   eventName,
@@ -189,6 +190,9 @@ export const Participants: FC<{
     }
   }
 
+  /**
+   * Save imported participants
+   */
   const handleSaveImportedParticipants = async (data: ConfirmedUser[]) => {
     const existingParticipants = data.filter(
       datum => 'id' in datum && datum.id,
@@ -198,9 +202,15 @@ export const Participants: FC<{
     ) as UserPayload[]
 
     // create non-existent people
-    const newParticipants = await Promise.all(
+    const newParticipantsOutcome = await Promise.allSettled(
       newParticipantsData.map(datum => createUser(datum).unwrap()),
     )
+
+    const newParticipants = newParticipantsOutcome
+      .map(outcome =>
+        outcome.status === 'fulfilled' ? outcome.value : undefined,
+      )
+      .filter(user => Boolean(user)) as User[]
 
     // save participants
     await addParticipants(
@@ -210,11 +220,25 @@ export const Participants: FC<{
     )
 
     // update existent people
-    await Promise.all(
+    const updatedUserOutcome = await Promise.allSettled(
       existingParticipants.map(async ({ id, ...data }) => {
         await updateUser({ id, patchedUser: data })
       }),
     )
+
+    const failedCreate = newParticipantsOutcome
+      .map((o, i) => [o, i] as const)
+      .filter(([o]) => o.status === 'rejected')
+      .map(([, i]) => newParticipantsData[i])
+
+    const failedUpdate = updatedUserOutcome
+      .map((o, i) => [o, i] as const)
+      .filter(([o]) => o.status === 'rejected')
+      .map(([, i]) => existingParticipants[i])
+
+    const failedImports = { create: failedCreate, update: failedUpdate }
+
+    return failedImports
   }
 
   const removeModalTitle = removeModalData
@@ -312,7 +336,7 @@ export const Participants: FC<{
                       }`}
                     </td>
                     <td>{participant.last_name}</td>
-                    <td>{participant.birthday}</td>
+                    <td>{formatDateTime(participant.birthday)}</td>
                     <TableCellIconButton
                       icon={EditUser}
                       action={() => onEditUser(participant)}
