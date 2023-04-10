@@ -22,6 +22,7 @@ import styles from '../ParticipantsStep.module.scss'
 import { AddParticipantModal } from './AddParticipantModal'
 import { NewApplicationModal } from './NewApplicationModal'
 import { ShowApplicationModal } from './ShowApplicationModal'
+import { useExportAttendanceList } from './useExportAttendanceList'
 
 export const Applications: FC<{
   event: Event
@@ -160,6 +161,9 @@ export const Applications: FC<{
     setIsGeneratingPdf(false)
   }
 
+  const [exportAttendanceList, { isLoading: isExportLoading }] =
+    useExportAttendanceList()
+
   const thereAreApplications = applications && applications.length !== 0
 
   const ApplicationRow = ({
@@ -247,8 +251,16 @@ export const Applications: FC<{
       <div className={classNames(styles.ListContainer, className)}>
         <h2>Přihlášení</h2>
         <div className={styles.buttonsContainer}>
-          <Button secondary disabled small type="button">
-            Export do CSV
+          <Button
+            secondary
+            small
+            type="button"
+            onClick={() => {
+              exportAttendanceList({ eventId: event.id, format: 'xlsx' })
+            }}
+            isLoading={isExportLoading}
+          >
+            Export do excelu
           </Button>
           <Button
             secondary

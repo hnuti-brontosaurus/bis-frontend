@@ -605,6 +605,15 @@ const injectedRtkApi = api.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    frontendEventsGetAttendanceListRetrieve: build.query<
+      FrontendEventsGetAttendanceListRetrieveApiResponse,
+      FrontendEventsGetAttendanceListRetrieveApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/get_attendance_list/`,
+        params: { formatting: queryArg.formatting },
+      }),
+    }),
     frontendEventsOrganizersList: build.query<
       FrontendEventsOrganizersListApiResponse,
       FrontendEventsOrganizersListApiArg
@@ -1730,6 +1739,13 @@ export type FrontendEventsFinanceReceiptsDestroyApiArg = {
   eventId: string
   /** A unique integer value identifying this Účtenka. */
   id: number
+}
+export type FrontendEventsGetAttendanceListRetrieveApiResponse = unknown
+export type FrontendEventsGetAttendanceListRetrieveApiArg = {
+  eventId: number
+  /** * `pdf` - pdf
+   * `xlsx` - xlsx */
+  formatting?: 'pdf' | 'xlsx'
 }
 export type FrontendEventsOrganizersListApiResponse =
   /** status 200  */ PaginatedUserList
@@ -3249,6 +3265,7 @@ export const {
   useFrontendEventsFinanceReceiptsUpdateMutation,
   useFrontendEventsFinanceReceiptsPartialUpdateMutation,
   useFrontendEventsFinanceReceiptsDestroyMutation,
+  useFrontendEventsGetAttendanceListRetrieveQuery,
   useFrontendEventsOrganizersListQuery,
   useFrontendEventsOrganizersRetrieveQuery,
   useFrontendEventsPropagationImagesListQuery,

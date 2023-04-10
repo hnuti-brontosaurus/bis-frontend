@@ -857,6 +857,21 @@ export const api = createApi({
           : []
         ).concat([{ type: 'Participant' as const, id: 'PARTICIPANT_LIST' }]),
     }),
+    // /**
+    //  * Please don't use this endpoint!
+    //  * It'll fill cache with blob, and that can potentially crash our application
+    //  * use the useExportAttendanceList hook
+    //  */
+    // exportEventAttendanceList: build.query<
+    //   Blob,
+    //   { eventId: number; formatting?: 'pdf' | 'xlsx' }
+    // >({
+    //   query: queryArg => ({
+    //     url: `frontend/events/${queryArg.eventId}/get_attendance_list/`,
+    //     params: { formatting: queryArg.formatting },
+    //     responseType: 'blob',
+    //   }),
+    // }),
     createEventPhoto: build.mutation<
       EventPhoto,
       { eventId: number; eventPhoto: EventPhotoPayload }
