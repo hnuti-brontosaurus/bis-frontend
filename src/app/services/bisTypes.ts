@@ -9,6 +9,7 @@ import type * as original from './testApi'
 export type {
   AdministrationUnit,
   Answer,
+  AttendanceListPage,
   DietCategory,
   EventApplication,
   EventContact,
@@ -97,7 +98,6 @@ export type EventPropagationImagePayload = Optional<
   'id'
 >
 
-export type AttendanceListPage = original.AttendanceListPage
 export type AttendanceListPagePayload = Optional<
   original.AttendanceListPage,
   'id'

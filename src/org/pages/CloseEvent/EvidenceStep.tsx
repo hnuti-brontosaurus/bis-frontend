@@ -5,7 +5,6 @@ import {
   FormSubsection,
   Help,
   ImagesUpload,
-  ImageUpload,
   InfoBox,
 } from 'components'
 import { ExternalButtonLink } from 'components/Button/Button'

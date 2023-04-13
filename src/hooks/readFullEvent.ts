@@ -5,13 +5,10 @@ import type { Location } from 'app/services/bisTypes'
 import {
   Event,
   EventPropagationImage,
-  Propagation,
   Question,
   User,
 } from 'app/services/bisTypes'
-import { mergeWith } from 'lodash'
 import { Assign, Overwrite } from 'utility-types'
-import { withOverwriteArray } from 'utils/helpers'
 
 export type FullEvent = Assign<
   Overwrite<

@@ -143,6 +143,13 @@ export const OrganizerStep = ({
   if (!(allQualifications && currentUser))
     return <Loading>Připravujeme formulář</Loading>
 
+  // TODO We may want to use this later to autofill contact info
+  // "Mohu vybrat "stejná jako hlavní organizátor" nebo člověka z selectu. Jeho údaje se propíšou do kontaktních údajů. Ty by si ale měl mít možnost upravit, přepsat atd. Zároveň by mělo být možné kontaktní údaje vepsat ručně bez toho, aniž bych vybrala konkrétního uživatele z selectu nebo zaškrtla "stejná jako hlavní organizátor"
+  // https://github.com/hnuti-brontosaurus/bis-frontend/pull/234#discussion_r1134000050
+  // const contactPerson: User | undefined = watch('contactPersonIsMainOrganizer')
+  //   ? watch('main_organizer')
+  //   : watch('propagation.contact_person')
+
   const requiredQualifications = getRequiredQualifications(
     mainOrganizerDependencies,
   ).map(slug =>
@@ -288,6 +295,38 @@ export const OrganizerStep = ({
           {!isNotOnWeb && (
             <>
               <FormSection header="Kontaktní údaje" required onWeb>
+                {/* TODO we may want to use this later, to autofill contact info */
+                /*
+                <label className="checkboxLabel">
+                  <input
+                    type="checkbox"
+                    {...register('contactPersonIsMainOrganizer')}
+                  />{' '}
+                  stejná jako hlavní organizátor
+                </label>
+                {!watch('contactPersonIsMainOrganizer') && (
+                  <FullSizeElement>
+                    <FormInputError>
+                      <Controller
+                        name="propagation.contact_person"
+                        control={control}
+                        rules={{ required }}
+                        render={({ field }) => (
+                          <SelectUnknownUser
+                            {...field}
+                            onBirthdayError={message =>
+                              showMessage({
+                                type: 'error',
+                                message: 'Nepodařilo se přidat uživatele',
+                                detail: message,
+                              })
+                            }
+                          />
+                        )}
+                      />
+                    </FormInputError>
+                  </FullSizeElement>
+                )} */}
                 <InlineSection>
                   <Label htmlFor="propagation.contact_name">
                     Jméno kontaktní osoby

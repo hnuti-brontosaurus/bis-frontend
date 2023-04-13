@@ -118,6 +118,7 @@ const shapes = {
   organizers: [
     'main_organizer',
     'other_organizers',
+    // 'contactPersonIsMainOrganizer', // TODO maybe will be useful (see OrganizerStep)
     'propagation.organizers',
     'propagation.contact_name',
     'propagation.contact_email',
