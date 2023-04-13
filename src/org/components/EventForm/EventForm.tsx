@@ -275,12 +275,17 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
   }
 
   if (data.propagation) {
+    // default data for propagation
     if (String(data.propagation.working_hours) === '') {
       finalData.propagation!.working_hours = null
     }
     if (String(data.propagation.working_days) === '') {
       finalData.propagation!.working_days = null
     }
+    if (typeof data.propagation.minimum_age !== 'number')
+      finalData.propagation!.minimum_age = null
+    if (typeof data.propagation.maximum_age !== 'number')
+      finalData.propagation!.maximum_age = null
   }
 
   const isVipPropagationFilled =
