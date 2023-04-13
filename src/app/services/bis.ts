@@ -887,6 +887,20 @@ export const api = createApi({
           search: queryArg.search,
         },
       }),
+      providesTags: (results, error, { eventId }) =>
+        results?.results
+          ? results.results
+              .map(receipt => ({
+                type: 'AttendanceListPage' as const,
+                id: `${eventId}_${receipt.id}`,
+              }))
+              .concat([
+                {
+                  type: 'AttendanceListPage' as const,
+                  id: `${eventId}_ATTENDANCE_LIST`,
+                },
+              ])
+          : [],
     }),
     createAttendanceListPage: build.mutation<
       AttendanceListPage,
@@ -897,6 +911,9 @@ export const api = createApi({
         method: 'POST',
         body: queryArg.eventAttendanceListPage,
       }),
+      invalidatesTags: (result, error, { eventId }) => [
+        { type: 'AttendanceListPage', id: `${eventId}_ATTENDANCE_LIST` },
+      ],
     }),
     updateAttendanceListPage: build.mutation<
       AttendanceListPage,
@@ -911,6 +928,10 @@ export const api = createApi({
         method: 'PATCH',
         body: queryArg.patchedAttendanceListPage,
       }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'AttendanceListPage', id: `${eventId}_${id}` },
+        { type: 'AttendanceListPage', id: `${eventId}_ATTENDANCE_LIST` },
+      ],
     }),
     deleteAttendanceListPage: build.mutation<
       void,
@@ -920,6 +941,10 @@ export const api = createApi({
         url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
         method: 'DELETE',
       }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'AttendanceListPage', id: `${eventId}_${id}` },
+        { type: 'AttendanceListPage', id: `${eventId}_ATTENDANCE_LIST` },
+      ],
     }),
     createEventPhoto: build.mutation<
       EventPhoto,
