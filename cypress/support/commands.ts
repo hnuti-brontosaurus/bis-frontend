@@ -54,6 +54,8 @@ declare global {
       interceptFullEvent(id?: number, fixture?: string): Chainable<Element>
       interceptLogin(userResponse?: RouteHandler): Chainable<Element>
       interceptCategories(): Chainable<Element>
+      setClock(date: string): Chainable<Element>
+      restoreClock(): Chainable<Element>
     }
   }
 }
@@ -166,6 +168,26 @@ Cypress.Commands.add('interceptCategories', () => {
     { method: 'GET', pathname: '/api/categories/diet_categories/' },
     { fixture: 'dietCategories' },
   )
+})
+
+/**
+ * Set a specific date
+ */
+Cypress.Commands.add('setClock', (date: string) => {
+  cy.clock().then(clock => {
+    clock.restore()
+    cy.clock(new Date(date), ['Date'])
+  })
+})
+
+/**
+ * Restore clock
+ * To be used after our custom cy.setClock
+ */
+Cypress.Commands.add('restoreClock', () => {
+  cy.clock().then(clock => {
+    clock.restore()
+  })
 })
 
 export {}

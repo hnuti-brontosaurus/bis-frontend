@@ -614,13 +614,6 @@ describe('create event', () => {
     })
   })
 
-  const setClock = (date: string) => {
-    cy.clock().then(clock => {
-      clock.restore()
-      cy.clock(new Date(date), ['Date'])
-    })
-  }
-
   describe('saving past event', () => {
     beforeEach(() => {
       // clone event
@@ -628,13 +621,11 @@ describe('create event', () => {
     })
 
     afterEach(() => {
-      cy.clock().then(clock => {
-        clock.restore()
-      })
+      cy.restoreClock()
     })
 
     it('allow saving an event in the future', () => {
-      setClock('2023-01-05')
+      cy.setClock('2023-01-05')
       cy.visit('/org/akce/vytvorit?klonovat=1000')
       next()
 
@@ -659,7 +650,7 @@ describe('create event', () => {
     })
 
     it('after 03/01 forbid saving event from past year', () => {
-      setClock('2023-03-01')
+      cy.setClock('2023-03-01')
       cy.visit('/org/akce/vytvorit?klonovat=1000')
       next()
 
@@ -677,7 +668,7 @@ describe('create event', () => {
     })
 
     it('before 03/01 allow saving event from past year', () => {
-      setClock('2023-02-28')
+      cy.setClock('2023-02-28')
       cy.visit('/org/akce/vytvorit?klonovat=1000')
       next()
 
@@ -703,7 +694,7 @@ describe('create event', () => {
     })
 
     it('before 03/01 forbid saving event from two years ago', () => {
-      setClock('2023-02-28')
+      cy.setClock('2023-02-28')
       cy.visit('/org/akce/vytvorit?klonovat=1000')
       next()
 
@@ -724,7 +715,7 @@ describe('create event', () => {
           cy.interceptLogin({ fixture: role })
           cy.login('asdf@example.com', 'correcthorsebatterystaple')
 
-          setClock('2023-02-28')
+          cy.setClock('2023-02-28')
           cy.visit('/org/akce/vytvorit?klonovat=1000')
           next()
 

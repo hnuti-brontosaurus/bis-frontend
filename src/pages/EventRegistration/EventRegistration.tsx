@@ -1,6 +1,6 @@
 import { api } from 'app/services/bis'
 import type { EventApplicationPayload } from 'app/services/bisTypes'
-import { Error, Loading, PageHeader } from 'components'
+import { Error, ExternalButtonLink, Loading, PageHeader } from 'components'
 import { useShowApiErrorMessage } from 'features/systemMessage/useSystemMessage'
 import { useCurrentUser } from 'hooks/currentUser'
 import {
@@ -66,6 +66,25 @@ export const EventRegistration = () => {
   if (isAuthenticated && !user) return <Loading>Ověřujeme uživatele</Loading>
 
   if (!event) return <Loading>Připravujeme přihlášku</Loading>
+
+  // akce už proběhla?
+  // we make sure that it's still possible to register to events ending today
+  // by setting both dates to midnight
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const end = new Date(event.end)
+  end.setHours(0, 0, 0, 0)
+  if (today > end)
+    return (
+      <Error message={`Akce ${event.name} už proběhla`}>
+        <ExternalButtonLink
+          tertiary
+          href="https://brontosaurus.cz/dobrovolnicke-akce/"
+        >
+          Zkuste jinou z našich akcí
+        </ExternalButtonLink>
+      </Error>
+    )
 
   if (!event.registration)
     return <Error message="Není zadefinována registrace."></Error>
