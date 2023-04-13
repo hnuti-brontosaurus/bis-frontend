@@ -51,6 +51,8 @@ export const { actions, reducer } = slice
 export const selectAuthenticated = (state: RootState) =>
   Boolean(state.auth.token)
 
+export const selectAuthToken = (state: RootState) => state.auth.token
+
 export const selectLoggingOut = (state: RootState) => state.auth.isLoggingOut
 
 export const selectCurrentAccess = (state: RootState) => state.auth.access
