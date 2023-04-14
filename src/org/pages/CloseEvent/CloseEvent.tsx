@@ -19,6 +19,9 @@ export const CloseEvent = () => {
   const { data: photos } = api.endpoints.readEventPhotos.useQuery({
     eventId,
   })
+  const { data: pages } = api.endpoints.readAttendanceListPages.useQuery({
+    eventId,
+  })
   const { data: receipts } = api.endpoints.readFinanceReceipts.useQuery({
     eventId,
   })
@@ -32,13 +35,19 @@ export const CloseEvent = () => {
   const [createPhoto] = api.endpoints.createEventPhoto.useMutation()
   const [updatePhoto] = api.endpoints.updateEventPhoto.useMutation()
   const [deletePhoto] = api.endpoints.deleteEventPhoto.useMutation()
+  const [createAttendanceListPage] =
+    api.endpoints.createAttendanceListPage.useMutation()
+  const [updateAttendanceListPage] =
+    api.endpoints.updateAttendanceListPage.useMutation()
+  const [deleteAttendanceListPage] =
+    api.endpoints.deleteAttendanceListPage.useMutation()
   const [createReceipt] = api.endpoints.createFinanceReceipt.useMutation()
   const [updateReceipt] = api.endpoints.updateFinanceReceipt.useMutation()
   const [deleteReceipt] = api.endpoints.deleteFinanceReceipt.useMutation()
 
   useShowApiErrorMessage(updateEventError)
 
-  if (!(photos && receipts)) return <Loading>Stahujeme data</Loading>
+  if (!(photos && receipts && pages)) return <Loading>Stahujeme data</Loading>
 
   const defaultValues = {
     record: event.record ?? undefined,
@@ -46,12 +55,14 @@ export const CloseEvent = () => {
       photo: photo.original,
       ...rest,
     })),
+    pages: pages.results,
     finance: event.finance ?? undefined,
     receipts: receipts.results,
   }
 
   const handleSubmit = async ({
     photos,
+    pages,
     receipts,
     ...evidence
   }: CloseEventPayload) => {
@@ -106,9 +117,55 @@ export const CloseEvent = () => {
     ])
 
     /**
+     * Event Attendance List Pages
+     */
+    // create each new page
+    const createdAttendanceListPagePromises = pages
+      // find only new pages...
+      .filter(page => !page.id)
+      // ...and create them via api
+      .map(eventAttendanceListPage =>
+        createAttendanceListPage({ eventId, eventAttendanceListPage }).unwrap(),
+      )
+    // update each changed page
+    const updatedAttendanceListPagePromises = pages
+      // find only changed pages...
+      .filter(p =>
+        Boolean(
+          defaultValues.pages.find(
+            ({ page, id }) => id === p.id && page !== p.page,
+          ),
+        ),
+      )
+      // ...and update them via api
+      .map(eventAttendanceListPage =>
+        updateAttendanceListPage({
+          eventId,
+          id: eventAttendanceListPage.id as number,
+          patchedAttendanceListPage: eventAttendanceListPage,
+        }).unwrap(),
+      )
+    // delete each removed page
+    const deletedAttendanceListPagePromises = defaultValues.pages
+      // find all removed pages...
+      .filter(p => pages.findIndex(({ id }) => p.id === id) === -1)
+      // ...and delete them via api
+      .map(({ id }) =>
+        deleteAttendanceListPage({
+          eventId,
+          id: id as number,
+        }).unwrap(),
+      )
+    // and wait for all the page api requests to finish
+    await Promise.all([
+      ...createdAttendanceListPagePromises,
+      ...updatedAttendanceListPagePromises,
+      ...deletedAttendanceListPagePromises,
+    ])
+
+    /**
      * Finance Receipts
      */
-
     const createdReceiptPromises = receipts
       // find only new receipts...
       .filter(receipt => !receipt.id)

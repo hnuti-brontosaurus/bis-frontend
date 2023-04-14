@@ -1,5 +1,5 @@
 {
-  "schemaFile": "https://bis.tatooine.wftech.eu/api/schema/",
+  "schemaFile": "https://dev.bis.brontosaurus.cz/api/schema/",
   "apiFile": "./emptyApi.ts",
   "apiImport": "emptySplitApi",
   "outputFile": "./testApi.ts",

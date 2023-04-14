@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Event,
   EventPhotoPayload,
+  AttendanceListPagePayload,
   Finance,
   FinanceReceipt,
   PatchedEvent,
@@ -32,18 +33,17 @@ export type CloseEventPayload = DeepPick<
   'is_complete' | 'record' | 'finance.bank_account_number'
 > & {
   photos: EventPhotoPayload[]
+  pages: AttendanceListPagePayload[]
   receipts: Optional<FinanceReceipt, 'id'>[]
 }
 
 // Forms setup
 export type EvidenceStepFormShape = {
-  record: Pick<
-    Record,
-    'total_hours_worked' | 'comment_on_work_done' | 'attendance_list'
-  >
+  record: Pick<Record, 'total_hours_worked' | 'comment_on_work_done'>
   finance: Pick<Finance, 'bank_account_number'>
 } & {
   photos: EventPhotoPayload[]
+  pages: AttendanceListPagePayload[]
   receipts: Optional<FinanceReceipt, 'id'>[]
 }
 
@@ -79,9 +79,9 @@ const pickEvidenceData = (data: Partial<CloseEventFormShape>) =>
     data,
     'record.total_hours_worked',
     'record.comment_on_work_done',
-    'record.attendance_list',
     'finance.bank_account_number',
     'photos',
+    'pages',
     'receipts',
   )
 
@@ -292,6 +292,7 @@ export const CloseEventForm = ({
         { is_complete },
         {
           photos: evidence.photos.filter(photo => photo.photo),
+          pages: evidence.pages.filter(page => page.page),
           receipts: evidence.receipts.filter(receipt => receipt.receipt),
         },
         withOverwriteArray,
@@ -302,10 +303,6 @@ export const CloseEventForm = ({
         data.record.total_hours_worked === null
       )
         delete data.record.total_hours_worked
-
-      // don't save the attendance list scan if it wasn't changed
-      if (data.record.attendance_list === initialData.record?.attendance_list)
-        delete data.record.attendance_list
 
       await onSubmit(formData2payload(data))
       clearPersist()

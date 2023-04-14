@@ -130,6 +130,10 @@ export const OrganizerStep = ({
         if (name === 'main_organizer') trigger('other_organizers')
         if (name === 'main_organizer' || name === 'other_organizers')
           trigger('propagation.organizers')
+        if (name === 'propagation.contact_email')
+          trigger('propagation.contact_phone')
+        if (name === 'propagation.contact_phone')
+          trigger('propagation.contact_email')
       }
     })
 
@@ -139,9 +143,12 @@ export const OrganizerStep = ({
   if (!(allQualifications && currentUser))
     return <Loading>Připravujeme formulář</Loading>
 
-  const contactPerson: User | undefined = watch('contactPersonIsMainOrganizer')
-    ? watch('main_organizer')
-    : watch('propagation.contact_person')
+  // TODO We may want to use this later to autofill contact info
+  // "Mohu vybrat "stejná jako hlavní organizátor" nebo člověka z selectu. Jeho údaje se propíšou do kontaktních údajů. Ty by si ale měl mít možnost upravit, přepsat atd. Zároveň by mělo být možné kontaktní údaje vepsat ručně bez toho, aniž bych vybrala konkrétního uživatele z selectu nebo zaškrtla "stejná jako hlavní organizátor"
+  // https://github.com/hnuti-brontosaurus/bis-frontend/pull/234#discussion_r1134000050
+  // const contactPerson: User | undefined = watch('contactPersonIsMainOrganizer')
+  //   ? watch('main_organizer')
+  //   : watch('propagation.contact_person')
 
   const requiredQualifications = getRequiredQualifications(
     mainOrganizerDependencies,
@@ -287,7 +294,9 @@ export const OrganizerStep = ({
           </FormSection>
           {!isNotOnWeb && (
             <>
-              <FormSection header="Kontaktní osoba" required onWeb>
+              <FormSection header="Kontaktní údaje" required onWeb>
+                {/* TODO we may want to use this later, to autofill contact info */
+                /*
                 <label className="checkboxLabel">
                   <input
                     type="checkbox"
@@ -317,56 +326,53 @@ export const OrganizerStep = ({
                       />
                     </FormInputError>
                   </FullSizeElement>
-                )}
-                <FormSubsection
-                  header="Kontaktní údaje"
-                  help="Pokud necháš kontaktní údaje prázdné, použije se jméno/email/telefon kontaktní osoby."
-                >
-                  <InlineSection>
-                    <Label htmlFor="propagation.contact_name">
-                      Jméno kontaktní osoby
-                    </Label>
-                    <FormInputError>
-                      <input
-                        type="text"
-                        id="propagation.contact_name"
-                        {...register('propagation.contact_name')}
-                        placeholder={
-                          contactPerson &&
-                          (contactPerson.nickname
-                            ? `${contactPerson.nickname} (${contactPerson.first_name} ${contactPerson.last_name})`
-                            : `${contactPerson.first_name} ${contactPerson.last_name}`)
-                        }
-                      />
-                    </FormInputError>
-                  </InlineSection>
-                  <InlineSection>
-                    <Label htmlFor="propagation.contact_email">
-                      Kontaktní email
-                    </Label>
-                    <FormInputError>
-                      <input
-                        id="propagation.contact_email"
-                        type="email"
-                        {...register('propagation.contact_email')}
-                        placeholder={contactPerson?.email ?? undefined}
-                      />
-                    </FormInputError>
-                  </InlineSection>
-                  <InlineSection>
-                    <Label htmlFor="propagation.contact_phone">
-                      Kontaktní telefon
-                    </Label>
-                    <FormInputError>
-                      <input
-                        id="propagation.contact_phone"
-                        type="tel"
-                        {...register('propagation.contact_phone')}
-                        placeholder={contactPerson?.phone}
-                      />
-                    </FormInputError>
-                  </InlineSection>
-                </FormSubsection>
+                )} */}
+                <InlineSection>
+                  <Label htmlFor="propagation.contact_name">
+                    Jméno kontaktní osoby
+                  </Label>
+                  <FormInputError>
+                    <input
+                      type="text"
+                      id="propagation.contact_name"
+                      {...register('propagation.contact_name', { required })}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label htmlFor="propagation.contact_email">
+                    Kontaktní email
+                  </Label>
+                  <FormInputError>
+                    <input
+                      id="propagation.contact_email"
+                      type="email"
+                      {...register('propagation.contact_email', {
+                        validate: value =>
+                          value || watch('propagation.contact_phone')
+                            ? true
+                            : 'Vyplňte buď kontaktní email nebo telefon',
+                      })}
+                    />
+                  </FormInputError>
+                </InlineSection>
+                <InlineSection>
+                  <Label htmlFor="propagation.contact_phone">
+                    Kontaktní telefon
+                  </Label>
+                  <FormInputError>
+                    <input
+                      id="propagation.contact_phone"
+                      type="tel"
+                      {...register('propagation.contact_phone', {
+                        validate: value =>
+                          value || watch('propagation.contact_email')
+                            ? true
+                            : 'Vyplňte buď kontaktní email nebo telefon',
+                      })}
+                    />
+                  </FormInputError>
+                </InlineSection>
               </FormSection>
             </>
           )}

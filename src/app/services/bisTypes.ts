@@ -9,6 +9,7 @@ import type * as original from './testApi'
 export type {
   AdministrationUnit,
   Answer,
+  AttendanceListPage,
   DietCategory,
   EventApplication,
   EventContact,
@@ -94,6 +95,11 @@ export type EventPropagationImage = Overwrite<
 
 export type EventPropagationImagePayload = Optional<
   original.EventPropagationImage,
+  'id'
+>
+
+export type AttendanceListPagePayload = Optional<
+  original.AttendanceListPage,
   'id'
 >
 

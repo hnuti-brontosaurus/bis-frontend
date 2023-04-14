@@ -59,10 +59,6 @@ export type InitialEventData = Overwrite<
   {
     main_organizer: User
     other_organizers: User[]
-    propagation: Overwrite<
-      NonNullable<SubmitShape['propagation']>,
-      { contact_person: User }
-    > | null
     location?: Location
   }
 >
@@ -76,8 +72,6 @@ export type EventFormShape = Assign<
     online: boolean
     // registrationMethod is internal, doesn't get sent to API
     registrationMethod: 'standard' | 'other' | 'none' | 'full'
-    // contactPersonIsMainOrganizer is internal, doesn't get sent to API
-    contactPersonIsMainOrganizer: boolean
     location: Location | NewLocation
   }
 >
@@ -124,9 +118,8 @@ const shapes = {
   organizers: [
     'main_organizer',
     'other_organizers',
-    'contactPersonIsMainOrganizer',
+    // 'contactPersonIsMainOrganizer', // TODO maybe will be useful (see OrganizerStep)
     'propagation.organizers',
-    'propagation.contact_person',
     'propagation.contact_name',
     'propagation.contact_email',
     'propagation.contact_phone',
@@ -207,11 +200,7 @@ const initialData2form = (
 const form2finalData = (data: EventFormShape): SubmitShape => {
   const finalData: SubmitShape = merge(
     {},
-    omit(data, [
-      'online',
-      'registrationMethod',
-      'contactPersonIsMainOrganizer',
-    ]),
+    omit(data, ['online', 'registrationMethod']),
     {
       // map users to user ids
       main_organizer: data.main_organizer.id,
@@ -220,11 +209,6 @@ const form2finalData = (data: EventFormShape): SubmitShape => {
           .map(({ id }) => id)
           .concat([data.main_organizer.id]),
       ),
-      propagation: merge({}, data.propagation, {
-        contact_person: data.contactPersonIsMainOrganizer
-          ? data.main_organizer.id
-          : data.propagation?.contact_person?.id,
-      }),
     },
   )
 

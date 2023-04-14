@@ -27,6 +27,8 @@ import dayjs from 'dayjs'
 import type { Assign, Overwrite } from 'utility-types'
 import type {
   AdministrationUnit,
+  AttendanceListPage,
+  AttendanceListPagePayload,
   DietCategory,
   Event,
   EventApplication,
@@ -78,6 +80,7 @@ export const api = createApi({
   }),
   tagTypes: [
     'Application',
+    'AttendanceListPage',
     'User',
     'UserSearch',
     'Event',
@@ -872,6 +875,77 @@ export const api = createApi({
     //     responseType: 'blob',
     //   }),
     // }),
+    readAttendanceListPages: build.query<
+      PaginatedList<AttendanceListPage>,
+      ListArguments & { eventId: number }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+      providesTags: (results, error, { eventId }) =>
+        results?.results
+          ? results.results
+              .map(receipt => ({
+                type: 'AttendanceListPage' as const,
+                id: `${eventId}_${receipt.id}`,
+              }))
+              .concat([
+                {
+                  type: 'AttendanceListPage' as const,
+                  id: `${eventId}_ATTENDANCE_LIST`,
+                },
+              ])
+          : [],
+    }),
+    createAttendanceListPage: build.mutation<
+      AttendanceListPage,
+      { eventId: number; eventAttendanceListPage: AttendanceListPagePayload }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/`,
+        method: 'POST',
+        body: queryArg.eventAttendanceListPage,
+      }),
+      invalidatesTags: (result, error, { eventId }) => [
+        { type: 'AttendanceListPage', id: `${eventId}_ATTENDANCE_LIST` },
+      ],
+    }),
+    updateAttendanceListPage: build.mutation<
+      AttendanceListPage,
+      {
+        eventId: number
+        id: number
+        patchedAttendanceListPage: Partial<AttendanceListPagePayload>
+      }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedAttendanceListPage,
+      }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'AttendanceListPage', id: `${eventId}_${id}` },
+        { type: 'AttendanceListPage', id: `${eventId}_ATTENDANCE_LIST` },
+      ],
+    }),
+    deleteAttendanceListPage: build.mutation<
+      void,
+      { eventId: number; id: number }
+    >({
+      query: queryArg => ({
+        url: `frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { id, eventId }) => [
+        { type: 'AttendanceListPage', id: `${eventId}_${id}` },
+        { type: 'AttendanceListPage', id: `${eventId}_ATTENDANCE_LIST` },
+      ],
+    }),
     createEventPhoto: build.mutation<
       EventPhoto,
       { eventId: number; eventPhoto: EventPhotoPayload }

@@ -174,7 +174,8 @@ describe('create event', () => {
     )
     cy.get('[type=submit]').contains('Pokračuj').should('be.visible').click()
 
-    cy.get('[name=contactPersonIsMainOrganizer]').should('be.visible').check()
+    cy.get('input[name="propagation.contact_name"]').type('contact name')
+    cy.get('input[name="propagation.contact_email"]').type('asdf@example.com')
 
     cy.intercept('POST', '/api/frontend/events/', req => {
       expect(req.body).to.have.property('name')
@@ -915,5 +916,7 @@ const fillPropagationFields = () => {
   cy.get('input[name="propagation.organizers"]').type(
     'nickname, name and otherName',
   )
-  cy.get('[name=contactPersonIsMainOrganizer]').check()
+
+  cy.get('input[name="propagation.contact_name"]').type('contact name')
+  cy.get('input[name="propagation.contact_email"]').type('asdf@example.com')
 }

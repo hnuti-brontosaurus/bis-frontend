@@ -697,6 +697,66 @@ const injectedRtkApi = api.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    frontendEventsRecordAttendanceListPagesList: build.query<
+      FrontendEventsRecordAttendanceListPagesListApiResponse,
+      FrontendEventsRecordAttendanceListPagesListApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/record/attendance_list_pages/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+          search: queryArg.search,
+        },
+      }),
+    }),
+    frontendEventsRecordAttendanceListPagesCreate: build.mutation<
+      FrontendEventsRecordAttendanceListPagesCreateApiResponse,
+      FrontendEventsRecordAttendanceListPagesCreateApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/record/attendance_list_pages/`,
+        method: 'POST',
+        body: queryArg.attendanceListPage,
+      }),
+    }),
+    frontendEventsRecordAttendanceListPagesRetrieve: build.query<
+      FrontendEventsRecordAttendanceListPagesRetrieveApiResponse,
+      FrontendEventsRecordAttendanceListPagesRetrieveApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+      }),
+    }),
+    frontendEventsRecordAttendanceListPagesUpdate: build.mutation<
+      FrontendEventsRecordAttendanceListPagesUpdateApiResponse,
+      FrontendEventsRecordAttendanceListPagesUpdateApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+        method: 'PUT',
+        body: queryArg.attendanceListPage,
+      }),
+    }),
+    frontendEventsRecordAttendanceListPagesPartialUpdate: build.mutation<
+      FrontendEventsRecordAttendanceListPagesPartialUpdateApiResponse,
+      FrontendEventsRecordAttendanceListPagesPartialUpdateApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+        method: 'PATCH',
+        body: queryArg.patchedAttendanceListPage,
+      }),
+    }),
+    frontendEventsRecordAttendanceListPagesDestroy: build.mutation<
+      FrontendEventsRecordAttendanceListPagesDestroyApiResponse,
+      FrontendEventsRecordAttendanceListPagesDestroyApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/record/attendance_list_pages/${queryArg.id}/`,
+        method: 'DELETE',
+      }),
+    }),
     frontendEventsRecordParticipantsList: build.query<
       FrontendEventsRecordParticipantsListApiResponse,
       FrontendEventsRecordParticipantsListApiArg
@@ -1815,6 +1875,52 @@ export type FrontendEventsPropagationImagesDestroyApiArg = {
   /** A unique integer value identifying this Obrázek k propagaci. */
   id: number
 }
+export type FrontendEventsRecordAttendanceListPagesListApiResponse =
+  /** status 200  */ PaginatedAttendanceListPageList
+export type FrontendEventsRecordAttendanceListPagesListApiArg = {
+  eventId: string
+  /** A page number within the paginated result set. */
+  page?: number
+  /** Number of results to return per page. */
+  pageSize?: number
+  /** A search term. */
+  search?: string
+}
+export type FrontendEventsRecordAttendanceListPagesCreateApiResponse =
+  /** status 201  */ AttendanceListPage
+export type FrontendEventsRecordAttendanceListPagesCreateApiArg = {
+  eventId: string
+  attendanceListPage: AttendanceListPage
+}
+export type FrontendEventsRecordAttendanceListPagesRetrieveApiResponse =
+  /** status 200  */ AttendanceListPage
+export type FrontendEventsRecordAttendanceListPagesRetrieveApiArg = {
+  eventId: string
+  /** A unique integer value identifying this Prezenční listina. */
+  id: number
+}
+export type FrontendEventsRecordAttendanceListPagesUpdateApiResponse =
+  /** status 200  */ AttendanceListPage
+export type FrontendEventsRecordAttendanceListPagesUpdateApiArg = {
+  eventId: string
+  /** A unique integer value identifying this Prezenční listina. */
+  id: number
+  attendanceListPage: AttendanceListPage
+}
+export type FrontendEventsRecordAttendanceListPagesPartialUpdateApiResponse =
+  /** status 200  */ AttendanceListPage
+export type FrontendEventsRecordAttendanceListPagesPartialUpdateApiArg = {
+  eventId: string
+  /** A unique integer value identifying this Prezenční listina. */
+  id: number
+  patchedAttendanceListPage: PatchedAttendanceListPage
+}
+export type FrontendEventsRecordAttendanceListPagesDestroyApiResponse = unknown
+export type FrontendEventsRecordAttendanceListPagesDestroyApiArg = {
+  eventId: string
+  /** A unique integer value identifying this Prezenční listina. */
+  id: number
+}
 export type FrontendEventsRecordParticipantsListApiResponse =
   /** status 200  */ PaginatedUserList
 export type FrontendEventsRecordParticipantsListApiArg = {
@@ -2224,7 +2330,12 @@ export type FrontendUsersRegisteredInEventsRetrieveApiArg = {
 export type WebAdministrationUnitsListApiResponse =
   /** status 200  */ PaginatedAdministrationUnitList
 export type WebAdministrationUnitsListApiArg = {
-  /** Více hodnot lze oddělit čárkami. */
+  /** Více hodnot lze oddělit čárkami.
+    
+    * `basic_section` - Základní článek
+    * `headquarter` - Ústředí
+    * `regional_center` - Regionální centrum
+    * `club` - Klub */
   category?: ('basic_section' | 'club' | 'headquarter' | 'regional_center')[]
   /** A page number within the paginated result set. */
   page?: number
@@ -2241,100 +2352,27 @@ export type WebAdministrationUnitsRetrieveApiArg = {
 }
 export type WebEventsListApiResponse = /** status 200  */ PaginatedEventList
 export type WebEventsListApiArg = {
-  /** Více hodnot lze oddělit čárkami. */
-  administrationUnit?: (
-    | 1
-    | 10
-    | 11
-    | 12
-    | 13
-    | 14
-    | 15
-    | 16
-    | 17
-    | 18
-    | 19
-    | 2
-    | 20
-    | 21
-    | 22
-    | 23
-    | 24
-    | 25
-    | 26
-    | 27
-    | 28
-    | 29
-    | 3
-    | 30
-    | 31
-    | 32
-    | 33
-    | 34
-    | 35
-    | 36
-    | 37
-    | 38
-    | 39
-    | 4
-    | 40
-    | 41
-    | 42
-    | 43
-    | 44
-    | 45
-    | 46
-    | 47
-    | 48
-    | 49
-    | 5
-    | 50
-    | 51
-    | 52
-    | 53
-    | 54
-    | 55
-    | 56
-    | 57
-    | 58
-    | 59
-    | 6
-    | 60
-    | 61
-    | 62
-    | 63
-    | 64
-    | 65
-    | 66
-    | 67
-    | 68
-    | 69
-    | 7
-    | 70
-    | 71
-    | 72
-    | 73
-    | 74
-    | 75
-    | 76
-    | 77
-    | 78
-    | 79
-    | 8
-    | 80
-    | 81
-    | 82
-    | 83
-    | 84
-    | 85
-    | 86
-    | 87
-    | 88
-    | 89
-    | 9
-    | 90
-  )[]
-  /** Více hodnot lze oddělit čárkami. */
+  /** Více hodnot lze oddělit čárkami.
+    
+    * `1` - Brontík */
+  administrationUnit?: 1[]
+  /** Více hodnot lze oddělit čárkami.
+    
+    * `internal__general_meeting` - Interní - Valná hromada
+    * `internal__volunteer_meeting` - Interní - Schůzka dobrovolníků, týmovka
+    * `internal__section_meeting` - Interní - Oddílová, družinová schůzka
+    * `public__volunteering` - Veřejná - Dobrovolnická
+    * `public__only_experiential` - Veřejná - Čistě zážitková
+    * `public__educational__lecture` - Veřejná - Vzdělávací - Přednáška
+    * `public__educational__course` - Veřejná - Vzdělávací - Kurz, školení, exkurze
+    * `public__educational__ohb` - Veřejná - Vzdělávací - OHB
+    * `public__educational__educational` - Veřejná - Vzdělávací - Výukový program
+    * `public__educational__educational_with_stay` - Veřejná - Vzdělávací - Pobytový výukový program
+    * `public__club__lecture` - Veřejná - Klub - Přednáška
+    * `public__club__meeting` - Veřejná - Klub - Setkání
+    * `public__other__for_public` - Veřejná - Ostatní - Akce pro veřejnost
+    * `public__other__exhibition` - Veřejná - Ostatní - Výstava
+    * `public__other__eco_tent` - Veřejná - Ostatní - Ekostan */
   category?: (
     | 'internal__general_meeting'
     | 'internal__section_meeting'
@@ -2357,9 +2395,19 @@ export type WebEventsListApiArg = {
   durationLte?: number
   endGte?: string
   endLte?: string
-  /** Více hodnot lze oddělit čárkami. */
+  /** Více hodnot lze oddělit čárkami.
+    
+    * `camp` - Tábor
+    * `weekend_event` - Víkendovka
+    * `other` - Ostatní */
   group?: ('camp' | 'other' | 'weekend_event')[]
-  /** Více hodnot lze oddělit čárkami. */
+  /** Více hodnot lze oddělit čárkami.
+    
+    * `for_all` - pro všechny
+    * `for_young_and_adult` - pro mládež a dospělé
+    * `for_kids` - pro děti
+    * `for_parents_with_kids` - pro rodiče s dětmi
+    * `for_first_time_participant` - pro prvoúčastníky */
   intendedFor?: (
     | 'for_all'
     | 'for_first_time_participant'
@@ -2367,13 +2415,27 @@ export type WebEventsListApiArg = {
     | 'for_parents_with_kids'
     | 'for_young_and_adult'
   )[]
-  /** Řazení */
+  /** Řazení
+    
+    * `start` - Start
+    * `-start` - Start (sestupně)
+    * `end` - End
+    * `-end` - End (sestupně) */
   ordering?: ('-end' | '-start' | 'end' | 'start')[]
   /** A page number within the paginated result set. */
   page?: number
   /** Number of results to return per page. */
   pageSize?: number
-  /** Více hodnot lze oddělit čárkami. */
+  /** Více hodnot lze oddělit čárkami.
+    
+    * `monuments` - Akce památky
+    * `nature` - Akce příroda
+    * `kids` - BRĎO
+    * `eco_tent` - Ekostan
+    * `holidays_with_brontosaurus` - PsB (Prázdniny s Brontosaurem = vícedenní letní akce)
+    * `education` - Vzdělávání
+    * `international` - Mezinárodní
+    * `none` - Žádný */
   program?: (
     | 'eco_tent'
     | 'education'
@@ -2397,7 +2459,11 @@ export type WebEventsRetrieveApiArg = {
 export type WebOpportunitiesListApiResponse =
   /** status 200  */ PaginatedOpportunityList
 export type WebOpportunitiesListApiArg = {
-  /** Více hodnot lze oddělit čárkami. */
+  /** Více hodnot lze oddělit čárkami.
+    
+    * `organizing` - Organizování akcí
+    * `collaboration` - Spolupráce
+    * `location_help` - Pomoc lokalitě */
   category?: ('collaboration' | 'location_help' | 'organizing')[]
   /** A page number within the paginated result set. */
   page?: number
@@ -2692,8 +2758,7 @@ export type Propagation = {
   invitation_text_practical_information: string
   invitation_text_work_description?: string
   invitation_text_about_us?: string
-  contact_person: string
-  contact_name?: string
+  contact_name: string
   contact_phone?: string
   contact_email?: string
 }
@@ -2722,7 +2787,6 @@ export type EventContact = {
 export type Record = {
   total_hours_worked?: number | null
   comment_on_work_done?: string
-  attendance_list?: string | null
   participants?: string[]
   number_of_participants?: number | null
   number_of_participants_under_26?: number | null
@@ -2890,6 +2954,20 @@ export type PatchedEventPropagationImage = {
   id?: number
   order?: number
   image?: string
+}
+export type AttendanceListPage = {
+  id: number
+  page?: string | null
+}
+export type PaginatedAttendanceListPageList = {
+  count?: number
+  next?: string | null
+  previous?: string | null
+  results?: AttendanceListPage[]
+}
+export type PatchedAttendanceListPage = {
+  id?: number
+  page?: string | null
 }
 export type EventPhoto = {
   id: number
@@ -3274,6 +3352,12 @@ export const {
   useFrontendEventsPropagationImagesUpdateMutation,
   useFrontendEventsPropagationImagesPartialUpdateMutation,
   useFrontendEventsPropagationImagesDestroyMutation,
+  useFrontendEventsRecordAttendanceListPagesListQuery,
+  useFrontendEventsRecordAttendanceListPagesCreateMutation,
+  useFrontendEventsRecordAttendanceListPagesRetrieveQuery,
+  useFrontendEventsRecordAttendanceListPagesUpdateMutation,
+  useFrontendEventsRecordAttendanceListPagesPartialUpdateMutation,
+  useFrontendEventsRecordAttendanceListPagesDestroyMutation,
   useFrontendEventsRecordParticipantsListQuery,
   useFrontendEventsRecordParticipantsRetrieveQuery,
   useFrontendEventsRecordPhotosListQuery,
