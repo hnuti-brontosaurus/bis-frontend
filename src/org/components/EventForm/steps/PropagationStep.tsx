@@ -13,7 +13,7 @@ import {
   Loading,
   NumberInput,
 } from 'components'
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { required } from 'utils/validationMessages'
 import { MethodsShapes } from '..'
@@ -22,6 +22,22 @@ const foodIcons: { [name: string]: ReactElement } = {
   's masem': <Piglet />,
   vegetariánská: <Cheese />,
   veganská: <Leaf />,
+}
+
+/**
+ * Validate ages
+ * if both ages are provided, then max age must be above or equal min age
+ * and we allow empty values
+ * we don't care about anything else (taken care of by NumberInput component)
+ */
+const areAgesValid = (
+  min: string | number | null | undefined,
+  max: string | number | null | undefined,
+) => {
+  if (typeof min === 'number' && typeof max === 'number') {
+    return min <= max
+    // we want to allow empty values
+  } else return true
 }
 
 export const PropagationStep = ({
@@ -37,8 +53,17 @@ export const PropagationStep = ({
   isCamp: boolean
   isInternalSectionMeeting: boolean
 }) => {
-  const { control, register, getValues } = methods
+  const { control, register, getValues, watch, trigger } = methods
   const { data: diets } = api.endpoints.readDiets.useQuery()
+
+  // revalidate ages when they change
+  useEffect(() => {
+    const subscription = watch((data, { name }) => {
+      if (name === 'propagation.minimum_age') trigger('propagation.maximum_age')
+    })
+
+    return subscription.unsubscribe
+  }, [trigger, watch])
 
   if (!diets) return <Loading>Připravujeme formulář</Loading>
 
@@ -69,16 +94,11 @@ export const PropagationStep = ({
           </FormSection>
           <FormSection header="Věk" onWeb>
             <InlineSection>
-              <Label required htmlFor="propagation.minimum_age">
-                Od
-              </Label>
+              <Label htmlFor="propagation.minimum_age">Od</Label>
               <FormInputError>
                 <Controller
                   control={control}
                   name="propagation.minimum_age"
-                  rules={{
-                    required: required,
-                  }}
                   render={({ field }) => (
                     <NumberInput
                       {...field}
@@ -88,19 +108,17 @@ export const PropagationStep = ({
                   )}
                 />
               </FormInputError>
-              <Label required htmlFor="propagation.maximum_age">
-                Do
-              </Label>
+              <Label htmlFor="propagation.maximum_age">Do</Label>
               <FormInputError>
                 <Controller
                   control={control}
                   name="propagation.maximum_age"
                   rules={{
-                    required,
                     validate: maxAge =>
-                      Number(getValues('propagation.minimum_age')) <=
-                        Number(maxAge) ||
-                      'Maximální věk musí být vyšší než minimální věk',
+                      areAgesValid(
+                        getValues('propagation.minimum_age'),
+                        maxAge,
+                      ) || 'Maximální věk musí být vyšší než minimální věk',
                   }}
                   render={({ field }) => (
                     <NumberInput
