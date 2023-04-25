@@ -101,34 +101,39 @@ export const ImportParticipants = ({
           onCancel={handleCancel}
         />
       </StyledModal>
-      <ImportExcelButton<UserImport>
-        keyMap={{
-          first_name: 0,
-          last_name: 1,
-          birthday: 2,
-          email: 3,
-          phone: 4,
-          address: 5,
-          contact_address: 6,
-          health_insurance_company: 7,
-          health_issues: 8,
-          close_person: {
-            first_name: 9,
-            last_name: 10,
-            email: 11,
-            phone: 12,
-          },
-          birth_name: 13,
-          nickname: 14,
-        }}
-        headerRows={2}
-        onUpload={handleImportParticipants}
-      >
-        Importovat z excelu
-      </ImportExcelButton>
-      <ExternalButtonLink tertiary small href={spreadsheetTemplate}>
-        (vzor .xlsx)
-      </ExternalButtonLink>
+      {/* Align template xlsx to center.
+      Just being too lazy to make a separate stylesheet
+      feel free to make one if you need to style more stuff :) */}
+      <div style={{ textAlign: 'center' }}>
+        <ImportExcelButton<UserImport>
+          keyMap={{
+            first_name: 0,
+            last_name: 1,
+            birthday: 2,
+            email: 3,
+            phone: 4,
+            address: 5,
+            contact_address: 6,
+            health_insurance_company: 7,
+            health_issues: 8,
+            close_person: {
+              first_name: 9,
+              last_name: 10,
+              email: 11,
+              phone: 12,
+            },
+            birth_name: 13,
+            nickname: 14,
+          }}
+          headerRows={2}
+          onUpload={handleImportParticipants}
+        >
+          Importovat z excelu
+        </ImportExcelButton>{' '}
+        <ExternalButtonLink tertiary small href={spreadsheetTemplate}>
+          (vzor .xlsx)
+        </ExternalButtonLink>
+      </div>
     </>
   )
 }

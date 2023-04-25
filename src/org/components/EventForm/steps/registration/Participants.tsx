@@ -24,6 +24,7 @@ import { formatDateTime } from 'utils/helpers'
 import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
+import { useExportParticipantsList } from './useExportParticipantsList'
 
 export const Participants: FC<{
   eventId: number
@@ -76,6 +77,9 @@ export const Participants: FC<{
   const [highLightedRow, setHighlightedRow] = useState<string>()
 
   useShowApiErrorMessage(patchEventStatus.error)
+
+  const [exportParticipantsList, { isLoading: isExportLoading }] =
+    useExportParticipantsList()
 
   const addParticipant = async (newParticipantId: string) => {
     let newParticipants: string[] = []
@@ -260,6 +264,18 @@ export const Participants: FC<{
 
       <h2>Účastníci</h2>
       <div className={styles.buttonsContainer}>
+        <Button
+          secondary
+          small
+          type="button"
+          onClick={() => {
+            exportParticipantsList({ eventId })
+          }}
+          isLoading={isExportLoading}
+        >
+          Export do excelu
+        </Button>
+        {/* TODO It would be awesome if import and export use excel in the same format */}
         <div className={styles.excelButtons}>
           <ImportParticipants onConfirm={handleSaveImportedParticipants} />
         </div>
