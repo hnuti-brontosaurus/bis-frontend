@@ -614,6 +614,14 @@ const injectedRtkApi = api.injectEndpoints({
         params: { formatting: queryArg.formatting },
       }),
     }),
+    frontendEventsGetParticipantsListRetrieve: build.query<
+      FrontendEventsGetParticipantsListRetrieveApiResponse,
+      FrontendEventsGetParticipantsListRetrieveApiArg
+    >({
+      query: queryArg => ({
+        url: `/api/frontend/events/${queryArg.eventId}/get_participants_list/`,
+      }),
+    }),
     frontendEventsOrganizersList: build.query<
       FrontendEventsOrganizersListApiResponse,
       FrontendEventsOrganizersListApiArg
@@ -1806,6 +1814,10 @@ export type FrontendEventsGetAttendanceListRetrieveApiArg = {
   /** * `pdf` - pdf
    * `xlsx` - xlsx */
   formatting?: 'pdf' | 'xlsx'
+}
+export type FrontendEventsGetParticipantsListRetrieveApiResponse = unknown
+export type FrontendEventsGetParticipantsListRetrieveApiArg = {
+  eventId: number
 }
 export type FrontendEventsOrganizersListApiResponse =
   /** status 200  */ PaginatedUserList
@@ -3344,6 +3356,7 @@ export const {
   useFrontendEventsFinanceReceiptsPartialUpdateMutation,
   useFrontendEventsFinanceReceiptsDestroyMutation,
   useFrontendEventsGetAttendanceListRetrieveQuery,
+  useFrontendEventsGetParticipantsListRetrieveQuery,
   useFrontendEventsOrganizersListQuery,
   useFrontendEventsOrganizersRetrieveQuery,
   useFrontendEventsPropagationImagesListQuery,
