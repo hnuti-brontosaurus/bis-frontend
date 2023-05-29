@@ -17,7 +17,7 @@ import { useTitle } from 'hooks/title'
 import { useAllowedToCreateEvent } from 'hooks/useAllowedToCreateEvent'
 import { useCancelEvent, useRestoreCanceledEvent } from 'hooks/useCancelEvent'
 import { mergeWith } from 'lodash'
-import { getRegistrationMethod } from 'org/components/EventForm/EventForm'
+import { getRegistrationMethodBeforeFull } from 'org/components/EventForm/EventForm'
 import { AiOutlineStop } from 'react-icons/ai'
 import {
   FaExternalLinkAlt,
@@ -124,17 +124,17 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
             )}
             {!isEventClosed(event) ? (
               <>
-                {getRegistrationMethod(event) === 'standard' && (
+                {getRegistrationMethodBeforeFull(event) === 'standard' && (
                   <ButtonLink to="prihlasky" secondary>
                     <FaUsers /> přihlášky
                   </ButtonLink>
                 )}
-                {getRegistrationMethod(event) === 'standard' && (
+                {getRegistrationMethodBeforeFull(event) === 'standard' && (
                   <ButtonLink secondary to={`/akce/${eventId}/prihlasit`}>
                     <FaRegEye /> přihláška
                   </ButtonLink>
                 )}
-                {getRegistrationMethod(event) === 'other' && (
+                {getRegistrationMethodBeforeFull(event) === 'other' && (
                   <ExternalButtonLink
                     secondary
                     target="_blank"

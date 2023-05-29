@@ -154,7 +154,15 @@ type ErrorShapes = {
 export const getRegistrationMethod = (data?: Pick<Event, 'registration'>) =>
   data?.registration?.is_event_full
     ? 'full'
-    : data?.registration?.is_registration_required === false
+    : getRegistrationMethodBeforeFull(data)
+
+/**
+ * Find registration method, ignoring full event
+ */
+export const getRegistrationMethodBeforeFull = (
+  data?: Pick<Event, 'registration'>,
+) =>
+  data?.registration?.is_registration_required === false
     ? 'none'
     : data?.registration?.alternative_registration_link
     ? 'other'
