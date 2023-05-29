@@ -37,8 +37,8 @@ export const Login = () => {
   const formMethods = useForm<{ email: string; password: string }>()
   const { register, handleSubmit } = formMethods
 
-  const handleFormSubmit = handleSubmit(async data => {
-    await login(data).unwrap()
+  const handleFormSubmit = handleSubmit(data => {
+    login(data)
     // AuthenticatedOutlet should take care of the rest...
   })
 
