@@ -1,4 +1,4 @@
-import type { Event } from 'app/services/bisTypes'
+import type { Address, Event } from 'app/services/bisTypes'
 import { cloneDeep, mapValues } from 'lodash'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
@@ -238,6 +238,15 @@ export const formatDateTime = (date: string, time?: string): string => {
     })
     return dateTimeFormat.format(new Date(date))
   }
+}
+
+/**
+ * Formats an address as a string.
+ *
+ * The string format is "Za Humny, 63405 Horní Dolní".
+ */
+export const formatAddress = (address: Address): string => {
+  return `${address.street}, ${address.zip_code} ${address.city}`
 }
 
 /**
