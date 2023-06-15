@@ -17,6 +17,7 @@ import {
   FaUserPlus as AddUser,
 } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
+import { formatDateTime } from 'utils/helpers'
 import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { AddParticipantModal } from './AddParticipantModal'
@@ -194,13 +195,22 @@ export const Applications: FC<{
       }}
     >
       <td onClick={() => handleShowApplication(application.id)}>
+        {formatDateTime(application.created_at)}
+      </td>
+      <td onClick={() => handleShowApplication(application.id)}>
         {application.first_name}
       </td>
       <td onClick={() => handleShowApplication(application.id)}>
         {application.last_name}
       </td>
       <td onClick={() => handleShowApplication(application.id)}>
-        {application.birthday}
+        {application.birthday && formatDateTime(application.birthday)}
+      </td>
+      <td onClick={() => handleShowApplication(application.id)}>
+        {application.phone}
+      </td>
+      <td onClick={() => handleShowApplication(application.id)}>
+        {application.email}
       </td>
       {withParticipants && (
         <TableCellIconButton
@@ -288,9 +298,12 @@ export const Applications: FC<{
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Jméno</th>
+                  <th>datum podání</th>
+                  <th>jméno</th>
                   <th>příjmení</th>
                   <th>datum narození</th>
+                  <th>telefon</th>
+                  <th>e-mail</th>
                   {withParticipants && (
                     <th>
                       <AddUser className={classNames(styles.iconHead)} />

@@ -20,7 +20,7 @@ import { ConfirmedUser } from 'org/components/ImportParticipants/ImportParticipa
 import { FC, useState } from 'react'
 import { FaTrash as Bin, FaUserEdit as EditUser } from 'react-icons/fa'
 import colors from 'styles/colors.module.scss'
-import { formatDateTime } from 'utils/helpers'
+import { formatAddress, formatDateTime } from 'utils/helpers'
 import { ApplicationStates } from '../ParticipantsStep'
 import styles from '../ParticipantsStep.module.scss'
 import { ShowApplicationModal } from './ShowApplicationModal'
@@ -310,6 +310,9 @@ export const Participants: FC<{
                   <th>Jméno</th>
                   <th>příjmení</th>
                   <th>datum narození</th>
+                  <th>adresa</th>
+                  <th>telefon</th>
+                  <th>e-mail</th>
                   <th>
                     <EditUser className={classNames(styles.iconHead)} />
                   </th>
@@ -353,6 +356,9 @@ export const Participants: FC<{
                     </td>
                     <td>{participant.last_name}</td>
                     <td>{formatDateTime(participant.birthday)}</td>
+                    <td>{formatAddress(participant.address)}</td>
+                    <td>{participant.phone}</td>
+                    <td>{participant.email}</td>
                     <TableCellIconButton
                       icon={EditUser}
                       action={() => onEditUser(participant)}

@@ -40,20 +40,11 @@ h2 {
     }
     td {
       cursor: pointer;
-      text-align: center;
       justify-content: center;
-      &:nth-child(1),
-      &:nth-child(2),
-      &:nth-child(3) {
-        border-right: 1px solid #d9d9d9;
-      }
-      &:nth-child(2) {
-        width: 50px;
-      }
+
+      &:nth-last-child(2),
       &:last-child {
         width: 50px;
-        border-right: 0px;
-        border-left: 1px solid #d9d9d9;
       }
       svg {
         display: inline-block;
@@ -85,22 +76,20 @@ h2 {
   width: 100%;
   border: 2px solid rgb(240, 238, 238);
   margin: 50px auto 0;
-  display: flex;
-  flex-direction: row;
 
   @include media.for-medium-desktop-up {
     width: 80%;
   }
 
   .ListContainer {
-    width: 50%;
     padding: 40px;
 
     .buttonsContainer {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: center;
       margin-top: 16px;
+      gap: 12px;
 
       .excelButtons {
         display: flex;
