@@ -356,7 +356,10 @@ export const Participants: FC<{
                     </td>
                     <td>{participant.last_name}</td>
                     <td>{formatDateTime(participant.birthday)}</td>
-                    <td>{formatAddress(participant.address)}</td>
+                    <td>
+                      {participant.address &&
+                        formatAddress(participant.address)}
+                    </td>
                     <td>{participant.phone}</td>
                     <td>{participant.email}</td>
                     <TableCellIconButton
