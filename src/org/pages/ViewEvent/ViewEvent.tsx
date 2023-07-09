@@ -54,7 +54,7 @@ export const ViewEvent = ({ readonly }: { readonly?: boolean }) => {
 
   const { data: participants } = api.endpoints.readUsers.useQuery(
     event.record?.participants && event.record.participants.length > 0
-      ? { id: event.record.participants }
+      ? { id: event.record.participants, pageSize: 2000 }
       : skipToken,
   )
 
